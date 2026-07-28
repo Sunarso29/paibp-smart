@@ -16,11 +16,12 @@
 5. Tarik seluruh file ke halaman unggah GitHub.
 6. Jangan mengunggah file ZIP.
 7. Pastikan `index.html` terlihat langsung di halaman utama repository, bukan berada di dalam folder tambahan.
-8. Isi keterangan perubahan:
+8. Pastikan `script.js`, `styles.css`, dan `service-worker.js` ikut terunggah. Ketiga file ini diperlukan agar tab, game, progres, dan mode luring berfungsi.
+9. Isi keterangan perubahan:
 
-   `Perbaiki dan sempurnakan website PAIBP SMART SMP`
+   `Aktifkan fitur interaktif PAIBP SMART SMP`
 
-9. Klik **Commit changes**.
+10. Klik **Commit changes**.
 
 ## C. Mengaktifkan GitHub Pages
 
@@ -42,16 +43,17 @@
 - Dukungan: https://sunarso29.github.io/paibp-smart/support.html
 - Kontak: https://sunarso29.github.io/paibp-smart/contact.html
 
-Periksa halaman menggunakan komputer dan telepon. Coba menu, seluruh tautan, gambar, tombol email, serta halaman Privasi.
+Periksa halaman menggunakan komputer dan telepon. Klik empat kartu statistik dan enam kartu fitur. Pastikan daftar 30 bab, game kuis, layanan Islami, progres belajar, mode luring, dan informasi privasi dapat dibuka.
 
 ## E. Jika Perubahan Belum Terlihat
 
 1. Tunggu hingga 10 menit.
 2. Pastikan proses pada tab **Actions** sudah berhasil.
 3. Tekan `Ctrl + F5` pada Windows untuk memuat ulang tanpa cache.
-4. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
-5. Pastikan `index.html` berada pada root repository.
-6. Periksa kembali pengaturan **Settings → Pages**.
+4. Jika masih terlihat versi lama, buka website pada jendela samaran/incognito lalu muat ulang.
+5. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
+6. Pastikan `index.html`, `script.js`, `styles.css`, dan `service-worker.js` berada pada root repository.
+7. Periksa kembali pengaturan **Settings → Pages**.
 
 ## F. Catatan Penting
 
@@ -59,3 +61,4 @@ Periksa halaman menggunakan komputer dan telepon. Coba menu, seluruh tautan, gam
 - Jangan mengubah nama repository tanpa memperbarui seluruh alamat website.
 - Jangan menyimpan kata sandi, kode verifikasi, atau data pribadi di dalam repository.
 - Setiap pembaruan pada branch `main` akan diterbitkan ulang secara otomatis oleh GitHub Pages.
+- Jadwal sholat mengambil data dari layanan daring. Karena itu, cocokkan kembali dengan jadwal masjid atau Kementerian Agama setempat.

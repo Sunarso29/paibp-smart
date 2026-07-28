@@ -7,7 +7,8 @@ LANGKAH UPLOAD:
 4. Drag SEMUA file dan folder di dalam hasil ekstrak ke halaman Upload GitHub.
    Jangan unggah file ZIP-nya.
 5. Pastikan index.html, privacy.html, terms.html, support.html, contact.html,
-   styles.css, script.js, robots.txt, sitemap.xml, dan semua gambar terlihat.
+   styles.css, script.js, service-worker.js, robots.txt, sitemap.xml,
+   dan semua gambar terlihat.
 6. Isi commit message: Perbarui website PAIBP SMART SMP
 7. Klik Commit changes.
 8. Buka Settings > Pages.
@@ -30,3 +31,6 @@ PENTING:
 - Jangan mengunggah ZIP langsung ke repository; unggah seluruh isinya.
 - Setelah Commit changes, periksa tab Actions sampai proses publikasi
   bertanda centang hijau.
+- Jika versi lama masih terlihat, tekan Ctrl + F5 atau buka melalui
+  jendela samaran/incognito.
+- Uji empat kartu statistik dan enam kartu fitur setelah website aktif.
