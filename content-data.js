@@ -3,6 +3,7 @@
     {
       id: "VII-1", grade: "VII", semester: "Gasal", number: 1, allocation: 9,
       element: "Al Qur'an dan Hadits",
+      references: ["Al Qur'an Surat An-Nisa' ayat 59", "Al Qur'an Surat An-Nahl ayat 64", "Hadits Riwayat tentang fungsi sunnah terhadap Al Qur'an"],
       title: "Al Qur'an dan Sunnah sebagai Pedoman Hidup",
       overview: "Al Qur'an merupakan wahyu Allah Subhanahu Wata'ala dan sunnah Nabi Muhammad Sholallohu 'Alaihi Wasallam menjadi penjelas serta teladan penerapannya. Keduanya membimbing manusia dalam akidah, ibadah, akhlak, dan kehidupan sosial.",
       objectives: ["Menjelaskan kedudukan Al Qur'an dan sunnah", "Membedakan fungsi Al Qur'an dan sunnah", "Menerapkan keduanya ketika mengambil keputusan"],
@@ -83,6 +84,7 @@
     {
       id: "VII-6", grade: "VII", semester: "Genap", number: 6, allocation: 9,
       element: "Al Qur'an dan Hadits",
+      references: ["Al Qur'an Surat Al-Anbiya' ayat 30", "Al Qur'an Surat Al-A'raf ayat 54", "Hadits Riwayat tentang penciptaan dan tanggung jawab terhadap alam"],
       title: "Alam Semesta sebagai Tanda Kekuasaan Allah Subhanahu Wata'ala",
       overview: "Keteraturan alam mendorong manusia berpikir, bersyukur, dan bertanggung jawab. Mengamati ciptaan Allah Subhanahu Wata'ala tidak menggantikan kajian ilmiah, tetapi memberikan landasan nilai agar ilmu digunakan untuk kemaslahatan.",
       objectives: ["Menghubungkan ayat kauniyah dengan pengamatan ilmiah", "Menjelaskan tanggung jawab manusia terhadap alam", "Merancang tindakan pelestarian sederhana"],
@@ -115,17 +117,18 @@
     {
       id: "VII-8", grade: "VII", semester: "Genap", number: 8, allocation: 9,
       element: "Akhlak",
-      title: "Menghindari Ghibah dan Melaksanakan Tabayun",
-      overview: "Ghibah merusak kehormatan dan kepercayaan, sedangkan tabayun melindungi masyarakat dari kesimpulan terburu-buru. Di ruang digital, keduanya berkaitan dengan jejak digital, manipulasi informasi, dan tanggung jawab berbagi.",
-      objectives: ["Menjelaskan ghibah, fitnah, dan tabayun", "Menganalisis risiko penyebaran informasi", "Mempraktikkan verifikasi sederhana"],
+      references: ["Al Qur'an Surat Al-Hujurat ayat 6", "Al Qur'an Surat Al-Hujurat ayat 12", "Hadits Riwayat tentang menjaga kehormatan dan lisan"],
+      title: "Menghindari Gibah dan Melaksanakan Tabayun",
+      overview: "Gibah merusak kehormatan dan kepercayaan, sedangkan tabayun melindungi masyarakat dari kesimpulan terburu-buru. Di ruang digital, keduanya berkaitan dengan jejak digital, manipulasi informasi, dan tanggung jawab berbagi.",
+      objectives: ["Menjelaskan gibah, fitnah, dan tabayun", "Menganalisis risiko penyebaran informasi", "Mempraktikkan verifikasi sederhana"],
       concepts: [
-        ["Ghibah dan kehormatan", "Ghibah membicarakan keburukan seseorang yang tidak ia sukai walaupun hal itu benar. Apabila isinya tidak benar, kerusakannya bertambah karena mengandung kebohongan atau fitnah."],
+        ["Gibah dan kehormatan", "Gibah membicarakan keburukan seseorang yang tidak ia sukai walaupun hal itu benar. Apabila isinya tidak benar, kerusakannya bertambah karena mengandung kebohongan atau fitnah."],
         ["Tabayun", "Tabayun berarti mencari kejelasan melalui sumber yang layak, konteks yang lengkap, dan sikap adil. Tabayun bukan mencari pembenaran bagi prasangka."],
         ["Literasi digital", "Judul provokatif, gambar lama, potongan video, akun palsu, dan pesan berantai dapat menyesatkan. Tanggal, sumber, konteks, dan perbandingan dengan informasi terpercaya perlu diperiksa."],
         ["Memulihkan keadaan", "Jika terlanjur menyebarkan informasi salah, seseorang perlu menghentikan penyebaran, mengoreksi pada pihak yang sama, meminta maaf, dan belajar dari kesalahan."],
       ],
       applications: ["Menahan diri sebelum meneruskan pesan", "Menanyakan langsung secara santun", "Tidak menjadikan aib teman sebagai bahan candaan"],
-      questions: ["Apa perbedaan ghibah dan kritik yang bertanggung jawab?", "Tuliskan empat langkah tabayun digital.", "Apa yang harus dilakukan setelah membagikan informasi salah?"],
+      questions: ["Apa perbedaan gibah dan kritik yang bertanggung jawab?", "Tuliskan empat langkah tabayun digital.", "Apa yang harus dilakukan setelah membagikan informasi salah?"],
       project: "Analisis satu contoh pesan berantai fiktif menggunakan cek sumber, tanggal, bukti, konteks, dan dampak.",
     },
     {
@@ -163,6 +166,7 @@
     {
       id: "VIII-1", grade: "VIII", semester: "Gasal", number: 1, allocation: 9,
       element: "Al Qur'an dan Hadits",
+      references: ["Al Qur'an Surat Ar-Rum ayat 41", "Al Qur'an Surat Ibrahim ayat 32", "Al Qur'an Surat Az-Zukhruf ayat 13"],
       title: "Inspirasi Al Qur'an: Melestarikan Alam dan Menjaga Kehidupan",
       overview: "Al Qur'an membimbing manusia memanfaatkan alam secara bertanggung jawab dan melarang kerusakan. Pelestarian lingkungan merupakan bentuk syukur, amanah, dan perlindungan terhadap kehidupan.",
       objectives: ["Menganalisis pesan ayat tentang alam", "Menjelaskan manusia sebagai khalifah", "Menyusun aksi lingkungan berbasis data"],
@@ -211,17 +215,17 @@
     {
       id: "VIII-4", grade: "VIII", semester: "Gasal", number: 4, allocation: 9,
       element: "Fikih",
-      title: "Sholat Gerhana, Istiska, dan Jenazah",
+      title: "Sholat Gerhana, Istisqa, dan Jenazah",
       overview: "Tiga ibadah ini menghubungkan ketundukan kepada Allah Subhanahu Wata'ala dengan kepedulian sosial serta perenungan terhadap alam dan kehidupan. Masing-masing memiliki sebab, hukum, dan tata cara yang perlu dipelajari dengan tertib.",
       objectives: ["Membedakan ketentuan tiga sholat", "Mempraktikkan bagian tata cara melalui simulasi", "Menjelaskan nilai sosial dan spiritual"],
       concepts: [
         ["Sholat gerhana", "Sholat gerhana dilaksanakan ketika terjadi gerhana matahari atau bulan. Ibadah ini mengarahkan manusia mengagungkan Pencipta, bukan mengaitkan gerhana dengan mitos atau kematian seseorang."],
-        ["Sholat istiska", "Sholat istiska merupakan permohonan hujan ketika terjadi kekeringan. Ia disertai introspeksi, doa, dan tanggung jawab memperbaiki pengelolaan air serta lingkungan."],
+        ["Sholat istisqa", "Sholat istisqa merupakan permohonan hujan ketika terjadi kekeringan. Ia disertai introspeksi, doa, dan tanggung jawab memperbaiki pengelolaan air serta lingkungan."],
         ["Sholat jenazah", "Sholat jenazah adalah kewajiban kolektif dengan rangkaian takbir dan doa tanpa rukuk serta sujud. Ibadah ini merupakan penghormatan terakhir dan dukungan bagi keluarga yang berduka."],
         ["Nilai kepedulian", "Ketiganya mengajarkan tauhid, penolakan takhayul, solidaritas, kepedulian lingkungan, ingat kematian, dan tanggung jawab bersama."],
       ],
       applications: ["Tidak menyebarkan mitos gerhana", "Menghemat air saat kemarau", "Menyampaikan takziah dengan empati"],
-      questions: ["Apa perbedaan struktur sholat jenazah dan sholat biasa?", "Mengapa istiska perlu disertai perbaikan lingkungan?", "Nilai apa yang dapat dipelajari dari gerhana?"],
+      questions: ["Apa perbedaan struktur sholat jenazah dan sholat biasa?", "Mengapa istisqa perlu disertai perbaikan lingkungan?", "Nilai apa yang dapat dipelajari dari gerhana?"],
       project: "Buat tabel perbandingan hukum, sebab, waktu, tata cara ringkas, dan hikmah ketiga sholat.",
     },
     {
@@ -243,6 +247,7 @@
     {
       id: "VIII-6", grade: "VIII", semester: "Genap", number: 6, allocation: 9,
       element: "Al Qur'an dan Hadits",
+      references: ["Al Qur'an Surat Al-Baqarah ayat 143", "Hadits Riwayat tentang sikap adil, seimbang, dan toleran"],
       title: "Indahnya Beragama Secara Moderat",
       overview: "Moderasi beragama berarti menjalankan ajaran secara teguh, adil, seimbang, dan tidak berlebihan. Sikap ini menolak kekerasan serta kebencian, sekaligus menjaga komitmen terhadap ajaran agama.",
       objectives: ["Menjelaskan makna moderasi beragama", "Membedakan teguh dan ekstrem", "Menerapkan sikap adil dalam perbedaan"],
@@ -323,6 +328,7 @@
     {
       id: "IX-1", grade: "IX", semester: "Gasal", number: 1, allocation: 9,
       element: "Al Qur'an dan Hadits",
+      references: ["Al Qur'an Surat Al-Mujadilah ayat 11", "Al Qur'an Surat Az-Zumar ayat 9", "Hadits Riwayat tentang keutamaan menuntut ilmu"],
       title: "Al Qur'an Menginspirasi: Semangat Mencari Ilmu",
       overview: "Mencari ilmu merupakan jalan memuliakan manusia dan menghadirkan manfaat. Al Qur'an mengarahkan kegiatan belajar agar disertai iman, adab, penalaran, dan tanggung jawab.",
       objectives: ["Menganalisis pesan dalil tentang ilmu", "Menjelaskan adab mencari ilmu", "Menyusun strategi belajar berkelanjutan"],
@@ -355,6 +361,7 @@
     {
       id: "IX-3", grade: "IX", semester: "Gasal", number: 3, allocation: 9,
       element: "Akhlak",
+      references: ["Al Qur'an Surat Al-Hujurat ayat 6", "Al Qur'an Surat Al-Hujurat ayat 13", "Hadits Riwayat tentang menyayangi yang muda dan menghormati yang tua"],
       title: "Etika Pergaulan dan Komunikasi Islami",
       overview: "Pergaulan sehat menjaga martabat, batas, keselamatan, dan hak setiap orang. Komunikasi Islami menuntut kebenaran, kesantunan, empati, serta tanggung jawab terhadap dampak ucapan.",
       objectives: ["Menjelaskan prinsip pergaulan sehat", "Menganalisis komunikasi verbal dan digital", "Menerapkan batas serta persetujuan yang sehat"],
@@ -403,6 +410,7 @@
     {
       id: "IX-6", grade: "IX", semester: "Genap", number: 6, allocation: 9,
       element: "Al Qur'an dan Hadits",
+      references: ["Al Qur'an Surat Al-Baqarah ayat 30", "Al Qur'an Surat Al-Qasas ayat 77", "Hadits Riwayat tentang kasih sayang"],
       title: "Menjadi Khalifah yang Menjaga Bumi",
       overview: "Khalifah berarti manusia menerima amanah mengelola kehidupan sesuai nilai Allah Subhanahu Wata'ala. Amanah itu mencakup keadilan, keberlanjutan, perlindungan makhluk, dan penggunaan teknologi secara bertanggung jawab.",
       objectives: ["Menganalisis tanggung jawab khalifah", "Menjelaskan keadilan antargenerasi", "Merancang solusi lingkungan kolaboratif"],
@@ -419,6 +427,7 @@
     {
       id: "IX-7", grade: "IX", semester: "Genap", number: 7, allocation: 9,
       element: "Akidah",
+      references: ["Al Qur'an Surat Al-Furqan ayat 2", "Al Qur'an Surat Ar-Ra'd ayat 11", "Hadits Riwayat tentang ketetapan Allah dan ikhtiar"],
       title: "Iman kepada Qada dan Qadar",
       overview: "Iman kepada qada dan qadar membangun keseimbangan antara keyakinan terhadap ketetapan Allah Subhanahu Wata'ala dan tanggung jawab manusia untuk berikhtiar. Takdir tidak boleh dijadikan alasan untuk pasif atau menghindari tanggung jawab.",
       objectives: ["Menjelaskan qada dan qadar", "Menghubungkan ikhtiar, doa, dan tawakal", "Menunjukkan optimisme serta tanggung jawab"],

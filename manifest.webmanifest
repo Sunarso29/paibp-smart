@@ -1,0 +1,25 @@
+{
+  "name": "PAIBP SMART SMP",
+  "short_name": "PAIBP SMART",
+  "description": "Portal PAIBP untuk murid dan guru SMP: materi, LKPD, rekap tugas, perangkat guru, fitur Islami, dan games.",
+  "lang": "id",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3faf7",
+  "theme_color": "#087f68",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Portal PAIBP SMART SMP: materi utuh, ringkasan, LKPD, perangkat guru, fitur Islami, dan game untuk kelas VII–IX.">
+    <meta name="description" content="Portal PAIBP SMART SMP: ringkasan materi, latihan, LKPD interaktif, rekap tugas, perangkat guru, fitur Islami, dan game kelas VII–IX.">
     <meta name="author" content="Sunarso, S.Pd.I., Gr.">
     <meta name="robots" content="index,follow">
     <meta name="theme-color" content="#087f68">
@@ -20,6 +20,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <title>PAIBP SMART SMP — Portal Murid dan Guru</title>
     <link rel="icon" type="image/png" href="logo-spensus.png">
+    <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -35,6 +36,7 @@
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
           <a class="active" aria-current="page" href="index.html">Beranda</a>
           <a href="#portal">Portal</a>
+          <a href="#spensus">Spensus</a>
           <a href="privacy.html">Privasi</a>
           <a href="support.html">Dukungan</a>
           <a href="contact.html">Kontak</a>
@@ -65,15 +67,15 @@
       <section class="container portal-tabs" aria-label="Empat ruang utama">
         <button class="portal-tab" type="button" data-open-panel="student" aria-controls="panel-student">
           <span class="portal-tab-icon" aria-hidden="true">🎒</span>
-          <span><strong>Ruang Murid</strong><small>Materi, ringkasan, LKPD, progres</small></span>
+          <span><strong>Ruang Murid</strong><small>Materi, latihan, LKPD, kirim tugas</small></span>
         </button>
         <button class="portal-tab" type="button" data-open-panel="teacher" aria-controls="panel-teacher">
           <span class="portal-tab-icon" aria-hidden="true">🧑‍🏫</span>
-          <span><strong>Ruang Guru</strong><small>CP, KKTP, ATP, Prota, Promes</small></span>
+          <span><strong>Ruang Guru</strong><small>Perangkat, modul ajar, rekap tugas</small></span>
         </button>
         <button class="portal-tab" type="button" data-open-panel="islamic" aria-controls="panel-islamic">
           <span class="portal-tab-icon" aria-hidden="true">🕌</span>
-          <span><strong>Fitur Islami</strong><small>Hari, Hijriah, jadwal sholat</small></span>
+          <span><strong>Fitur Islami</strong><small>Al Qur'an, doa, dzikir, kalender</small></span>
         </button>
         <button class="portal-tab" type="button" data-open-panel="games" aria-controls="panel-games">
           <span class="portal-tab-icon" aria-hidden="true">🎮</span>
@@ -106,7 +108,7 @@
                 </div>
               </div>
               <div class="portal-metrics">
-                <article><strong>30</strong><span>Paket materi utuh</span></article>
+                <article><strong>30</strong><span>Ringkasan materi</span></article>
                 <article><strong>30</strong><span>Ringkasan bab</span></article>
                 <article><strong>30</strong><span>LKPD siap cetak</span></article>
                 <article><strong>7</strong><span>Perangkat guru</span></article>
@@ -118,7 +120,7 @@
                 <div>
                   <span class="panel-kicker">🎒 Ruang Murid</span>
                   <h3>30 Paket Belajar PAIBP Kelas VII–IX</h3>
-                  <p>Setiap bab memiliki tujuan, materi inti, penerapan, cek pemahaman, ringkasan, LKPD, dan progres belajar.</p>
+                  <p>Setiap bab diolah dari modul terlampir menjadi materi, ringkasan, latihan, LKPD interaktif, dan berkas tugas yang dapat dikirim kepada guru.</p>
                 </div>
                 <div class="mini-progress"><strong id="material-completed">0/30</strong><span>bab selesai</span></div>
               </div>
@@ -155,6 +157,8 @@
                   <button class="text-button" type="button" id="back-to-library">← Kembali ke daftar bab</button>
                   <div class="lesson-actions">
                     <button class="btn btn-compact" type="button" id="print-lesson">Cetak / Simpan PDF</button>
+                    <button class="btn btn-compact" type="button" id="save-student-work">Simpan jawaban</button>
+                    <button class="cta btn-compact" type="button" id="send-student-work">Kirim kepada guru</button>
                     <button class="btn btn-compact" type="button" id="toggle-lesson-complete">Tandai selesai</button>
                   </div>
                 </div>
@@ -164,10 +168,12 @@
                   <p id="lesson-overview"></p>
                 </div>
                 <div class="document-tabs" role="tablist" aria-label="Bagian paket belajar">
-                  <button type="button" data-lesson-view="material" aria-pressed="true">📖 Materi Utuh</button>
+                  <button type="button" data-lesson-view="material" aria-pressed="true">📖 Materi Bab</button>
                   <button type="button" data-lesson-view="summary" aria-pressed="false">📝 Ringkasan</button>
                   <button type="button" data-lesson-view="worksheet" aria-pressed="false">📋 LKPD</button>
+                  <button type="button" data-lesson-view="submission" aria-pressed="false">✍️ Jawaban &amp; Kirim</button>
                 </div>
+                <p class="save-status" id="student-save-status" aria-live="polite"></p>
                 <div class="lesson-content printable-document" id="lesson-content"></div>
               </article>
             </section>
@@ -206,6 +212,8 @@
                   <button type="button" data-teacher-doc="promes" aria-pressed="false"><span>📅</span> Promes</button>
                   <button type="button" data-teacher-doc="calendar" aria-pressed="false"><span>🏫</span> Kalender Pendidikan</button>
                   <button type="button" data-teacher-doc="effective" aria-pressed="false"><span>🧮</span> Analisis Hari Efektif</button>
+                  <button type="button" data-teacher-doc="module" aria-pressed="false"><span>📚</span> Modul Ajar Lengkap</button>
+                  <button type="button" data-teacher-doc="submissions" aria-pressed="false"><span>📥</span> Rekap Pekerjaan Murid</button>
                 </nav>
                 <article class="teacher-document printable-document" id="teacher-document" aria-live="polite"></article>
               </div>
@@ -215,37 +223,99 @@
               <div class="panel-heading">
                 <div>
                   <span class="panel-kicker">🕌 Fitur Islami</span>
-                  <h3>Layanan Harian Susukan, Banjarnegara</h3>
-                  <p>Tanggal diperbarui otomatis. Jadwal sholat memerlukan internet dan perlu dicocokkan dengan pengumuman masjid setempat.</p>
+                  <h3>Pusat Fitur Islami</h3>
+                  <p>Menu terinspirasi kebutuhan Hijrah App: Al Qur'an, Hisnul Muslim, dzikir, kalender ibadah, jadwal sholat, dan nasihat bersumber.</p>
                 </div>
                 <span class="live-badge">Hari ini</span>
               </div>
-              <div class="date-grid">
-                <article class="date-card"><span>Hari Arab</span><strong id="arabic-day">—</strong></article>
-                <article class="date-card"><span>Tanggal Masehi</span><strong id="gregorian-date">—</strong></article>
-                <article class="date-card"><span>Tanggal Hijriah</span><strong id="hijri-date">—</strong></article>
-              </div>
-              <div class="prayer-block">
-                <div class="subheading-row">
-                  <div>
-                    <h4>Jadwal Sholat Hari Ini</h4>
-                    <p id="prayer-status">Memuat jadwal untuk wilayah Kecamatan Susukan…</p>
-                  </div>
-                  <button class="btn btn-compact" id="refresh-prayer" type="button">Muat Ulang</button>
+              <div class="islamic-app-layout">
+                <nav class="islamic-menu" aria-label="Menu fitur Islami">
+                  <button type="button" data-islamic-view="home" aria-pressed="true">🏠 Beranda</button>
+                  <button type="button" data-islamic-view="quran" aria-pressed="false">📖 Al Qur'an</button>
+                  <button type="button" data-islamic-view="hisnul" aria-pressed="false">🤲 Hisnul Muslim</button>
+                  <button type="button" data-islamic-view="morning" aria-pressed="false">🌤️ Dzikir Pagi</button>
+                  <button type="button" data-islamic-view="evening" aria-pressed="false">🌙 Dzikir Petang</button>
+                  <button type="button" data-islamic-view="calendar" aria-pressed="false">🗓️ Kalender Hijriah</button>
+                  <button type="button" data-islamic-view="insights" aria-pressed="false">💡 Nasihat Harian</button>
+                </nav>
+                <div class="islamic-content">
+                  <section data-islamic-page="home">
+                    <div class="date-grid">
+                      <article class="date-card"><span>Hari Arab</span><strong id="arabic-day">—</strong></article>
+                      <article class="date-card"><span>Tanggal Masehi</span><strong id="gregorian-date">—</strong></article>
+                      <article class="date-card"><span>Tanggal Hijriah</span><strong id="hijri-date">—</strong></article>
+                    </div>
+                    <div class="prayer-block">
+                      <div class="subheading-row">
+                        <div>
+                          <h4>Jadwal Sholat Hari Ini</h4>
+                          <p id="prayer-status">Memuat jadwal untuk wilayah Kecamatan Susukan…</p>
+                        </div>
+                        <button class="btn btn-compact" id="refresh-prayer" type="button">Muat Ulang</button>
+                      </div>
+                      <div class="prayer-grid">
+                        <div><span>Imsak</span><strong data-prayer="Imsak">--:--</strong></div>
+                        <div><span>Subuh</span><strong data-prayer="Fajr">--:--</strong></div>
+                        <div><span>Dzuhur</span><strong data-prayer="Dhuhr">--:--</strong></div>
+                        <div><span>Ashar</span><strong data-prayer="Asr">--:--</strong></div>
+                        <div><span>Maghrib</span><strong data-prayer="Maghrib">--:--</strong></div>
+                        <div><span>Isya</span><strong data-prayer="Isha">--:--</strong></div>
+                      </div>
+                    </div>
+                    <blockquote class="daily-motivation">
+                      <span>Pengingat belajar hari ini</span>
+                      <p id="daily-motivation">—</p>
+                    </blockquote>
+                  </section>
+
+                  <section data-islamic-page="quran" hidden>
+                    <div class="subheading-row">
+                      <div><h4>Al Qur'an Digital</h4><p>Masukkan nomor surat 1–114. Surat yang pernah dibuka disimpan untuk dibaca kembali saat luring.</p></div>
+                    </div>
+                    <form class="quran-controls" id="quran-form">
+                      <label>Nomor surat <input id="quran-surah-number" type="number" min="1" max="114" value="1" required></label>
+                      <button class="cta btn-compact" type="submit">Buka surat</button>
+                      <button class="btn btn-compact" id="cache-quran-audio" type="button">Simpan audio luring</button>
+                    </form>
+                    <p class="save-status" id="quran-status" aria-live="polite">Silakan buka surat.</p>
+                    <article class="quran-reader" id="quran-reader"></article>
+                    <p class="document-note">Teks dan audio dimuat dari Al Quran Cloud. Audio dapat diputar luring setelah tombol “Simpan audio luring” berhasil diselesaikan saat tersambung internet.</p>
+                  </section>
+
+                  <section data-islamic-page="hisnul" hidden>
+                    <div class="subheading-row"><div><h4>Hisnul Muslim Pilihan</h4><p>Doa harian dengan teks Arab, makna ringkas, jumlah bacaan, dan sumber.</p></div></div>
+                    <div class="dua-list" id="hisnul-list"></div>
+                  </section>
+
+                  <section data-islamic-page="morning" hidden>
+                    <div class="subheading-row"><div><h4>Dzikir Pagi</h4><p>Bacaan pilihan bersumber. Baca dengan tertib dan pahami maknanya.</p></div></div>
+                    <div class="dua-list" id="morning-list"></div>
+                  </section>
+
+                  <section data-islamic-page="evening" hidden>
+                    <div class="subheading-row"><div><h4>Dzikir Petang</h4><p>Bacaan pilihan bersumber. Baca dengan tertib dan pahami maknanya.</p></div></div>
+                    <div class="dua-list" id="evening-list"></div>
+                  </section>
+
+                  <section data-islamic-page="calendar" hidden>
+                    <div class="calendar-toolbar">
+                      <button class="btn btn-compact" id="calendar-prev" type="button">← Bulan lalu</button>
+                      <h4 id="calendar-title">Kalender Ibadah</h4>
+                      <button class="btn btn-compact" id="calendar-next" type="button">Bulan depan →</button>
+                    </div>
+                    <p class="warning">Tanggal Hijriah dihitung oleh kalender perangkat dan dapat berbeda satu hari dari keputusan resmi pemerintah/hasil rukyat. Gunakan sebagai panduan awal.</p>
+                    <div class="hijri-calendar" id="hijri-calendar"></div>
+                    <div class="calendar-legend"><span class="fast-required">Puasa wajib</span><span class="fast-sunnah">Puasa sunnah</span><span class="fast-forbidden">Dilarang berpuasa</span><span class="history-mark">Sejarah/peringatan</span></div>
+                    <div class="fasting-guide" id="fasting-guide"></div>
+                  </section>
+
+                  <section data-islamic-page="insights" hidden>
+                    <div class="subheading-row"><div><h4>Nasihat Harian Bersumber</h4><p>Berubah otomatis setiap hari. Nomor hadits/bab ditampilkan; halaman hanya dicantumkan bila edisi sudah diverifikasi.</p></div></div>
+                    <article class="daily-insight" id="daily-insight"></article>
+                    <div class="warning"><strong>Kebijakan sumber:</strong> PAIBP SMART tidak mengarang nomor halaman. Karena halaman kitab berbeda menurut edisi, sumber memakai surat/ayat, nomor hadits, atau nama bab. Intisari editorial selalu ditandai.</div>
+                  </section>
                 </div>
-                <div class="prayer-grid">
-                  <div><span>Imsak</span><strong data-prayer="Imsak">--:--</strong></div>
-                  <div><span>Subuh</span><strong data-prayer="Fajr">--:--</strong></div>
-                  <div><span>Dzuhur</span><strong data-prayer="Dhuhr">--:--</strong></div>
-                  <div><span>Ashar</span><strong data-prayer="Asr">--:--</strong></div>
-                  <div><span>Maghrib</span><strong data-prayer="Maghrib">--:--</strong></div>
-                  <div><span>Isya</span><strong data-prayer="Isha">--:--</strong></div>
-                </div>
               </div>
-              <blockquote class="daily-motivation">
-                <span>Motivasi hari ini</span>
-                <p id="daily-motivation">—</p>
-              </blockquote>
             </section>
 
             <section class="workspace-panel" id="panel-games" data-panel="games" hidden>
@@ -307,11 +377,34 @@
         </div>
       </section>
 
-      <section class="section">
+      <section class="section" id="spensus">
         <div class="container">
-          <div class="quote">
-            <p>“Teknologi menjadi bermakna ketika membantu murid memahami ilmu, memperbaiki sikap, dan menghadirkan manfaat dalam kehidupan.”</p>
-            <strong>— Sunarso, S.Pd.I., Gr.</strong>
+          <div class="section-heading">
+            <span class="badge">Selayang Pandang</span>
+            <h2>SMP Negeri 1 Susukan</h2>
+            <p class="lead">Identitas sekolah, keluarga besar Spensus, dan ruang dokumentasi kegiatan.</p>
+          </div>
+          <div class="school-profile" id="school-profile"></div>
+          <div class="staff-section">
+            <div class="subheading-row">
+              <div><h3>Kepala Sekolah dan Tenaga Kependidikan</h3><p>Disusun dari foto Yearbook AI 2026 yang dilampirkan.</p></div>
+            </div>
+            <div class="staff-grid" id="staff-grid"></div>
+          </div>
+          <div class="staff-section">
+            <div class="subheading-row">
+              <div><h3>Tenaga Pendidik</h3><p>Gunakan filter untuk melihat guru berdasarkan mata pelajaran.</p></div>
+              <label class="staff-filter">Mata pelajaran <select id="teacher-subject-filter"><option value="all">Semua</option></select></label>
+            </div>
+            <div class="staff-grid" id="teacher-grid"></div>
+          </div>
+          <div class="staff-section">
+            <span class="badge">Spensus Terkini</span>
+            <h3>Dokumentasi Kegiatan</h3>
+            <div class="news-placeholder" id="news-gallery">
+              <span aria-hidden="true">📸</span>
+              <div><strong>Galeri siap diisi</strong><p>Bagian ini telah disiapkan untuk foto, judul, tanggal, dan ringkasan kegiatan Spensus berikutnya.</p></div>
+            </div>
           </div>
         </div>
       </section>
@@ -333,6 +426,8 @@
     </footer>
 
     <script src="content-data.js"></script>
+    <script src="school-data.js"></script>
+    <script src="islamic-data.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v5";
+const CACHE_NAME = "paibp-smart-core-v6";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -7,8 +7,13 @@ const CORE_ASSETS = [
   "./support.html",
   "./contact.html",
   "./404.html",
+  "./manifest.webmanifest",
+  "./assets/icons/icon-192.png",
+  "./assets/icons/icon-512.png",
   "./styles.css",
   "./content-data.js",
+  "./school-data.js",
+  "./islamic-data.js",
   "./script.js",
   "./logo-spensus.png",
   "./sunarso.jpeg",
@@ -33,7 +38,7 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((keys) => Promise.all(
         keys
-          .filter((key) => key.startsWith("paibp-smart-") && key !== CACHE_NAME)
+          .filter((key) => key.startsWith("paibp-smart-core-") && key !== CACHE_NAME)
           .map((key) => caches.delete(key)),
       ))
       .then(() => self.clients.claim()),
@@ -45,7 +50,12 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const requestUrl = new URL(request.url);
-  if (requestUrl.origin !== self.location.origin) return;
+  if (requestUrl.origin !== self.location.origin) {
+    event.respondWith(
+      caches.match(request).then((cached) => cached || fetch(request)),
+    );
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(
