@@ -6,8 +6,9 @@ LANGKAH UPLOAD:
 3. Ekstrak ZIP ini terlebih dahulu.
 4. Drag SEMUA file dan folder di dalam hasil ekstrak ke halaman Upload GitHub.
    Jangan unggah file ZIP-nya.
-5. Pastikan file index.html, privacy.html, styles.css, script.js, dan folder assets terlihat.
-6. Isi commit message: Upload website PAIBP SMART
+5. Pastikan index.html, privacy.html, terms.html, support.html, contact.html,
+   styles.css, script.js, robots.txt, sitemap.xml, dan semua gambar terlihat.
+6. Isi commit message: Perbarui website PAIBP SMART SMP
 7. Klik Commit changes.
 8. Buka Settings > Pages.
 9. Pada Build and deployment pilih:
@@ -26,3 +27,6 @@ PENTING:
 - Repository harus Public.
 - File index.html harus berada di root repository.
 - Jangan ubah nama file privacy.html.
+- Jangan mengunggah ZIP langsung ke repository; unggah seluruh isinya.
+- Setelah Commit changes, periksa tab Actions sampai proses publikasi
+  bertanda centang hijau.

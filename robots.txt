@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sunarso29.github.io/paibp-smart/sitemap.xml
