@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Situs resmi PAIBP SMART SMP, aplikasi pembelajaran PAIBP interaktif untuk kelas VII, VIII, dan IX.">
+    <meta name="description" content="Portal PAIBP SMART SMP: materi utuh, ringkasan, LKPD, perangkat guru, fitur Islami, dan game untuk kelas VII–IX.">
     <meta name="author" content="Sunarso, S.Pd.I., Gr.">
     <meta name="robots" content="index,follow">
     <meta name="theme-color" content="#087f68">
@@ -12,13 +12,13 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="id_ID">
     <meta property="og:site_name" content="PAIBP SMART SMP">
-    <meta property="og:title" content="PAIBP SMART SMP — Belajar, Bermain, Berakhlak">
-    <meta property="og:description" content="Platform pembelajaran PAIBP interaktif untuk kelas VII, VIII, dan IX.">
+    <meta property="og:title" content="PAIBP SMART SMP — Portal Murid dan Guru">
+    <meta property="og:description" content="Materi utuh, ringkasan, LKPD, perangkat pembelajaran, fitur Islami, dan game PAIBP kelas VII–IX.">
     <meta property="og:url" content="https://sunarso29.github.io/paibp-smart/">
     <meta property="og:image" content="https://sunarso29.github.io/paibp-smart/gerbang.jpg">
     <meta property="og:image:alt" content="Gerbang SMP Negeri 1 Susukan">
     <meta name="twitter:card" content="summary_large_image">
-    <title>PAIBP SMART SMP — Belajar, Bermain, Berakhlak</title>
+    <title>PAIBP SMART SMP — Portal Murid dan Guru</title>
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="preload" as="image" href="gerbang.jpg">
     <link rel="stylesheet" href="styles.css">
@@ -29,13 +29,13 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Belajar • Bermain • Berakhlak</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
           <a class="active" aria-current="page" href="index.html">Beranda</a>
+          <a href="#portal">Portal</a>
           <a href="privacy.html">Privasi</a>
-          <a href="terms.html">Ketentuan</a>
           <a href="support.html">Dukungan</a>
           <a href="contact.html">Kontak</a>
         </nav>
@@ -46,12 +46,12 @@
       <section class="hero">
         <div class="container hero-grid">
           <div>
-            <span class="eyebrow">✨ Platform Pembelajaran PAIBP SMP</span>
-            <h1>Belajar PAIBP lebih hidup, seru, dan bermakna.</h1>
-            <p class="hero-copy">PAIBP SMART SMP menghadirkan materi kelas VII, VIII, dan IX melalui rangkuman visual, aktivitas kontekstual, evaluasi, dan game edukatif yang tetap menjaga materi inti.</p>
+            <span class="eyebrow">✨ Portal Pembelajaran dan Perangkat Guru PAIBP SMP</span>
+            <h1>Belajar utuh. Mengajar terarah.</h1>
+            <p class="hero-copy">PAIBP SMART SMP menyatukan materi lengkap, ringkasan, LKPD, progres murid, perangkat pembelajaran guru, layanan Islami, dan game edukatif kelas VII–IX.</p>
             <div class="actions">
-              <button class="cta" type="button" data-open-panel="materials" aria-controls="panel-materials">Mulai Belajar</button>
-              <a class="btn btn-outline" href="privacy.html">Kebijakan Privasi</a>
+              <button class="cta" type="button" data-open-panel="student" aria-controls="panel-student">Masuk Ruang Murid</button>
+              <button class="btn btn-outline" type="button" data-open-panel="teacher" aria-controls="panel-teacher">Masuk Ruang Guru</button>
             </div>
           </div>
           <aside class="profile-card">
@@ -62,175 +62,168 @@
         </div>
       </section>
 
-      <section class="container stats" aria-label="Ringkasan aplikasi">
-        <button class="stat stat-button" type="button" data-open-panel="materials" data-grade="all" aria-controls="panel-materials">
-          <strong>VII–IX</strong>
-          <span>Jenjang SMP</span>
-          <small>Lihat pilihan kelas</small>
+      <section class="container portal-tabs" aria-label="Empat ruang utama">
+        <button class="portal-tab" type="button" data-open-panel="student" aria-controls="panel-student">
+          <span class="portal-tab-icon" aria-hidden="true">🎒</span>
+          <span><strong>Ruang Murid</strong><small>Materi, ringkasan, LKPD, progres</small></span>
         </button>
-        <button class="stat stat-button" type="button" data-open-panel="materials" data-grade="all" data-semester="all" aria-controls="panel-materials">
-          <strong>30</strong>
-          <span>Bab Terstruktur</span>
-          <small>Buka seluruh bab</small>
+        <button class="portal-tab" type="button" data-open-panel="teacher" aria-controls="panel-teacher">
+          <span class="portal-tab-icon" aria-hidden="true">🧑‍🏫</span>
+          <span><strong>Ruang Guru</strong><small>CP, KKTP, ATP, Prota, Promes</small></span>
         </button>
-        <button class="stat stat-button" type="button" data-open-panel="materials" data-grade="all" data-semester="all" aria-controls="panel-materials">
-          <strong>2</strong>
-          <span>Semester</span>
-          <small>Gasal dan Genap</small>
+        <button class="portal-tab" type="button" data-open-panel="islamic" aria-controls="panel-islamic">
+          <span class="portal-tab-icon" aria-hidden="true">🕌</span>
+          <span><strong>Fitur Islami</strong><small>Hari, Hijriah, jadwal sholat</small></span>
         </button>
-        <button class="stat stat-button" type="button" data-open-panel="privacy" aria-controls="panel-privacy">
-          <strong>0</strong>
-          <span>Iklan Versi 1.0</span>
-          <small>Lihat perlindungan privasi</small>
+        <button class="portal-tab" type="button" data-open-panel="games" aria-controls="panel-games">
+          <span class="portal-tab-icon" aria-hidden="true">🎮</span>
+          <span><strong>Fitur Games</strong><small>Kuis, skor, XP, lencana</small></span>
         </button>
       </section>
 
-      <section class="section" id="fitur">
-        <div class="container">
-          <span class="badge">Fitur Utama</span>
-          <h2>Ekosistem belajar yang benar-benar dapat digunakan</h2>
-          <p class="lead">Pilih fitur di bawah ini. Setiap kartu akan membuka ruang kerja interaktif sesuai judulnya.</p>
-          <div class="cards">
-            <button class="card feature-button" type="button" data-open-panel="materials" aria-controls="panel-materials">
-              <span class="icon" aria-hidden="true">📚</span>
-              <span class="card-title">Materi kelas VII–IX</span>
-              <span class="card-copy">Buka 30 bab menurut kelas dan Semester Gasal atau Genap, kemudian tandai progres belajar.</span>
-              <span class="card-action">Buka materi →</span>
-            </button>
-            <button class="card feature-button" type="button" data-open-panel="games" aria-controls="panel-games">
-              <span class="icon" aria-hidden="true">🎮</span>
-              <span class="card-title">Game edukatif</span>
-              <span class="card-copy">Kerjakan kuis PAIBP, dapatkan skor, dan tingkatkan XP terbaikmu.</span>
-              <span class="card-action">Mulai bermain →</span>
-            </button>
-            <button class="card feature-button" type="button" data-open-panel="islamic" aria-controls="panel-islamic">
-              <span class="icon" aria-hidden="true">🕌</span>
-              <span class="card-title">Layanan Islami</span>
-              <span class="card-copy">Lihat hari Arab, tanggal Masehi dan Hijriah, jadwal sholat Susukan, serta motivasi harian.</span>
-              <span class="card-action">Buka layanan →</span>
-            </button>
-            <button class="card feature-button" type="button" data-open-panel="progress" aria-controls="panel-progress">
-              <span class="icon" aria-hidden="true">🏆</span>
-              <span class="card-title">Progres dan prestasi</span>
-              <span class="card-copy">Pantau bab selesai, XP, level, skor game, dan lencana yang tersimpan pada perangkat.</span>
-              <span class="card-action">Lihat progres →</span>
-            </button>
-            <button class="card feature-button" type="button" data-open-panel="offline" aria-controls="panel-offline">
-              <span class="icon" aria-hidden="true">📴</span>
-              <span class="card-title">Ramah koneksi terbatas</span>
-              <span class="card-copy">Periksa kesiapan mode luring dan simpan konten inti agar tetap dapat dibuka.</span>
-              <span class="card-action">Periksa mode luring →</span>
-            </button>
-            <button class="card feature-button" type="button" data-open-panel="privacy" aria-controls="panel-privacy">
-              <span class="icon" aria-hidden="true">🛡️</span>
-              <span class="card-title">Privasi sejak awal</span>
-              <span class="card-copy">Pelajari data apa yang disimpan secara lokal dan apa yang tidak dikumpulkan.</span>
-              <span class="card-action">Baca ringkasan →</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section class="section workspace-section" id="pusat-interaktif" aria-labelledby="workspace-title">
+      <section class="section portal-section" id="portal" aria-labelledby="workspace-title">
         <div class="container">
           <div class="workspace-shell">
             <div class="workspace-header">
               <div>
-                <span class="badge">Pusat Interaktif</span>
-                <h2 id="workspace-title">Pilih fitur untuk mulai</h2>
-                <p id="workspace-description">Klik salah satu kartu statistik atau fitur di atas. Isinya akan tampil di bagian ini.</p>
+                <span class="badge">PAIBP SMART SMP</span>
+                <h2 id="workspace-title">Pilih ruang yang dibutuhkan</h2>
+                <p id="workspace-description">Empat ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya.</p>
               </div>
-              <button class="workspace-close" type="button" data-close-workspace aria-label="Tutup pusat interaktif">×</button>
+              <button class="workspace-close" type="button" data-close-workspace aria-label="Kembali ke tampilan awal">×</button>
             </div>
 
             <section class="workspace-panel welcome-panel" id="panel-welcome" data-panel="welcome">
-              <div class="welcome-grid">
+              <div class="welcome-grid portal-welcome">
                 <div>
-                  <span class="welcome-icon" aria-hidden="true">👆</span>
-                  <h3>Semua kartu sudah aktif</h3>
-                  <p>Pilih materi, game, layanan Islami, progres, mode luring, atau privasi. Hasil pilihan akan tampil tanpa meninggalkan halaman.</p>
+                  <span class="welcome-icon" aria-hidden="true">📚</span>
+                  <h3>Bukan lagi kartu kosong</h3>
+                  <p>Ruang Murid memuat 30 paket bab lengkap. Ruang Guru memuat tujuh perangkat kerja. Fitur Islami dan Games tetap aktif dalam portal yang sama.</p>
                 </div>
-                <button class="cta" type="button" data-open-panel="materials" aria-controls="panel-materials">Buka Materi Sekarang</button>
+                <div class="welcome-actions">
+                  <button class="cta" type="button" data-open-panel="student" aria-controls="panel-student">Buka Ruang Murid</button>
+                  <button class="btn" type="button" data-open-panel="teacher" aria-controls="panel-teacher">Buka Ruang Guru</button>
+                </div>
+              </div>
+              <div class="portal-metrics">
+                <article><strong>30</strong><span>Paket materi utuh</span></article>
+                <article><strong>30</strong><span>Ringkasan bab</span></article>
+                <article><strong>30</strong><span>LKPD siap cetak</span></article>
+                <article><strong>7</strong><span>Perangkat guru</span></article>
               </div>
             </section>
 
-            <section class="workspace-panel" id="panel-materials" data-panel="materials" hidden>
+            <section class="workspace-panel" id="panel-student" data-panel="student" hidden>
               <div class="panel-heading">
                 <div>
-                  <span class="panel-kicker">📚 Pusat Materi</span>
-                  <h3>Materi PAIBP Kelas VII–IX</h3>
-                  <p>Pilih kelas dan semester. Tombol selesai akan memperbarui progres dan XP pada perangkat ini.</p>
+                  <span class="panel-kicker">🎒 Ruang Murid</span>
+                  <h3>30 Paket Belajar PAIBP Kelas VII–IX</h3>
+                  <p>Setiap bab memiliki tujuan, materi inti, penerapan, cek pemahaman, ringkasan, LKPD, dan progres belajar.</p>
                 </div>
                 <div class="mini-progress"><strong id="material-completed">0/30</strong><span>bab selesai</span></div>
               </div>
-              <div class="filter-row" aria-label="Filter kelas">
-                <span class="filter-label">Kelas</span>
-                <div class="segmented" id="grade-filter">
-                  <button type="button" data-grade-filter="all" aria-pressed="true">Semua</button>
-                  <button type="button" data-grade-filter="VII" aria-pressed="false">VII</button>
-                  <button type="button" data-grade-filter="VIII" aria-pressed="false">VIII</button>
-                  <button type="button" data-grade-filter="IX" aria-pressed="false">IX</button>
+
+              <div id="student-library">
+                <div class="filter-card">
+                  <div class="filter-row" role="group" aria-label="Filter kelas">
+                    <span class="filter-label">Kelas</span>
+                    <div class="segmented" id="grade-filter">
+                      <button type="button" data-grade-filter="all" aria-pressed="true">Semua</button>
+                      <button type="button" data-grade-filter="VII" aria-pressed="false">VII</button>
+                      <button type="button" data-grade-filter="VIII" aria-pressed="false">VIII</button>
+                      <button type="button" data-grade-filter="IX" aria-pressed="false">IX</button>
+                    </div>
+                  </div>
+                  <div class="filter-row" role="group" aria-label="Filter semester">
+                    <span class="filter-label">Semester</span>
+                    <div class="segmented" id="semester-filter">
+                      <button type="button" data-semester-filter="all" aria-pressed="true">Semua</button>
+                      <button type="button" data-semester-filter="Gasal" aria-pressed="false">Gasal</button>
+                      <button type="button" data-semester-filter="Genap" aria-pressed="false">Genap</button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="filter-row" aria-label="Filter semester">
-                <span class="filter-label">Semester</span>
-                <div class="segmented" id="semester-filter">
-                  <button type="button" data-semester-filter="all" aria-pressed="true">Semua</button>
-                  <button type="button" data-semester-filter="Gasal" aria-pressed="false">Gasal</button>
-                  <button type="button" data-semester-filter="Genap" aria-pressed="false">Genap</button>
+                <div class="student-summary-row">
+                  <p class="result-summary" id="material-summary" aria-live="polite"></p>
+                  <div class="student-legend"><span>📖 Materi</span><span>📝 Ringkasan</span><span>📋 LKPD</span></div>
                 </div>
+                <div class="chapter-list rich-chapter-list" id="chapter-list"></div>
               </div>
-              <p class="result-summary" id="material-summary" aria-live="polite"></p>
-              <div class="chapter-list" id="chapter-list"></div>
+
+              <article class="lesson-viewer" id="lesson-viewer" hidden>
+                <div class="lesson-viewer-head">
+                  <button class="text-button" type="button" id="back-to-library">← Kembali ke daftar bab</button>
+                  <div class="lesson-actions">
+                    <button class="btn btn-compact" type="button" id="print-lesson">Cetak / Simpan PDF</button>
+                    <button class="btn btn-compact" type="button" id="toggle-lesson-complete">Tandai selesai</button>
+                  </div>
+                </div>
+                <div class="lesson-title-block">
+                  <span class="badge" id="lesson-meta"></span>
+                  <h3 id="lesson-title">Pilih bab</h3>
+                  <p id="lesson-overview"></p>
+                </div>
+                <div class="document-tabs" role="tablist" aria-label="Bagian paket belajar">
+                  <button type="button" data-lesson-view="material" aria-pressed="true">📖 Materi Utuh</button>
+                  <button type="button" data-lesson-view="summary" aria-pressed="false">📝 Ringkasan</button>
+                  <button type="button" data-lesson-view="worksheet" aria-pressed="false">📋 LKPD</button>
+                </div>
+                <div class="lesson-content printable-document" id="lesson-content"></div>
+              </article>
             </section>
 
-            <section class="workspace-panel" id="panel-games" data-panel="games" hidden>
+            <section class="workspace-panel" id="panel-teacher" data-panel="teacher" hidden>
               <div class="panel-heading">
                 <div>
-                  <span class="panel-kicker">🎮 Tantangan PAIBP</span>
-                  <h3>Kuis Cepat Lima Soal</h3>
-                  <p>Pilih jawaban terbaik. Skor tertinggi akan tersimpan dan menambah XP.</p>
+                  <span class="panel-kicker">🧑‍🏫 Ruang Guru</span>
+                  <h3>Perangkat Pembelajaran PAIBP Fase D</h3>
+                  <p>Dokumen kerja Tahun Ajaran 2026/2027 yang dapat disaring per kelas, dicetak, disimpan sebagai PDF, dan diunduh.</p>
                 </div>
-                <div class="mini-progress"><strong id="quiz-score">0</strong><span>skor saat ini</span></div>
+                <span class="live-badge">Tahun Ajaran 2026/2027</span>
               </div>
-              <div class="quiz-card">
-                <div class="quiz-meta">
-                  <span id="quiz-number">Soal 1 dari 5</span>
-                  <span id="quiz-best">Skor terbaik: 0</span>
+
+              <div class="teacher-controls">
+                <div class="filter-row">
+                  <span class="filter-label">Kelas</span>
+                  <div class="segmented" id="teacher-grade-filter">
+                    <button type="button" data-teacher-grade="VII" aria-pressed="false">VII</button>
+                    <button type="button" data-teacher-grade="VIII" aria-pressed="true">VIII</button>
+                    <button type="button" data-teacher-grade="IX" aria-pressed="false">IX</button>
+                  </div>
                 </div>
-                <div class="quiz-progress" aria-hidden="true"><span id="quiz-progress-bar"></span></div>
-                <h4 id="quiz-question">Tekan “Mulai Kuis” untuk menampilkan soal.</h4>
-                <div class="quiz-options" id="quiz-options"></div>
-                <p class="quiz-feedback" id="quiz-feedback" aria-live="polite"></p>
-                <div class="actions">
-                  <button class="cta" id="quiz-start" type="button">Mulai Kuis</button>
-                  <button class="btn" id="quiz-next" type="button" hidden>Soal Berikutnya</button>
+                <div class="teacher-toolbar">
+                  <button class="btn btn-compact" type="button" id="print-teacher-document">Cetak / Simpan PDF</button>
+                  <button class="btn btn-compact" type="button" id="download-teacher-document">Unduh Dokumen</button>
                 </div>
+              </div>
+
+              <div class="teacher-layout">
+                <nav class="teacher-doc-menu" aria-label="Jenis perangkat guru">
+                  <button type="button" data-teacher-doc="cp" aria-pressed="true"><span>📘</span> CP Terbaru</button>
+                  <button type="button" data-teacher-doc="kktp" aria-pressed="false"><span>✅</span> KKTP</button>
+                  <button type="button" data-teacher-doc="atp" aria-pressed="false"><span>🧭</span> ATP</button>
+                  <button type="button" data-teacher-doc="prota" aria-pressed="false"><span>🗓️</span> Prota</button>
+                  <button type="button" data-teacher-doc="promes" aria-pressed="false"><span>📅</span> Promes</button>
+                  <button type="button" data-teacher-doc="calendar" aria-pressed="false"><span>🏫</span> Kalender Pendidikan</button>
+                  <button type="button" data-teacher-doc="effective" aria-pressed="false"><span>🧮</span> Analisis Hari Efektif</button>
+                </nav>
+                <article class="teacher-document printable-document" id="teacher-document" aria-live="polite"></article>
               </div>
             </section>
 
             <section class="workspace-panel" id="panel-islamic" data-panel="islamic" hidden>
               <div class="panel-heading">
                 <div>
-                  <span class="panel-kicker">🕌 Layanan Islami Harian</span>
-                  <h3>Susukan, Banjarnegara</h3>
+                  <span class="panel-kicker">🕌 Fitur Islami</span>
+                  <h3>Layanan Harian Susukan, Banjarnegara</h3>
                   <p>Tanggal diperbarui otomatis. Jadwal sholat memerlukan internet dan perlu dicocokkan dengan pengumuman masjid setempat.</p>
                 </div>
-                <span class="live-badge" id="islamic-live-status">Hari ini</span>
+                <span class="live-badge">Hari ini</span>
               </div>
               <div class="date-grid">
-                <article class="date-card">
-                  <span>Hari Arab</span>
-                  <strong id="arabic-day">—</strong>
-                </article>
-                <article class="date-card">
-                  <span>Tanggal Masehi</span>
-                  <strong id="gregorian-date">—</strong>
-                </article>
-                <article class="date-card">
-                  <span>Tanggal Hijriah</span>
-                  <strong id="hijri-date">—</strong>
-                </article>
+                <article class="date-card"><span>Hari Arab</span><strong id="arabic-day">—</strong></article>
+                <article class="date-card"><span>Tanggal Masehi</span><strong id="gregorian-date">—</strong></article>
+                <article class="date-card"><span>Tanggal Hijriah</span><strong id="hijri-date">—</strong></article>
               </div>
               <div class="prayer-block">
                 <div class="subheading-row">
@@ -240,7 +233,7 @@
                   </div>
                   <button class="btn btn-compact" id="refresh-prayer" type="button">Muat Ulang</button>
                 </div>
-                <div class="prayer-grid" id="prayer-grid">
+                <div class="prayer-grid">
                   <div><span>Imsak</span><strong data-prayer="Imsak">--:--</strong></div>
                   <div><span>Subuh</span><strong data-prayer="Fajr">--:--</strong></div>
                   <div><span>Dzuhur</span><strong data-prayer="Dhuhr">--:--</strong></div>
@@ -255,64 +248,41 @@
               </blockquote>
             </section>
 
-            <section class="workspace-panel" id="panel-progress" data-panel="progress" hidden>
+            <section class="workspace-panel" id="panel-games" data-panel="games" hidden>
               <div class="panel-heading">
                 <div>
-                  <span class="panel-kicker">🏆 Progres dan Prestasi</span>
-                  <h3>Perjalanan Belajarmu</h3>
-                  <p>Data tersimpan secara lokal pada browser perangkat ini dan tidak dikirim ke server.</p>
+                  <span class="panel-kicker">🎮 Fitur Games</span>
+                  <h3>Tantangan Cerdas PAIBP</h3>
+                  <p>Sepuluh soal acak dari materi kelas VII–IX. Setiap permainan memberi skor, XP, dan catatan prestasi lokal.</p>
+                </div>
+                <div class="mini-progress"><strong id="quiz-score">0</strong><span>skor saat ini</span></div>
+              </div>
+              <div class="quiz-card">
+                <div class="quiz-meta">
+                  <span id="quiz-number">Siap bermain</span>
+                  <span id="quiz-best">Skor terbaik: 0</span>
+                </div>
+                <div class="quiz-progress" aria-hidden="true"><span id="quiz-progress-bar"></span></div>
+                <h4 id="quiz-question">Tekan “Mulai Games” untuk menampilkan soal.</h4>
+                <div class="quiz-options" id="quiz-options"></div>
+                <p class="quiz-feedback" id="quiz-feedback" aria-live="polite"></p>
+                <div class="actions">
+                  <button class="cta" id="quiz-start" type="button">Mulai Games</button>
+                  <button class="btn" id="quiz-next" type="button" hidden>Soal Berikutnya</button>
+                  <button class="text-button danger-button" id="reset-progress" type="button">Hapus progres lokal</button>
                 </div>
               </div>
-              <div class="achievement-grid">
+              <div class="game-achievements">
                 <article><span>Bab selesai</span><strong id="progress-completed">0/30</strong></article>
                 <article><span>Total XP</span><strong id="progress-xp">0 XP</strong></article>
                 <article><span>Level</span><strong id="progress-level">Pemula</strong></article>
-                <article><span>Skor game terbaik</span><strong id="progress-game">0/5</strong></article>
+                <article><span>Skor terbaik</span><strong id="progress-game">0/10</strong></article>
               </div>
               <div class="overall-progress">
                 <div><span>Ketuntasan materi</span><strong id="progress-percent">0%</strong></div>
-                <div class="progress-track" role="progressbar" aria-label="Ketuntasan materi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="overall-progress-bar"><span></span></div>
+                <progress class="progress-track" aria-label="Ketuntasan materi" max="100" value="0" id="overall-progress-bar">0%</progress>
               </div>
-              <h4>Lencana</h4>
               <div class="badge-grid" id="badge-grid"></div>
-              <button class="text-button danger-button" id="reset-progress" type="button">Hapus progres pada perangkat ini</button>
-            </section>
-
-            <section class="workspace-panel" id="panel-offline" data-panel="offline" hidden>
-              <div class="panel-heading">
-                <div>
-                  <span class="panel-kicker">📴 Mode Koneksi Terbatas</span>
-                  <h3>Kesiapan Penggunaan Luring</h3>
-                  <p>Halaman inti, tampilan, dan data progres dapat disimpan pada perangkat. Jadwal sholat tetap memerlukan internet untuk pembaruan.</p>
-                </div>
-              </div>
-              <div class="status-list">
-                <div><span class="status-dot" id="network-dot"></span><div><strong>Status jaringan</strong><p id="network-status">Memeriksa…</p></div></div>
-                <div><span class="status-dot" id="offline-dot"></span><div><strong>Konten inti</strong><p id="offline-status">Memeriksa dukungan browser…</p></div></div>
-                <div><span class="status-dot ready"></span><div><strong>Progres belajar</strong><p>Tersimpan lokal dan dapat dibaca tanpa login.</p></div></div>
-              </div>
-              <div class="notice">
-                <strong>Cara menggunakan:</strong> buka situs satu kali ketika tersambung internet. Setelah proses penyimpanan selesai, halaman yang sudah disimpan dapat dibuka kembali saat koneksi terbatas.
-              </div>
-              <button class="cta" id="prepare-offline" type="button">Siapkan Mode Luring</button>
-              <p class="action-status" id="offline-action-status" aria-live="polite"></p>
-            </section>
-
-            <section class="workspace-panel" id="panel-privacy" data-panel="privacy" hidden>
-              <div class="panel-heading">
-                <div>
-                  <span class="panel-kicker">🛡️ Privasi Sejak Awal</span>
-                  <h3>Ringkasan Perlindungan Pengguna</h3>
-                  <p>Versi ini menerapkan prinsip minimisasi data dan tidak membutuhkan akun.</p>
-                </div>
-              </div>
-              <div class="privacy-grid">
-                <article><span aria-hidden="true">✓</span><div><strong>Tanpa login</strong><p>Tidak ada nama pengguna atau kata sandi yang dikumpulkan.</p></div></article>
-                <article><span aria-hidden="true">✓</span><div><strong>Tanpa iklan</strong><p>Tidak menggunakan jaringan iklan maupun ID iklan.</p></div></article>
-                <article><span aria-hidden="true">✓</span><div><strong>Progres lokal</strong><p>Bab selesai, XP, dan skor tersimpan hanya pada browser perangkat.</p></div></article>
-                <article><span aria-hidden="true">✓</span><div><strong>Tanpa pelacakan lokasi</strong><p>Jadwal menggunakan koordinat wilayah tetap Kecamatan Susukan, bukan lokasi pengguna.</p></div></article>
-              </div>
-              <a class="cta" href="privacy.html">Baca Kebijakan Privasi Lengkap</a>
             </section>
           </div>
         </div>
@@ -321,14 +291,14 @@
       <section class="section alt">
         <div class="container feature">
           <div>
-            <span class="badge">Identitas Sekolah</span>
-            <h2>Lahir dari pengalaman pembelajaran nyata</h2>
-            <p class="lead">PAIBP SMART SMP dikembangkan dari kebutuhan nyata di kelas dan komitmen menghadirkan media belajar yang mudah digunakan, bermutu, serta relevan bagi murid SMP.</p>
+            <span class="badge">Identitas dan Arah Pengembangan</span>
+            <h2>Berangkat dari kebutuhan pembelajaran nyata</h2>
+            <p class="lead">PAIBP SMART SMP dikembangkan untuk membantu murid belajar mandiri sekaligus memudahkan guru mengelola perangkat pembelajaran secara tertib.</p>
             <ul class="checklist">
-              <li>Identitas SMP Negeri 1 Susukan ditampilkan secara profesional.</li>
-              <li>Materi ditulis orisinal dan diselaraskan dengan kebutuhan pembelajaran.</li>
-              <li>Game tidak menggantikan materi inti, tetapi memperkuat pemahaman.</li>
-              <li>Pengembangan dilakukan bertahap dengan evaluasi dan perbaikan.</li>
+              <li>Materi disusun per bab, tidak berhenti pada ringkasan.</li>
+              <li>LKPD mengarahkan analisis, penerapan, proyek, dan refleksi.</li>
+              <li>Perangkat guru terhubung dengan 30 bab kelas VII–IX.</li>
+              <li>Progres hanya tersimpan pada perangkat dan tidak memerlukan login.</li>
             </ul>
           </div>
           <div class="screenshot">
@@ -361,6 +331,8 @@
         </div>
       </div>
     </footer>
-    <script src="script.js" defer></script>
+
+    <script src="content-data.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>

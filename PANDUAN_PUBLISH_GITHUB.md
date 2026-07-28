@@ -16,10 +16,10 @@
 5. Tarik seluruh file ke halaman unggah GitHub.
 6. Jangan mengunggah file ZIP.
 7. Pastikan `index.html` terlihat langsung di halaman utama repository, bukan berada di dalam folder tambahan.
-8. Pastikan `script.js`, `styles.css`, dan `service-worker.js` ikut terunggah. Ketiga file ini diperlukan agar tab, game, progres, dan mode luring berfungsi.
+8. Pastikan `content-data.js`, `script.js`, `styles.css`, dan `service-worker.js` ikut terunggah. Keempat file ini diperlukan agar materi, LKPD, Ruang Guru, games, progres, dan mode luring berfungsi.
 9. Isi keterangan perubahan:
 
-   `Aktifkan fitur interaktif PAIBP SMART SMP`
+   `Perbarui portal Ruang Murid dan Ruang Guru PAIBP SMART SMP`
 
 10. Klik **Commit changes**.
 
@@ -43,7 +43,9 @@
 - Dukungan: https://sunarso29.github.io/paibp-smart/support.html
 - Kontak: https://sunarso29.github.io/paibp-smart/contact.html
 
-Periksa halaman menggunakan komputer dan telepon. Klik empat kartu statistik dan enam kartu fitur. Pastikan daftar 30 bab, game kuis, layanan Islami, progres belajar, mode luring, dan informasi privasi dapat dibuka.
+Periksa halaman menggunakan komputer dan telepon. Klik empat tab utama: **Ruang Murid**, **Ruang Guru**, **Fitur Islami**, dan **Fitur Games**.
+
+Pada Ruang Murid, buka salah satu bab dan periksa **Materi Utuh**, **Ringkasan**, serta **LKPD**. Pada Ruang Guru, buka CP, KKTP, ATP, Prota, Promes, Kalender Pendidikan, dan Analisis Hari Efektif.
 
 ## E. Jika Perubahan Belum Terlihat
 
@@ -52,7 +54,7 @@ Periksa halaman menggunakan komputer dan telepon. Klik empat kartu statistik dan
 3. Tekan `Ctrl + F5` pada Windows untuk memuat ulang tanpa cache.
 4. Jika masih terlihat versi lama, buka website pada jendela samaran/incognito lalu muat ulang.
 5. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
-6. Pastikan `index.html`, `script.js`, `styles.css`, dan `service-worker.js` berada pada root repository.
+6. Pastikan `index.html`, `content-data.js`, `script.js`, `styles.css`, dan `service-worker.js` berada pada root repository.
 7. Periksa kembali pengaturan **Settings → Pages**.
 
 ## F. Catatan Penting
@@ -62,3 +64,4 @@ Periksa halaman menggunakan komputer dan telepon. Klik empat kartu statistik dan
 - Jangan menyimpan kata sandi, kode verifikasi, atau data pribadi di dalam repository.
 - Setiap pembaruan pada branch `main` akan diterbitkan ulang secara otomatis oleh GitHub Pages.
 - Jadwal sholat mengambil data dari layanan daring. Karena itu, cocokkan kembali dengan jadwal masjid atau Kementerian Agama setempat.
+- Kalender Pendidikan dan analisis hari efektif harus diselaraskan dengan keputusan resmi Dindikpora Banjarnegara yang diterima sekolah.
