@@ -7,8 +7,10 @@ LANGKAH UPLOAD:
 4. Drag SEMUA file dan folder di dalam hasil ekstrak ke halaman Upload GitHub.
    Jangan unggah file ZIP-nya.
 5. Pastikan index.html, privacy.html, terms.html, support.html, contact.html,
-   content-data.js, styles.css, script.js, service-worker.js, robots.txt,
-   sitemap.xml, dan semua gambar terlihat.
+   app-config.js, content-data.js, calendar-data.js, staff-images.js,
+   school-data.js, islamic-data.js,
+   styles.css, script.js, service-worker.js, robots.txt, sitemap.xml,
+   dan semua folder terlihat.
 6. Isi commit message: Perbarui website PAIBP SMART SMP
 7. Klik Commit changes.
 8. Buka Settings > Pages.
@@ -27,6 +29,11 @@ https://sunarso29.github.io/paibp-smart/privacy.html
 PENTING:
 - Repository harus Public.
 - File index.html harus berada di root repository.
+- File staff-images.js wajib berada di root repository agar seluruh foto
+  guru dan tenaga kependidikan selalu tampil.
+- Kata sandi standar Ruang Guru: 261078.
+- Rekap akses lintas perangkat belum aktif sampai URL Web App dan kunci baca
+  diisi pada app-config.js. Ikuti PANDUAN_REKAP_REALTIME.md.
 - Jangan ubah nama file privacy.html.
 - Jangan mengunggah ZIP langsung ke repository; unggah seluruh isinya.
 - Setelah Commit changes, periksa tab Actions sampai proses publikasi

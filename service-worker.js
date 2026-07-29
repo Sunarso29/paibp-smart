@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v6";
+const CACHE_NAME = "paibp-smart-core-v8";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -11,7 +11,10 @@ const CORE_ASSETS = [
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png",
   "./styles.css",
+  "./app-config.js",
   "./content-data.js",
+  "./calendar-data.js",
+  "./staff-images.js",
   "./school-data.js",
   "./islamic-data.js",
   "./script.js",
@@ -53,6 +56,19 @@ self.addEventListener("fetch", (event) => {
   if (requestUrl.origin !== self.location.origin) {
     event.respondWith(
       caches.match(request).then((cached) => cached || fetch(request)),
+    );
+    return;
+  }
+
+  if (requestUrl.pathname.endsWith("/app-config.js")) {
+    event.respondWith(
+      fetch(request, { cache: "no-store" })
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          return response;
+        })
+        .catch(() => caches.match(request)),
     );
     return;
   }

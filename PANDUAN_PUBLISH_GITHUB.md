@@ -16,7 +16,7 @@
 5. Tarik seluruh file ke halaman unggah GitHub.
 6. Jangan mengunggah file ZIP.
 7. Pastikan `index.html` terlihat langsung di halaman utama repository, bukan berada di dalam folder tambahan.
-8. Pastikan `content-data.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, `service-worker.js`, serta folder `assets` ikut terunggah. Berkas dan folder tersebut diperlukan agar materi, LKPD, rekap, foto sekolah, Fitur Islami, games, progres, dan mode luring berfungsi.
+8. Pastikan `app-config.js`, `content-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, `service-worker.js`, serta folder `assets` ikut terunggah. `staff-images.js` berada di root repository dan menjadi cadangan tertanam agar seluruh foto guru dan tenaga kependidikan tetap tampil. Berkas dan folder tersebut diperlukan agar materi, LKPD, rekap, foto sekolah, Fitur Islami, games, progres, kalender, dan mode luring berfungsi.
 9. Isi keterangan perubahan:
 
    `Perbarui portal Ruang Murid dan Ruang Guru PAIBP SMART SMP`
@@ -45,7 +45,7 @@
 
 Periksa halaman menggunakan komputer dan telepon. Klik empat tab utama: **Ruang Murid**, **Ruang Guru**, **Fitur Islami**, dan **Fitur Games**.
 
-Pada Ruang Murid, buka salah satu bab dan periksa **Materi Bab**, **Ringkasan**, **LKPD**, serta **Jawaban & Kirim**. Pada Ruang Guru, buka CP, KKTP, ATP, Prota, Promes, Kalender Pendidikan, Analisis Hari Efektif, Modul Ajar Lengkap, dan Rekap Pekerjaan Murid.
+Pada Ruang Murid, buka salah satu bab dan periksa **Materi Bab**, **Ringkasan**, **LKPD**, serta **Jawaban & Kirim**. Pada Ruang Guru, masukkan kata sandi standar `261078`, lalu buka CP, KKTP, ATP, Prota, Promes, Kalender Pendidikan, Analisis Hari Efektif, Modul Ajar Lengkap, Rekap Akses Murid, dan Rekap Pekerjaan Murid.
 
 Uji alur tugas menggunakan data percobaan:
 
@@ -62,8 +62,13 @@ Uji alur tugas menggunakan data percobaan:
 3. Tekan `Ctrl + F5` pada Windows untuk memuat ulang tanpa cache.
 4. Jika masih terlihat versi lama, buka website pada jendela samaran/incognito lalu muat ulang.
 5. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
-6. Pastikan `index.html`, tiga berkas data JavaScript, `script.js`, `styles.css`, `manifest.webmanifest`, dan `service-worker.js` berada pada root repository.
-7. Periksa kembali pengaturan **Settings → Pages**.
+6. Pastikan `index.html`, `app-config.js`, `content-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, dan `service-worker.js` berada pada root repository.
+7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 6.0`.
+8. Periksa kembali pengaturan **Settings → Pages**.
+
+## Mengaktifkan rekap akses lintas perangkat
+
+GitHub Pages tidak memiliki basis data. Website menampilkan status mode lokal sampai integrasi Google Apps Script diaktifkan. Ikuti `PANDUAN_REKAP_REALTIME.md`, kemudian isi URL Web App dan kunci baca pada `app-config.js` sebelum mengunggah versi final.
 
 ## F. Catatan Penting
 

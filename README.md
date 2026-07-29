@@ -5,15 +5,17 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 ## Fitur Utama
 
 - Ruang Murid: 30 ringkasan materi hasil pengolahan modul, latihan, LKPD interaktif, jawaban lokal, cetak, dan kirim tugas.
-- Ruang Guru: CP terbaru, KKTP, ATP, Prota, Promes, Kalender Pendidikan, analisis hari efektif, 30 Modul Ajar Lengkap, dan rekap tugas murid.
-- Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat, kalender ibadah, hari sejarah, dan nasihat bersumber.
+- Ruang Guru: akses berkunci, CP terbaru, KKTP, ATP, Prota, Promes, Kalender Pendidikan, analisis hari efektif, 30 Modul Ajar Lengkap, rekap akses, dan rekap tugas terpisah per kelas.
+- Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat, kalender bertanda per tanggal, dan nasihat bersumber.
 - Fitur Games: 10 soal acak, skor, XP, level, dan lencana.
-- Spensus: selayang pandang sekolah, kepala sekolah, tenaga kependidikan, 39 guru, dan ruang dokumentasi kegiatan.
+- Spensus: selayang pandang sekolah, kepala sekolah, tenaga kependidikan, 39 guru, galeri dua baris pada telepon, dan ruang dokumentasi kegiatan.
 
 ## Halaman
 
 - `index.html` — beranda serta empat ruang utama
+- `app-config.js` — konfigurasi opsional sinkronisasi rekap
 - `content-data.js` — data lengkap 30 bab dan perangkat guru
+- `calendar-data.js` — libur, peringatan, dan Kaldik bertanggal
 - `islamic-data.js` — doa, dzikir, kalender puasa/sejarah, dan nasihat bersumber
 - `school-data.js` — identitas sekolah serta data kepala sekolah, guru, dan tenaga kependidikan
 - `script.js` — fungsi tab, materi, LKPD, perangkat guru, kalkulator, jadwal, dan games
@@ -21,6 +23,8 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 - `service-worker.js` — dukungan konten inti saat koneksi terbatas
 - `manifest.webmanifest` — pemasangan situs sebagai aplikasi web
 - `assets/staff/` — foto web tenaga pendidik dan kependidikan
+- `google-apps-script/Code.gs` — backend opsional rekap akses lintas perangkat
+- `PANDUAN_REKAP_REALTIME.md` — langkah aktivasi backend
 - `privacy.html` — Kebijakan Privasi
 - `terms.html` — Ketentuan Penggunaan
 - `support.html` — pusat dukungan
@@ -31,7 +35,7 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 
 Situs diterbitkan melalui GitHub Pages dari branch `main` dan folder `/(root)`.
 
-Alur tugas tidak memerlukan server: murid membuat berkas `.paibp`, membagikannya kepada guru melalui kanal kelas, lalu guru mengimpor banyak berkas ke Rekap Pekerjaan Murid. Berkas tugas, cadangan rekap, dan CSV nilai tidak boleh dimasukkan ke repository publik.
+Alur tugas inti tidak memerlukan server: murid membuat berkas `.paibp`, membagikannya kepada guru melalui kanal kelas, lalu guru mengimpor banyak berkas ke Rekap Pekerjaan Murid. Rekap akses lintas perangkat bersifat opsional dan memakai Google Apps Script setelah diaktifkan pengelola. Berkas tugas, cadangan rekap, dan CSV nilai tidak boleh dimasukkan ke repository publik.
 
 Alamat publik: https://sunarso29.github.io/paibp-smart/
 

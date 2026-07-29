@@ -42,12 +42,18 @@ if (workspace && appData) {
   const { chapters, cp, academicCalendar } = appData;
   const islamicData = window.PAIBP_ISLAMIC || { dua: [], fastingRules: [], historicDates: [], dailyInsights: [] };
   const schoolData = window.PAIBP_SCHOOL || { school: null, teachers: [], staff: [], news: [] };
+  const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
+  const appConfig = window.PAIBP_CONFIG || { realtimeEndpoint: "", realtimeReadKey: "" };
   const STORAGE_KEY = "paibp-smart-progress-v3";
   const PRAYER_CACHE_KEY = "paibp-smart-prayer-cache-v1";
   const EFFECTIVE_KEY = "paibp-smart-effective-v1";
   const STUDENT_WORK_KEY = "paibp-smart-student-work-v1";
   const STUDENT_IDENTITY_KEY = "paibp-smart-student-identity-v1";
   const SUBMISSION_RECAP_KEY = "paibp-smart-submission-recap-v1";
+  const CUSTOM_CALENDAR_KEY = "paibp-smart-custom-calendar-v1";
+  const TEACHER_SESSION_KEY = "paibp-smart-teacher-unlocked";
+  const TEACHER_PASSWORD_HASH = "5a26e9c9bf1880cd3532883aad715e962d0b8c6cf06c4bfb61b44bcf0def3284";
+  const ACCESS_SESSION_KEY = "paibp-smart-access-session-v1";
   const QURAN_CACHE_NAME = "paibp-smart-quran-v1";
   const QURAN_AUDIO_CACHE_NAME = "paibp-smart-quran-audio-v1";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -175,7 +181,93 @@ if (workspace && appData) {
     workspace.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
   }
 
-  function openPanel(name) {
+  function isTeacherUnlocked() {
+    try {
+      return sessionStorage.getItem(TEACHER_SESSION_KEY) === "yes";
+    } catch {
+      return false;
+    }
+  }
+
+  function setTeacherAuthVisible(visible) {
+    const modal = document.querySelector("#teacher-auth");
+    if (!modal) return;
+    modal.hidden = !visible;
+    document.body.classList.toggle("has-modal", visible);
+    if (visible) {
+      const input = document.querySelector("#teacher-password");
+      const error = document.querySelector("#teacher-auth-error");
+      if (error) error.textContent = "";
+      if (input) {
+        input.value = "";
+        window.setTimeout(() => input.focus(), 0);
+      }
+    }
+  }
+
+  async function sha256(value) {
+    const bytes = new TextEncoder().encode(value);
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    return [...new Uint8Array(digest)].map((part) => part.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function verifyTeacherPassword(value) {
+    try {
+      return await sha256(value) === TEACHER_PASSWORD_HASH;
+    } catch {
+      return false;
+    }
+  }
+
+  function getAccessSessionId() {
+    try {
+      const existing = sessionStorage.getItem(ACCESS_SESSION_KEY);
+      if (existing) return existing;
+      const created = typeof crypto?.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      sessionStorage.setItem(ACCESS_SESSION_KEY, created);
+      return created;
+    } catch {
+      return `session-${Date.now()}`;
+    }
+  }
+
+  function realtimeIsConfigured() {
+    return /^https:\/\/script\.google\.com\/macros\/s\//.test(String(appConfig.realtimeEndpoint || ""));
+  }
+
+  async function postRealtimeEvent(type, extra = {}) {
+    if (!realtimeIsConfigured()) return false;
+    const identity = loadStudentIdentity();
+    const payload = {
+      type,
+      timestamp: new Date().toISOString(),
+      sessionId: getAccessSessionId(),
+      name: identity.name || "",
+      attendance: identity.attendance || "",
+      className: identity.className || "",
+      page: location.pathname || "/",
+      ...extra,
+    };
+    try {
+      await fetch(appConfig.realtimeEndpoint, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function openPanel(name, { skipAuth = false } = {}) {
+    if (name === "teacher" && !skipAuth && !isTeacherUnlocked()) {
+      setTeacherAuthVisible(true);
+      return;
+    }
     const target = document.querySelector(`[data-panel="${name}"]`);
     if (!target || !panelMeta[name]) return;
     panels.forEach((panel) => {
@@ -184,7 +276,10 @@ if (workspace && appData) {
     openButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.openPanel === name));
     workspaceTitle.textContent = panelMeta[name][0];
     workspaceDescription.textContent = panelMeta[name][1];
-    if (name === "student") renderChapterCards();
+    if (name === "student") {
+      renderChapterCards();
+      postRealtimeEvent("access", { action: "open_student_room" });
+    }
     if (name === "teacher") renderTeacherDocument();
     if (name === "islamic") {
       updateIslamicDate();
@@ -195,6 +290,35 @@ if (workspace && appData) {
   }
 
   openButtons.forEach((button) => button.addEventListener("click", () => openPanel(button.dataset.openPanel)));
+  document.querySelector("#teacher-auth-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = document.querySelector("#teacher-password");
+    const error = document.querySelector("#teacher-auth-error");
+    if (await verifyTeacherPassword(input?.value || "")) {
+      try {
+        sessionStorage.setItem(TEACHER_SESSION_KEY, "yes");
+      } catch {
+        // The room remains open for the current interaction even if storage is unavailable.
+      }
+      setTeacherAuthVisible(false);
+      openPanel("teacher", { skipAuth: true });
+      return;
+    }
+    if (error) error.textContent = "Kata sandi tidak sesuai. Silakan periksa kembali.";
+    input?.select();
+  });
+  document.querySelectorAll("[data-cancel-teacher-auth]").forEach((button) => button.addEventListener("click", () => setTeacherAuthVisible(false)));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !document.querySelector("#teacher-auth")?.hidden) setTeacherAuthVisible(false);
+  });
+  document.querySelector("#lock-teacher-room")?.addEventListener("click", () => {
+    try {
+      sessionStorage.removeItem(TEACHER_SESSION_KEY);
+    } catch {
+      // Ignore restricted storage.
+    }
+    openPanel("welcome");
+  });
   document.querySelector("[data-close-workspace]")?.addEventListener("click", () => {
     panels.forEach((panel) => {
       panel.hidden = panel.dataset.panel !== "welcome";
@@ -270,6 +394,11 @@ if (workspace && appData) {
     document.querySelector("#lesson-title").textContent = currentChapter.title;
     document.querySelector("#lesson-overview").textContent = currentChapter.overview;
     renderLesson();
+    postRealtimeEvent("access", {
+      action: "open_chapter",
+      chapterId: currentChapter.id,
+      chapterTitle: currentChapter.title,
+    });
     document.querySelector("#lesson-viewer").scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
   }
 
@@ -462,7 +591,9 @@ if (workspace && appData) {
               <input name="className" maxlength="20" placeholder="Contoh: VIII A" value="${escapeHtml(identity.className)}" required>
             </label>
           </div>
-          <p class="privacy-note">Identitas dan jawaban disimpan hanya pada perangkat ini. Saat “Kirim kepada guru” dipilih, situs membuat satu berkas tugas untuk dibagikan langsung kepada guru.</p>
+          <p class="privacy-note">${realtimeIsConfigured()
+            ? "Identitas dan jawaban tersimpan di perangkat. Saat “Kirim kepada guru” dipilih, salinan pekerjaan dikirim ke penyimpanan sekolah dan satu berkas tugas tetap disiapkan sebagai cadangan."
+            : "Identitas dan jawaban disimpan hanya pada perangkat ini. Saat “Kirim kepada guru” dipilih, situs membuat satu berkas tugas untuk dibagikan langsung kepada guru."}</p>
         </section>
         <section class="document-section">
           <h3>A. Jawaban Latihan Pemahaman</h3>
@@ -596,6 +727,12 @@ if (workspace && appData) {
     }
     const work = saveCurrentStudentWork({ silent: true });
     const submission = buildSubmission(work);
+    await postRealtimeEvent("submission", {
+      action: "send_assignment",
+      chapterId: currentChapter.id,
+      chapterTitle: currentChapter.title,
+      submissionData: submission,
+    });
     const filename = `Tugas-PAIBP-${currentChapter.id}-${work.identity.className}-${work.identity.attendance}-${work.identity.name}`
       .replace(/[^\p{L}\p{N}._-]+/gu, "-")
       .replace(/-+/g, "-")
@@ -895,24 +1032,114 @@ if (workspace && appData) {
       </section>`;
   }
 
+  function readCustomAcademicEvents() {
+    const stored = safeJsonParse(localStorage.getItem(CUSTOM_CALENDAR_KEY), []);
+    return Array.isArray(stored) ? stored.filter((item) => item?.id && item?.start && item?.label) : [];
+  }
+
+  function writeCustomAcademicEvents(events) {
+    localStorage.setItem(CUSTOM_CALENDAR_KEY, JSON.stringify(events));
+  }
+
+  const academicCategoryLabels = {
+    pts: "PTS/STS",
+    sas: "SAS/Sumatif Akhir Semester",
+    report: "Pembagian laporan",
+    holiday: "Libur sekolah",
+    activity: "Kegiatan sekolah",
+  };
+
   function calendarDocument() {
+    const customEvents = readCustomAcademicEvents();
     return `${teacherIdentity("Kalender Pendidikan — Dokumen Kerja Sekolah")}
       <section class="document-section">
-        <div class="warning"><strong>Status dokumen:</strong> kerangka kerja, bukan pengganti Keputusan Kalender Pendidikan resmi Dindikpora. Tanggal asesmen, libur, jeda semester, dan pembagian laporan harus diperbarui setelah dokumen daerah diterima sekolah.</div>
+        <div class="teacher-source"><strong>Dasar:</strong> Peraturan Kepala Dinas Pendidikan Provinsi Jawa Tengah Nomor 400.3/23862/2026 tentang Pedoman Penyusunan Kalender Pendidikan Tahun Ajaran 2026/2027. Agenda satuan pendidikan seperti PTS/STS dan SAS tetap dimasukkan sesuai keputusan sekolah.</div>
         <table class="data-table">
           <thead><tr><th>Tanggal/Rentang</th><th>Agenda</th><th>Status/Keterangan</th></tr></thead>
           <tbody>${academicCalendar.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody>
         </table>
       </section>
+      <section class="document-section no-print">
+        <h3>Tambahkan Agenda Sekolah</h3>
+        <p>Agenda yang disimpan di sini akan langsung diberi warna pada tanggal Kalender Hijriah/Fitur Islami di perangkat ini.</p>
+        <form class="academic-event-form" id="academic-event-form">
+          <label>Nama agenda
+            <input name="label" maxlength="100" placeholder="Contoh: PTS Semester Gasal" required>
+          </label>
+          <label>Jenis
+            <select name="category" required>
+              ${Object.entries(academicCategoryLabels).map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}
+            </select>
+          </label>
+          <label>Tanggal mulai
+            <input name="start" type="date" required>
+          </label>
+          <label>Tanggal selesai
+            <input name="end" type="date">
+          </label>
+          <label class="academic-note-field">Keterangan
+            <input name="note" maxlength="180" placeholder="Keterangan singkat untuk guru dan murid">
+          </label>
+          <button class="btn" type="submit">Simpan Agenda</button>
+        </form>
+        <p class="save-status" id="academic-event-status" aria-live="polite"></p>
+        <div class="custom-event-list">
+          ${customEvents.length ? customEvents.map((item) => `
+            <article>
+              <span class="academic-mark category-${escapeHtml(item.category)}">${escapeHtml(academicCategoryLabels[item.category] || "Agenda")}</span>
+              <div><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.start)}${item.end && item.end !== item.start ? ` s.d. ${escapeHtml(item.end)}` : ""}</small></div>
+              <button class="text-button danger-button" type="button" data-delete-academic-event="${escapeHtml(item.id)}">Hapus</button>
+            </article>`).join("") : "<p>Belum ada agenda sekolah tambahan.</p>"}
+        </div>
+      </section>
       <section class="document-section">
         <h3>Checklist Finalisasi</h3>
         <ul>
-          <li>Cocokkan awal dan akhir semester dengan keputusan Dindikpora Banjarnegara.</li>
+          <li>Cocokkan agenda sekolah dengan Kaldik Provinsi Jawa Tengah dan keputusan Dindikpora Banjarnegara.</li>
           <li>Masukkan libur nasional, cuti bersama, libur khusus keagamaan, dan hari besar daerah yang resmi.</li>
           <li>Masukkan asesmen, pembagian laporan, kegiatan sekolah, serta agenda kokurikuler.</li>
           <li>Sinkronkan dengan analisis hari efektif dan jadwal PAIBP setiap rombongan belajar.</li>
         </ul>
       </section>`;
+  }
+
+  function attachAcademicCalendarManager() {
+    document.querySelector("#academic-event-form")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const data = new FormData(form);
+      const start = String(data.get("start") || "");
+      const end = String(data.get("end") || start) || start;
+      const status = document.querySelector("#academic-event-status");
+      if (end < start) {
+        if (status) {
+          status.textContent = "Tanggal selesai tidak boleh sebelum tanggal mulai.";
+          status.classList.add("error");
+        }
+        return;
+      }
+      const id = typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `event-${Date.now()}`;
+      const events = readCustomAcademicEvents();
+      events.push({
+        id,
+        label: String(data.get("label") || "").trim(),
+        category: String(data.get("category") || "activity"),
+        start,
+        end,
+        note: String(data.get("note") || "").trim(),
+      });
+      writeCustomAcademicEvents(events);
+      renderTeacherDocument();
+      renderHijriCalendar();
+      const refreshedStatus = document.querySelector("#academic-event-status");
+      if (refreshedStatus) refreshedStatus.textContent = "Agenda tersimpan dan sudah ditandai pada kalender.";
+    });
+    document.querySelectorAll("[data-delete-academic-event]").forEach((button) => button.addEventListener("click", () => {
+      if (!window.confirm("Hapus agenda ini dari kalender perangkat?")) return;
+      writeCustomAcademicEvents(readCustomAcademicEvents().filter((item) => item.id !== button.dataset.deleteAcademicEvent));
+      renderTeacherDocument();
+      renderHijriCalendar();
+    }));
   }
 
   function workdaysInMonth(year, monthIndex) {
@@ -1141,20 +1368,153 @@ if (workspace && appData) {
     return Math.round((values.filter((value) => String(value || "").trim()).length / values.length) * 100);
   }
 
+  function accessDocument() {
+    const configured = realtimeIsConfigured();
+    return `${teacherIdentity("Rekap Akses Murid")}
+      <section class="document-section">
+        <div class="realtime-status ${configured ? "is-ready" : "is-offline"}">
+          <span class="status-dot ${configured ? "ready" : "warning"}" aria-hidden="true"></span>
+          <div>
+            <strong>${configured ? "Sinkronisasi daring siap digunakan" : "Mode daring belum diaktifkan"}</strong>
+            <p>${configured
+              ? "Pilih Muat Ulang untuk mengambil kunjungan terbaru dari penyimpanan daring."
+              : "Website tetap berfungsi secara lokal. Ikuti PANDUAN_REKAP_REALTIME.md untuk mengaktifkan rekap lintas perangkat."}</p>
+          </div>
+        </div>
+        <div class="submission-import no-print">
+          <button class="btn" id="refresh-access-recap" type="button" ${configured ? "" : "disabled"}>Muat Ulang Rekap</button>
+          <button class="btn" id="export-access-csv" type="button" disabled>Unduh CSV Akses</button>
+        </div>
+        <p class="save-status" id="access-recap-status" aria-live="polite">${configured ? "Belum memuat data." : "Alamat sinkronisasi belum diisi di app-config.js."}</p>
+      </section>
+      <section class="document-section">
+        <div class="access-summary" id="access-summary"></div>
+        <div class="table-scroll">
+          <table class="data-table access-table">
+            <thead><tr><th>Waktu</th><th>Nama/Absen</th><th>Kelas</th><th>Aktivitas</th><th>Bab</th></tr></thead>
+            <tbody id="access-recap-body"><tr><td colspan="5">${configured ? "Pilih Muat Ulang Rekap." : "Aktifkan integrasi daring terlebih dahulu."}</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="document-section">
+        <div class="warning"><strong>Perlindungan data:</strong> rekap akses hanya menyimpan waktu, identitas yang diisi murid, kelas, dan aktivitas. Isi jawaban tidak dikirim ke log akses.</div>
+      </section>`;
+  }
+
+  function normalizeAccessRows(payload) {
+    const rows = Array.isArray(payload) ? payload : Array.isArray(payload?.events) ? payload.events : [];
+    return rows
+      .filter((item) => item && ["access", "submission"].includes(String(item.type)))
+      .map((item) => ({
+        timestamp: String(item.timestamp || ""),
+        name: String(item.name || ""),
+        attendance: String(item.attendance || ""),
+        className: String(item.className || ""),
+        type: String(item.type || "access"),
+        action: String(item.action || ""),
+        chapterId: String(item.chapterId || ""),
+        chapterTitle: String(item.chapterTitle || ""),
+      }))
+      .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  }
+
+  function accessRowsCsv(rows) {
+    const lines = [
+      ["Waktu", "Nama", "Nomor Absen", "Kelas", "Jenis", "Aktivitas", "Bab", "Judul Bab"],
+      ...rows.map((item) => [
+        item.timestamp, item.name, item.attendance, item.className,
+        item.type, item.action, item.chapterId, item.chapterTitle,
+      ]),
+    ].map((row) => row.map(csvCell).join(","));
+    return `\ufeff${lines.join("\r\n")}`;
+  }
+
+  async function loadRealtimeAccess() {
+    const status = document.querySelector("#access-recap-status");
+    const body = document.querySelector("#access-recap-body");
+    const summary = document.querySelector("#access-summary");
+    const exportButton = document.querySelector("#export-access-csv");
+    if (!status || !body || !summary || !realtimeIsConfigured()) return;
+    status.textContent = "Mengambil data terbaru…";
+    try {
+      const url = new URL(appConfig.realtimeEndpoint);
+      url.searchParams.set("action", "recap");
+      if (appConfig.realtimeReadKey) url.searchParams.set("key", appConfig.realtimeReadKey);
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      if (!response.ok) throw new Error("Respons tidak berhasil");
+      const payload = await response.json();
+      const rows = normalizeAccessRows(payload);
+      const classes = rows.reduce((result, item) => {
+        const label = item.className || "Belum mengisi kelas";
+        result[label] = (result[label] || 0) + 1;
+        return result;
+      }, {});
+      summary.innerHTML = `
+        <article><span>Total aktivitas</span><strong>${rows.length}</strong></article>
+        <article><span>Kunjungan</span><strong>${rows.filter((item) => item.type === "access").length}</strong></article>
+        <article><span>Pengiriman tugas</span><strong>${rows.filter((item) => item.type === "submission").length}</strong></article>
+        <article><span>Kelas terpantau</span><strong>${Object.keys(classes).length}</strong></article>`;
+      body.innerHTML = rows.length ? rows.map((item) => `
+        <tr>
+          <td>${item.timestamp ? new Date(item.timestamp).toLocaleString("id-ID") : "—"}</td>
+          <td><strong>${escapeHtml(item.name || "Belum mengisi nama")}</strong>${item.attendance ? `<br><small>Absen ${escapeHtml(item.attendance)}</small>` : ""}</td>
+          <td>${escapeHtml(item.className || "—")}</td>
+          <td><span class="activity-badge ${item.type === "submission" ? "is-submission" : ""}">${item.type === "submission" ? "Mengirim tugas" : "Membuka situs"}</span></td>
+          <td>${escapeHtml(item.chapterId || "—")}${item.chapterTitle ? `<br><small>${escapeHtml(item.chapterTitle)}</small>` : ""}</td>
+        </tr>`).join("") : "<tr><td colspan='5'>Belum ada aktivitas murid yang tercatat.</td></tr>";
+      status.textContent = `${rows.length} aktivitas dimuat pada ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}.`;
+      if (exportButton) {
+        exportButton.disabled = !rows.length;
+        exportButton.onclick = () => downloadBlob(
+          new Blob([accessRowsCsv(rows)], { type: "text/csv;charset=utf-8" }),
+          `Rekap-Akses-PAIBP-${new Date().toISOString().slice(0, 10)}.csv`,
+        );
+      }
+    } catch {
+      status.textContent = "Rekap daring belum dapat dimuat. Periksa URL Web App, kunci baca, dan izin deployment.";
+      status.classList.add("error");
+    }
+  }
+
+  function attachAccessRecap() {
+    document.querySelector("#refresh-access-recap")?.addEventListener("click", loadRealtimeAccess);
+  }
+
   function submissionsDocument() {
-    const recap = readSubmissionRecap();
-    const rows = recap.map((item, index) => `
-      <tr data-recap-id="${escapeHtml(item.submissionId)}">
-        <td>${index + 1}</td>
-        <td><strong>${escapeHtml(item.student.name)}</strong><br><small>Absen ${escapeHtml(item.student.attendance)}</small></td>
-        <td>${escapeHtml(item.student.className)}</td>
-        <td>${escapeHtml(item.chapter.id)}<br><small>${escapeHtml(item.chapter.title)}</small></td>
-        <td>${new Date(item.createdAt).toLocaleString("id-ID")}</td>
-        <td>${completionPercent(item)}%</td>
-        <td><input class="recap-score" type="number" min="0" max="100" value="${escapeHtml(item.teacher?.score ?? "")}" aria-label="Nilai ${escapeHtml(item.student.name)}"></td>
-        <td><textarea class="recap-note" rows="2" maxlength="500" aria-label="Catatan ${escapeHtml(item.student.name)}">${escapeHtml(item.teacher?.note || "")}</textarea></td>
-        <td class="no-print"><button class="text-button" type="button" data-view-submission="${escapeHtml(item.submissionId)}">Lihat</button><button class="text-button danger-button" type="button" data-delete-submission="${escapeHtml(item.submissionId)}">Hapus</button></td>
-      </tr>`).join("");
+    const recap = readSubmissionRecap().sort((a, b) => (
+      String(a.student.className).localeCompare(String(b.student.className), "id", { numeric: true })
+      || String(b.createdAt).localeCompare(String(a.createdAt))
+    ));
+    const grouped = recap.reduce((result, item) => {
+      const className = String(item.student.className || "Kelas belum diisi").trim().toLocaleUpperCase("id");
+      if (!result[className]) result[className] = [];
+      result[className].push(item);
+      return result;
+    }, {});
+    const classNames = Object.keys(grouped).sort((a, b) => a.localeCompare(b, "id", { numeric: true }));
+    const groupTables = classNames.map((className) => {
+      const items = grouped[className];
+      const rows = items.map((item, index) => `
+        <tr data-recap-id="${escapeHtml(item.submissionId)}">
+          <td>${index + 1}</td>
+          <td><strong>${escapeHtml(item.student.name)}</strong><br><small>Absen ${escapeHtml(item.student.attendance)}</small></td>
+          <td>${escapeHtml(item.chapter.id)}<br><small>${escapeHtml(item.chapter.title)}</small></td>
+          <td>${new Date(item.createdAt).toLocaleString("id-ID")}</td>
+          <td>${completionPercent(item)}%</td>
+          <td><input class="recap-score" type="number" min="0" max="100" value="${escapeHtml(item.teacher?.score ?? "")}" aria-label="Nilai ${escapeHtml(item.student.name)}"></td>
+          <td><textarea class="recap-note" rows="2" maxlength="500" aria-label="Catatan ${escapeHtml(item.student.name)}">${escapeHtml(item.teacher?.note || "")}</textarea></td>
+          <td class="no-print"><button class="text-button" type="button" data-view-submission="${escapeHtml(item.submissionId)}">Lihat</button><button class="text-button danger-button" type="button" data-delete-submission="${escapeHtml(item.submissionId)}">Hapus</button></td>
+        </tr>`).join("");
+      return `<section class="recap-class-group">
+        <div class="recap-class-heading"><h3>Kelas ${escapeHtml(className)}</h3><span>${items.length} pekerjaan</span></div>
+        <div class="table-scroll">
+          <table class="data-table recap-table">
+            <thead><tr><th>No.</th><th>Nama/Absen</th><th>Bab</th><th>Dibuat</th><th>Isi</th><th>Nilai</th><th>Catatan Guru</th><th class="no-print">Aksi</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </section>`;
+    }).join("");
     return `${teacherIdentity("Rekap Pekerjaan Murid")}
       <section class="document-section no-print">
         <div class="warning"><strong>Privasi:</strong> berkas tugas hanya dibaca di browser guru dan rekap disimpan pada perangkat ini. Jangan unggah berkas identitas murid ke repositori publik.</div>
@@ -1162,19 +1522,16 @@ if (workspace && appData) {
           <label class="file-drop">Impor berkas tugas murid (.paibp)
             <input id="submission-files" type="file" accept=".paibp,.json,application/json" multiple>
           </label>
+          <button class="btn" id="sync-submissions-online" type="button" ${realtimeIsConfigured() ? "" : "disabled"}>Muat Tugas Daring</button>
           <button class="btn" id="export-recap-csv" type="button">Unduh CSV</button>
           <button class="btn" id="backup-recap-json" type="button">Cadangkan rekap</button>
           <button class="text-button danger-button" id="clear-recap" type="button">Hapus semua rekap</button>
         </div>
         <p class="save-status" id="recap-status" aria-live="polite">${recap.length} pekerjaan tersimpan pada perangkat ini.</p>
+        ${classNames.length ? `<div class="class-summary">${classNames.map((className) => `<span>Kelas ${escapeHtml(className)} <strong>${grouped[className].length}</strong></span>`).join("")}</div>` : ""}
       </section>
       <section class="document-section">
-        <div class="table-scroll">
-          <table class="data-table recap-table">
-            <thead><tr><th>No.</th><th>Nama/Absen</th><th>Kelas</th><th>Bab</th><th>Dibuat</th><th>Isi</th><th>Nilai</th><th>Catatan Guru</th><th class="no-print">Aksi</th></tr></thead>
-            <tbody>${rows || "<tr><td colspan='9'>Belum ada tugas. Minta murid mengirimkan berkas .paibp, lalu impor di sini.</td></tr>"}</tbody>
-          </table>
-        </div>
+        ${groupTables || "<div class='empty-recap'><strong>Belum ada tugas.</strong><p>Minta murid mengirimkan berkas .paibp, lalu impor di sini.</p></div>"}
       </section>
       <section class="document-section" id="submission-detail"></section>`;
   }
@@ -1221,7 +1578,52 @@ if (workspace && appData) {
     container.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
   }
 
+  async function loadRealtimeSubmissions() {
+    const status = document.querySelector("#recap-status");
+    if (!status || !realtimeIsConfigured()) return;
+    status.textContent = "Mengambil pekerjaan terbaru dari penyimpanan sekolah…";
+    try {
+      const url = new URL(appConfig.realtimeEndpoint);
+      url.searchParams.set("action", "submissions");
+      if (appConfig.realtimeReadKey) url.searchParams.set("key", appConfig.realtimeReadKey);
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      if (!response.ok) throw new Error("Respons tidak berhasil");
+      const payload = await response.json();
+      const online = Array.isArray(payload) ? payload : Array.isArray(payload?.submissions) ? payload.submissions : [];
+      const valid = online.filter(validateSubmission);
+      const current = readSubmissionRecap();
+      let added = 0;
+      let updated = 0;
+      valid.forEach((submission) => {
+        const logicalKey = submissionStudentKey(submission);
+        const index = current.findIndex((item) => (
+          item.submissionId === submission.submissionId
+          || submissionStudentKey(item) === logicalKey
+        ));
+        if (index >= 0) {
+          current[index] = {
+            ...submission,
+            teacher: current[index].teacher || submission.teacher || {},
+          };
+          updated += 1;
+        } else {
+          current.push(submission);
+          added += 1;
+        }
+      });
+      current.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+      writeSubmissionRecap(current);
+      renderTeacherDocument();
+      const refreshedStatus = document.querySelector("#recap-status");
+      if (refreshedStatus) refreshedStatus.textContent = `${added} pekerjaan baru dan ${updated} pembaruan dimuat dari penyimpanan sekolah.`;
+    } catch {
+      status.textContent = "Tugas daring belum dapat dimuat. Periksa URL Web App, kunci baca, dan izin deployment.";
+      status.classList.add("error");
+    }
+  }
+
   function attachSubmissionRecap() {
+    document.querySelector("#sync-submissions-online")?.addEventListener("click", loadRealtimeSubmissions);
     document.querySelector("#submission-files")?.addEventListener("change", async (event) => {
       const files = [...event.target.files];
       const current = readSubmissionRecap();
@@ -1299,6 +1701,7 @@ if (workspace && appData) {
     else if (teacherDoc === "calendar") html = calendarDocument();
     else if (teacherDoc === "effective") html = effectiveDocument();
     else if (teacherDoc === "module") html = moduleDocument(gradeChapters);
+    else if (teacherDoc === "access") html = accessDocument();
     else if (teacherDoc === "submissions") html = submissionsDocument();
     else html = cpDocument();
     const container = document.querySelector("#teacher-document");
@@ -1311,6 +1714,8 @@ if (workspace && appData) {
         renderTeacherDocument();
       });
     }
+    if (teacherDoc === "calendar") attachAcademicCalendarManager();
+    if (teacherDoc === "access") attachAccessRecap();
     if (teacherDoc === "submissions") attachSubmissionRecap();
   }
 
@@ -1345,7 +1750,7 @@ if (workspace && appData) {
   const teacherDocTitles = {
     cp: "CP Terbaru", kktp: "KKTP", atp: "ATP", prota: "Prota", promes: "Promes",
     calendar: "Kalender Pendidikan", effective: "Analisis Hari Efektif",
-    module: "Modul Ajar Lengkap", submissions: "Rekap Pekerjaan Murid",
+    module: "Modul Ajar Lengkap", access: "Rekap Akses Murid", submissions: "Rekap Pekerjaan Murid",
   };
   document.querySelector("#print-teacher-document")?.addEventListener("click", () => {
     printDocument(
@@ -1638,29 +2043,88 @@ if (workspace && appData) {
     return null;
   }
 
+  function localDateKey(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function dateIsInRange(key, start, end = start) {
+    return key >= start && key <= (end || start);
+  }
+
   function calendarMarkers(date, hijri) {
-    if (!hijri) return [];
     const markers = [];
+    const key = localDateKey(date);
     const weekday = date.getDay();
-    const forbidden = (
-      (hijri.month === 10 && hijri.day === 1)
-      || (hijri.month === 12 && hijri.day >= 10 && hijri.day <= 13)
-    );
-    if (forbidden) {
-      markers.push(["Dilarang puasa", "fast-forbidden"]);
-    } else if (hijri.month === 9) {
-      markers.push(["Ramadhan", "fast-required"]);
-    } else {
-      if (weekday === 1 || weekday === 4) markers.push([weekday === 1 ? "Senin" : "Kamis", "fast-sunnah"]);
-      if (hijri.day >= 13 && hijri.day <= 15 && !(hijri.month === 12 && hijri.day === 13)) markers.push(["Ayyamul Bidh", "fast-sunnah"]);
-      if (hijri.month === 1 && hijri.day === 9) markers.push(["Tasu'a", "fast-sunnah"]);
-      if (hijri.month === 1 && hijri.day === 10) markers.push(["Asyura", "fast-sunnah"]);
-      if (hijri.month === 10 && hijri.day >= 2) markers.push(["Pilih 6 Syawal", "fast-sunnah"]);
-      if (hijri.month === 12 && hijri.day >= 1 && hijri.day <= 9) markers.push([hijri.day === 9 ? "Arafah" : "Awal Dzulhijjah", "fast-sunnah"]);
+    const push = (label, className, note, category = className, source = "") => markers.push({
+      label, className, note, category, source,
+    });
+
+    if (hijri) {
+      const forbidden = (
+        (hijri.month === 10 && hijri.day === 1)
+        || (hijri.month === 12 && hijri.day >= 10 && hijri.day <= 13)
+      );
+      if (forbidden) {
+        push("Dilarang berpuasa", "fast-forbidden", "Idul Fitri, Idul Adha, dan hari tasyrik termasuk hari yang dilarang berpuasa menurut ketentuan fikih.");
+      } else if (hijri.month === 9) {
+        push("Puasa Ramadhan", "fast-required", "Puasa wajib bagi Muslim yang memenuhi syarat. Ketetapan awal dan akhir Ramadhan mengikuti keputusan pemerintah.");
+      } else {
+        if (weekday === 1 || weekday === 4) {
+          push(
+            weekday === 1 ? "Puasa Senin" : "Puasa Kamis",
+            "fast-sunnah",
+            `Puasa sunnah hari ${weekday === 1 ? "Senin" : "Kamis"}, selama tidak bertepatan dengan hari yang dilarang berpuasa.`,
+          );
+        }
+        if (hijri.day >= 13 && hijri.day <= 15 && !(hijri.month === 12 && hijri.day === 13)) {
+          push("Ayyamul Bidh", "fast-sunnah", "Puasa sunnah tanggal 13, 14, dan 15 bulan Hijriah.");
+        }
+        if (hijri.month === 1 && hijri.day === 9) push("Puasa Tasu'a", "fast-sunnah", "Puasa sunnah pada 9 Muharram.");
+        if (hijri.month === 1 && hijri.day === 10) push("Puasa Asyura", "fast-sunnah", "Puasa sunnah pada 10 Muharram; dianjurkan melengkapinya dengan Tasu'a.");
+        if (hijri.month === 10 && hijri.day >= 2) {
+          push("Rentang 6 Syawal", "fast-sunnah", "Tanggal ini termasuk rentang untuk memilih enam hari puasa sunnah Syawal setelah Idul Fitri.");
+        }
+        if (hijri.month === 12 && hijri.day >= 1 && hijri.day <= 9) {
+          push(
+            hijri.day === 9 ? "Puasa Arafah" : "Awal Dzulhijjah",
+            "fast-sunnah",
+            hijri.day === 9
+              ? "Puasa sunnah Arafah bagi yang tidak sedang berhaji."
+              : "Sembilan hari pertama Dzulhijjah merupakan waktu utama untuk memperbanyak amal sholeh; puasa dapat dikerjakan sesuai kemampuan.",
+          );
+        }
+      }
+      islamicData.historicDates
+        .filter((item) => item.month === hijri.month && item.day === hijri.day)
+        .forEach((item) => push(item.label, "history-mark", item.note, "history"));
     }
-    islamicData.historicDates
-      .filter((item) => item.month === hijri.month && item.day === hijri.day)
-      .forEach((item) => markers.push([item.label, "history-mark"]));
+
+    calendarData.datedEvents
+      .filter((item) => item.date === key)
+      .forEach((item) => push(
+        item.label,
+        item.category === "holiday" ? "holiday-mark" : "collective-leave-mark",
+        item.note,
+        item.category,
+        item.source,
+      ));
+    calendarData.recurringCommemorations
+      .filter((item) => item.month === date.getMonth() + 1 && item.day === date.getDate())
+      .forEach((item) => push(item.label, "commemoration-mark", item.note, item.category));
+    calendarData.academicEvents
+      .filter((item) => dateIsInRange(key, item.start, item.end))
+      .forEach((item) => push(item.label, `academic-mark ${item.category}`, item.note, item.category, item.source));
+    readCustomAcademicEvents()
+      .filter((item) => dateIsInRange(key, item.start, item.end))
+      .forEach((item) => push(
+        item.label,
+        `academic-mark academic-${item.category}`,
+        item.note || `${academicCategoryLabels[item.category] || "Agenda sekolah"} yang ditambahkan guru.`,
+        `academic-${item.category}`,
+      ));
     return markers;
   }
 
@@ -1673,25 +2137,48 @@ if (workspace && appData) {
     const mondayOffset = (firstDay + 6) % 7;
     const totalDays = new Date(year, month + 1, 0).getDate();
     const cells = Array.from({ length: mondayOffset }, () => '<div class="calendar-cell is-empty" aria-hidden="true"></div>');
+    const monthEvents = [];
     for (let day = 1; day <= totalDays; day += 1) {
       const date = new Date(year, month, day, 12);
       const hijri = hijriParts(date);
       const markers = calendarMarkers(date, hijri);
-      const history = islamicData.historicDates.find((item) => item.month === hijri?.month && item.day === hijri?.day);
+      const visibleMarkers = markers.slice(0, 3);
+      if (markers.length) monthEvents.push({ date, hijri, markers });
+      const cellClasses = [...new Set(markers.flatMap((item) => item.className.split(" ")).filter(Boolean))]
+        .map((className) => `has-${className}`)
+        .join(" ");
       cells.push(`
-        <article class="calendar-cell${markers.length ? " has-marker" : ""}">
+        <article class="calendar-cell${markers.length ? " has-marker" : ""}${cellClasses ? ` ${cellClasses}` : ""}">
           <div><strong>${day}</strong><span>${hijri ? `${hijri.day}/${hijri.month}` : "—"}</span></div>
-          ${markers.map(([label, className]) => `<small class="${className}" title="${escapeHtml(history?.note || label)}">${escapeHtml(label)}</small>`).join("")}
+          ${visibleMarkers.map((item) => `<small class="${escapeHtml(item.className)}" title="${escapeHtml(item.note)}">${escapeHtml(item.label)}</small>`).join("")}
+          ${markers.length > visibleMarkers.length ? `<small class="more-markers">+${markers.length - visibleMarkers.length} keterangan</small>` : ""}
         </article>`);
     }
     document.querySelector("#hijri-calendar").innerHTML = `
       <div class="calendar-weekdays">${["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Ahd"].map((day) => `<span>${day}</span>`).join("")}</div>
       <div class="calendar-grid">${cells.join("")}</div>`;
     document.querySelector("#fasting-guide").innerHTML = `
-      <h4>Panduan ringkas puasa</h4>
-      <div class="fasting-rule-grid">${islamicData.fastingRules.map(([name, note]) => `<article><strong>${escapeHtml(name)}</strong><p>${escapeHtml(note)}</p></article>`).join("")}</div>
-      <h4>Catatan tanggal sejarah</h4>
-      <ul>${islamicData.historicDates.map((item) => `<li><strong>${item.day}/${item.month} H — ${escapeHtml(item.label)}:</strong> ${escapeHtml(item.note)}</li>`).join("")}</ul>`;
+      <div class="calendar-month-heading">
+        <div><span class="badge">Keterangan Bulanan</span><h4>${escapeHtml(title)}</h4></div>
+        <p>Hanya kejadian yang jatuh pada bulan yang sedang dibuka.</p>
+      </div>
+      <div class="calendar-event-list">
+        ${monthEvents.length ? monthEvents.map(({ date, hijri, markers }) => `
+          <article>
+            <time datetime="${localDateKey(date)}">${new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(date)}${hijri ? ` • ${hijri.day}/${hijri.month}/${hijri.year} H` : ""}</time>
+            <div class="event-marker-list">
+              ${markers.map((item) => `
+                <div>
+                  <span class="${escapeHtml(item.className)}">${escapeHtml(item.label)}</span>
+                  <p>${escapeHtml(item.note)}</p>
+                  ${item.source && calendarData.sources[item.source]
+                    ? `<a href="${escapeHtml(calendarData.sources[item.source].url)}" target="_blank" rel="noopener">${escapeHtml(calendarData.sources[item.source].label)} ↗</a>`
+                    : ""}
+                </div>`).join("")}
+            </div>
+          </article>`).join("") : "<p>Tidak ada penanda khusus pada bulan ini.</p>"}
+      </div>
+      <div class="warning"><strong>Catatan:</strong> puasa qadha, nazar, kafarat, dan Puasa Nabi Dawud tidak ditandai pada tanggal umum karena jadwalnya bergantung pada kewajiban atau pola ibadah masing-masing orang.</div>`;
   }
 
   document.querySelector("#calendar-prev")?.addEventListener("click", () => {
@@ -1853,11 +2340,32 @@ if (workspace && appData) {
   }
 
   function staffCardHtml(person, label) {
+    const imageSource = window.PAIBP_STAFF_IMAGES?.[person.image] || person.image;
+    const initials = person.name
+      .replace(/,\s*.*$/, "")
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase();
     return `
       <article class="staff-card">
-        <img src="${escapeHtml(person.image)}" alt="Foto ${escapeHtml(person.name)}" width="520" height="720" loading="lazy" decoding="async">
+        <div class="staff-photo">
+          <span class="staff-initials" aria-hidden="true">${escapeHtml(initials)}</span>
+          <img src="${escapeHtml(imageSource)}" alt="${escapeHtml(person.name)}" width="520" height="520" loading="lazy" decoding="async">
+        </div>
         <div><strong>${escapeHtml(person.name)}</strong><span>${escapeHtml(label)}</span></div>
       </article>`;
+  }
+
+  function activateStaffImageFallback(container) {
+    if (!container) return;
+    container.querySelectorAll(".staff-photo img").forEach((image) => {
+      const showFallback = () => image.closest(".staff-photo")?.classList.add("has-error");
+      image.addEventListener("error", showFallback, { once: true });
+      if (image.complete && image.naturalWidth === 0) showFallback();
+    });
   }
 
   function renderSchoolProfile() {
@@ -1880,7 +2388,10 @@ if (workspace && appData) {
         <img class="school-profile-image" src="gerbang.jpg" alt="Gerbang SMP Negeri 1 Susukan" width="720" height="318" loading="lazy">`;
     }
     const staffGrid = document.querySelector("#staff-grid");
-    if (staffGrid) staffGrid.innerHTML = staff.map((person) => staffCardHtml(person, person.role)).join("");
+    if (staffGrid) {
+      staffGrid.innerHTML = staff.map((person) => staffCardHtml(person, person.role)).join("");
+      activateStaffImageFallback(staffGrid);
+    }
     const newsGallery = document.querySelector("#news-gallery");
     if (newsGallery && Array.isArray(schoolData.news) && schoolData.news.length) {
       newsGallery.className = "news-grid";
@@ -1894,18 +2405,10 @@ if (workspace && appData) {
           </div>
         </article>`).join("");
     }
-    const subjectSelect = document.querySelector("#teacher-subject-filter");
     const teacherGrid = document.querySelector("#teacher-grid");
-    if (subjectSelect && teacherGrid) {
-      const subjects = [...new Set(teachers.map((person) => person.subject))].sort((a, b) => a.localeCompare(b, "id"));
-      subjectSelect.insertAdjacentHTML("beforeend", subjects.map((subject) => `<option value="${escapeHtml(subject)}">${escapeHtml(subject)}</option>`).join(""));
-      const renderTeachers = () => {
-        const selected = subjectSelect.value || "all";
-        const visible = selected === "all" ? teachers : teachers.filter((person) => person.subject === selected);
-        teacherGrid.innerHTML = visible.map((person) => staffCardHtml(person, person.subject)).join("");
-      };
-      subjectSelect.addEventListener("change", renderTeachers);
-      renderTeachers();
+    if (teacherGrid) {
+      teacherGrid.innerHTML = teachers.map((person) => staffCardHtml(person, person.subject)).join("");
+      activateStaffImageFallback(teacherGrid);
     }
   }
 
@@ -1930,5 +2433,6 @@ if (workspace && appData) {
   renderHijriCalendar();
   renderDailyInsight();
   renderSchoolProfile();
+  postRealtimeEvent("access", { action: "site_open" });
   registerServiceWorker();
 }

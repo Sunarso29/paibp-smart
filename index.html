@@ -57,7 +57,7 @@
             </div>
           </div>
           <aside class="profile-card">
-            <img src="sunarso.jpeg" alt="Foto Sunarso, S.Pd.I., Gr." width="864" height="1184">
+            <img src="sunarso.jpeg" alt="Sunarso, S.Pd.I., Gr." width="864" height="1184">
             <h2>Sunarso, S.Pd.I., Gr.</h2>
             <p>Guru Pendidikan Agama Islam dan Budi Pekerti<br>SMP Negeri 1 Susukan<br>Banjarnegara, Jawa Tengah</p>
           </aside>
@@ -99,8 +99,8 @@
               <div class="welcome-grid portal-welcome">
                 <div>
                   <span class="welcome-icon" aria-hidden="true">📚</span>
-                  <h3>Bukan lagi kartu kosong</h3>
-                  <p>Ruang Murid memuat 30 paket bab lengkap. Ruang Guru memuat tujuh perangkat kerja. Fitur Islami dan Games tetap aktif dalam portal yang sama.</p>
+                  <h3>Empat ruang dalam satu ekosistem pembelajaran</h3>
+                  <p>Akses materi, latihan, LKPD, perangkat guru, layanan Islami, dan game edukatif dalam satu portal yang terintegrasi.</p>
                 </div>
                 <div class="welcome-actions">
                   <button class="cta" type="button" data-open-panel="student" aria-controls="panel-student">Buka Ruang Murid</button>
@@ -108,8 +108,8 @@
                 </div>
               </div>
               <div class="portal-metrics">
-                <article><strong>30</strong><span>Ringkasan materi</span></article>
-                <article><strong>30</strong><span>Ringkasan bab</span></article>
+                <article><strong>30</strong><span>Paket pembelajaran</span></article>
+                <article><strong>30</strong><span>Latihan interaktif</span></article>
                 <article><strong>30</strong><span>LKPD siap cetak</span></article>
                 <article><strong>7</strong><span>Perangkat guru</span></article>
               </div>
@@ -200,6 +200,7 @@
                 <div class="teacher-toolbar">
                   <button class="btn btn-compact" type="button" id="print-teacher-document">Cetak / Simpan PDF</button>
                   <button class="btn btn-compact" type="button" id="download-teacher-document">Unduh Dokumen</button>
+                  <button class="btn btn-compact teacher-lock-button" type="button" id="lock-teacher-room">🔒 Kunci Ruang Guru</button>
                 </div>
               </div>
 
@@ -213,6 +214,7 @@
                   <button type="button" data-teacher-doc="calendar" aria-pressed="false"><span>🏫</span> Kalender Pendidikan</button>
                   <button type="button" data-teacher-doc="effective" aria-pressed="false"><span>🧮</span> Analisis Hari Efektif</button>
                   <button type="button" data-teacher-doc="module" aria-pressed="false"><span>📚</span> Modul Ajar Lengkap</button>
+                  <button type="button" data-teacher-doc="access" aria-pressed="false"><span>📊</span> Rekap Akses Murid</button>
                   <button type="button" data-teacher-doc="submissions" aria-pressed="false"><span>📥</span> Rekap Pekerjaan Murid</button>
                 </nav>
                 <article class="teacher-document printable-document" id="teacher-document" aria-live="polite"></article>
@@ -305,7 +307,15 @@
                     </div>
                     <p class="warning">Tanggal Hijriah dihitung oleh kalender perangkat dan dapat berbeda satu hari dari keputusan resmi pemerintah/hasil rukyat. Gunakan sebagai panduan awal.</p>
                     <div class="hijri-calendar" id="hijri-calendar"></div>
-                    <div class="calendar-legend"><span class="fast-required">Puasa wajib</span><span class="fast-sunnah">Puasa sunnah</span><span class="fast-forbidden">Dilarang berpuasa</span><span class="history-mark">Sejarah/peringatan</span></div>
+                    <div class="calendar-legend">
+                      <span class="fast-required">Puasa wajib</span>
+                      <span class="fast-sunnah">Puasa sunnah</span>
+                      <span class="fast-forbidden">Dilarang berpuasa</span>
+                      <span class="history-mark">Sejarah Islam</span>
+                      <span class="holiday-mark">Libur nasional</span>
+                      <span class="commemoration-mark">Peringatan umum</span>
+                      <span class="academic-mark">Kalender pendidikan</span>
+                    </div>
                     <div class="fasting-guide" id="fasting-guide"></div>
                   </section>
 
@@ -387,15 +397,16 @@
           <div class="school-profile" id="school-profile"></div>
           <div class="staff-section">
             <div class="subheading-row">
-              <div><h3>Kepala Sekolah dan Tenaga Kependidikan</h3><p>Disusun dari foto Yearbook AI 2026 yang dilampirkan.</p></div>
+              <div><h3>Kepala Sekolah dan Tenaga Kependidikan</h3><p>Profil keluarga besar SMP Negeri 1 Susukan.</p></div>
             </div>
+            <p class="staff-swipe-hint">Geser ke samping untuk melihat profil lainnya.</p>
             <div class="staff-grid" id="staff-grid"></div>
           </div>
           <div class="staff-section">
             <div class="subheading-row">
-              <div><h3>Tenaga Pendidik</h3><p>Gunakan filter untuk melihat guru berdasarkan mata pelajaran.</p></div>
-              <label class="staff-filter">Mata pelajaran <select id="teacher-subject-filter"><option value="all">Semua</option></select></label>
+              <div><h3>Tenaga Pendidik</h3><p>Profil guru SMP Negeri 1 Susukan disajikan ringkas dan mudah ditelusuri.</p></div>
             </div>
+            <p class="staff-swipe-hint">Geser ke samping untuk melihat profil lainnya.</p>
             <div class="staff-grid" id="teacher-grid"></div>
           </div>
           <div class="staff-section">
@@ -425,7 +436,29 @@
       </div>
     </footer>
 
+    <div class="teacher-auth" id="teacher-auth" hidden>
+      <div class="teacher-auth-backdrop" data-cancel-teacher-auth></div>
+      <section class="teacher-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="teacher-auth-title" aria-describedby="teacher-auth-description">
+        <button class="teacher-auth-close" type="button" data-cancel-teacher-auth aria-label="Tutup">×</button>
+        <span class="auth-icon" aria-hidden="true">🔐</span>
+        <h2 id="teacher-auth-title">Akses Khusus Ruang Guru</h2>
+        <p id="teacher-auth-description">Masukkan kata sandi untuk membuka perangkat pembelajaran dan rekap murid.</p>
+        <form id="teacher-auth-form">
+          <label for="teacher-password">Kata sandi Ruang Guru</label>
+          <input id="teacher-password" name="teacher-password" type="password" inputmode="numeric" autocomplete="current-password" required>
+          <p class="auth-error" id="teacher-auth-error" aria-live="polite"></p>
+          <div class="auth-actions">
+            <button class="btn" type="button" data-cancel-teacher-auth>Batal</button>
+            <button class="cta" type="submit">Buka Ruang Guru</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <script src="app-config.js"></script>
     <script src="content-data.js"></script>
+    <script src="calendar-data.js"></script>
+    <script src="staff-images.js"></script>
     <script src="school-data.js"></script>
     <script src="islamic-data.js"></script>
     <script src="script.js"></script>
