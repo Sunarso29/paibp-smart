@@ -30,8 +30,8 @@ Editor galeri dibuka dari Beranda menggunakan kata sandi admin. Tanpa integrasi 
 ## Fitur Islami
 
 - Teks dan audio Al Qur'an dimuat dari Al Quran Cloud. Surat yang pernah dibuka disimpan untuk dibaca luring. Audio luring harus disimpan terlebih dahulu ketika internet tersedia.
-- Audio doa/dzikir memakai suara bahasa Arab pada perangkat. Ketersediaannya bergantung pada suara yang terpasang di sistem.
-- Akademi Bahasa Arab menyimpan materi dan progres secara luring. Pelafalan dapat diputar luring bila paket suara Arab sudah terpasang pada perangkat.
+- Audio doa/dzikir memakai suara bahasa Arab pada perangkat. Situs menunggu daftar suara sampai siap dan memilih suara Arab secara otomatis; ketersediaannya tetap bergantung pada paket suara yang terpasang di sistem.
+- Akademi Bahasa Arab memuat 80 pelajaran dan menyimpan materi serta progres secara luring. Pelafalan dapat diputar luring bila paket suara Arab sudah terpasang pada perangkat.
 - Kalender Hijriah browser dapat berbeda satu hari dari keputusan resmi pemerintah atau hasil rukyat.
 - Halaman kitab sengaja tidak dicantumkan bila edisi belum terverifikasi karena nomor halaman berbeda antarcetakan.
 

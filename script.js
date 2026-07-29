@@ -45,6 +45,7 @@ if (workspace && appData) {
   const teacherSources = window.PAIBP_TEACHER_SOURCES || {};
   const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
   const arabicData = window.PAIBP_ARABIC || { levels: [] };
+  const gameData = window.PAIBP_GAME_BANK || null;
   const videoData = window.PAIBP_VIDEOS || {};
   const appConfig = window.PAIBP_CONFIG || { realtimeEndpoint: "", realtimeReadKey: "" };
   const STORAGE_KEY = "paibp-smart-progress-v3";
@@ -99,7 +100,7 @@ if (workspace && appData) {
     ["Sikap yang tepat setelah menyebarkan informasi salah ialah…", ["Diam saja", "Mengoreksi, meminta maaf, dan mencegah penyebaran", "Menghapus tanpa penjelasan", "Menyalahkan pembaca"], 1, "Pemulihan memerlukan koreksi kepada pihak yang menerima informasi salah."],
   ];
 
-  const gameModeBanks = {
+  const fallbackGameModeBanks = {
     quiz: questionBank,
     match: [
       ["Pasangkan istilah tabayun dengan maknanya.", ["Memeriksa kebenaran informasi", "Membicarakan aib", "Menunda amanah", "Mencampur transaksi"], 0, "Tabayun berarti mencari kejelasan sebelum menyimpulkan atau menyebarkan."],
@@ -141,6 +142,7 @@ if (workspace && appData) {
       ["Murid memakai bantuan AI untuk tugas. Sikap terbaik ialah …", ["Menyalin seluruhnya", "Memeriksa, menyunting, mencantumkan bantuan, dan memahami isi", "Menghapus sumber", "Mengaku tanpa membaca"], 1, "Teknologi dipakai secara jujur dan bertanggung jawab."],
     ],
   };
+  const gameModeBanks = gameData?.bank || fallbackGameModeBanks;
 
   const panelMeta = {
     welcome: ["Pilih ruang yang dibutuhkan", "Empat ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya."],
@@ -163,6 +165,8 @@ if (workspace && appData) {
   let teacherModuleChapterId = "VIII-1";
   let serviceWorkerRegistration = null;
   let prayerLoadedFor = "";
+  let currentPrayerTimings = null;
+  let prayerCountdownTimer = null;
   let currentQuranPayload = null;
   let islamicCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let quizQuestions = [];
@@ -176,6 +180,7 @@ if (workspace && appData) {
   let sessionStartedAt = Date.now();
   let currentGameMode = "quiz";
   let arabicLevelId = "dasar";
+  let dailyInsightIndex = null;
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -777,14 +782,29 @@ if (workspace && appData) {
   }
 
   function lessonWorksheetHtml(chapter) {
+    const identity = loadStudentIdentity();
+    const work = loadStudentWorks()[chapter.id] || {};
+    const answers = Array.isArray(work.answers) ? work.answers : [];
+    const reflections = Array.isArray(work.reflections) ? work.reflections : [];
+    const lkpdMeta = work.lkpdMeta || {};
     return `
       <section class="document-cover worksheet-cover">
         <p>LEMBAR KERJA MURID • PAIBP SMART SMP</p>
         <h2>LKPD: ${escapeHtml(chapter.title)}</h2>
-        <table class="identity-table">
-          <tr><th>Nama</th><td>....................................................................</td><th>Kelas</th><td>....................</td></tr>
-          <tr><th>Kelompok</th><td>....................................................................</td><th>Tanggal</th><td>....................</td></tr>
+        <table class="identity-table editable-lkpd-table">
+          <tr>
+            <th>Nama</th><td><input data-lkpd-field="studentName" value="${escapeHtml(identity.name)}" placeholder="Ketik nama lengkap"></td>
+            <th>Kelas</th><td><input data-lkpd-field="className" value="${escapeHtml(identity.className)}" placeholder="Contoh: VII A"></td>
+          </tr>
+          <tr>
+            <th>Nomor absen</th><td><input data-lkpd-field="attendance" inputmode="numeric" value="${escapeHtml(identity.attendance)}" placeholder="Ketik nomor absen"></td>
+            <th>Kelompok</th><td><input data-lkpd-meta="group" value="${escapeHtml(lkpdMeta.group || "")}" placeholder="Ketik nama/nomor kelompok"></td>
+          </tr>
+          <tr>
+            <th>Tanggal</th><td colspan="3"><input data-lkpd-meta="date" type="date" value="${escapeHtml(lkpdMeta.date || new Date().toISOString().slice(0, 10))}"></td>
+          </tr>
         </table>
+        <p class="editable-hint">Klik kolom mana pun lalu langsung ketik. Isian tersimpan otomatis dan menyatu dengan paket jawaban yang dikirim kepada guru.</p>
       </section>
       <section class="document-section">
         <h3>A. Tujuan LKPD</h3>
@@ -805,30 +825,38 @@ if (workspace && appData) {
         <div class="concept-map">
           ${chapter.concepts.map(([title]) => `<span>${escapeHtml(title)}</span>`).join("")}
         </div>
-        <div class="answer-space tall"></div>
-        <button class="text-button inline-answer-link no-print" type="button" data-scroll-submission>Isi jawaban digital ↓</button>
+        <label class="direct-lkpd-field">Jelaskan hubungan antarkonsep
+          <textarea rows="7" data-lkpd-field="projectPlan" placeholder="Klik di sini lalu tuliskan hubungan antarkonsep…">${escapeHtml(work.projectPlan || "")}</textarea>
+        </label>
       </section>
       <section class="document-section worksheet-activity">
         <h3>D. Aktivitas 2 — Analisis</h3>
-        <ol>${chapter.questions.map((item) => `<li>${escapeHtml(item)}<div class="answer-space"></div><button class="text-button inline-answer-link no-print" type="button" data-scroll-submission>Jawab dan kirim kepada guru ↓</button></li>`).join("")}</ol>
+        <ol class="direct-lkpd-answers">${chapter.questions.map((item, index) => `
+          <li>
+            <label>${escapeHtml(item)}
+              <textarea rows="5" data-lkpd-field="answer-${index}" placeholder="Klik lalu ketik jawaban lengkap…">${escapeHtml(answers[index] || "")}</textarea>
+            </label>
+          </li>`).join("")}</ol>
       </section>
       <section class="document-section worksheet-activity">
         <h3>E. Aktivitas 3 — Produk Bermakna</h3>
         <div class="project-box">${escapeHtml(chapter.project)}</div>
-        <table class="planning-table">
-          <tr><th>Tujuan produk</th><td></td></tr>
-          <tr><th>Pembagian tugas</th><td></td></tr>
-          <tr><th>Sumber/bukti</th><td></td></tr>
-          <tr><th>Jadwal kerja</th><td></td></tr>
-          <tr><th>Indikator keberhasilan</th><td></td></tr>
+        <table class="planning-table editable-lkpd-table">
+          <tr><th>Tujuan produk</th><td><textarea rows="2" data-lkpd-meta="goal" placeholder="Tuliskan tujuan produk">${escapeHtml(lkpdMeta.goal || "")}</textarea></td></tr>
+          <tr><th>Pembagian tugas</th><td><textarea rows="2" data-lkpd-meta="roles" placeholder="Tuliskan pembagian tugas">${escapeHtml(lkpdMeta.roles || "")}</textarea></td></tr>
+          <tr><th>Sumber/bukti</th><td><textarea rows="2" data-lkpd-meta="sources" placeholder="Tuliskan sumber atau bukti">${escapeHtml(lkpdMeta.sources || "")}</textarea></td></tr>
+          <tr><th>Jadwal kerja</th><td><textarea rows="2" data-lkpd-meta="schedule" placeholder="Tuliskan jadwal kerja">${escapeHtml(lkpdMeta.schedule || "")}</textarea></td></tr>
+          <tr><th>Indikator keberhasilan</th><td><textarea rows="2" data-lkpd-meta="success" placeholder="Tuliskan indikator keberhasilan">${escapeHtml(lkpdMeta.success || "")}</textarea></td></tr>
         </table>
       </section>
       <section class="document-section">
         <h3>F. Refleksi</h3>
-        <ol>
-          <li>Hal baru yang saya pahami: <div class="answer-space"></div></li>
-          <li>Bagian yang masih perlu saya pelajari: <div class="answer-space"></div></li>
-          <li>Tindakan nyata yang akan saya lakukan: <div class="answer-space"></div></li>
+        <ol class="direct-lkpd-answers">
+          ${[
+            "Hal baru yang saya pahami",
+            "Bagian yang masih perlu saya pelajari",
+            "Tindakan nyata yang akan saya lakukan",
+          ].map((prompt, index) => `<li><label>${prompt}<textarea rows="4" data-lkpd-field="reflection-${index}" placeholder="Klik lalu ketik refleksi…">${escapeHtml(reflections[index] || "")}</textarea></label></li>`).join("")}
         </ol>
       </section>
       <section class="document-section">
@@ -842,7 +870,7 @@ if (workspace && appData) {
             <tr><td>Integritas</td><td>Sumber dan proses transparan</td><td>Sumber dicantumkan</td><td>Sumber belum lengkap</td><td>Menyalin tanpa pengakuan</td></tr>
           </tbody>
         </table>
-        <button class="cta no-print" type="button" data-scroll-submission>Isi LKPD Digital dan Kirim kepada Guru</button>
+        <button class="cta no-print" type="button" data-scroll-submission>Periksa Paket Jawaban dan Kirim kepada Guru</button>
       </section>
       ${lessonSubmissionHtml(chapter, { compact: true })}`;
   }
@@ -979,6 +1007,10 @@ if (workspace && appData) {
     const videos = Array.isArray(videoData[currentChapter.id]) ? videoData[currentChapter.id] : [];
     const videoSummaries = videos.map((_, index) => fieldValue(`video-summary-${index}`));
     const previous = loadStudentWorks()[currentChapter.id] || {};
+    const lkpdMeta = { ...(previous.lkpdMeta || {}) };
+    document.querySelectorAll("[data-lkpd-meta]").forEach((field) => {
+      lkpdMeta[field.dataset.lkpdMeta] = String(field.value || "").trim();
+    });
     const identityKey = `${identity.name}|${identity.attendance}|${identity.className}`.trim().toLocaleLowerCase("id");
     return {
       identity,
@@ -986,6 +1018,8 @@ if (workspace && appData) {
       projectPlan: fieldValue("projectPlan"),
       reflections,
       videoSummaries,
+      lkpdMeta,
+      quickQuiz: previous.quickQuiz || { answered: [], score: 0, complete: false },
       identityKey,
       submissionId: previous.identityKey === identityKey && previous.submissionId ? previous.submissionId : (
         typeof window.crypto?.randomUUID === "function"
@@ -1016,6 +1050,9 @@ if (workspace && appData) {
       projectPlan: work.projectPlan,
       reflections: work.reflections,
       videoSummaries: work.videoSummaries,
+      lkpdMeta: work.lkpdMeta,
+      quickQuiz: work.quickQuiz,
+      viewedSections: allWorks[currentChapter.id]?.viewedSections || [],
       submissionId: work.submissionId,
       identityKey: work.identityKey,
       savedAt: work.savedAt,
@@ -1048,6 +1085,8 @@ if (workspace && appData) {
           answer: work.answers[index],
         })),
         project: { prompt: currentChapter.project, answer: work.projectPlan },
+        lkpdPlanning: work.lkpdMeta,
+        quickQuiz: work.quickQuiz,
         reflections: [
           ["Hal baru yang saya pahami", work.reflections[0]],
           ["Bagian yang masih perlu saya pelajari", work.reflections[1]],
@@ -1121,6 +1160,7 @@ if (workspace && appData) {
     form.addEventListener("input", () => {
       window.clearTimeout(saveTimer);
       saveTimer = window.setTimeout(() => saveCurrentStudentWork({ silent: true }), 600);
+      updateLessonCompleteButton();
     });
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -1144,31 +1184,96 @@ if (workspace && appData) {
     });
   }
 
+  function attachLkpdEditors() {
+    const form = document.querySelector("#student-work-form");
+    if (!form) return;
+    document.querySelectorAll("[data-lkpd-field]").forEach((field) => {
+      const target = form.querySelector(`[name="${field.dataset.lkpdField}"]`);
+      if (!target) return;
+      field.addEventListener("input", () => {
+        target.value = field.value;
+        target.dispatchEvent(new Event("input", { bubbles: true }));
+        updateLessonCompleteButton();
+      });
+      target.addEventListener("input", () => {
+        if (field.value !== target.value) field.value = target.value;
+      });
+    });
+    let metaSaveTimer = null;
+    document.querySelectorAll("[data-lkpd-meta]").forEach((field) => {
+      field.addEventListener("input", () => {
+        window.clearTimeout(metaSaveTimer);
+        metaSaveTimer = window.setTimeout(() => {
+          saveCurrentStudentWork({ silent: true });
+          updateLessonCompleteButton();
+        }, 350);
+      });
+    });
+  }
+
   function attachQuickQuiz() {
     const quiz = document.querySelector("[data-quick-quiz]");
-    if (!quiz) return;
-    const answered = new Map();
+    if (!quiz || !currentChapter) return;
+    const savedQuiz = loadStudentWorks()[currentChapter.id]?.quickQuiz || {};
+    const answered = new Map(
+      Array.isArray(savedQuiz.answered)
+        ? savedQuiz.answered.map((item) => [String(item.questionIndex), {
+          selected: Number(item.selected),
+          correct: Boolean(item.correct),
+        }])
+        : [],
+    );
+    const refreshScore = () => {
+      const correctCount = [...answered.values()].filter((item) => item.correct).length;
+      quiz.querySelector("[data-quiz-score]").textContent = `${correctCount} dari 5 benar • ${answered.size} soal sudah dijawab`;
+    };
+    const persistQuiz = () => {
+      saveCurrentStudentWork({ silent: true });
+      const allWorks = loadStudentWorks();
+      const work = allWorks[currentChapter.id] || {};
+      const correctCount = [...answered.values()].filter((item) => item.correct).length;
+      work.quickQuiz = {
+        answered: [...answered.entries()].map(([questionIndex, value]) => ({
+          questionIndex: Number(questionIndex),
+          selected: value.selected,
+          correct: value.correct,
+        })),
+        score: correctCount,
+        complete: answered.size === 5,
+        savedAt: new Date().toISOString(),
+      };
+      allWorks[currentChapter.id] = work;
+      localStorage.setItem(STUDENT_WORK_KEY, JSON.stringify(allWorks));
+      updateLessonCompleteButton();
+    };
     quiz.querySelectorAll("[data-quiz-question]").forEach((question) => {
+      const applyAnswer = (selected) => {
+        const correct = Number(question.dataset.correct);
+        question.querySelectorAll("[data-quiz-option]").forEach((option) => {
+          const optionIndex = Number(option.dataset.quizOption);
+          option.classList.toggle("is-correct", optionIndex === correct);
+          option.classList.toggle("is-wrong", optionIndex === selected && selected !== correct);
+          option.setAttribute("aria-pressed", String(optionIndex === selected));
+        });
+        const feedback = question.querySelector(".chapter-quiz-feedback");
+        feedback.className = `chapter-quiz-feedback ${selected === correct ? "correct" : "wrong"}`;
+        feedback.textContent = `${selected === correct ? "Benar." : "Belum tepat."} ${question.dataset.explanation}`;
+      };
+      const restored = answered.get(String(question.dataset.quizQuestion));
+      if (restored) applyAnswer(restored.selected);
       question.querySelectorAll("[data-quiz-option]").forEach((button) => {
         button.addEventListener("click", () => {
           const questionIndex = question.dataset.quizQuestion;
           const selected = Number(button.dataset.quizOption);
           const correct = Number(question.dataset.correct);
-          answered.set(questionIndex, selected === correct);
-          question.querySelectorAll("[data-quiz-option]").forEach((option) => {
-            const optionIndex = Number(option.dataset.quizOption);
-            option.classList.toggle("is-correct", optionIndex === correct);
-            option.classList.toggle("is-wrong", optionIndex === selected && selected !== correct);
-            option.setAttribute("aria-pressed", String(optionIndex === selected));
-          });
-          const feedback = question.querySelector(".chapter-quiz-feedback");
-          feedback.className = `chapter-quiz-feedback ${selected === correct ? "correct" : "wrong"}`;
-          feedback.textContent = `${selected === correct ? "Benar." : "Belum tepat."} ${question.dataset.explanation}`;
-          const correctCount = [...answered.values()].filter(Boolean).length;
-          quiz.querySelector("[data-quiz-score]").textContent = `${correctCount} dari 5 benar • ${answered.size} soal sudah dijawab`;
+          answered.set(questionIndex, { selected, correct: selected === correct });
+          applyAnswer(selected);
+          refreshScore();
+          persistQuiz();
         });
       });
     });
+    refreshScore();
   }
 
   function attachLessonNavigation() {
@@ -1189,6 +1294,12 @@ if (workspace && appData) {
     else if (currentLessonView === "worksheet") content.innerHTML = lessonWorksheetHtml(currentChapter);
     else content.innerHTML = lessonMaterialHtml(currentChapter);
     attachStudentWorkForm();
+    attachLkpdEditors();
+    const allWorks = loadStudentWorks();
+    const chapterWork = allWorks[currentChapter.id] || {};
+    chapterWork.viewedSections = [...new Set([...(chapterWork.viewedSections || []), currentLessonView])];
+    allWorks[currentChapter.id] = chapterWork;
+    localStorage.setItem(STUDENT_WORK_KEY, JSON.stringify(allWorks));
     if (currentLessonView === "material") attachQuickQuiz();
     attachLessonNavigation();
     setStudentStatus("Jawaban pada bab ini tersimpan otomatis saat diketik.");
@@ -1215,11 +1326,9 @@ if (workspace && appData) {
   });
   document.querySelector("#toggle-lesson-complete")?.addEventListener("click", () => {
     if (!currentChapter) return;
-    if (state.completed.includes(currentChapter.id)) {
-      state.completed = state.completed.filter((id) => id !== currentChapter.id);
-    } else {
-      state.completed = [...state.completed, currentChapter.id];
-    }
+    const validation = chapterCompletionValidation();
+    if (!validation.ready || state.completed.includes(currentChapter.id)) return;
+    state.completed = [...state.completed, currentChapter.id];
     saveState();
     updateProgress();
     updateLessonCompleteButton();
@@ -1229,12 +1338,82 @@ if (workspace && appData) {
   });
   document.querySelector("#send-student-work")?.addEventListener("click", exportAndShareStudentWork);
 
+  function chapterCompletionValidation() {
+    if (!currentChapter) return { ready: false, checks: [] };
+    const saved = loadStudentWorks()[currentChapter.id] || {};
+    const live = document.querySelector("#student-work-form") ? collectStudentWork() : null;
+    const identity = live?.identity || loadStudentIdentity();
+    const answers = live?.answers || saved.answers || [];
+    const reflections = live?.reflections || saved.reflections || [];
+    const videos = live?.videoSummaries || saved.videoSummaries || [];
+    const viewedSections = saved.viewedSections || [];
+    const quickQuiz = saved.quickQuiz || {};
+    const checks = [
+      {
+        label: "Materi, Ringkasan, dan LKPD sudah dibuka",
+        passed: ["material", "summary", "worksheet"].every((name) => viewedSections.includes(name)),
+      },
+      {
+        label: "Nama, nomor absen, dan kelas lengkap",
+        passed: Boolean(identity?.name?.trim() && identity?.attendance?.trim() && identity?.className?.trim()),
+      },
+      {
+        label: "Seluruh latihan uraian sudah dijawab",
+        passed: answers.length === currentChapter.questions.length && answers.every((answer) => String(answer || "").trim().length >= 10),
+      },
+      {
+        label: "Rencana produk/LKPD sudah diisi",
+        passed: String(live?.projectPlan ?? saved.projectPlan ?? "").trim().length >= 20,
+      },
+      {
+        label: "Tiga refleksi sudah diisi",
+        passed: reflections.length === 3 && reflections.every((answer) => String(answer || "").trim().length >= 10),
+      },
+      {
+        label: "Lima soal cek langsung sudah dijawab",
+        passed: Boolean(quickQuiz.complete && Array.isArray(quickQuiz.answered) && quickQuiz.answered.length === 5),
+      },
+      {
+        label: "Dua ringkasan video masing-masing minimal 500 karakter",
+        passed: videos.length === 2 && videos.every((summary) => String(summary || "").trim().length >= 500),
+      },
+    ];
+    return { ready: checks.every((item) => item.passed), checks };
+  }
+
   function updateLessonCompleteButton() {
     const button = document.querySelector("#toggle-lesson-complete");
     if (!button || !currentChapter) return;
-    const completed = state.completed.includes(currentChapter.id);
-    button.textContent = completed ? "✓ Bab sudah selesai" : "Tandai selesai";
+    const validation = chapterCompletionValidation();
+    let completed = state.completed.includes(currentChapter.id);
+    if (completed && !validation.ready) {
+      state.completed = state.completed.filter((id) => id !== currentChapter.id);
+      completed = false;
+      saveState();
+      updateProgress();
+    }
+    const passedCount = validation.checks.filter((item) => item.passed).length;
+    button.disabled = completed || !validation.ready;
+    button.textContent = completed
+      ? "✓ Bab sudah selesai"
+      : validation.ready
+        ? "Tandai bab selesai"
+        : `🔒 Lengkapi tugas (${passedCount}/${validation.checks.length})`;
     button.classList.toggle("is-complete", completed);
+    button.classList.toggle("is-ready", validation.ready && !completed);
+    const summary = document.querySelector("#chapter-completion-summary");
+    if (summary) {
+      summary.textContent = completed
+        ? "Seluruh komponen telah tervalidasi. Status bab dikunci sebagai selesai."
+        : validation.ready
+          ? "Seluruh komponen lengkap. Tombol penyelesaian bab sudah dapat digunakan."
+          : `${passedCount} dari ${validation.checks.length} syarat terpenuhi. Lengkapi bagian yang belum bertanda centang.`;
+    }
+    const checks = document.querySelector("#chapter-completion-checks");
+    if (checks) {
+      checks.innerHTML = validation.checks.map((item) => `
+        <span class="${item.passed ? "passed" : "pending"}">${item.passed ? "✓" : "○"} ${escapeHtml(item.label)}</span>`).join("");
+    }
   }
 
   function printDocument(title, html) {
@@ -2426,9 +2605,71 @@ if (workspace && appData) {
   }
 
   function displayPrayerTimes(timings) {
+    currentPrayerTimings = timings;
     document.querySelectorAll("[data-prayer]").forEach((element) => {
       element.textContent = String(timings[element.dataset.prayer] || "--:--").match(/\d{1,2}:\d{2}/)?.[0] || "--:--";
     });
+    updatePrayerCountdown();
+    window.clearInterval(prayerCountdownTimer);
+    prayerCountdownTimer = window.setInterval(updatePrayerCountdown, 30000);
+  }
+
+  function jakartaClockMinutes() {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+      timeZone: "Asia/Jakarta",
+    }).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return (Number(values.hour) * 60) + Number(values.minute);
+  }
+
+  function prayerMinutes(timings, key) {
+    const value = String(timings?.[key] || "").match(/(\d{1,2}):(\d{2})/);
+    return value ? (Number(value[1]) * 60) + Number(value[2]) : null;
+  }
+
+  function updatePrayerCountdown() {
+    if (!currentPrayerTimings) return;
+    const prayers = [
+      { key: "Fajr", label: "Subuh" },
+      { key: "Dhuhr", label: "Dzuhur" },
+      { key: "Asr", label: "Ashar" },
+      { key: "Maghrib", label: "Maghrib" },
+      { key: "Isha", label: "Isya" },
+    ].map((item) => ({ ...item, minutes: prayerMinutes(currentPrayerTimings, item.key) }))
+      .filter((item) => Number.isFinite(item.minutes));
+    if (prayers.length !== 5) return;
+    const now = jakartaClockMinutes();
+    let nextIndex = prayers.findIndex((item) => item.minutes > now);
+    let activeIndex = nextIndex - 1;
+    let minutesRemaining;
+    if (nextIndex === -1) {
+      nextIndex = 0;
+      activeIndex = prayers.length - 1;
+      minutesRemaining = (1440 - now) + prayers[0].minutes;
+    } else {
+      minutesRemaining = prayers[nextIndex].minutes - now;
+    }
+    document.querySelectorAll(".prayer-grid > div").forEach((card) => {
+      const key = card.querySelector("[data-prayer]")?.dataset.prayer;
+      card.classList.toggle("is-current-prayer", activeIndex >= 0 && key === prayers[activeIndex]?.key);
+      card.classList.toggle("is-next-prayer", key === prayers[nextIndex]?.key);
+    });
+    const activeLabel = document.querySelector("#active-prayer-label");
+    const countdown = document.querySelector("#next-prayer-countdown");
+    if (activeLabel) {
+      activeLabel.textContent = activeIndex >= 0
+        ? `Waktu ${prayers[activeIndex].label}`
+        : "Menjelang Subuh";
+    }
+    if (countdown) {
+      const hours = Math.floor(minutesRemaining / 60);
+      const minutes = minutesRemaining % 60;
+      const duration = hours > 0 ? `${hours} jam ${minutes} menit` : `${minutes} menit`;
+      countdown.textContent = `${duration} lagi menuju ${prayers[nextIndex].label} (${String(currentPrayerTimings[prayers[nextIndex].key]).match(/\d{1,2}:\d{2}/)?.[0]} WIB).`;
+    }
   }
 
   async function loadPrayerTimes(force = false) {
@@ -2482,17 +2723,54 @@ if (workspace && appData) {
     button.addEventListener("click", () => openIslamicView(button.dataset.islamicView));
   });
 
-  function speakArabic(text, statusElement) {
+  let arabicVoicePromise = null;
+
+  function resolveArabicVoice() {
+    if (!("speechSynthesis" in window)) return Promise.resolve(null);
+    const chooseVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      return voices.find((voice) => /^ar[-_]/i.test(voice.lang))
+        || voices.find((voice) => /arab/i.test(`${voice.name} ${voice.lang}`))
+        || null;
+    };
+    const immediate = chooseVoice();
+    if (immediate) return Promise.resolve(immediate);
+    if (arabicVoicePromise) return arabicVoicePromise;
+    arabicVoicePromise = new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        window.speechSynthesis.removeEventListener?.("voiceschanged", finish);
+        resolve(chooseVoice());
+      };
+      window.speechSynthesis.addEventListener?.("voiceschanged", finish, { once: true });
+      window.setTimeout(finish, 1800);
+      window.speechSynthesis.getVoices();
+    }).finally(() => {
+      arabicVoicePromise = null;
+    });
+    return arabicVoicePromise;
+  }
+
+  async function speakArabic(text, statusElement) {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
       statusElement.textContent = "Audio perangkat tidak tersedia pada browser ini.";
       return;
     }
+    statusElement.textContent = "Menyiapkan suara Arab perangkat…";
+    const voice = await resolveArabicVoice();
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "ar-SA";
-    utterance.rate = 0.8;
+    if (voice) utterance.voice = voice;
+    utterance.rate = 0.72;
+    utterance.pitch = 1;
+    utterance.volume = 1;
     utterance.onstart = () => {
-      statusElement.textContent = "Audio perangkat sedang diputar.";
+      statusElement.textContent = voice
+        ? `Pelafalan diputar dengan suara ${voice.name}.`
+        : "Pelafalan diputar dengan suara bawaan perangkat.";
     };
     utterance.onend = () => {
       statusElement.textContent = "Pemutaran selesai.";
@@ -2501,6 +2779,9 @@ if (workspace && appData) {
       statusElement.textContent = "Suara bahasa Arab tidak tersedia. Pasang suara Arab pada perangkat untuk memakai audio luring.";
     };
     window.speechSynthesis.speak(utterance);
+    window.setTimeout(() => {
+      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    }, 120);
   }
 
   function readArabicProgress() {
@@ -2890,19 +3171,41 @@ if (workspace && appData) {
     renderHijriCalendar();
   });
 
-  function renderDailyInsight() {
+  function renderDailyInsight(nextIndex = null) {
     const container = document.querySelector("#daily-insight");
     if (!container || !islamicData.dailyInsights.length) return;
-    const index = Math.floor(Date.now() / 86400000) % islamicData.dailyInsights.length;
-    const item = islamicData.dailyInsights[index];
+    if (Number.isInteger(nextIndex)) dailyInsightIndex = nextIndex;
+    if (!Number.isInteger(dailyInsightIndex)) {
+      dailyInsightIndex = Math.floor(Date.now() / 86400000) % islamicData.dailyInsights.length;
+    }
+    const normalizedIndex = ((dailyInsightIndex % islamicData.dailyInsights.length) + islamicData.dailyInsights.length) % islamicData.dailyInsights.length;
+    dailyInsightIndex = normalizedIndex;
+    const item = islamicData.dailyInsights[normalizedIndex];
     container.innerHTML = `
-      <span class="badge">${escapeHtml(item.type)}</span>
+      <div class="insight-card-head"><span class="badge">${escapeHtml(item.type)}</span><small>${normalizedIndex + 1} dari ${islamicData.dailyInsights.length}</small></div>
       <blockquote>${escapeHtml(item.text)}</blockquote>
       ${item.url
         ? `<a class="insight-source" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.source)} ↗</a>`
         : `<strong>${escapeHtml(item.source)}</strong>`}
-      <p>${escapeHtml(item.detail)}</p>`;
+      <p>${escapeHtml(item.detail)}</p>
+      <span class="insight-click-hint">Klik kartu untuk menampilkan nasihat berikutnya.</span>`;
   }
+
+  function showNextDailyInsight() {
+    const next = Number.isInteger(dailyInsightIndex) ? dailyInsightIndex + 1 : 1;
+    renderDailyInsight(next);
+  }
+
+  document.querySelector("#daily-insight")?.addEventListener("click", (event) => {
+    if (event.target.closest("a")) return;
+    showNextDailyInsight();
+  });
+  document.querySelector("#daily-insight")?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    showNextDailyInsight();
+  });
+  document.querySelector("#next-daily-insight")?.addEventListener("click", showNextDailyInsight);
 
   function shuffle(items) {
     const copy = [...items];

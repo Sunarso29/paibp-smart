@@ -1,5 +1,5 @@
 (() => {
-  const levels = [
+  const baseLevels = [
     {
       id: "dasar",
       label: "Dasar",
@@ -56,9 +56,78 @@
         ["Berdiskusi santun", "أَحْتَرِمُ رَأْيَكَ، وَلَكِنْ لِي رَأْيٌ آخَرُ", "aḥtarimu ra’yaka, walākin lī ra’yun ākharu", "Saya menghormati pendapatmu, tetapi saya memiliki pendapat lain.", "Ungkapan ini menunjukkan …", ["ejekan", "perbedaan yang santun", "penolakan kasar"], 1],
       ],
     },
-  ].map((level) => ({
+  ];
+
+  const expansions = {
+    dasar: [
+      ["Warna", "اَلْكِتَابُ أَزْرَقُ", "al-kitābu azraqu", "Buku itu berwarna biru.", "Kata أَزْرَقُ berarti …", ["merah", "biru", "hijau"], 1],
+      ["Anggota tubuh", "هٰذِهِ يَدِي", "hādzihī yadī", "Ini tangan saya.", "Kata يَدِي berarti …", ["tanganku", "mataku", "kepalaku"], 0],
+      ["Pakaian", "أَلْبَسُ الْقَمِيصَ", "albasul-qamīsha", "Saya mengenakan kemeja.", "Kata الْقَمِيصَ berarti …", ["sepatu", "kemeja", "peci"], 1],
+      ["Makanan", "آكُلُ الْأَرُزَّ", "ākulul-aruzza", "Saya makan nasi.", "Kata kerja آكُلُ berarti …", ["saya makan", "saya minum", "saya membaca"], 0],
+      ["Minuman", "أَشْرَبُ الْمَاءَ", "asyrabul-mā'a", "Saya minum air.", "Kata الْمَاءَ berarti …", ["susu", "air", "teh"], 1],
+      ["Cuaca", "اَلْجَوُّ مُشْمِسٌ", "al-jawwu musymsun", "Cuaca cerah.", "Kata مُشْمِسٌ berarti …", ["cerah", "hujan", "dingin"], 0],
+      ["Rumah", "هٰذَا بَيْتِي", "hādzā baitī", "Ini rumah saya.", "Kata بَيْتِي berarti …", ["sekolahku", "rumahku", "kamarku"], 1],
+      ["Kamar", "غُرْفَتِي نَظِيفَةٌ", "ghurfatī naẓīfatun", "Kamar saya bersih.", "Kata غُرْفَتِي berarti …", ["kamarku", "kelasku", "tamanku"], 0],
+      ["Hobi", "هَوَايَتِي الْقِرَاءَةُ", "hiwāyatī al-qirā'atu", "Hobi saya membaca.", "Hobi pada kalimat ialah …", ["menulis", "membaca", "berenang"], 1],
+      ["Olahraga", "أَلْعَبُ كُرَةَ الْقَدَمِ", "al'abu kuratal-qadami", "Saya bermain sepak bola.", "Kata أَلْعَبُ berarti …", ["saya bermain", "saya belajar", "saya berjalan"], 0],
+      ["Kendaraan", "أَذْهَبُ بِالدَّرَّاجَةِ", "adz-habu bid-darrājati", "Saya pergi dengan sepeda.", "Kendaraan pada kalimat ialah …", ["bus", "sepeda", "kereta"], 1],
+      ["Profesi", "أَبِي مُعَلِّمٌ", "abī mu'allimun", "Ayah saya seorang guru.", "Kata مُعَلِّمٌ berarti …", ["dokter", "guru", "petani"], 1],
+      ["Kata sifat", "اَلْفَصْلُ وَاسِعٌ", "al-fashlu wāsi'un", "Kelas itu luas.", "Kata وَاسِعٌ berarti …", ["sempit", "luas", "tinggi"], 1],
+      ["Ucapan terima kasih", "شُكْرًا جَزِيلًا", "syukran jazīlan", "Terima kasih banyak.", "Ungkapan ini digunakan untuk …", ["meminta maaf", "berterima kasih", "berpamitan"], 1],
+    ],
+    menengah: [
+      ["Kata ganti", "هُوَ طَالِبٌ مُجْتَهِدٌ", "huwa thālibun mujtahidun", "Dia murid laki-laki yang rajin.", "Kata هُوَ berarti …", ["dia laki-laki", "dia perempuan", "mereka"], 0],
+      ["Kepemilikan", "هٰذَا كِتَابُ الْمُعَلِّمِ", "hādzā kitābul-mu'allimi", "Ini buku guru.", "Susunan tersebut menunjukkan …", ["larangan", "kepemilikan", "pertanyaan"], 1],
+      ["Kata tunjuk", "هٰذِهِ سَبُّورَةٌ", "hādzihī sabbūratun", "Ini papan tulis.", "هٰذِهِ digunakan untuk kata benda …", ["mudzakkar", "muannats", "jamak saja"], 1],
+      ["Keterangan waktu", "أَدْرُسُ بَعْدَ الْمَغْرِبِ", "adrusu ba'dal-maghribi", "Saya belajar setelah Maghrib.", "Kapan kegiatan belajar berlangsung?", ["sebelum Subuh", "setelah Maghrib", "siang hari"], 1],
+      ["Keterangan tempat", "الْكِتَابُ فَوْقَ الْمَكْتَبِ", "al-kitābu fauqal-maktabi", "Buku berada di atas meja.", "Kata فَوْقَ berarti …", ["di bawah", "di atas", "di antara"], 1],
+      ["Kalimat negatif", "لَا أَكْذِبُ", "lā akdzibu", "Saya tidak berdusta.", "Partikel لَا pada kalimat menyatakan …", ["perintah", "peniadaan", "pertanyaan"], 1],
+      ["Perintah", "اِقْرَأِ الدَّرْسَ", "iqra'id-darsa", "Bacalah pelajaran.", "Kalimat tersebut berbentuk …", ["perintah", "berita", "larangan"], 0],
+      ["Larangan", "لَا تُهْمِلْ وَاجِبَكَ", "lā tuhml wājibaka", "Jangan abaikan tugasmu.", "Kalimat ini berisi …", ["pujian", "larangan", "permintaan arah"], 1],
+      ["Kebiasaan baik", "أُرَتِّبُ غُرْفَتِي كُلَّ يَوْمٍ", "urattibu ghurfatī kulla yaumin", "Saya merapikan kamar setiap hari.", "Seberapa sering kegiatan dilakukan?", ["setiap hari", "setiap bulan", "sekali"], 0],
+      ["Kesehatan", "أَغْسِلُ يَدَيَّ قَبْلَ الطَّعَامِ", "aghsilu yadayya qablath-tha'āmi", "Saya mencuci tangan sebelum makan.", "Kegiatan dilakukan … makan.", ["setelah", "sebelum", "ketika"], 1],
+      ["Lingkungan", "نَضَعُ النُّفَايَاتِ فِي مَكَانِهَا", "nadha'un-nufāyāti fī makānihā", "Kami menaruh sampah pada tempatnya.", "Nilai utama kalimat ialah …", ["kebersihan", "persaingan", "perjalanan"], 0],
+      ["Perpustakaan", "أَبْحَثُ عَنِ الْمَرْجِعِ", "abḥatsu 'anil-marji'i", "Saya mencari buku rujukan.", "Kata أَبْحَثُ berarti …", ["saya mencari", "saya meminjam", "saya mengembalikan"], 0],
+      ["Menyatakan kemampuan", "أَسْتَطِيعُ أَنْ أَقْرَأَ", "astathī'u an aqra'a", "Saya mampu membaca.", "أَسْتَطِيعُ berarti …", ["saya ingin", "saya mampu", "saya harus"], 1],
+      ["Menyatakan keinginan", "أُرِيدُ أَنْ أَتَعَلَّمَ", "urīdu an ata'allama", "Saya ingin belajar.", "Kata أُرِيدُ berarti …", ["saya ingin", "saya tahu", "saya selesai"], 0],
+    ],
+    mahir: [
+      ["Gagasan utama", "اَلْعِلْمُ يَبْنِي الْمُسْتَقْبَلَ", "al-'ilmu yabnil-mustaqbala", "Ilmu membangun masa depan.", "Gagasan utama kalimat ialah …", ["masa depan dibangun dengan ilmu", "ilmu harus disimpan", "masa depan tidak penting"], 0],
+      ["Kalimat majemuk", "دَرَسْتُ ثُمَّ كَتَبْتُ الْخُلَاصَةَ", "darastu tsumma katabtul-khulāshata", "Saya belajar kemudian menulis ringkasan.", "Kata ثُمَّ menunjukkan …", ["urutan", "sebab", "larangan"], 0],
+      ["Syarat sederhana", "إِنْ تَجْتَهِدْ تَنْجَحْ", "in tajtahid tanjaḥ", "Jika bersungguh-sungguh, kamu akan berhasil.", "Hubungan kalimat ialah …", ["syarat dan hasil", "perbandingan", "pertanyaan"], 0],
+      ["Tujuan", "أَذْهَبُ إِلَى الْمَكْتَبَةِ لِأَقْرَأَ", "adz-habu ilal-maktabati li-aqra'a", "Saya pergi ke perpustakaan untuk membaca.", "Tujuan pergi ke perpustakaan ialah …", ["menulis", "membaca", "bermain"], 1],
+      ["Alasan", "أَحْفَظُ الْوَقْتَ لِأَنَّهُ أَمَانَةٌ", "aḥfaẓul-waqta li-annahu amānatun", "Saya menjaga waktu karena waktu adalah amanah.", "Alasan menjaga waktu ialah …", ["waktu adalah amanah", "waktu sangat panjang", "waktu dapat diulang"], 0],
+      ["Kesimpulan", "إِذَنْ، الصِّدْقُ طَرِيقُ النَّجَاحِ", "idzan, ash-shidqu tharīqun-najāḥi", "Jadi, kejujuran adalah jalan keberhasilan.", "Kata إِذَنْ menandai …", ["sapaan", "kesimpulan", "larangan"], 1],
+      ["Menyetujui", "أُوَافِقُكَ فِي هٰذَا الرَّأْيِ", "uwāfiquka fī hādzar-ra'yi", "Saya setuju dengan pendapat ini.", "Penutur menyatakan …", ["persetujuan", "kebingungan", "permohonan"], 0],
+      ["Tidak setuju santun", "لَا أُوَافِقُ، وَلِي سَبَبٌ", "lā uwāfiqu, wa lī sababun", "Saya tidak setuju dan memiliki alasan.", "Sikap ilmiah yang ditunjukkan ialah …", ["menolak tanpa alasan", "berbeda dengan alasan", "mengejek"], 1],
+      ["Menyajikan bukti", "الدَّلِيلُ عَلَى ذٰلِكَ هُوَ النَّصُّ", "ad-dalīlu 'alā dzālika huwan-nashshu", "Buktinya adalah teks tersebut.", "Kalimat digunakan untuk …", ["menunjukkan bukti", "berpamitan", "meminta izin"], 0],
+      ["Merangkum", "خُلَاصَةُ النَّصِّ أَنَّ الْأَمَانَةَ وَاجِبَةٌ", "khulāshatun-nashshi annal-amānata wājibatun", "Ringkasan teks: amanah itu wajib.", "Isi ringkasan ialah …", ["amanah itu wajib", "teks itu panjang", "ringkasan tidak perlu"], 0],
+      ["Sebab sosial", "نَتَعَاوَنُ لِنَخْدِمَ الْمُجْتَمَعَ", "nata'āwanu linakhdimal-mujtama'a", "Kami bekerja sama untuk melayani masyarakat.", "Tujuan kerja sama ialah …", ["melayani masyarakat", "mencari pujian", "menghindari tugas"], 0],
+      ["Menjaga bumi", "يَجِبُ أَنْ نَحْفَظَ الْأَرْضَ", "yajibu an naḥfaẓal-ardha", "Kita wajib menjaga bumi.", "Kata يَجِبُ menunjukkan …", ["kewajiban", "kemungkinan", "masa lalu"], 0],
+      ["Teks sejarah", "اِزْدَهَرَ الْعِلْمُ فِي الْحَضَارَةِ الْإِسْلَامِيَّةِ", "izdaharal-'ilmu fil-ḥadhāratil-islāmiyyati", "Ilmu berkembang dalam peradaban Islam.", "Apa yang berkembang?", ["perdagangan", "ilmu", "perjalanan"], 1],
+      ["Ajakan akademik", "لِنَقْرَأِ الْمَصْدَرَ قَبْلَ الْحُكْمِ", "linaqra'il-mashdara qablal-ḥukmi", "Mari membaca sumber sebelum menilai.", "Pesan utama kalimat ialah …", ["periksa sumber", "cepat menilai", "abaikan bukti"], 0],
+    ],
+    percakapan: [
+      ["Berkenalan", "مَا اسْمُكَ؟ اِسْمِي عَلِيٌّ", "mā ismuka? ismī 'Aliyyun", "Siapa namamu? Nama saya Ali.", "Pertanyaan menanyakan …", ["alamat", "nama", "kelas"], 1],
+      ["Menanyakan kabar", "كَيْفَ حَالُكَ؟ أَنَا بِخَيْرٍ", "kaifa ḥāluka? anā bikhairin", "Apa kabar? Saya baik.", "Jawaban yang diberikan ialah …", ["saya baik", "saya pergi", "saya belajar"], 0],
+      ["Meminta izin masuk", "هَلْ أَسْتَطِيعُ الدُّخُولَ؟", "hal astathī'ud-dukhūla?", "Bolehkah saya masuk?", "Percakapan ini digunakan untuk …", ["meminta izin", "meminta buku", "menawarkan makanan"], 0],
+      ["Meminta pengulangan", "مِنْ فَضْلِكَ، أَعِدِ الْكَلَامَ", "min fadhlika, a'idil-kalāma", "Tolong ulangi ucapan itu.", "Penutur meminta …", ["penjelasan tertulis", "pengulangan", "perjalanan"], 1],
+      ["Meminta penjelasan", "لَا أَفْهَمُ، هَلْ تَشْرَحُ؟", "lā afhamu, hal tasyraḥu?", "Saya belum paham, apakah Anda dapat menjelaskan?", "Kebutuhan penutur ialah …", ["penjelasan", "makanan", "arah"], 0],
+      ["Meminjam alat tulis", "هَلْ أَسْتَعِيرُ قَلَمَكَ؟", "hal asta'īru qalamaka?", "Bolehkah saya meminjam penamu?", "Benda yang hendak dipinjam ialah …", ["buku", "pena", "penggaris"], 1],
+      ["Membeli makanan", "بِكَمْ هٰذَا الطَّعَامُ؟", "bikam hādzath-tha'āmu?", "Berapa harga makanan ini?", "Kata بِكَمْ digunakan untuk menanyakan …", ["harga", "tempat", "waktu"], 0],
+      ["Di halte", "مَتَى تَصِلُ الْحَافِلَةُ؟", "matā tashilul-ḥāfilatu?", "Kapan bus tiba?", "Yang ditanyakan ialah …", ["arah bus", "waktu tiba", "harga tiket"], 1],
+      ["Menjenguk teman", "شَفَاكَ اللَّهُ", "syafākallāhu", "Semoga Allah Subhanahu Wata'ala menyembuhkanmu.", "Ungkapan ini disampaikan kepada …", ["orang sakit", "orang bepergian", "orang belajar"], 0],
+      ["Bertamu", "أَهْلًا وَسَهْلًا، تَفَضَّلْ", "ahlan wa sahlan, tafadhdhal", "Selamat datang, silakan masuk.", "Ungkapan menunjukkan …", ["sambutan", "penolakan", "perpisahan"], 0],
+      ["Menyusun janji", "نَلْتَقِي بَعْدَ الظُّهْرِ", "naltaqī ba'dazh-zhuhri", "Kita bertemu setelah Dzuhur.", "Waktu pertemuan ialah …", ["sebelum Subuh", "setelah Dzuhur", "setelah Isya"], 1],
+      ["Meminta maaf", "أَعْتَذِرُ عَنْ خَطَئِي", "a'tadziru 'an khatha'ī", "Saya meminta maaf atas kesalahan saya.", "Penutur sedang …", ["berterima kasih", "meminta maaf", "mengundang"], 1],
+      ["Memberi saran", "مِنَ الْأَفْضَلِ أَنْ تُرَاجِعَ دَرْسَكَ", "minal-afdhali an turāji'a darsaka", "Sebaiknya kamu mengulang pelajaranmu.", "Kalimat berisi …", ["saran", "larangan keras", "sapaan"], 0],
+      ["Berpamitan", "إِلَى اللِّقَاءِ، فِي أَمَانِ اللَّهِ", "ilal-liqā', fī amānillāhi", "Sampai jumpa, semoga dalam penjagaan Allah Subhanahu Wata'ala.", "Ungkapan digunakan ketika …", ["bertemu", "berpamitan", "meminta bantuan"], 1],
+    ],
+  };
+
+  const levels = baseLevels.map((level) => ({
     ...level,
-    lessons: level.lessons.map(([title, arabic, transliteration, meaning, question, options, answer], index) => ({
+    lessons: [...level.lessons, ...(expansions[level.id] || [])].map(([title, arabic, transliteration, meaning, question, options, answer], index) => ({
       id: `${level.id}-${index + 1}`,
       title,
       arabic,

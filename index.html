@@ -177,8 +177,15 @@
                     <button class="btn btn-compact" type="button" id="download-lesson">Unduh Materi</button>
                     <button class="btn btn-compact" type="button" id="save-student-work">Simpan jawaban</button>
                     <button class="cta btn-compact" type="button" id="send-student-work">Kirim kepada guru</button>
-                    <button class="btn btn-compact" type="button" id="toggle-lesson-complete">Tandai selesai</button>
+                    <button class="btn btn-compact completion-button" type="button" id="toggle-lesson-complete" disabled>🔒 Lengkapi seluruh tugas</button>
                   </div>
+                </div>
+                <div class="chapter-completion-panel" id="chapter-completion-panel" aria-live="polite">
+                  <div>
+                    <strong>Validasi ketuntasan bab</strong>
+                    <span id="chapter-completion-summary">Selesaikan seluruh komponen sebelum bab dapat ditandai selesai.</span>
+                  </div>
+                  <div class="completion-checks" id="chapter-completion-checks"></div>
                 </div>
                 <div class="lesson-title-block">
                   <span class="badge" id="lesson-meta"></span>
@@ -281,6 +288,11 @@
                         <div><span>Maghrib</span><strong data-prayer="Maghrib">--:--</strong></div>
                         <div><span>Isya</span><strong data-prayer="Isha">--:--</strong></div>
                       </div>
+                      <div class="prayer-countdown" id="prayer-countdown" aria-live="polite">
+                        <span>Waktu aktif</span>
+                        <strong id="active-prayer-label">Menunggu jadwal</strong>
+                        <span id="next-prayer-countdown">Hitung mundur akan tampil setelah jadwal dimuat.</span>
+                      </div>
                     </div>
                     <blockquote class="daily-motivation">
                       <span>Pengingat belajar hari ini</span>
@@ -341,7 +353,7 @@
                     <div class="subheading-row">
                       <div>
                         <h4>Akademi Bahasa Arab</h4>
-                        <p>Jalur belajar Dasar, Menengah, Mahir, dan Percakapan dengan latihan bertahap, XP, serta suara Arab perangkat.</p>
+                        <p>Jalur belajar Dasar, Menengah, Mahir, dan Percakapan berisi 80 pelajaran bertahap, latihan, XP, serta pelafalan Arab yang diperiksa otomatis pada perangkat.</p>
                       </div>
                       <span class="live-badge" id="arabic-xp">0 XP</span>
                     </div>
@@ -350,12 +362,13 @@
                     <article class="arabic-lesson-player" id="arabic-lesson-player">
                       <p>Pilih pelajaran untuk mulai belajar.</p>
                     </article>
-                    <p class="document-note">Materi dan progres tersedia luring. Audio memakai suara Arab pada perangkat; agar dapat diputar tanpa internet, pasang suara Arab luring pada pengaturan bahasa ponsel atau komputer.</p>
+                    <p class="document-note">Materi dan progres tersedia luring. Pemutar menunggu daftar suara perangkat sampai siap, memilih suara Arab secara otomatis, lalu memberi petunjuk bila paket suara Arab belum terpasang.</p>
                   </section>
 
                   <section data-islamic-page="insights" hidden>
-                    <div class="subheading-row"><div><h4>Nasihat Harian Bersumber</h4><p>Berubah otomatis setiap hari. Nomor hadits/bab ditampilkan; halaman hanya dicantumkan bila edisi sudah diverifikasi.</p></div></div>
-                    <article class="daily-insight" id="daily-insight"></article>
+                    <div class="subheading-row"><div><h4>Nasihat Harian Bersumber</h4><p>Berubah otomatis setiap hari dan dapat diganti dengan sekali klik. Nomor hadits/bab ditampilkan; halaman hanya dicantumkan bila edisi sudah diverifikasi.</p></div></div>
+                    <article class="daily-insight" id="daily-insight" role="button" tabindex="0" aria-label="Klik untuk menampilkan nasihat berikutnya"></article>
+                    <button class="btn btn-compact insight-next-button" id="next-daily-insight" type="button">Nasihat berikutnya →</button>
                     <div class="warning"><strong>Kebijakan sumber:</strong> PAIBP SMART tidak mengarang nomor halaman. Karena halaman kitab berbeda menurut edisi, sumber memakai surat/ayat, nomor hadits, atau nama bab. Intisari editorial selalu ditandai.</div>
                   </section>
                 </div>
@@ -369,7 +382,7 @@
                   <h3>Laboratorium Games PAIBP</h3>
                   <p>Pilih permainan cepat tepat, pasangan ilmu, urutan ibadah, benar atau perlu diluruskan, jejak dalil, atau misi akhlak.</p>
                 </div>
-                <div class="mini-progress"><strong id="quiz-score">0</strong><span>skor saat ini</span></div>
+                <div class="game-bank-summary"><strong><span id="quiz-score">0</span>/10</strong><span>skor saat ini • bank 120 soal</span></div>
               </div>
               <div class="game-mode-grid" id="game-mode-grid">
                 <button type="button" data-game-mode="quiz"><span>⚡</span><strong>Cepat Tepat</strong><small>10 soal pilihan ganda</small></button>
@@ -550,6 +563,7 @@
     <script src="school-data.js"></script>
     <script src="islamic-data.js"></script>
     <script src="arabic-data.js"></script>
+    <script src="game-data.js"></script>
     <script src="video-data.js"></script>
     <script src="script.js"></script>
   </body>

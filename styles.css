@@ -90,6 +90,13 @@
 .prayer-grid div{background:#f4faf7;border-radius:15px;padding:14px 8px;text-align:center}
 .prayer-grid span{display:block;color:var(--muted);font-size:12px}
 .prayer-grid strong{display:block;margin-top:5px;color:var(--navy);font-size:19px}
+.prayer-grid div.is-current-prayer{position:relative;color:#fff;background:linear-gradient(145deg,#087f68,#075764);box-shadow:0 10px 24px rgba(8,127,104,.25);transform:translateY(-2px)}
+.prayer-grid div.is-current-prayer::before{content:"WAKTU AKTIF";position:absolute;top:-9px;left:50%;transform:translateX(-50%);border-radius:999px;background:#f4bd3e;padding:2px 7px;color:#16343c;font-size:7px;font-weight:900;white-space:nowrap}
+.prayer-grid div.is-current-prayer span,.prayer-grid div.is-current-prayer strong{color:#fff}
+.prayer-grid div.is-next-prayer:not(.is-current-prayer){outline:2px solid #f4bd3e;background:#fff9e3}
+.prayer-countdown{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:center;margin-top:14px;border-radius:15px;background:#e8f6f1;padding:13px 16px}
+.prayer-countdown>span:first-child{grid-row:1/3;border-radius:999px;background:#087f68;padding:7px 10px;color:#fff;font-size:9px;font-weight:900;text-transform:uppercase}
+.prayer-countdown strong{color:var(--navy);font-size:15px}.prayer-countdown>span:last-child{color:var(--muted);font-size:12px}
 .daily-motivation{margin:18px 0 0;padding:22px;border:0;border-left:5px solid var(--gold);border-radius:15px;background:#fff8dc}
 .daily-motivation span{font-size:12px;font-weight:900;color:#7a5b0b;text-transform:uppercase}
 .daily-motivation p{margin:7px 0 0;font-size:18px;font-weight:750}
@@ -233,6 +240,16 @@
 .concept-map span{min-height:70px;display:grid;place-items:center;border:2px dashed #8bcdbb;border-radius:14px;background:#f4fbf8;padding:12px;text-align:center;font-weight:800}
 .answer-space{min-height:68px;border-bottom:2px dotted #a9b9b4;margin:8px 0}
 .answer-space.tall{min-height:150px}
+.editable-lkpd-table input,.editable-lkpd-table textarea,.direct-lkpd-field textarea,.direct-lkpd-answers textarea{width:100%;border:1px solid #b8cdc6;border-radius:9px;background:#fff;padding:10px;color:var(--ink);font:inherit;resize:vertical}
+.editable-lkpd-table input:focus,.editable-lkpd-table textarea:focus,.direct-lkpd-field textarea:focus,.direct-lkpd-answers textarea:focus{outline:3px solid rgba(8,127,104,.14);border-color:var(--emerald);background:#fbfffd}
+.editable-lkpd-table td{min-width:180px}.editable-hint{margin:12px 0 0;color:var(--emerald);font-size:11px;font-weight:750}
+.direct-lkpd-field,.direct-lkpd-answers label{display:grid;gap:7px;margin-top:13px;color:#25444d;font-weight:750}
+.direct-lkpd-answers li{margin-bottom:15px}
+.chapter-completion-panel{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:12px 0 18px;border:1px solid #c9dcd6;border-radius:16px;background:#f7fbf9;padding:14px 16px}
+.chapter-completion-panel>div:first-child{display:grid;gap:3px;min-width:220px}.chapter-completion-panel strong{font-size:13px}.chapter-completion-panel>div:first-child span{color:var(--muted);font-size:10px}
+.completion-checks{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}.completion-checks span{border-radius:999px;padding:5px 8px;font-size:8px;font-weight:800}
+.completion-checks .passed{background:#dff5ec;color:#087554}.completion-checks .pending{background:#fff3cf;color:#805f08}
+.completion-button:disabled{cursor:not-allowed;opacity:.76}.completion-button.is-ready{border-color:#087f68;background:#e4f8f0;color:#087554;box-shadow:0 7px 18px rgba(8,127,104,.15)}
 .planning-table td{height:56px}
 .teacher-controls{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:18px;padding:12px 16px;border:1px solid var(--line);border-radius:18px;background:#f8fcfa}
 .teacher-controls .filter-row{margin:0}
@@ -509,11 +526,14 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .arabic-practice h5{margin:0;font-size:16px}.arabic-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .arabic-options button{border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px;cursor:pointer}
 .arabic-options button.correct{border-color:#079b73;background:#e4f8f0}.arabic-options button.wrong{border-color:#d55e43;background:#fff0ec}
+.daily-insight[role="button"]{cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}.daily-insight[role="button"]:hover,.daily-insight[role="button"]:focus-visible{transform:translateY(-2px);box-shadow:0 14px 32px rgba(8,44,54,.11);outline:2px solid rgba(8,127,104,.25)}
+.insight-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.insight-card-head small,.insight-click-hint{color:var(--muted);font-size:10px}.insight-click-hint{display:block;margin-top:14px;font-weight:750}.insight-next-button{margin-top:10px}
 .game-mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:18px 0}
 .game-mode-grid button{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;border:1px solid var(--line);border-radius:17px;background:#fff;padding:15px;text-align:left;color:var(--ink);cursor:pointer;box-shadow:0 7px 20px rgba(8,44,54,.05)}
 .game-mode-grid button>span{grid-row:1/3;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#e2f6ef,#fff2c5);font-size:21px}
 .game-mode-grid strong{font-size:13px}.game-mode-grid small{color:var(--muted);font-size:10px}
 .game-mode-grid button.is-active{border-color:var(--emerald);background:#eef9f5;box-shadow:0 9px 24px rgba(8,127,104,.13)}
+.game-bank-summary{display:grid;min-width:150px;border-radius:16px;background:#e6f6f0;padding:12px 15px;text-align:right}.game-bank-summary strong{color:var(--emerald);font-size:21px}.game-bank-summary span{color:var(--muted);font-size:9px}
 .teacher-auth{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
 .teacher-auth-backdrop{position:absolute;inset:0;background:rgba(4,25,34,.72);backdrop-filter:blur(7px)}
 .teacher-auth-dialog{position:relative;width:min(100%,430px);border:1px solid rgba(255,255,255,.35);border-radius:25px;background:#fff;padding:30px;box-shadow:0 30px 100px rgba(0,0,0,.38)}
@@ -567,6 +587,7 @@ body.has-modal{overflow:hidden}
   .chapter-package-actions{grid-template-columns:1fr}
   .lesson-viewer{padding:12px}
   .lesson-viewer-head{align-items:flex-start;flex-direction:column}
+  .chapter-completion-panel{flex-direction:column}.completion-checks{justify-content:flex-start}
   .document-tabs{display:grid}
   .printable-document{padding:17px}
   .identity-grid,.concept-map{grid-template-columns:1fr}
@@ -605,6 +626,7 @@ body.has-modal{overflow:hidden}
   .video-section-heading,.video-summary-footer,.arabic-level-intro{align-items:flex-start;flex-direction:column}
   .arabic-level-tabs{grid-template-columns:repeat(2,1fr)}
   .arabic-lesson-nodes,.arabic-options,.game-mode-grid{grid-template-columns:1fr}
+  .prayer-countdown{grid-template-columns:1fr}.prayer-countdown>span:first-child{grid-row:auto;width:max-content}
 }
 @media print{
   .topbar,.hero,.portal-tabs,.workspace-header,.lesson-viewer-head,.document-tabs,.teacher-controls,.teacher-doc-menu,.footer,.alt{display:none!important}

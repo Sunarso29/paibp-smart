@@ -4,10 +4,10 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 
 ## Fitur Utama
 
-- Ruang Murid: 30 paket belajar dengan pendahuluan, pengertian, dalil, infografis, ikhtisar, latihan, LKPD interaktif, dua video per bab, unduhan materi, serta satu formulir jawaban terpadu di bawah materi/LKPD.
+- Ruang Murid: 30 paket belajar dengan pendahuluan, pengertian, dalil, infografis, ikhtisar, latihan, LKPD yang langsung dapat diketik, dua video per bab, unduhan materi, serta validasi tujuh syarat sebelum bab dapat ditandai selesai.
 - Ruang Guru: akses berkunci, CP, KKTP, ATP, Prota, Promes, analisis alokasi waktu, dan 30 modul lengkap yang diadopsi dari 48 berkas sumber kelas VII–IX, Kalender Pendidikan, kendali aktivitas, serta rekap tugas terpisah per kelas.
-- Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat, kalender bertanda per tanggal, nasihat bersumber, dan Akademi Bahasa Arab empat tingkat.
-- Fitur Games: enam mode permainan, skor, XP, level, dan lencana.
+- Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat dengan penanda waktu aktif dan hitung mundur, kalender bertanda per tanggal, 60 nasihat bersumber yang dapat diganti dengan klik, dan Akademi Bahasa Arab empat tingkat.
+- Fitur Games: enam mode permainan dengan bank 120 soal, skor, XP, level, dan lencana.
 - Spensus: selayang pandang sekolah, 38 tenaga pendidik termasuk kepala sekolah, 13 tenaga kependidikan, galeri dua baris pada telepon, serta editor admin dokumentasi kegiatan.
 
 ## Halaman
@@ -18,7 +18,8 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 - `teacher-source-data.js` — tampilan terstruktur 48 perangkat sumber Ruang Guru
 - `calendar-data.js` — libur, peringatan, dan Kaldik bertanggal
 - `islamic-data.js` — doa, dzikir, kalender puasa/sejarah, dan nasihat bersumber
-- `arabic-data.js` — 24 pelajaran Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan
+- `arabic-data.js` — 80 pelajaran Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan
+- `game-data.js` — bank 120 soal untuk enam mode games
 - `video-data.js` — kurasi dua video penguatan untuk setiap bab kelas VII–IX
 - `school-data.js` — identitas sekolah serta data kepala sekolah, guru, dan tenaga kependidikan
 - `script.js` — fungsi tab, materi, LKPD, perangkat guru, kalkulator, jadwal, dan games
