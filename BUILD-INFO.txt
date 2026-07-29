@@ -1,5 +1,5 @@
 PAIBP SMART SMP
-Versi paket: 10.0
+Versi paket: 11.0
 Tanggal paket: 29 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
@@ -7,19 +7,22 @@ Paket ini memuat:
 - 30 paket materi, dalil, ringkasan visual, latihan langsung, dan LKPD kelas VII–IX yang dapat diketik langsung
 - validasi tujuh syarat ketuntasan; tombol penyelesaian bab tetap terkunci sampai seluruh komponen benar-benar lengkap
 - formulir latihan, LKPD, refleksi, dan ringkasan video yang menyatu sebagai satu paket tugas murid
-- rekap tugas guru, nilai, catatan, CSV, cadangan, dan cetak
-- Ruang Guru berkunci, rekap pekerjaan terpisah per kelas, serta integrasi opsional rekap akses dan pengiriman tugas lintas perangkat
+- rekap tugas guru, nilai, catatan, unduhan Word/PDF, cadangan Word, dan cetak
+- Ruang Guru memakai identitas nama, unit kerja, dan NIP opsional; rekap pekerjaan tetap terpisah per kelas
+- statistik pengunjung non-admin, angka guru/murid, komentar, rating, balasan, dan moderasi
+- Ruang Editor dengan kata sandi admin standar 261078 untuk teks beranda, galeri, statistik, dan tanggapan
 - 48 perangkat sumber kelas VII–IX: CP, ATP, KKTP, Prota, Promes, analisis alokasi waktu, dan 30 modul ajar lengkap
 - 48 berkas sumber .docx telah dibersihkan dari blok tanda tangan; bold dibatasi pada judul, subjudul, dan kepala tabel
 - unduhan materi murid dan berkas sumber guru memiliki jalur unduh utama serta jalur buka cadangan
 - Al Qur'an, audio yang dapat disimpan luring, Hisnul Muslim, dzikir, kalender bertanda per tanggal, 60 nasihat bersumber yang dapat diganti dengan klik, serta jadwal sholat dengan waktu aktif dan hitung mundur
 - Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dengan 80 pelajaran, XP, latihan, pemuatan suara Arab asinkron, serta petunjuk ketersediaan audio perangkat
 - 60 video penguatan (dua per bab) dengan ringkasan minimal 500 karakter yang ikut dalam paket tugas
-- 14 arena game PAIBP dengan 280 soal: cepat tepat, pasangan ilmu, urutan, luruskan pernyataan, jejak dalil, misi akhlak, tebak tokoh, jelajah sejarah, fikih praktis, Bahasa Arab kilat, sambung makna ayat, detektif informasi, puzzle ibadah, dan boss battle
-- setiap arena memuat 20 soal dan mengunci perpindahan ruang sampai seluruh soal diselesaikan; sesi tersimpan agar dapat dilanjutkan setelah muat ulang
+- 100 game edukatif dalam 10 kelompok dengan 15 mekanik, termasuk Sambung Ayat dari ayat pilihan yang mudah
+- setiap game memuat 20 soal dengan pengacakan kriptografis urutan soal/pilihan; ruang kombinasi sesi melebihi satu triliun
+- setiap game mengunci perpindahan ruang sampai seluruh soal diselesaikan; sesi tersimpan agar dapat dilanjutkan setelah muat ulang
 - pembaca dalil luring memuat 114 Al Qur'an Surat dan 6.236 ayat lengkap dengan terjemahan Bahasa Indonesia dan suara Arab perangkat
 - profil sekolah, 38 tenaga pendidik termasuk kepala sekolah, 13 tenaga kependidikan, dan Spensus Terkini khusus beranda
-- editor admin Spensus Terkini untuk foto, judul, tanggal, ringkasan, cadangan, dan sinkronisasi opsional
+- editor admin Spensus Terkini untuk foto, judul, tanggal, ringkasan, laporan Word, dan sinkronisasi opsional
 - galeri personel responsif dua baris pada telepon, tanpa filter mapel, dengan foto wajah tertanam
 - panduan Google Apps Script untuk mengaktifkan rekap waktu, tempat berbasis izin, durasi, bagian yang diakses, dan pekerjaan murid secara daring
 - dukungan PWA dan mode luring

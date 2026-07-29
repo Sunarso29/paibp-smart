@@ -379,10 +379,116 @@
     return [`Boss Battle ${index + 1}: bukti penguasaan tema ${item.term} yang paling utuh ialah …`, options, answer, correct];
   });
 
+  const versePairs = [
+    ["Al-Fatihah 1–2", "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ", "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ"],
+    ["Al-Fatihah 4–5", "مَٰلِكِ يَوۡمِ ٱلدِّينِ", "إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ"],
+    ["Al-Fatihah 6–7", "ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ", "صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ"],
+    ["Ad-Duha 1–2", "وَٱلضُّحَىٰ", "وَٱلَّيۡلِ إِذَا سَجَىٰ"],
+    ["Ad-Duha 3–4", "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ", "وَلَلۡأٓخِرَةُ خَيۡرٞ لَّكَ مِنَ ٱلۡأُولَىٰ"],
+    ["Asy-Syarh 1–2", "أَلَمۡ نَشۡرَحۡ لَكَ صَدۡرَكَ", "وَوَضَعۡنَا عَنكَ وِزۡرَكَ"],
+    ["Asy-Syarh 5–6", "فَإِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرًا", "إِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرٗا"],
+    ["At-Tin 1–2", "وَٱلتِّينِ وَٱلزَّيۡتُونِ", "وَطُورِ سِينِينَ"],
+    ["Al-Qadr 1–2", "إِنَّآ أَنزَلۡنَٰهُ فِي لَيۡلَةِ ٱلۡقَدۡرِ", "وَمَآ أَدۡرَىٰكَ مَا لَيۡلَةُ ٱلۡقَدۡرِ"],
+    ["Az-Zalzalah 1–2", "إِذَا زُلۡزِلَتِ ٱلۡأَرۡضُ زِلۡزَالَهَا", "وَأَخۡرَجَتِ ٱلۡأَرۡضُ أَثۡقَالَهَا"],
+    ["Al-'Adiyat 1–2", "وَٱلۡعَٰدِيَٰتِ ضَبۡحٗا", "فَٱلۡمُورِيَٰتِ قَدۡحٗا"],
+    ["Al-Qari'ah 1–2", "ٱلۡقَارِعَةُ", "مَا ٱلۡقَارِعَةُ"],
+    ["At-Takasur 1–2", "أَلۡهَىٰكُمُ ٱلتَّكَاثُرُ", "حَتَّىٰ زُرۡتُمُ ٱلۡمَقَابِرَ"],
+    ["Al-'Asr 1–2", "وَٱلۡعَصۡرِ", "إِنَّ ٱلۡإِنسَٰنَ لَفِي خُسۡرٍ"],
+    ["Al-Fil 1–2", "أَلَمۡ تَرَ كَيۡفَ فَعَلَ رَبُّكَ بِأَصۡحَٰبِ ٱلۡفِيلِ", "أَلَمۡ يَجۡعَلۡ كَيۡدَهُمۡ فِي تَضۡلِيلٖ"],
+    ["Quraisy 1–2", "لِإِيلَٰفِ قُرَيۡشٍ", "إِۦلَٰفِهِمۡ رِحۡلَةَ ٱلشِّتَآءِ وَٱلصَّيۡفِ"],
+    ["Al-Ma'un 1–2", "أَرَءَيۡتَ ٱلَّذِي يُكَذِّبُ بِٱلدِّينِ", "فَذَٰلِكَ ٱلَّذِي يَدُعُّ ٱلۡيَتِيمَ"],
+    ["Al-Kafirun 1–2", "قُلۡ يَـٰٓأَيُّهَا ٱلۡكَٰفِرُونَ", "لَآ أَعۡبُدُ مَا تَعۡبُدُونَ"],
+    ["Al-Ikhlas 1–2", "قُلۡ هُوَ ٱللَّهُ أَحَدٌ", "ٱللَّهُ ٱلصَّمَدُ"],
+    ["Al-Falaq 1–2", "قُلۡ أَعُوذُ بِرَبِّ ٱلۡفَلَقِ", "مِن شَرِّ مَا خَلَقَ"],
+  ];
+  bank.continueVerse = versePairs.map(([reference, current, next], index) => {
+    const distractors = [5, 9, 13].map((step) => versePairs[(index + step) % versePairs.length][2]);
+    const [options, answer] = rotateOptions(next, distractors, index);
+    return [
+      `Sambung ayat berikut dengan lanjutan yang tepat.\n${current}`,
+      options,
+      answer,
+      `Lanjutan ${reference} adalah ${next}`,
+    ];
+  });
+
+  const worlds = [
+    { id: "quran", title: "Jelajah Al Qur'an", icon: "📖", modes: ["continueVerse", "verseMeaning", "dalil", "continueVerse", "verseMeaning"] },
+    { id: "iman", title: "Benteng Iman", icon: "🛡️", modes: ["quiz", "truefalse", "dalil", "match", "boss"] },
+    { id: "ibadah", title: "Lab Ibadah", icon: "🕌", modes: ["fiqh", "worshipPuzzle", "sequence", "truefalse", "scenario"] },
+    { id: "akhlak", title: "Misi Akhlak", icon: "🌱", modes: ["scenario", "match", "truefalse", "digital", "boss"] },
+    { id: "sejarah", title: "Lorong Sejarah", icon: "🏛️", modes: ["history", "prophets", "quiz", "sequence", "boss"] },
+    { id: "tokoh", title: "Teladan Tokoh", icon: "🧭", modes: ["prophets", "history", "match", "truefalse", "boss"] },
+    { id: "fikih", title: "Fikih Kehidupan", icon: "⚖️", modes: ["fiqh", "scenario", "sequence", "dalil", "worshipPuzzle"] },
+    { id: "arab", title: "Bahasa Arab", icon: "🔤", modes: ["arabic", "match", "quiz", "sequence", "boss"] },
+    { id: "digital", title: "Muslim Digital", icon: "💻", modes: ["digital", "truefalse", "scenario", "quiz", "boss"] },
+    { id: "juara", title: "Liga PAIBP", icon: "🏆", modes: ["boss", "quiz", "dalil", "fiqh", "continueVerse"] },
+  ];
+  const challengeNames = [
+    "Gerbang Pemula", "Misi Penjelajah", "Tantangan Cendekia", "Arena Teladan", "Lintasan Cepat",
+    "Ruang Detektif", "Puzzle Berantai", "Ujian Fokus", "Kombo Juara", "Final Cahaya",
+  ];
+  const arenas = worlds.flatMap((world, worldIndex) => challengeNames.map((challenge, challengeIndex) => ({
+    id: `arena-${String((worldIndex * 10) + challengeIndex + 1).padStart(3, "0")}`,
+    world: world.id,
+    worldTitle: world.title,
+    title: `${world.title}: ${challenge}`,
+    icon: world.icon,
+    description: challengeIndex % 3 === 0
+      ? "20 soal acak dengan urutan pilihan berbeda pada setiap sesi"
+      : challengeIndex % 3 === 1
+        ? "20 tantangan relevan PAIBP SMP yang wajib dituntaskan"
+        : "20 misi adaptif dari bank konsep, dalil, dan penerapan",
+    baseMode: world.modes[challengeIndex % world.modes.length],
+  })));
+
+  function secureRandomInt(max) {
+    if (max <= 1) return 0;
+    if (globalThis.crypto?.getRandomValues) {
+      const buffer = new Uint32Array(1);
+      globalThis.crypto.getRandomValues(buffer);
+      return buffer[0] % max;
+    }
+    return Math.floor(Math.random() * max);
+  }
+
+  function randomShuffle(items) {
+    const copy = [...items];
+    for (let index = copy.length - 1; index > 0; index -= 1) {
+      const target = secureRandomInt(index + 1);
+      [copy[index], copy[target]] = [copy[target], copy[index]];
+    }
+    return copy;
+  }
+
+  function generateSession(arenaId, count = 20) {
+    const arena = arenas.find((item) => item.id === arenaId) || arenas[0];
+    const source = bank[arena.baseMode] || bank.quiz;
+    const prefixes = [
+      "", "Cermati baik-baik. ", "Tantangan berikutnya: ", "Gunakan pemahaman PAIBP SMP. ",
+      "Pilih berdasarkan dalil dan konsep. ", "Hindari jawaban tergesa-gesa. ",
+    ];
+    return randomShuffle(source).slice(0, count).map((entry) => {
+      const [question, options, correctIndex, explanation] = entry;
+      const correct = options[correctIndex];
+      const randomizedOptions = randomShuffle(options);
+      return [
+        `${prefixes[secureRandomInt(prefixes.length)]}${question}`,
+        randomizedOptions,
+        randomizedOptions.indexOf(correct),
+        explanation,
+      ];
+    });
+  }
+
   window.PAIBP_GAME_BANK = {
     bank,
+    arenas,
+    worlds,
+    generateSession,
     total: Object.values(bank).reduce((total, items) => total + items.length, 0),
     perMode: 20,
-    modeCount: Object.keys(bank).length,
+    modeCount: arenas.length,
+    combinationLabel: "> 1 triliun kemungkinan sesi",
   };
 })();

@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -54,6 +54,7 @@
             <div class="actions">
               <button class="cta" type="button" data-open-panel="student" aria-controls="panel-student">Masuk Ruang Murid</button>
               <button class="btn btn-outline" type="button" data-open-panel="teacher" aria-controls="panel-teacher">Masuk Ruang Guru</button>
+              <button class="btn btn-outline" type="button" data-open-panel="editor" aria-controls="panel-editor">Ruang Editor</button>
             </div>
           </div>
           <aside class="profile-card">
@@ -64,7 +65,7 @@
         </div>
       </section>
 
-      <section class="container portal-tabs" aria-label="Empat ruang utama">
+      <section class="container portal-tabs" aria-label="Lima ruang utama">
         <button class="portal-tab" type="button" data-open-panel="student" aria-controls="panel-student">
           <span class="portal-tab-icon" aria-hidden="true">🎒</span>
           <span><strong>Ruang Murid</strong><small>Materi, latihan, LKPD, kirim tugas</small></span>
@@ -81,6 +82,25 @@
           <span class="portal-tab-icon" aria-hidden="true">🎮</span>
           <span><strong>Fitur Games</strong><small>Kuis, skor, XP, lencana</small></span>
         </button>
+        <button class="portal-tab portal-tab-editor" type="button" data-open-panel="editor" aria-controls="panel-editor">
+          <span class="portal-tab-icon" aria-hidden="true">✍️</span>
+          <span><strong>Ruang Editor</strong><small>Kelola konten, statistik, tanggapan</small></span>
+        </button>
+      </section>
+
+      <section class="container visitor-overview" data-home-only aria-labelledby="visitor-overview-title">
+        <div>
+          <span class="badge">Statistik Pengunjung</span>
+          <h2 id="visitor-overview-title">Portal yang tumbuh bersama penggunanya</h2>
+          <p>Angka menampilkan kunjungan berperan yang tercatat dan tidak memasukkan sesi editor/admin.</p>
+        </div>
+        <div class="visitor-stat-grid">
+          <article><span>Total akses</span><strong id="visitor-total">0</strong></article>
+          <article><span>Guru</span><strong id="visitor-teachers">0</strong></article>
+          <article><span>Murid</span><strong id="visitor-students">0</strong></article>
+          <article><span>Rating</span><strong id="visitor-rating">—</strong><small id="visitor-rating-count">Belum ada penilaian</small></article>
+        </div>
+        <p class="save-status" id="visitor-stats-status" aria-live="polite"></p>
       </section>
 
       <section class="section portal-section" id="portal" aria-labelledby="workspace-title">
@@ -90,7 +110,7 @@
               <div>
                 <span class="badge">PAIBP SMART SMP</span>
                 <h2 id="workspace-title">Pilih ruang yang dibutuhkan</h2>
-                <p id="workspace-description">Empat ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya.</p>
+                <p id="workspace-description">Lima ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya.</p>
               </div>
               <button class="workspace-close" type="button" data-close-workspace aria-label="Kembali ke tampilan awal">×</button>
             </div>
@@ -99,12 +119,13 @@
               <div class="welcome-grid portal-welcome">
                 <div>
                   <span class="welcome-icon" aria-hidden="true">📚</span>
-                  <h3>Empat ruang dalam satu ekosistem pembelajaran</h3>
-                  <p>Akses materi, latihan, LKPD, perangkat guru, layanan Islami, dan game edukatif dalam satu portal yang terintegrasi.</p>
+                  <h3>Lima ruang dalam satu ekosistem pembelajaran</h3>
+                  <p>Akses materi, latihan, LKPD, perangkat guru, layanan Islami, game edukatif, dan kendali editor dalam satu portal yang terintegrasi.</p>
                 </div>
                 <div class="welcome-actions">
                   <button class="cta" type="button" data-open-panel="student" aria-controls="panel-student">Buka Ruang Murid</button>
                   <button class="btn" type="button" data-open-panel="teacher" aria-controls="panel-teacher">Buka Ruang Guru</button>
+                  <button class="btn" type="button" data-open-panel="editor" aria-controls="panel-editor">Buka Ruang Editor</button>
                 </div>
               </div>
               <div class="portal-metrics">
@@ -224,7 +245,7 @@
                 <div class="teacher-toolbar">
                   <button class="btn btn-compact" type="button" id="print-teacher-document">Cetak / Simpan PDF</button>
                   <button class="btn btn-compact" type="button" id="download-teacher-document">Unduh Dokumen</button>
-                  <button class="btn btn-compact teacher-lock-button" type="button" id="lock-teacher-room">🔒 Kunci Ruang Guru</button>
+                  <button class="btn btn-compact teacher-lock-button" type="button" id="lock-teacher-room">Ganti identitas guru</button>
                 </div>
               </div>
 
@@ -379,27 +400,19 @@
               <div class="panel-heading">
                 <div>
                   <span class="panel-kicker">🎮 Fitur Games</span>
-                  <h3>PAIBP Quest — 14 Arena Tantangan</h3>
-                  <p>Setiap arena berisi 20 soal utuh. Setelah dimulai, selesaikan seluruh soal sebelum membuka arena lain atau keluar.</p>
+                  <h3>PAIBP Quest — 100 Games Edukatif</h3>
+                  <p>Setiap game berisi 20 soal acak per sesi. Setelah dimulai, selesaikan seluruh soal sebelum membuka game lain atau keluar.</p>
                 </div>
-                <div class="game-bank-summary"><strong><span id="quiz-score">0</span>/20</strong><span>skor saat ini • bank 280 soal</span></div>
+                <div class="game-bank-summary"><strong><span id="quiz-score">0</span>/20</strong><span>skor saat ini • kombinasi sesi &gt; 1 triliun</span></div>
               </div>
-              <div class="game-mode-grid" id="game-mode-grid">
-                <button type="button" data-game-mode="quiz"><span>⚡</span><strong>Cepat Tepat</strong><small>20 soal konsep inti</small></button>
-                <button type="button" data-game-mode="match"><span>🧩</span><strong>Pasangan Ilmu</strong><small>20 pasangan istilah dan makna</small></button>
-                <button type="button" data-game-mode="sequence"><span>🔢</span><strong>Urutkan Hikmah</strong><small>20 susunan langkah</small></button>
-                <button type="button" data-game-mode="truefalse"><span>🔎</span><strong>Luruskan Pernyataan</strong><small>20 pernyataan kritis</small></button>
-                <button type="button" data-game-mode="dalil"><span>📖</span><strong>Jejak Dalil</strong><small>20 pencarian dalil</small></button>
-                <button type="button" data-game-mode="scenario"><span>🌱</span><strong>Misi Akhlak</strong><small>20 keputusan kehidupan</small></button>
-                <button type="button" data-game-mode="prophets"><span>🧭</span><strong>Tebak Tokoh</strong><small>20 nabi, sahabat, dan ulama</small></button>
-                <button type="button" data-game-mode="history"><span>🏛️</span><strong>Jelajah Sejarah</strong><small>20 tonggak peradaban Islam</small></button>
-                <button type="button" data-game-mode="fiqh"><span>🕌</span><strong>Fikih Praktis</strong><small>20 persoalan ibadah dan muamalah</small></button>
-                <button type="button" data-game-mode="arabic"><span>🔤</span><strong>Bahasa Arab Kilat</strong><small>20 tantangan kosakata</small></button>
-                <button type="button" data-game-mode="verseMeaning"><span>💡</span><strong>Sambung Makna Ayat</strong><small>20 tema Al Qur'an Surat</small></button>
-                <button type="button" data-game-mode="digital"><span>🛡️</span><strong>Detektif Informasi</strong><small>20 misi adab digital</small></button>
-                <button type="button" data-game-mode="worshipPuzzle"><span>🧠</span><strong>Puzzle Ibadah</strong><small>20 susunan penerapan</small></button>
-                <button type="button" data-game-mode="boss"><span>👑</span><strong>Boss Battle PAIBP</strong><small>20 tantangan penguasaan akhir</small></button>
+              <div class="game-catalog-tools">
+                <label>Cari game <input id="game-search" type="search" placeholder="Contoh: sambung ayat, fikih, akhlak"></label>
+                <label>Kelompok
+                  <select id="game-world-filter"><option value="">Semua kelompok</option></select>
+                </label>
+                <span id="game-catalog-count">100 game tersedia</span>
               </div>
+              <div class="game-mode-grid" id="game-mode-grid"></div>
               <div class="game-session-lock" id="game-session-lock" hidden>
                 <span aria-hidden="true">🔒</span>
                 <div><strong id="game-session-title">Arena dikunci</strong><p>Selesaikan 20 soal. Pemilihan arena dan tombol keluar akan terbuka setelah soal terakhir.</p></div>
@@ -432,6 +445,91 @@
               </div>
               <div class="badge-grid" id="badge-grid"></div>
             </section>
+
+            <section class="workspace-panel" id="panel-editor" data-panel="editor" hidden>
+              <div class="panel-heading">
+                <div>
+                  <span class="panel-kicker">✍️ Ruang Editor</span>
+                  <h3>Kendali Konten dan Tanggapan</h3>
+                  <p>Kelola teks beranda, dokumentasi Spensus, statistik, komentar, rating, dan balasan editor.</p>
+                </div>
+                <button class="btn btn-compact" id="lock-editor-room" type="button">Keluar dari editor</button>
+              </div>
+              <div class="editor-stat-grid">
+                <article><span>Total akses non-admin</span><strong id="editor-total-visits">0</strong></article>
+                <article><span>Guru</span><strong id="editor-teacher-visits">0</strong></article>
+                <article><span>Murid</span><strong id="editor-student-visits">0</strong></article>
+                <article><span>Tanggapan</span><strong id="editor-feedback-count">0</strong></article>
+              </div>
+              <div class="editor-layout">
+                <section class="editor-card">
+                  <h4>Sunting teks utama beranda</h4>
+                  <form id="homepage-editor-form">
+                    <label>Judul utama<input id="editor-hero-title" maxlength="100" required></label>
+                    <label>Deskripsi utama<textarea id="editor-hero-copy" rows="4" maxlength="500" required></textarea></label>
+                    <div class="actions">
+                      <button class="cta" type="submit">Terapkan perubahan</button>
+                      <button class="btn" id="reset-homepage-copy" type="button">Kembalikan bawaan</button>
+                    </div>
+                    <p class="save-status" id="homepage-editor-status" aria-live="polite"></p>
+                  </form>
+                </section>
+                <section class="editor-card">
+                  <h4>Spensus Terkini</h4>
+                  <p>Tambah foto kegiatan, ubah judul, tanggal, ringkasan, atau hapus dokumentasi.</p>
+                  <button class="btn" id="editor-open-gallery" type="button">Buka Editor Galeri</button>
+                </section>
+              </div>
+              <section class="editor-card">
+                <div class="subheading-row">
+                  <div><h4>Kunjungan guru terbaru</h4><p>Nama, unit kerja, NIP bila diisi, waktu, dan aktivitas akses.</p></div>
+                  <button class="btn btn-compact" id="editor-refresh-data" type="button">Muat ulang</button>
+                </div>
+                <div class="table-scroll"><table class="data-table"><thead><tr><th>Waktu</th><th>Nama</th><th>Unit kerja</th><th>NIP</th><th>Aktivitas</th></tr></thead><tbody id="editor-teacher-access"><tr><td colspan="5">Belum ada data guru.</td></tr></tbody></table></div>
+              </section>
+              <section class="editor-card">
+                <div class="subheading-row"><div><h4>Moderasi tanggapan</h4><p>Balas, tampilkan, sembunyikan, atau hapus komentar dan rating.</p></div></div>
+                <div id="editor-feedback-list"></div>
+              </section>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section feedback-section" data-home-only id="tanggapan">
+        <div class="container feedback-layout">
+          <div>
+            <span class="badge">Suara Pengguna</span>
+            <h2>Komentar dan rating</h2>
+            <p class="lead">Bagikan pengalaman menggunakan PAIBP SMART SMP. Masukan yang santun membantu portal ini terus berkembang.</p>
+            <form class="feedback-form" id="feedback-form">
+              <div class="feedback-form-row">
+                <label>Nama <input id="feedback-name" maxlength="80" placeholder="Boleh nama lengkap atau inisial"></label>
+                <label>Peran
+                  <select id="feedback-role" required>
+                    <option value="murid">Murid</option>
+                    <option value="guru">Guru</option>
+                    <option value="umum">Pengunjung umum</option>
+                  </select>
+                </label>
+                <label>Rating
+                  <select id="feedback-rating" required>
+                    <option value="5">5 — Sangat baik</option>
+                    <option value="4">4 — Baik</option>
+                    <option value="3">3 — Cukup</option>
+                    <option value="2">2 — Perlu perbaikan</option>
+                    <option value="1">1 — Kurang</option>
+                  </select>
+                </label>
+              </div>
+              <label>Komentar<textarea id="feedback-comment" rows="4" maxlength="1500" required placeholder="Tuliskan apresiasi, kendala, atau usulan secara spesifik."></textarea></label>
+              <button class="cta" type="submit">Kirim tanggapan</button>
+              <p class="save-status" id="feedback-status" aria-live="polite"></p>
+            </form>
+          </div>
+          <div class="public-feedback">
+            <h3>Tanggapan terbaru</h3>
+            <div id="public-feedback-list"><p>Belum ada tanggapan.</p></div>
           </div>
         </div>
       </section>
@@ -484,7 +582,7 @@
                 <h3>Dokumentasi Kegiatan</h3>
                 <p>Informasi dan dokumentasi kegiatan terbaru SMP Negeri 1 Susukan.</p>
               </div>
-              <button class="btn btn-compact" id="open-gallery-admin" type="button">🔐 Kelola Galeri</button>
+              <button class="btn btn-compact" id="open-gallery-admin" type="button">✍️ Buka Ruang Editor</button>
             </div>
             <div class="news-placeholder" id="news-gallery">
               <span aria-hidden="true">📸</span>
@@ -524,8 +622,7 @@
                 <div class="actions">
                   <button class="cta" type="submit">Simpan dan Terbitkan</button>
                   <button class="btn" id="cancel-gallery-edit" type="button">Bersihkan Formulir</button>
-                  <button class="btn" id="export-gallery" type="button">Cadangkan Galeri</button>
-                  <label class="btn file-button">Pulihkan Galeri<input id="import-gallery" type="file" accept="application/json,.json"></label>
+                  <button class="btn" id="export-gallery" type="button">Unduh Laporan Galeri Word</button>
                 </div>
               </form>
             </section>
@@ -554,15 +651,28 @@
       <section class="teacher-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="teacher-auth-title" aria-describedby="teacher-auth-description">
         <button class="teacher-auth-close" type="button" data-cancel-teacher-auth aria-label="Tutup">×</button>
         <span class="auth-icon" aria-hidden="true">🔐</span>
-        <h2 id="teacher-auth-title">Akses Khusus Ruang Guru</h2>
-        <p id="teacher-auth-description">Masukkan kata sandi untuk membuka perangkat pembelajaran dan rekap murid.</p>
-        <form id="teacher-auth-form">
-          <label for="teacher-password">Kata sandi Ruang Guru</label>
-          <input id="teacher-password" name="teacher-password" type="password" inputmode="numeric" autocomplete="current-password" required>
+        <h2 id="teacher-auth-title">Identitas Akses Guru</h2>
+        <p id="teacher-auth-description">Isi nama dan unit kerja agar kunjungan guru dapat tercatat. NIP bersifat opsional.</p>
+        <form id="teacher-access-form">
+          <label for="teacher-name">Nama guru</label>
+          <input id="teacher-name" name="teacher-name" type="text" maxlength="80" autocomplete="name" required>
+          <label for="teacher-work-unit">Unit kerja</label>
+          <input id="teacher-work-unit" name="teacher-work-unit" type="text" maxlength="120" placeholder="Contoh: SMP Negeri 1 Susukan" required>
+          <label for="teacher-nip">NIP <small>(opsional)</small></label>
+          <input id="teacher-nip" name="teacher-nip" type="text" inputmode="numeric" maxlength="30">
           <p class="auth-error" id="teacher-auth-error" aria-live="polite"></p>
           <div class="auth-actions">
             <button class="btn" type="button" data-cancel-teacher-auth>Batal</button>
             <button class="cta" type="submit">Buka Ruang Guru</button>
+          </div>
+        </form>
+        <form id="editor-auth-form" hidden>
+          <label for="editor-password">Kata sandi editor</label>
+          <input id="editor-password" name="editor-password" type="password" inputmode="numeric" autocomplete="current-password" required>
+          <p class="auth-error" id="editor-auth-error" aria-live="polite"></p>
+          <div class="auth-actions">
+            <button class="btn" type="button" data-cancel-teacher-auth>Batal</button>
+            <button class="cta" type="submit">Buka Ruang Editor</button>
           </div>
         </form>
       </section>
@@ -597,6 +707,7 @@
     <script src="arabic-data.js"></script>
     <script src="game-data.js"></script>
     <script src="video-data.js"></script>
+    <script src="docx-export.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

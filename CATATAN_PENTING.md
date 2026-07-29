@@ -5,12 +5,12 @@
 GitHub Pages tidak menyediakan server basis data. Karena itu, tombol **Kirim kepada guru** memakai alur yang menjaga identitas murid:
 
 1. latihan, LKPD, refleksi, dan ringkasan video disimpan sebagai satu pekerjaan per bab pada browser murid;
-2. situs membuat satu berkas `.paibp`;
+2. situs membuat satu berkas Word `.docx` yang dapat dibaca pengguna dan diimpor kembali oleh Ruang Guru;
 3. murid membagikan berkas kepada guru melalui kanal kelas;
 4. guru mengimpor banyak berkas melalui **Ruang Guru → Rekap Pekerjaan Murid**;
-5. rekap, nilai, dan catatan tersimpan pada browser guru dan dapat diunduh sebagai CSV atau dicetak.
+5. rekap, nilai, dan catatan tersimpan pada browser guru dan dapat diunduh sebagai Word atau disimpan sebagai PDF.
 
-Jangan mengunggah berkas tugas, rekap JSON, atau CSV nilai ke repository publik.
+Jangan mengunggah berkas tugas atau rekap Word yang memuat identitas murid ke repository publik.
 
 ## Perangkat kelas VII, VIII, dan IX
 
@@ -25,7 +25,7 @@ Susunan paragraf dan tabel sumber dipertahankan dalam tampilan web. Blok tanda t
 
 ## Spensus Terkini
 
-Editor galeri dibuka dari Beranda menggunakan kata sandi admin. Tanpa integrasi Google Apps Script, foto dan teks hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, data galeri disimpan pada Google Sheet dan foto pada Google Drive agar dapat dilihat dari perangkat lain.
+Ruang Editor dibuka dari Beranda menggunakan kata sandi admin standar `261078`. Editor dapat mengubah teks beranda, galeri, balasan, dan status tanggapan. Tanpa integrasi Google Apps Script, perubahan hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, konten, tanggapan, dan data galeri disimpan pada Google Sheet; foto disimpan pada Google Drive.
 
 ## Fitur Islami
 
@@ -39,7 +39,9 @@ Editor galeri dibuka dari Beranda menggunakan kata sandi admin. Tanpa integrasi 
 
 ## Fitur Games
 
-- Tersedia 14 arena dengan total 280 soal; setiap arena selalu menjalankan 20 soal.
+- Tersedia 100 game dalam 10 kelompok dan 15 mekanik; setiap game selalu menjalankan 20 soal.
+- Sambung Ayat memakai ayat pilihan yang mudah dari paket Al Qur'an luring.
+- Urutan soal dan pilihan diacak per sesi. Kombinasi yang mungkin melebihi satu triliun tanpa menyimpan atau mengarang triliunan butir literal.
 - Setelah arena dimulai, pemilihan arena lain, perpindahan ruang, dan tombol keluar dikunci sampai soal ke-20 selesai.
 - Sesi aktif disimpan pada perangkat. Jika halaman tidak sengaja dimuat ulang atau browser ditutup, arena dilanjutkan dari soal terakhir saat situs dibuka kembali.
 - Browser tetap dapat ditutup paksa oleh sistem operasi. Penguncian yang diterapkan adalah penguncian alur situs dan pemulihan sesi, bukan pengambilalihan kendali perangkat.

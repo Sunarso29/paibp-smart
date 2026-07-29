@@ -328,5 +328,29 @@
     detail,
   })));
 
+  dailyInsights.push(
+    {
+      type: "Hadits",
+      text: "Setiap orang adalah pemimpin dan akan dimintai pertanggungjawaban atas pihak yang berada dalam tanggungannya.",
+      source: "Hadits Riwayat Al-Bukhari no. 893",
+      detail: "Tema: amanah kepemimpinan dalam keluarga dan kehidupan bersama.",
+      url: "https://sunnah.com/bukhari:893",
+    },
+    {
+      type: "Kitab",
+      text: "Kelalaian orang tua dalam mengajarkan hal yang bermanfaat, kewajiban agama, dan sunnah dapat menjadi sebab besar kerusakan pendidikan anak.",
+      source: "Ibnul Qayyim, Tuhfatul Maudud bi Ahkamil Maulud, bagian pendidikan anak",
+      detail: "Intisari terjemahan dari teks Arab yang terverifikasi. Nomor halaman berbeda menurut edisi; rujukan digital menampilkan bagian tersebut pada halaman 80.",
+      url: "https://ftp.shamela.ws/book/17582/2375",
+    },
+    {
+      type: "Intisari Kitab",
+      text: "Sholat berjamaah menampakkan syiar Islam; pembahasannya perlu diletakkan bersama hukum, syarat, dan keadaan orang yang melaksanakannya.",
+      source: "Wahbah Az-Zuhaili, Al-Fiqhul Islami wa Adillatuhu, bab Hukum Sholat Berjamaah",
+      detail: "Intisari editorial—bukan kutipan langsung. Halaman mengikuti edisi digital yang digunakan.",
+      url: "https://shamela.ws/book/384/1125",
+    },
+  );
+
   window.PAIBP_ISLAMIC = { dua, fastingRules, historicDates, dailyInsights };
 })();

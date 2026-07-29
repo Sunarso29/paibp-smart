@@ -4,9 +4,11 @@ GitHub Pages hanya menyajikan file statis. Karena itu, rekap akses dari telepon 
 
 ## Data yang dicatat
 
-Integrasi mencatat waktu, nama/nomor absen/kelas yang pernah diisi murid, ruang/bab/bagian yang dibuka, serta potongan durasi aktif pada sheet **Aktivitas**. Nama tempat dipilih murid. Koordinat yang sudah dibulatkan hanya dicatat setelah murid menekan **Izinkan lokasi** dan menyetujui permintaan browser. Ketika murid memilih **Kirim kepada guru**, satu paket jawaban berisi latihan, LKPD, refleksi, dan ringkasan video disimpan secara terpisah pada sheet **Pekerjaan** agar dapat dimuat oleh guru. Isi jawaban tidak dimasukkan ke log aktivitas.
+Integrasi mencatat waktu, peran pengguna, identitas murid atau identitas guru, ruang/bab/bagian yang dibuka, serta potongan durasi aktif pada sheet **Aktivitas**. Identitas guru berisi nama, unit kerja, dan NIP bila diisi. Nama tempat dipilih murid. Koordinat yang sudah dibulatkan hanya dicatat setelah murid menekan **Izinkan lokasi** dan menyetujui permintaan browser. Ketika murid memilih **Kirim kepada guru**, satu paket jawaban berisi latihan, LKPD, refleksi, dan ringkasan video disimpan secara terpisah pada sheet **Pekerjaan** agar dapat dimuat oleh guru. Isi jawaban tidak dimasukkan ke log aktivitas.
 
 Editor admin **Spensus Terkini** memakai integrasi yang sama. Data judul, tanggal, dan ringkasan disimpan pada sheet **Spensus Terkini**, sedangkan foto kegiatan disimpan dalam folder Google Drive **PAIBP SMART — Spensus Terkini**. Tanpa integrasi, editor tetap berfungsi tetapi perubahan galeri hanya tersimpan pada perangkat admin tersebut.
+
+Komentar/rating disimpan pada sheet **Tanggapan**, sedangkan teks beranda hasil suntingan disimpan pada sheet **Konten Editor**. Statistik publik hanya menghitung sesi non-admin dan tidak membuka identitas pengguna.
 
 ## 1. Buat Web App
 
@@ -46,10 +48,10 @@ Unggah kembali `app-config.js` ke root repository GitHub, tunggu GitHub Pages se
 1. Buka website dari telepon.
 2. Masuk Ruang Murid, buka satu bab, isi identitas, lalu kirim satu tugas.
 3. Pilih nama tempat akses. Jika pengujian lokasi diperlukan, tekan **Izinkan lokasi** dan setujui permintaan browser.
-4. Di perangkat guru, buka Ruang Guru dengan kata sandi.
+4. Di perangkat guru, buka Ruang Guru, lalu isi nama, unit kerja, dan NIP bila ada.
 5. Pilih **Rekap Akses Murid → Muat Ulang Rekap** dan pastikan waktu, aktivitas, durasi, tempat, serta pengiriman muncul.
 6. Pilih **Rekap Pekerjaan Murid → Muat Tugas Daring** dan pastikan isi pekerjaan masuk ke kelompok kelas yang sesuai.
-7. Kembali ke Beranda, pilih **Kelola Galeri**, masukkan kata sandi admin, tambahkan satu foto uji, lalu buka website dari perangkat lain untuk memastikan dokumentasi tampil.
+7. Kembali ke Beranda, buka **Ruang Editor** dengan kata sandi standar `261078`, tambahkan satu foto uji, kirim satu komentar/rating, dan ubah teks beranda untuk memastikan sinkronisasi lintas perangkat.
 
 ## Memperbarui deployment
 
@@ -57,4 +59,4 @@ Setiap kali `google-apps-script/Code.gs` diperbarui, buka **Deploy → Manage de
 
 ## Catatan keamanan
 
-Kata sandi Ruang Guru dan Editor Galeri pada GitHub Pages adalah penghalang praktis agar murid tidak membuka menu secara tidak sengaja, bukan sistem akun berkeamanan tinggi. Izin lokasi harus bersifat sukarela dan pengguna perlu mengetahui tujuan pencatatannya. Jangan menyimpan data sensitif, dokumen rahasia, atau nilai final yang belum boleh dipublikasikan di dalam file repository. Untuk keamanan tingkat akun, versi berikutnya memerlukan backend dengan login guru terautentikasi.
+Ruang Guru sengaja tidak memakai kata sandi; identitas akses dipakai untuk pemantauan operasional, bukan autentikasi resmi. Kata sandi Ruang Editor pada GitHub Pages merupakan penghalang praktis, bukan sistem akun berkeamanan tinggi. Izin lokasi harus sukarela dan pengguna perlu mengetahui tujuan pencatatannya. Jangan menyimpan data sensitif, dokumen rahasia, atau nilai final yang belum boleh dipublikasikan di dalam repository. Keamanan tingkat akun memerlukan backend dengan login guru terautentikasi.

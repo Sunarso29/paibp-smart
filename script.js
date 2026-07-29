@@ -56,8 +56,13 @@ if (workspace && appData) {
   const SUBMISSION_RECAP_KEY = "paibp-smart-submission-recap-v1";
   const CUSTOM_CALENDAR_KEY = "paibp-smart-custom-calendar-v1";
   const GALLERY_STORAGE_KEY = "paibp-smart-gallery-v1";
-  const TEACHER_SESSION_KEY = "paibp-smart-teacher-unlocked";
-  const TEACHER_PASSWORD_HASH = "5a26e9c9bf1880cd3532883aad715e962d0b8c6cf06c4bfb61b44bcf0def3284";
+  const TEACHER_IDENTITY_KEY = "paibp-smart-teacher-identity-v1";
+  const EDITOR_SESSION_KEY = "paibp-smart-editor-unlocked";
+  const ADMIN_PASSWORD_HASH = "5a26e9c9bf1880cd3532883aad715e962d0b8c6cf06c4bfb61b44bcf0def3284";
+  const VISITOR_ROLE_KEY = "paibp-smart-visitor-role-v1";
+  const VISITOR_LEDGER_KEY = "paibp-smart-visitor-ledger-v1";
+  const FEEDBACK_STORAGE_KEY = "paibp-smart-feedback-v1";
+  const HOMEPAGE_COPY_KEY = "paibp-smart-homepage-copy-v1";
   const ACCESS_SESSION_KEY = "paibp-smart-access-session-v1";
   const ACCESS_CONTEXT_KEY = "paibp-smart-access-context-v1";
   const ARABIC_PROGRESS_KEY = "paibp-smart-arabic-progress-v1";
@@ -147,11 +152,12 @@ if (workspace && appData) {
   const gameModeBanks = gameData?.bank || fallbackGameModeBanks;
 
   const panelMeta = {
-    welcome: ["Pilih ruang yang dibutuhkan", "Empat ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya."],
+    welcome: ["Pilih ruang yang dibutuhkan", "Lima ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya."],
     student: ["Ruang Murid", "Buka materi, ringkasan, LKPD, tulis jawaban, simpan, cetak, dan kirim tugas dari 30 bab kelas VII–IX."],
     teacher: ["Ruang Guru", "Kelola perangkat, modul ajar lengkap, impor tugas murid, rekap, nilai, unduh, dan cetak."],
     islamic: ["Fitur Islami", "Baca Al Qur'an, Hisnul Muslim, dzikir, kalender, dan belajar Bahasa Arab bertahap dengan dukungan luring."],
-    games: ["Fitur Games", "Pilih 14 arena PAIBP, tuntaskan 20 soal per arena, raih XP, dan pantau prestasi lokal."],
+    games: ["Fitur Games", "Pilih 100 game edukatif PAIBP, tuntaskan 20 soal acak per game, raih XP, dan pantau prestasi lokal."],
+    editor: ["Ruang Editor", "Kelola konten beranda, statistik pengunjung, dokumentasi Spensus, komentar, rating, dan balasan."],
   };
 
   const panels = [...document.querySelectorAll("[data-panel]")];
@@ -179,11 +185,17 @@ if (workspace && appData) {
   let quizScore = 0;
   let quizLocked = false;
   let pendingProtectedAction = "teacher";
+  let currentVisitorRole = "umum";
+  try {
+    currentVisitorRole = sessionStorage.getItem(VISITOR_ROLE_KEY) || "umum";
+  } catch {
+    currentVisitorRole = "umum";
+  }
   let galleryAdminOpen = false;
   let galleryPreviewData = "";
   let activeResource = { type: "page", id: "home", title: "Beranda", startedAt: Date.now() };
   let sessionStartedAt = Date.now();
-  let currentGameMode = "quiz";
+  let currentGameMode = gameData?.arenas?.[0]?.id || "quiz";
   let activeGameSession = safeJsonParse(localStorage.getItem(GAME_SESSION_KEY), null);
   let arabicLevelId = "dasar";
   let dailyInsightIndex = null;
@@ -248,9 +260,27 @@ if (workspace && appData) {
     workspace.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
   }
 
-  function isTeacherUnlocked() {
+  function loadTeacherIdentity() {
     try {
-      return sessionStorage.getItem(TEACHER_SESSION_KEY) === "yes";
+      const identity = safeJsonParse(localStorage.getItem(TEACHER_IDENTITY_KEY), {});
+      return {
+        name: String(identity?.name || "").trim(),
+        workUnit: String(identity?.workUnit || "").trim(),
+        nip: String(identity?.nip || "").trim(),
+      };
+    } catch {
+      return { name: "", workUnit: "", nip: "" };
+    }
+  }
+
+  function isTeacherIdentified() {
+    const identity = loadTeacherIdentity();
+    return Boolean(identity.name && identity.workUnit);
+  }
+
+  function isEditorUnlocked() {
+    try {
+      return sessionStorage.getItem(EDITOR_SESSION_KEY) === "yes";
     } catch {
       return false;
     }
@@ -264,21 +294,36 @@ if (workspace && appData) {
     if (visible) {
       const title = document.querySelector("#teacher-auth-title");
       const description = document.querySelector("#teacher-auth-description");
-      const submit = document.querySelector("#teacher-auth-form button[type='submit']");
-      const galleryPurpose = purpose === "gallery";
-      if (title) title.textContent = galleryPurpose ? "Akses Admin Spensus Terkini" : "Akses Khusus Ruang Guru";
+      const icon = document.querySelector("#teacher-auth .auth-icon");
+      const adminPurpose = purpose === "gallery" || purpose === "editor";
+      const teacherForm = document.querySelector("#teacher-access-form");
+      const editorForm = document.querySelector("#editor-auth-form");
+      if (teacherForm) teacherForm.hidden = adminPurpose;
+      if (editorForm) editorForm.hidden = !adminPurpose;
+      if (icon) icon.textContent = adminPurpose ? "🔐" : "👤";
+      if (title) title.textContent = adminPurpose ? "Akses Ruang Editor" : "Identitas Akses Guru";
       if (description) {
-        description.textContent = galleryPurpose
-          ? "Masukkan kata sandi admin untuk menambah atau menyunting dokumentasi kegiatan."
-          : "Masukkan kata sandi untuk membuka perangkat pembelajaran dan rekap murid.";
+        description.textContent = adminPurpose
+          ? "Masukkan kata sandi admin untuk mengelola konten, statistik, dan tanggapan."
+          : "Isi nama dan unit kerja agar kunjungan guru dapat tercatat. NIP bersifat opsional.";
       }
-      if (submit) submit.textContent = galleryPurpose ? "Buka Editor Galeri" : "Buka Ruang Guru";
-      const input = document.querySelector("#teacher-password");
       const error = document.querySelector("#teacher-auth-error");
+      const editorError = document.querySelector("#editor-auth-error");
       if (error) error.textContent = "";
-      if (input) {
-        input.value = "";
-        window.setTimeout(() => input.focus(), 0);
+      if (editorError) editorError.textContent = "";
+      if (adminPurpose) {
+        const input = document.querySelector("#editor-password");
+        if (input) input.value = "";
+        window.setTimeout(() => input?.focus(), 0);
+      } else {
+        const identity = loadTeacherIdentity();
+        const name = document.querySelector("#teacher-name");
+        const workUnit = document.querySelector("#teacher-work-unit");
+        const nip = document.querySelector("#teacher-nip");
+        if (name) name.value = identity.name;
+        if (workUnit) workUnit.value = identity.workUnit;
+        if (nip) nip.value = identity.nip;
+        window.setTimeout(() => name?.focus(), 0);
       }
     }
   }
@@ -289,9 +334,9 @@ if (workspace && appData) {
     return [...new Uint8Array(digest)].map((part) => part.toString(16).padStart(2, "0")).join("");
   }
 
-  async function verifyTeacherPassword(value) {
+  async function verifyAdminPassword(value) {
     try {
-      return await sha256(value) === TEACHER_PASSWORD_HASH;
+      return await sha256(value) === ADMIN_PASSWORD_HASH;
     } catch {
       return false;
     }
@@ -327,9 +372,129 @@ if (workspace && appData) {
     localStorage.setItem(ACCESS_CONTEXT_KEY, JSON.stringify(context));
   }
 
+  function readVisitorLedger() {
+    try {
+      const ledger = safeJsonParse(localStorage.getItem(VISITOR_LEDGER_KEY), { sessions: {} });
+      return ledger && typeof ledger.sessions === "object" ? ledger : { sessions: {} };
+    } catch {
+      return { sessions: {} };
+    }
+  }
+
+  function writeVisitorLedger(ledger) {
+    try {
+      localStorage.setItem(VISITOR_LEDGER_KEY, JSON.stringify(ledger));
+    } catch {
+      // Statistik lokal adalah jalur cadangan; portal tetap dapat digunakan tanpa penyimpanan.
+    }
+  }
+
+  function getLocalVisitorStats() {
+    const sessions = Object.values(readVisitorLedger().sessions || {}).filter((entry) => !entry.admin);
+    const feedback = readFeedbackItems();
+    const ratings = feedback.map((item) => Number(item.rating)).filter((value) => value >= 1 && value <= 5);
+    return {
+      total: sessions.length,
+      teachers: sessions.filter((entry) => entry.roles?.includes("guru")).length,
+      students: sessions.filter((entry) => entry.roles?.includes("murid")).length,
+      rating: ratings.length ? ratings.reduce((sum, value) => sum + value, 0) / ratings.length : 0,
+      ratingCount: ratings.length,
+      feedbackCount: feedback.length,
+    };
+  }
+
+  function renderVisitorStats(stats = getLocalVisitorStats()) {
+    const setText = (selector, value) => {
+      const element = document.querySelector(selector);
+      if (element) element.textContent = value;
+    };
+    setText("#visitor-total", Number(stats.total || 0).toLocaleString("id-ID"));
+    setText("#visitor-teachers", Number(stats.teachers || 0).toLocaleString("id-ID"));
+    setText("#visitor-students", Number(stats.students || 0).toLocaleString("id-ID"));
+    setText("#visitor-rating", Number(stats.rating || 0) ? `${Number(stats.rating).toFixed(1)}/5` : "—");
+    setText("#visitor-rating-count", Number(stats.ratingCount || 0)
+      ? `${Number(stats.ratingCount).toLocaleString("id-ID")} penilaian`
+      : "Belum ada penilaian");
+    setText("#editor-total-visits", Number(stats.total || 0).toLocaleString("id-ID"));
+    setText("#editor-teacher-visits", Number(stats.teachers || 0).toLocaleString("id-ID"));
+    setText("#editor-student-visits", Number(stats.students || 0).toLocaleString("id-ID"));
+    setText("#editor-feedback-count", Number(stats.feedbackCount ?? stats.ratingCount ?? 0).toLocaleString("id-ID"));
+  }
+
+  function registerVisitorRole(role) {
+    const sessionId = getAccessSessionId();
+    const ledger = readVisitorLedger();
+    const entry = ledger.sessions[sessionId] || {
+      roles: [],
+      firstAccess: new Date().toISOString(),
+      lastAccess: "",
+      admin: false,
+    };
+    if (role === "editor") {
+      entry.admin = true;
+      currentVisitorRole = "editor";
+      if (realtimeIsConfigured()) {
+        fetch(appConfig.realtimeEndpoint, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            type: "access",
+            timestamp: new Date().toISOString(),
+            sessionId,
+            sessionStartedAt: new Date(sessionStartedAt).toISOString(),
+            visitorRole: "editor",
+            action: "admin_session",
+            page: location.pathname || "/",
+          }),
+        }).catch(() => {});
+      }
+    } else {
+      if (!entry.roles.includes(role)) entry.roles.push(role);
+      if (role === "guru") entry.teacher = loadTeacherIdentity();
+      currentVisitorRole = role;
+    }
+    entry.lastAccess = new Date().toISOString();
+    ledger.sessions[sessionId] = entry;
+    writeVisitorLedger(ledger);
+    try {
+      sessionStorage.setItem(VISITOR_ROLE_KEY, currentVisitorRole);
+    } catch {
+      // Abaikan pembatasan penyimpanan sesi.
+    }
+    renderVisitorStats();
+  }
+
+  async function refreshPublicStats() {
+    renderVisitorStats();
+    const status = document.querySelector("#visitor-stats-status");
+    if (!realtimeIsConfigured()) {
+      if (status) status.textContent = "Statistik perangkat ini ditampilkan; aktifkan sinkronisasi untuk angka lintas perangkat.";
+      return;
+    }
+    try {
+      const url = new URL(appConfig.realtimeEndpoint);
+      url.searchParams.set("action", "public-stats");
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      const payload = await response.json();
+      if (!payload.ok || !payload.stats) throw new Error("Data statistik belum tersedia.");
+      renderVisitorStats(payload.stats);
+      if (status) status.textContent = `Diperbarui ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}.`;
+    } catch {
+      if (status) status.textContent = "Statistik daring belum dapat dimuat; angka perangkat ini tetap ditampilkan.";
+    }
+  }
+
   async function postRealtimeEvent(type, extra = {}) {
+    const visitorRole = String(extra.visitorRole || currentVisitorRole || "umum");
+    if (visitorRole === "editor") return false;
     if (!realtimeIsConfigured()) return false;
-    const identity = loadStudentIdentity();
+    const studentIdentity = loadStudentIdentity();
+    const teacherIdentity = loadTeacherIdentity();
+    const teacherVisit = visitorRole === "guru";
+    const identity = teacherVisit
+      ? { name: teacherIdentity.name, attendance: "", className: "", workUnit: teacherIdentity.workUnit, nip: teacherIdentity.nip }
+      : { ...studentIdentity, workUnit: "", nip: "" };
     const accessContext = loadAccessContext();
     const payload = {
       type,
@@ -339,6 +504,9 @@ if (workspace && appData) {
       name: identity.name || "",
       attendance: identity.attendance || "",
       className: identity.className || "",
+      visitorRole,
+      workUnit: identity.workUnit || "",
+      nip: identity.nip || "",
       page: location.pathname || "/",
       locationLabel: accessContext.locationLabel || "",
       latitude: accessContext.permissionGranted ? accessContext.latitude || "" : "",
@@ -438,9 +606,14 @@ if (workspace && appData) {
       }
       return;
     }
-    if (name === "teacher" && !skipAuth && !isTeacherUnlocked()) {
+    if (name === "teacher" && !skipAuth && !isTeacherIdentified()) {
       pendingProtectedAction = "teacher";
       setTeacherAuthVisible(true, "teacher");
+      return;
+    }
+    if (name === "editor" && !skipAuth && !isEditorUnlocked()) {
+      pendingProtectedAction = "editor";
+      setTeacherAuthVisible(true, "editor");
       return;
     }
     const target = document.querySelector(`[data-panel="${name}"]`);
@@ -455,40 +628,70 @@ if (workspace && appData) {
       section.hidden = name !== "welcome";
     });
     if (name === "student") {
+      registerVisitorRole("murid");
       renderChapterCards();
-      postRealtimeEvent("access", { action: "open_student_room" });
+      postRealtimeEvent("access", { action: "open_student_room", visitorRole: "murid" });
     }
-    if (name === "teacher") renderTeacherDocument();
+    if (name === "teacher") {
+      registerVisitorRole("guru");
+      postRealtimeEvent("access", {
+        action: "open_teacher_room",
+        visitorRole: "guru",
+        resourceType: "ruang",
+        resourceId: "teacher",
+        resourceTitle: "Ruang Guru",
+      });
+      renderTeacherDocument();
+    }
     if (name === "islamic") {
       updateIslamicDate();
       loadPrayerTimes();
     }
     if (name === "games") updateProgress();
+    if (name === "editor") {
+      registerVisitorRole("editor");
+      renderEditorPanel();
+    }
     switchTrackedResource("ruang", name, panelMeta[name][0]);
     scrollToWorkspace();
   }
 
   openButtons.forEach((button) => button.addEventListener("click", () => openPanel(button.dataset.openPanel)));
-  document.querySelector("#teacher-auth-form")?.addEventListener("submit", async (event) => {
+  document.querySelector("#teacher-access-form")?.addEventListener("submit", (event) => {
     event.preventDefault();
-    const input = document.querySelector("#teacher-password");
     const error = document.querySelector("#teacher-auth-error");
-    if (await verifyTeacherPassword(input?.value || "")) {
-      try {
-        sessionStorage.setItem(TEACHER_SESSION_KEY, "yes");
-      } catch {
-        // The room remains open for the current interaction even if storage is unavailable.
-      }
-      setTeacherAuthVisible(false);
-      if (pendingProtectedAction === "gallery") {
-        setGalleryAdminVisible(true);
-      } else {
-        openPanel("teacher", { skipAuth: true });
-      }
+    const identity = {
+      name: document.querySelector("#teacher-name")?.value.trim() || "",
+      workUnit: document.querySelector("#teacher-work-unit")?.value.trim() || "",
+      nip: document.querySelector("#teacher-nip")?.value.trim() || "",
+    };
+    if (!identity.name || !identity.workUnit) {
+      if (error) error.textContent = "Nama guru dan unit kerja wajib diisi.";
       return;
     }
-    if (error) error.textContent = "Kata sandi tidak sesuai. Silakan periksa kembali.";
-    input?.select();
+    localStorage.setItem(TEACHER_IDENTITY_KEY, JSON.stringify(identity));
+    registerVisitorRole("guru");
+    setTeacherAuthVisible(false);
+    openPanel("teacher", { skipAuth: true });
+  });
+  document.querySelector("#editor-auth-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = document.querySelector("#editor-password");
+    const error = document.querySelector("#editor-auth-error");
+    if (!await verifyAdminPassword(input?.value || "")) {
+      if (error) error.textContent = "Kata sandi editor tidak sesuai.";
+      input?.select();
+      return;
+    }
+    try {
+      sessionStorage.setItem(EDITOR_SESSION_KEY, "yes");
+    } catch {
+      // Editor tetap terbuka untuk interaksi saat ini.
+    }
+    registerVisitorRole("editor");
+    setTeacherAuthVisible(false);
+    if (pendingProtectedAction === "gallery") setGalleryAdminVisible(true);
+    else openPanel("editor", { skipAuth: true });
   });
   document.querySelectorAll("[data-cancel-teacher-auth]").forEach((button) => button.addEventListener("click", () => setTeacherAuthVisible(false)));
   document.addEventListener("keydown", (event) => {
@@ -496,10 +699,22 @@ if (workspace && appData) {
   });
   document.querySelector("#lock-teacher-room")?.addEventListener("click", () => {
     try {
-      sessionStorage.removeItem(TEACHER_SESSION_KEY);
+      localStorage.removeItem(TEACHER_IDENTITY_KEY);
+      sessionStorage.setItem(VISITOR_ROLE_KEY, "umum");
     } catch {
       // Ignore restricted storage.
     }
+    currentVisitorRole = "umum";
+    openPanel("welcome");
+  });
+  document.querySelector("#lock-editor-room")?.addEventListener("click", () => {
+    try {
+      sessionStorage.removeItem(EDITOR_SESSION_KEY);
+      sessionStorage.setItem(VISITOR_ROLE_KEY, "umum");
+    } catch {
+      // Abaikan pembatasan penyimpanan sesi.
+    }
+    currentVisitorRole = "umum";
     openPanel("welcome");
   });
   document.querySelector("[data-close-workspace]")?.addEventListener("click", () => {
@@ -659,7 +874,7 @@ if (workspace && appData) {
   function quickQuizForChapter(chapter) {
     const concepts = chapter.concepts;
     const applications = chapter.applications;
-    return [
+    const items = [
       {
         question: `Pernyataan yang paling tepat menjelaskan “${concepts[0][0]}” adalah …`,
         options: [concepts[0][1], concepts[1][1], "Cukup dihafalkan tanpa dipahami atau diterapkan.", "Tidak memiliki hubungan dengan kehidupan sehari-hari."],
@@ -691,6 +906,24 @@ if (workspace && appData) {
         explanation: chapter.overview,
       },
     ];
+    const sessionSeed = `${getAccessSessionId()}|${chapter.id}`;
+    const seededShuffle = (values, suffix) => {
+      let seed = `${sessionSeed}|${suffix}`.split("").reduce((hash, character) => (
+        Math.imul(hash ^ character.charCodeAt(0), 16777619) >>> 0
+      ), 2166136261);
+      const copy = [...values];
+      for (let index = copy.length - 1; index > 0; index -= 1) {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        const target = seed % (index + 1);
+        [copy[index], copy[target]] = [copy[target], copy[index]];
+      }
+      return copy;
+    };
+    return seededShuffle(items, "questions").map((item, index) => {
+      const correct = item.options[item.answer];
+      const options = seededShuffle(item.options, `options-${index}-${item.question}`);
+      return { ...item, options, answer: options.indexOf(correct) };
+    });
   }
 
   function quickQuizHtml(chapter) {
@@ -1169,10 +1402,39 @@ if (workspace && appData) {
     const filename = `Tugas-PAIBP-${currentChapter.id}-${work.identity.className}-${work.identity.attendance}-${work.identity.name}`
       .replace(/[^\p{L}\p{N}._-]+/gu, "-")
       .replace(/-+/g, "-")
-      .slice(0, 140) + ".paibp";
-    const file = new File([JSON.stringify(submission, null, 2)], filename, {
-      type: "application/json",
+      .slice(0, 140) + ".docx";
+    const blocks = [
+      { text: "Identitas Murid", style: "Heading1" },
+      `Nama: ${work.identity.name}`,
+      `Nomor absen: ${work.identity.attendance}`,
+      `Kelas: ${work.identity.className}`,
+      `Dibuat: ${new Date(submission.createdAt).toLocaleString("id-ID")}`,
+      { text: `${currentChapter.id} — ${currentChapter.title}`, style: "Heading1" },
+      { text: "Jawaban Latihan", style: "Heading2" },
+      ...submission.work.questions.flatMap((entry, index) => [
+        { text: `${index + 1}. ${entry.question}`, style: "Heading3" },
+        entry.answer || "Belum dijawab.",
+      ]),
+      { text: "LKPD dan Produk Bermakna", style: "Heading2" },
+      submission.work.project?.prompt || "",
+      submission.work.project?.answer || "Belum dijawab.",
+      { text: "Refleksi", style: "Heading2" },
+      ...submission.work.reflections.flatMap((entry) => [
+        { text: entry.prompt, style: "Heading3" },
+        entry.answer || "Belum dijawab.",
+      ]),
+      ...(submission.work.videoSummaries || []).flatMap((entry) => [
+        { text: `Ringkasan video: ${entry.title}`, style: "Heading2" },
+        `Kanal: ${entry.channel}`,
+        entry.summary || "Belum dijawab.",
+      ]),
+    ];
+    const blob = window.PAIBP_DOCX.createDocument({
+      title: `Tugas PAIBP — ${currentChapter.title}`,
+      blocks,
+      customData: submission,
     });
+    const file = new File([blob], filename, { type: blob.type });
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
       try {
         await navigator.share({
@@ -1190,7 +1452,7 @@ if (workspace && appData) {
       }
     }
     downloadBlob(file, filename);
-    setStudentStatus("Berkas tugas telah diunduh. Kirimkan berkas .paibp itu kepada guru melalui kanal yang disepakati.");
+    setStudentStatus("Berkas Word (.docx) telah diunduh. Kirimkan berkas itu kepada guru melalui kanal yang disepakati.");
   }
 
   function attachStudentWorkForm() {
@@ -1532,12 +1794,12 @@ if (workspace && appData) {
   document.querySelector("#download-lesson")?.addEventListener("click", () => {
     if (!currentChapter) return;
     const title = `Materi-PAIBP-${currentChapter.id}-${currentLessonView}`;
-    const html = `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
-      <style>body{font-family:Arial,sans-serif;line-height:1.6;color:#142d35}h1,h2,h3,h4{font-weight:700}
-      p,li,td{font-weight:400}table{width:100%;border-collapse:collapse}th,td{border:1px solid #9eaaa6;padding:8px;text-align:left}
-      section{margin:20px 0}.no-print,iframe,button{display:none}.printed-answer{white-space:pre-wrap;border:1px solid #ccd8d4;padding:10px}</style>
-      </head><body>${currentPrintableLessonHtml()}</body></html>`;
-    downloadBlob(new Blob(["\ufeff", html], { type: "application/msword;charset=utf-8" }), `${title}.doc`);
+    const source = document.querySelector("#lesson-content");
+    const blob = window.PAIBP_DOCX.createDocument({
+      title,
+      blocks: window.PAIBP_DOCX.blocksFromElement(source),
+    });
+    downloadBlob(blob, `${title}.docx`);
     setStudentStatus("Materi berhasil disiapkan sebagai dokumen. Periksa folder unduhan perangkat.");
   });
 
@@ -2030,7 +2292,7 @@ if (workspace && appData) {
         </div>
         <div class="submission-import no-print">
           <button class="btn" id="refresh-access-recap" type="button" ${configured ? "" : "disabled"}>Muat Ulang Rekap</button>
-          <button class="btn" id="export-access-csv" type="button" disabled>Unduh CSV Akses</button>
+          <button class="btn" id="export-access-csv" type="button" disabled>Unduh Rekap Word</button>
         </div>
         <div class="access-filters no-print">
           <label>Kelas <select id="access-class-filter"><option value="">Semua kelas</option></select></label>
@@ -2158,10 +2420,19 @@ if (workspace && appData) {
         </tr>`).join("") : "<tr><td colspan='7'>Belum ada aktivitas murid yang sesuai filter.</td></tr>";
         if (exportButton) {
           exportButton.disabled = !visible.length;
-          exportButton.onclick = () => downloadBlob(
-            new Blob([accessRowsCsv(visible)], { type: "text/csv;charset=utf-8" }),
-            `Rekap-Akses-PAIBP-${new Date().toISOString().slice(0, 10)}.csv`,
-          );
+          exportButton.onclick = () => {
+            const blocks = visible.flatMap((item, index) => [
+              { text: `${index + 1}. ${item.name || "Pengunjung"} — ${item.className || "Tanpa kelas"}`, style: "Heading2" },
+              `Waktu: ${item.timestamp ? new Date(item.timestamp).toLocaleString("id-ID") : "—"}`,
+              `Aktivitas: ${item.resourceTitle || item.chapterTitle || item.action || "Membuka situs"}`,
+              `Durasi: ${formatDuration(item.durationSeconds)}`,
+              `Tempat: ${item.locationLabel || "Tidak dibagikan"}`,
+            ]);
+            downloadBlob(
+              window.PAIBP_DOCX.createDocument({ title: "Rekap Akses PAIBP SMART", blocks }),
+              `Rekap-Akses-PAIBP-${new Date().toISOString().slice(0, 10)}.docx`,
+            );
+          };
         }
       };
       [classFilter, actionFilter, dateFilter].forEach((input) => input?.addEventListener("change", renderRows));
@@ -2216,19 +2487,19 @@ if (workspace && appData) {
       <section class="document-section no-print">
         <div class="warning"><strong>Privasi:</strong> berkas tugas hanya dibaca di browser guru dan rekap disimpan pada perangkat ini. Jangan unggah berkas identitas murid ke repositori publik.</div>
         <div class="submission-import">
-          <label class="file-drop">Impor berkas tugas murid (.paibp)
-            <input id="submission-files" type="file" accept=".paibp,.json,application/json" multiple>
+          <label class="file-drop">Impor berkas tugas murid (.docx)
+            <input id="submission-files" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
           </label>
           <button class="btn" id="sync-submissions-online" type="button" ${realtimeIsConfigured() ? "" : "disabled"}>Muat Tugas Daring</button>
-          <button class="btn" id="export-recap-csv" type="button">Unduh CSV</button>
-          <button class="btn" id="backup-recap-json" type="button">Cadangkan rekap</button>
+          <button class="btn" id="export-recap-csv" type="button">Unduh Rekap Word</button>
+          <button class="btn" id="backup-recap-json" type="button">Cadangkan Jawaban Word</button>
           <button class="text-button danger-button" id="clear-recap" type="button">Hapus semua rekap</button>
         </div>
         <p class="save-status" id="recap-status" aria-live="polite">${recap.length} pekerjaan tersimpan pada perangkat ini.</p>
         ${classNames.length ? `<div class="class-summary">${classNames.map((className) => `<span>Kelas ${escapeHtml(className)} <strong>${grouped[className].length}</strong></span>`).join("")}</div>` : ""}
       </section>
       <section class="document-section">
-        ${groupTables || "<div class='empty-recap'><strong>Belum ada tugas.</strong><p>Minta murid mengirimkan berkas .paibp, lalu impor di sini.</p></div>"}
+        ${groupTables || "<div class='empty-recap'><strong>Belum ada tugas.</strong><p>Minta murid mengirimkan berkas Word (.docx), lalu impor di sini.</p></div>"}
       </section>
       <section class="document-section" id="submission-detail"></section>`;
   }
@@ -2241,21 +2512,19 @@ if (workspace && appData) {
 
   function exportRecapCsv() {
     const recap = readSubmissionRecap();
-    const lines = [
-      ["Nama", "Nomor Absen", "Kelas", "Bab", "Judul", "Tanggal", "Kelengkapan", "Nilai", "Catatan"],
-      ...recap.map((item) => [
-        item.student.name,
-        item.student.attendance,
-        item.student.className,
-        item.chapter.id,
-        item.chapter.title,
-        item.createdAt,
-        `${completionPercent(item)}%`,
-        item.teacher?.score ?? "",
-        item.teacher?.note ?? "",
-      ]),
-    ].map((row) => row.map(csvCell).join(","));
-    downloadBlob(new Blob(["\ufeff", lines.join("\r\n")], { type: "text/csv;charset=utf-8" }), `Rekap-PAIBP-${new Date().toISOString().slice(0, 10)}.csv`);
+    const blocks = recap.flatMap((item, index) => [
+      { text: `${index + 1}. ${item.student.name} — ${item.student.className}`, style: "Heading2" },
+      `Nomor absen: ${item.student.attendance}`,
+      `Bab: ${item.chapter.id} — ${item.chapter.title}`,
+      `Tanggal: ${item.createdAt ? new Date(item.createdAt).toLocaleString("id-ID") : "—"}`,
+      `Kelengkapan: ${completionPercent(item)}%`,
+      `Nilai: ${item.teacher?.score ?? "Belum dinilai"}`,
+      `Catatan guru: ${item.teacher?.note || "Belum ada catatan"}`,
+    ]);
+    downloadBlob(
+      window.PAIBP_DOCX.createDocument({ title: "Rekap Pekerjaan Murid — PAIBP SMART", blocks }),
+      `Rekap-PAIBP-${new Date().toISOString().slice(0, 10)}.docx`,
+    );
   }
 
   function renderSubmissionDetail(id) {
@@ -2335,8 +2604,8 @@ if (workspace && appData) {
       let rejected = 0;
       for (const file of files) {
         try {
-          if (file.size > 5_000_000) throw new Error("Berkas terlalu besar");
-          const parsed = JSON.parse(await file.text());
+          if (file.size > 10_000_000) throw new Error("Berkas terlalu besar");
+          const parsed = await window.PAIBP_DOCX.readCustomData(file);
           const payloads = Array.isArray(parsed) ? parsed : [parsed];
           if (!payloads.length || payloads.some((payload) => !validateSubmission(payload))) throw new Error("Format tidak sesuai");
           payloads.forEach((payload) => {
@@ -2361,9 +2630,19 @@ if (workspace && appData) {
     });
     document.querySelector("#export-recap-csv")?.addEventListener("click", exportRecapCsv);
     document.querySelector("#backup-recap-json")?.addEventListener("click", () => {
+      const recap = readSubmissionRecap();
+      const blocks = recap.flatMap((item, index) => [
+        { text: `${index + 1}. ${item.student.name} — ${item.student.className}`, style: "Heading2" },
+        `${item.chapter.id} — ${item.chapter.title}`,
+        `Kelengkapan ${completionPercent(item)}% • Nilai ${item.teacher?.score ?? "belum dinilai"}`,
+      ]);
       downloadBlob(
-        new Blob([JSON.stringify(readSubmissionRecap(), null, 2)], { type: "application/json" }),
-        `Cadangan-Rekap-PAIBP-${new Date().toISOString().slice(0, 10)}.json`,
+        window.PAIBP_DOCX.createDocument({
+          title: "Cadangan Jawaban dan Rekap PAIBP SMART",
+          blocks,
+          customData: recap,
+        }),
+        `Cadangan-Rekap-PAIBP-${new Date().toISOString().slice(0, 10)}.docx`,
       );
     });
     document.querySelector("#clear-recap")?.addEventListener("click", () => {
@@ -2595,23 +2874,11 @@ if (workspace && appData) {
   });
   document.querySelector("#download-teacher-document")?.addEventListener("click", () => {
     const title = `${teacherDocTitles[teacherDoc]}-PAIBP-Kelas-${teacherGrade}-2026-2027`;
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
-      <style>
-        body{font-family:Cambria,Georgia,serif;color:#142d35;line-height:1.5}
-        h1,h2,h3,h4{line-height:1.25}h2{color:#087f68}
-        .document-cover{border:2px solid #087f68;padding:24px;margin-bottom:22px}
-        .document-section{margin:22px 0}table{width:100%;border-collapse:collapse}
-        th,td{border:1px solid #9eaaa6;padding:8px;text-align:left;vertical-align:top}th{background:#e7f5f0}
-        .teacher-source,.warning{border-left:4px solid #087f68;padding:12px;background:#eaf8f3}
-        .cp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cp-grid article{border:1px solid #cddbd6;padding:12px}
-      </style></head><body>${printableHtmlFrom(document.querySelector("#teacher-document"))}</body></html>`;
-    const blob = new Blob([html], { type: "application/msword;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${title}.doc`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const blob = window.PAIBP_DOCX.createDocument({
+      title,
+      blocks: window.PAIBP_DOCX.blocksFromElement(document.querySelector("#teacher-document")),
+    });
+    downloadBlob(blob, `${title}.docx`);
   });
 
   function updateIslamicDate() {
@@ -3402,6 +3669,55 @@ if (workspace && appData) {
     renderHijriCalendar();
   });
 
+  const combineInsightVariants = (starts, ends) => starts.flatMap((start) => ends.map((end) => `${start} ${end}`));
+  const insightVariantDimensions = {
+    audience: combineInsightVariants(
+      ["murid", "guru", "keluarga", "komunitas sekolah", "pengunjung umum"],
+      ["yang sedang belajar", "yang memerlukan penguatan", "yang ingin berefleksi", "yang sedang mengambil keputusan"],
+    ),
+    context: combineInsightVariants(
+      ["di rumah", "di kelas", "di lingkungan sekolah", "di ruang digital", "di masyarakat"],
+      ["pada pagi hari", "setelah belajar", "sebelum bertindak", "saat menghadapi perbedaan"],
+    ),
+    action: combineInsightVariants(
+      ["catat", "diskusikan", "praktikkan", "jelaskan kembali", "hubungkan"],
+      ["satu pelajaran", "dua bukti", "satu kebiasaan", "satu keputusan nyata"],
+    ),
+    reflection: combineInsightVariants(
+      ["tanyakan kepada diri", "renungkan bersama teman", "tulis dalam jurnal", "bahas dengan guru", "sampaikan kepada keluarga"],
+      ["apa yang perlu diperbaiki", "siapa yang menerima manfaat", "dalil apa yang menguatkan", "kebiasaan apa yang harus dijaga"],
+    ),
+    evidence: combineInsightVariants(
+      ["gunakan", "bandingkan", "periksa", "cantumkan", "jelaskan"],
+      ["sumber primer", "nomor hadits", "surat dan ayat", "bab kitab yang dirujuk"],
+    ),
+    format: combineInsightVariants(
+      ["buat", "susun", "sajikan", "rekam", "gambarkan"],
+      ["catatan singkat", "peta konsep", "contoh tindakan", "ringkasan lisan"],
+    ),
+    duration: combineInsightVariants(
+      ["luangkan", "fokus selama", "ulang dalam", "jadwalkan", "evaluasi setelah"],
+      ["lima menit", "sepuluh menit", "satu sesi belajar", "satu hari"],
+    ),
+    habit: combineInsightVariants(
+      ["mulai dari", "jaga konsistensi", "ajak satu teman untuk", "beri teladan dalam", "ukur kemajuan pada"],
+      ["satu tindakan kecil", "satu pekan", "satu kesempatan nyata", "kebiasaan harian"],
+    ),
+  };
+  let dailyInsightVariantCounter = 0;
+
+  function insightLearningVariation(itemIndex) {
+    const keys = Object.keys(insightVariantDimensions);
+    const base = (Math.floor(Date.now() / 86400000) * 131) + (itemIndex * 97) + (dailyInsightVariantCounter * 53);
+    const values = Object.fromEntries(keys.map((key, index) => {
+      const options = insightVariantDimensions[key];
+      return [key, options[Math.abs(base + (index * 67)) % options.length]];
+    }));
+    const combinations = islamicData.dailyInsights.length
+      * keys.reduce((product, key) => product * insightVariantDimensions[key].length, 1);
+    return { ...values, combinations };
+  }
+
   function renderDailyInsight(nextIndex = null) {
     const container = document.querySelector("#daily-insight");
     if (!container || !islamicData.dailyInsights.length) return;
@@ -3412,6 +3728,7 @@ if (workspace && appData) {
     const normalizedIndex = ((dailyInsightIndex % islamicData.dailyInsights.length) + islamicData.dailyInsights.length) % islamicData.dailyInsights.length;
     dailyInsightIndex = normalizedIndex;
     const item = islamicData.dailyInsights[normalizedIndex];
+    const variation = insightLearningVariation(normalizedIndex);
     container.innerHTML = `
       <div class="insight-card-head"><span class="badge">${escapeHtml(item.type)}</span><small>${normalizedIndex + 1} dari ${islamicData.dailyInsights.length}</small></div>
       <blockquote>${escapeHtml(item.text)}</blockquote>
@@ -3419,10 +3736,17 @@ if (workspace && appData) {
         ? `<a class="insight-source" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.source)} ↗</a>`
         : `<strong>${escapeHtml(item.source)}</strong>`}
       <p>${escapeHtml(item.detail)}</p>
+      <div class="insight-learning-variation">
+        <strong>Aktivitas penguatan hari ini</strong>
+        <p>${escapeHtml(variation.action)}; ${escapeHtml(variation.reflection)}. ${escapeHtml(variation.evidence)} dan ${escapeHtml(variation.habit)}.</p>
+        <small>Untuk ${escapeHtml(variation.audience)} ${escapeHtml(variation.context)} • ${escapeHtml(variation.duration)} • ${escapeHtml(variation.format)}.</small>
+      </div>
+      <small class="insight-combination-count">Ruang variasi pembelajaran: ${variation.combinations.toLocaleString("id-ID")} kemungkinan susunan. Kutipan sumber tidak diubah.</small>
       <span class="insight-click-hint">Klik kartu untuk menampilkan nasihat berikutnya.</span>`;
   }
 
   function showNextDailyInsight() {
+    dailyInsightVariantCounter += 1;
     const next = Number.isInteger(dailyInsightIndex) ? dailyInsightIndex + 1 : 1;
     renderDailyInsight(next);
   }
@@ -3461,6 +3785,47 @@ if (workspace && appData) {
 
   function gameModeTitle(mode = currentGameMode) {
     return document.querySelector(`[data-game-mode="${mode}"] strong`)?.textContent || "Games PAIBP";
+  }
+
+  function renderGameCatalog() {
+    const container = document.querySelector("#game-mode-grid");
+    if (!container) return;
+    const arenas = Array.isArray(gameData?.arenas) && gameData.arenas.length
+      ? gameData.arenas
+      : Object.keys(gameModeBanks).map((id, index) => ({
+        id,
+        world: "utama",
+        worldTitle: "Arena Utama",
+        title: id,
+        icon: ["⚡", "🧩", "📖", "🌱"][index % 4],
+        description: "20 soal PAIBP SMP",
+      }));
+    container.innerHTML = arenas.map((arena) => `
+      <button type="button" data-game-mode="${escapeHtml(arena.id)}" data-game-world="${escapeHtml(arena.world || "")}" data-game-search-text="${escapeHtml(`${arena.title} ${arena.description} ${arena.worldTitle}`.toLocaleLowerCase("id"))}">
+        <span>${escapeHtml(arena.icon || "🎮")}</span>
+        <strong>${escapeHtml(arena.title)}</strong>
+        <small>${escapeHtml(arena.description)}</small>
+      </button>`).join("");
+    const worldFilter = document.querySelector("#game-world-filter");
+    if (worldFilter) {
+      const worlds = [...new Map(arenas.map((arena) => [arena.world, arena.worldTitle])).entries()];
+      worldFilter.innerHTML = `<option value="">Semua kelompok</option>${worlds.map(([id, label]) => `<option value="${escapeHtml(id)}">${escapeHtml(label)}</option>`).join("")}`;
+    }
+    const filterCatalog = () => {
+      const query = document.querySelector("#game-search")?.value.trim().toLocaleLowerCase("id") || "";
+      const world = worldFilter?.value || "";
+      let visible = 0;
+      container.querySelectorAll("[data-game-mode]").forEach((button) => {
+        const match = (!world || button.dataset.gameWorld === world)
+          && (!query || button.dataset.gameSearchText.includes(query));
+        button.hidden = !match;
+        if (match) visible += 1;
+      });
+      const count = document.querySelector("#game-catalog-count");
+      if (count) count.textContent = `${visible} dari ${arenas.length} game ditampilkan`;
+    };
+    document.querySelector("#game-search")?.addEventListener("input", filterCatalog);
+    worldFilter?.addEventListener("change", filterCatalog);
   }
 
   function readGameProgress() {
@@ -3523,8 +3888,11 @@ if (workspace && appData) {
 
   function startQuiz() {
     if (isGameSessionBlocking()) return;
+    const generated = typeof gameData?.generateSession === "function"
+      ? gameData.generateSession(currentGameMode, 20)
+      : null;
     const bank = gameModeBanks[currentGameMode] || questionBank;
-    quizQuestions = shuffle(bank).slice(0, 20);
+    quizQuestions = Array.isArray(generated) ? generated : shuffle(bank).slice(0, 20);
     if (quizQuestions.length < 20) {
       document.querySelector("#quiz-feedback").textContent = "Arena belum memiliki 20 soal lengkap.";
       document.querySelector("#quiz-feedback").className = "quiz-feedback error";
@@ -3671,7 +4039,7 @@ if (workspace && appData) {
     quizLocked = false;
     applyGameSessionLock();
     document.querySelector("#quiz-score").textContent = "0";
-    document.querySelector("#quiz-question").textContent = "Pilih salah satu dari 14 arena, lalu tekan “Mulai Games”.";
+    document.querySelector("#quiz-question").textContent = "Pilih salah satu dari 100 game, lalu tekan “Mulai 20 Soal”.";
     document.querySelector("#quiz-options").replaceChildren();
     document.querySelector("#quiz-feedback").textContent = "";
     document.querySelector("#quiz-number").textContent = "Siap bermain • 20 soal per arena";
@@ -3683,7 +4051,10 @@ if (workspace && appData) {
 
   function restoreGameSession() {
     if (!activeGameSession?.active) return;
-    const bankExists = Boolean(gameModeBanks[activeGameSession.mode]);
+    const bankExists = Boolean(
+      gameModeBanks[activeGameSession.mode]
+      || gameData?.arenas?.some((arena) => arena.id === activeGameSession.mode),
+    );
     const validQuestions = Array.isArray(activeGameSession.questions) && activeGameSession.questions.length === 20;
     if (!bankExists || !validQuestions) {
       activeGameSession = null;
@@ -3704,6 +4075,7 @@ if (workspace && appData) {
     else renderQuizQuestion();
   }
 
+  renderGameCatalog();
   document.querySelector("#quiz-start")?.addEventListener("click", startQuiz);
   document.querySelector("#quiz-next")?.addEventListener("click", nextQuiz);
   document.querySelector("#game-finish-exit")?.addEventListener("click", exitFinishedGame);
@@ -3722,7 +4094,7 @@ if (workspace && appData) {
     document.querySelector("#quiz-number").textContent = "Mode dipilih • 20 soal";
     switchTrackedResource("game", currentGameMode, title);
   }));
-  document.querySelector('[data-game-mode="quiz"]')?.classList.add("is-active");
+  document.querySelector(`[data-game-mode="${currentGameMode}"]`)?.classList.add("is-active");
   renderGameModeProgress();
   document.querySelector("#reset-progress")?.addEventListener("click", () => {
     if (isGameSessionBlocking()) return;
@@ -3860,7 +4232,7 @@ if (workspace && appData) {
   }
 
   function setGalleryAdminVisible(visible) {
-    if (visible && !isTeacherUnlocked()) {
+    if (visible && !isEditorUnlocked()) {
       pendingProtectedAction = "gallery";
       setTeacherAuthVisible(true, "gallery");
       return;
@@ -3980,6 +4352,9 @@ if (workspace && appData) {
 
   function attachGalleryAdmin() {
     document.querySelector("#open-gallery-admin")?.addEventListener("click", () => {
+      openPanel("editor");
+    });
+    document.querySelector("#editor-open-gallery")?.addEventListener("click", () => {
       pendingProtectedAction = "gallery";
       setGalleryAdminVisible(true);
     });
@@ -4030,9 +4405,14 @@ if (workspace && appData) {
         : "Dokumentasi disimpan pada perangkat ini. Aktifkan rekap daring agar tampil pada semua perangkat.";
     });
     document.querySelector("#export-gallery")?.addEventListener("click", () => {
+      const blocks = readGalleryItems().flatMap((item, index) => [
+        { text: `${index + 1}. ${item.title}`, style: "Heading2" },
+        `Tanggal: ${item.date ? new Date(`${item.date}T00:00:00`).toLocaleDateString("id-ID") : "—"}`,
+        item.summary,
+      ]);
       downloadBlob(
-        new Blob([JSON.stringify(readGalleryItems(), null, 2)], { type: "application/json" }),
-        `Cadangan-Spensus-Terkini-${new Date().toISOString().slice(0, 10)}.json`,
+        window.PAIBP_DOCX.createDocument({ title: "Laporan Galeri Spensus Terkini", blocks }),
+        `Laporan-Spensus-Terkini-${new Date().toISOString().slice(0, 10)}.docx`,
       );
     });
     document.querySelector("#import-gallery")?.addEventListener("change", async (event) => {
@@ -4046,6 +4426,301 @@ if (workspace && appData) {
         document.querySelector("#gallery-admin-status").textContent = "Berkas cadangan galeri tidak sesuai.";
       }
       event.target.value = "";
+    });
+  }
+
+  function readFeedbackItems() {
+    try {
+      const items = safeJsonParse(localStorage.getItem(FEEDBACK_STORAGE_KEY), []);
+      return Array.isArray(items) ? items : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writeFeedbackItems(items) {
+    localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(items.slice(0, 300)));
+    renderPublicFeedback();
+    renderEditorFeedback();
+    renderVisitorStats();
+  }
+
+  function feedbackStars(rating) {
+    const value = Math.min(5, Math.max(1, Number(rating) || 1));
+    return `${"★".repeat(value)}${"☆".repeat(5 - value)}`;
+  }
+
+  function renderPublicFeedback() {
+    const container = document.querySelector("#public-feedback-list");
+    if (!container) return;
+    const visible = readFeedbackItems()
+      .filter((item) => item.status !== "hidden" && item.status !== "deleted")
+      .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+      .slice(0, 12);
+    container.innerHTML = visible.length ? visible.map((item) => `
+      <article class="feedback-item">
+        <div class="feedback-item-head">
+          <strong>${escapeHtml(item.name || "Pengguna PAIBP SMART")}</strong>
+          <span class="feedback-stars" aria-label="${Number(item.rating)} dari 5 bintang">${feedbackStars(item.rating)}</span>
+        </div>
+        <small>${escapeHtml(item.role || "umum")} • ${item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID") : ""}</small>
+        <p>${escapeHtml(item.comment)}</p>
+        ${item.reply ? `<div class="feedback-reply"><strong>Balasan editor</strong><p>${escapeHtml(item.reply)}</p></div>` : ""}
+      </article>`).join("") : "<p>Belum ada tanggapan. Jadilah pengguna pertama yang memberi masukan.</p>";
+  }
+
+  async function syncFeedback(action, item) {
+    if (!realtimeIsConfigured()) return false;
+    try {
+      await fetch(appConfig.realtimeEndpoint, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          type: "feedback",
+          action,
+          item,
+          key: appConfig.realtimeReadKey || "",
+        }),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function loadPublicFeedback() {
+    if (!realtimeIsConfigured()) return;
+    try {
+      const url = new URL(appConfig.realtimeEndpoint);
+      url.searchParams.set("action", "public-feedback");
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      const payload = await response.json();
+      if (payload.ok && Array.isArray(payload.feedback)) {
+        localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(payload.feedback));
+        renderPublicFeedback();
+        renderVisitorStats();
+      }
+    } catch {
+      // Tanggapan lokal tetap tampil ketika sinkronisasi belum tersedia.
+    }
+  }
+
+  function attachFeedbackForm() {
+    document.querySelector("#feedback-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const status = document.querySelector("#feedback-status");
+      const item = {
+        id: typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `feedback-${Date.now()}`,
+        name: document.querySelector("#feedback-name")?.value.trim() || "",
+        role: document.querySelector("#feedback-role")?.value || "umum",
+        rating: Math.min(5, Math.max(1, Number(document.querySelector("#feedback-rating")?.value) || 5)),
+        comment: document.querySelector("#feedback-comment")?.value.trim() || "",
+        reply: "",
+        status: "published",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      if (!item.comment) return;
+      writeFeedbackItems([item, ...readFeedbackItems().filter((entry) => entry.id !== item.id)]);
+      event.currentTarget.reset?.();
+      const commentField = document.querySelector("#feedback-comment");
+      if (commentField) commentField.value = "";
+      const synced = await syncFeedback("add", item);
+      if (status) status.textContent = synced
+        ? "Terima kasih. Tanggapan tersimpan dan dikirim ke pengelola."
+        : "Terima kasih. Tanggapan tersimpan pada perangkat ini; sinkronisasi daring belum aktif.";
+      refreshPublicStats();
+    });
+  }
+
+  function renderEditorFeedback() {
+    const container = document.querySelector("#editor-feedback-list");
+    if (!container) return;
+    const items = readFeedbackItems().sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+    container.innerHTML = items.length ? items.map((item) => `
+      <article class="editor-feedback-item" data-feedback-id="${escapeHtml(item.id)}">
+        <div class="feedback-item-head">
+          <strong>${escapeHtml(item.name || "Pengguna PAIBP SMART")} • ${escapeHtml(item.role)}</strong>
+          <span class="feedback-stars">${feedbackStars(item.rating)}</span>
+        </div>
+        <p>${escapeHtml(item.comment)}</p>
+        <small>Status: ${escapeHtml(item.status || "published")} • ${item.createdAt ? new Date(item.createdAt).toLocaleString("id-ID") : ""}</small>
+        <form class="editor-reply-form" data-feedback-reply="${escapeHtml(item.id)}">
+          <input value="${escapeHtml(item.reply || "")}" maxlength="800" placeholder="Tulis balasan editor">
+          <button class="btn btn-compact" type="submit">Simpan balasan</button>
+        </form>
+        <div class="editor-feedback-actions">
+          <button class="btn btn-compact" type="button" data-feedback-action="published" data-feedback-id="${escapeHtml(item.id)}">Tampilkan</button>
+          <button class="btn btn-compact" type="button" data-feedback-action="hidden" data-feedback-id="${escapeHtml(item.id)}">Sembunyikan</button>
+          <button class="text-button danger-button" type="button" data-feedback-action="deleted" data-feedback-id="${escapeHtml(item.id)}">Hapus</button>
+        </div>
+      </article>`).join("") : "<p>Belum ada tanggapan yang masuk.</p>";
+    container.querySelectorAll("[data-feedback-action]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const id = button.dataset.feedbackId;
+        const next = readFeedbackItems().map((item) => item.id === id
+          ? { ...item, status: button.dataset.feedbackAction, updatedAt: new Date().toISOString() }
+          : item);
+        const changed = next.find((item) => item.id === id);
+        writeFeedbackItems(next);
+        if (changed) await syncFeedback("moderate", changed);
+      });
+    });
+    container.querySelectorAll("[data-feedback-reply]").forEach((form) => {
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const id = form.dataset.feedbackReply;
+        const reply = form.querySelector("input")?.value.trim() || "";
+        const next = readFeedbackItems().map((item) => item.id === id
+          ? { ...item, reply, updatedAt: new Date().toISOString() }
+          : item);
+        const changed = next.find((item) => item.id === id);
+        writeFeedbackItems(next);
+        if (changed) await syncFeedback("moderate", changed);
+      });
+    });
+  }
+
+  function readHomepageCopy() {
+    const defaults = {
+      title: "Belajar utuh. Mengajar terarah.",
+      copy: "PAIBP SMART SMP menyatukan materi lengkap, ringkasan, LKPD, progres murid, perangkat pembelajaran guru, layanan Islami, dan game edukatif kelas VII–IX.",
+    };
+    try {
+      return { ...defaults, ...(safeJsonParse(localStorage.getItem(HOMEPAGE_COPY_KEY), {}) || {}) };
+    } catch {
+      return defaults;
+    }
+  }
+
+  function applyHomepageCopy() {
+    const copy = readHomepageCopy();
+    const title = document.querySelector(".hero h1");
+    const paragraph = document.querySelector(".hero .hero-copy");
+    if (title) title.textContent = copy.title;
+    if (paragraph) paragraph.textContent = copy.copy;
+    const editorTitle = document.querySelector("#editor-hero-title");
+    const editorCopy = document.querySelector("#editor-hero-copy");
+    if (editorTitle) editorTitle.value = copy.title;
+    if (editorCopy) editorCopy.value = copy.copy;
+  }
+
+  async function syncHomepageCopy(copy) {
+    if (!realtimeIsConfigured()) return false;
+    try {
+      await fetch(appConfig.realtimeEndpoint, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          type: "content",
+          action: "save",
+          key: appConfig.realtimeReadKey || "",
+          item: { id: "homepage", ...copy, updatedAt: new Date().toISOString() },
+        }),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function loadPublicContent() {
+    if (!realtimeIsConfigured()) return;
+    try {
+      const url = new URL(appConfig.realtimeEndpoint);
+      url.searchParams.set("action", "public-content");
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      const payload = await response.json();
+      const homepage = payload.content?.find((item) => item.id === "homepage");
+      if (!payload.ok || !homepage?.title || !homepage?.copy) return;
+      localStorage.setItem(HOMEPAGE_COPY_KEY, JSON.stringify({ title: homepage.title, copy: homepage.copy }));
+      applyHomepageCopy();
+    } catch {
+      // Konten lokal/bawaan tetap dipakai ketika sinkronisasi belum tersedia.
+    }
+  }
+
+  function attachHomepageEditor() {
+    document.querySelector("#homepage-editor-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const copy = {
+        title: document.querySelector("#editor-hero-title")?.value.trim() || "",
+        copy: document.querySelector("#editor-hero-copy")?.value.trim() || "",
+      };
+      localStorage.setItem(HOMEPAGE_COPY_KEY, JSON.stringify(copy));
+      applyHomepageCopy();
+      const synced = await syncHomepageCopy(copy);
+      const status = document.querySelector("#homepage-editor-status");
+      if (status) status.textContent = synced
+        ? "Perubahan diterapkan dan permintaan sinkronisasi dikirim."
+        : "Perubahan diterapkan pada perangkat ini. Aktifkan sinkronisasi agar berlaku lintas perangkat.";
+    });
+    document.querySelector("#reset-homepage-copy")?.addEventListener("click", () => {
+      localStorage.removeItem(HOMEPAGE_COPY_KEY);
+      applyHomepageCopy();
+      const status = document.querySelector("#homepage-editor-status");
+      if (status) status.textContent = "Teks bawaan telah dipulihkan pada perangkat ini.";
+    });
+  }
+
+  async function loadEditorRemoteData() {
+    const body = document.querySelector("#editor-teacher-access");
+    if (!body) return;
+    if (!realtimeIsConfigured() || !appConfig.realtimeReadKey) {
+      const localTeachers = Object.values(readVisitorLedger().sessions || {})
+        .filter((entry) => !entry.admin && entry.roles?.includes("guru") && entry.teacher?.name)
+        .sort((a, b) => String(b.lastAccess).localeCompare(String(a.lastAccess)));
+      body.innerHTML = localTeachers.length ? localTeachers.map((entry) => `
+        <tr>
+          <td>${entry.lastAccess ? new Date(entry.lastAccess).toLocaleString("id-ID") : "—"}</td>
+          <td>${escapeHtml(entry.teacher.name)}</td>
+          <td>${escapeHtml(entry.teacher.workUnit || "—")}</td>
+          <td>${escapeHtml(entry.teacher.nip || "—")}</td>
+          <td>Riwayat perangkat ini</td>
+        </tr>`).join("") : "<tr><td colspan='5'>Belum ada guru pada perangkat ini. Aktifkan Google Apps Script untuk pemantauan lintas perangkat.</td></tr>";
+      return;
+    }
+    try {
+      const url = new URL(appConfig.realtimeEndpoint);
+      url.searchParams.set("action", "editor-data");
+      url.searchParams.set("key", appConfig.realtimeReadKey);
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      const payload = await response.json();
+      if (!payload.ok) throw new Error("Data editor belum tersedia.");
+      if (Array.isArray(payload.feedback)) {
+        localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(payload.feedback));
+        renderPublicFeedback();
+        renderEditorFeedback();
+      }
+      const teachers = (payload.events || []).filter((item) => item.visitorRole === "guru").slice(0, 150);
+      body.innerHTML = teachers.length ? teachers.map((item) => `
+        <tr>
+          <td>${item.timestamp ? new Date(item.timestamp).toLocaleString("id-ID") : "—"}</td>
+          <td>${escapeHtml(item.name || "—")}</td>
+          <td>${escapeHtml(item.workUnit || "—")}</td>
+          <td>${escapeHtml(item.nip || "—")}</td>
+          <td>${escapeHtml(item.resourceTitle || item.action || "Membuka situs")}</td>
+        </tr>`).join("") : "<tr><td colspan='5'>Belum ada kunjungan guru yang tercatat.</td></tr>";
+      if (payload.stats) renderVisitorStats(payload.stats);
+    } catch {
+      body.innerHTML = "<tr><td colspan='5'>Data daring belum dapat dimuat. Periksa endpoint dan kunci baca.</td></tr>";
+    }
+  }
+
+  function renderEditorPanel() {
+    applyHomepageCopy();
+    renderEditorFeedback();
+    refreshPublicStats();
+    loadEditorRemoteData();
+  }
+
+  function attachEditorControls() {
+    attachHomepageEditor();
+    document.querySelector("#editor-refresh-data")?.addEventListener("click", () => {
+      refreshPublicStats();
+      loadEditorRemoteData();
     });
   }
 
@@ -4082,8 +4757,13 @@ if (workspace && appData) {
   }
 
   function sendSessionClose() {
-    if (!realtimeIsConfigured() || !navigator.sendBeacon) return;
-    const identity = loadStudentIdentity();
+    if (!realtimeIsConfigured() || !navigator.sendBeacon || currentVisitorRole === "editor") return;
+    const studentIdentity = loadStudentIdentity();
+    const teacherIdentity = loadTeacherIdentity();
+    const teacherVisit = currentVisitorRole === "guru";
+    const identity = teacherVisit
+      ? { name: teacherIdentity.name, attendance: "", className: "", workUnit: teacherIdentity.workUnit, nip: teacherIdentity.nip }
+      : { ...studentIdentity, workUnit: "", nip: "" };
     const accessContext = loadAccessContext();
     const payload = {
       type: "access",
@@ -4093,6 +4773,9 @@ if (workspace && appData) {
       name: identity.name || "",
       attendance: identity.attendance || "",
       className: identity.className || "",
+      visitorRole: currentVisitorRole,
+      workUnit: identity.workUnit || "",
+      nip: identity.nip || "",
       action: "session_close",
       page: location.pathname || "/",
       resourceType: activeResource.type,
@@ -4128,10 +4811,21 @@ if (workspace && appData) {
   renderHijriCalendar();
   renderDailyInsight();
   renderSchoolProfile();
+  const galleryAdmin = document.querySelector("#gallery-admin");
+  const editorPanel = document.querySelector("#panel-editor");
+  if (galleryAdmin && editorPanel) editorPanel.append(galleryAdmin);
+  applyHomepageCopy();
+  renderPublicFeedback();
+  renderVisitorStats();
+  attachFeedbackForm();
+  attachEditorControls();
   attachGalleryAdmin();
   attachLocationConsent();
   loadOnlineGallery();
-  postRealtimeEvent("access", { action: "site_open" });
+  loadPublicFeedback();
+  loadPublicContent();
+  refreshPublicStats();
+  postRealtimeEvent("access", { action: "site_open", visitorRole: currentVisitorRole });
   window.setInterval(() => {
     if (document.visibilityState !== "visible") return;
     postRealtimeEvent("access", {
