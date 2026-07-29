@@ -67,6 +67,7 @@ if (workspace && appData) {
   const ACCESS_SESSION_KEY = "paibp-smart-access-session-v1";
   const ACCESS_CONTEXT_KEY = "paibp-smart-access-context-v1";
   const ARABIC_PROGRESS_KEY = "paibp-smart-arabic-progress-v1";
+  const ARABIC_SESSION_KEY = "paibp-smart-arabic-session-v2";
   const GAME_SESSION_KEY = "paibp-smart-game-session-v2";
   const GAME_PROGRESS_KEY = "paibp-smart-game-progress-v2";
   const QURAN_CACHE_NAME = "paibp-smart-quran-v1";
@@ -202,7 +203,9 @@ if (workspace && appData) {
   let sessionStartedAt = Date.now();
   let currentGameMode = gameData?.arenas?.[0]?.id || "quiz";
   let activeGameSession = safeJsonParse(localStorage.getItem(GAME_SESSION_KEY), null);
-  let arabicLevelId = "semua";
+  let arabicLevelId = "dasar";
+  let activeArabicSession = null;
+  let arabicAutoAdvanceTimer = 0;
   let dailyInsightIndex = null;
   let recentTeacherVisits = [];
   let expandedInsightBankPromise = null;
@@ -3242,11 +3245,11 @@ if (workspace && appData) {
         blocks: window.PAIBP_DOCX.blocksFromElement(documentElement),
       });
       const sourceFilename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
-      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v14.docx");
+      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v15.docx");
       downloadBlob(blob, filename);
       if (status) status.textContent = "Dokumen Word lengkap berhasil disiapkan langsung dari isi portal. Tidak ada tautan halaman 404.";
     } catch (error) {
-      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v14 lalu coba kembali.";
+      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v15 lalu coba kembali.";
     }
   }
 
@@ -3549,59 +3552,222 @@ if (workspace && appData) {
   }
 
   function readArabicProgress() {
-    return safeJsonParse(localStorage.getItem(ARABIC_PROGRESS_KEY), { completed: [], xp: 0 }) || { completed: [], xp: 0 };
+    const stored = safeJsonParse(localStorage.getItem(ARABIC_PROGRESS_KEY), {}) || {};
+    return {
+      xp: Number(stored.xp || 0),
+      topics: stored.topics && typeof stored.topics === "object" ? stored.topics : {},
+      completed: Array.isArray(stored.completed) ? stored.completed : [],
+    };
   }
 
   function writeArabicProgress(progress) {
     localStorage.setItem(ARABIC_PROGRESS_KEY, JSON.stringify(progress));
   }
 
-  function renderArabicLesson(lesson) {
+  function saveArabicSession() {
+    if (!activeArabicSession) {
+      localStorage.removeItem(ARABIC_SESSION_KEY);
+      return;
+    }
+    const { questions, ...serializable } = activeArabicSession;
+    localStorage.setItem(ARABIC_SESSION_KEY, JSON.stringify(serializable));
+  }
+
+  function clearArabicAutoAdvance() {
+    if (!arabicAutoAdvanceTimer) return;
+    window.clearTimeout(arabicAutoAdvanceTimer);
+    arabicAutoAdvanceTimer = 0;
+  }
+
+  function currentArabicQuestion() {
+    return activeArabicSession?.questions?.[activeArabicSession.index] || null;
+  }
+
+  function finishArabicTopic() {
     const player = document.querySelector("#arabic-lesson-player");
-    if (!player || !lesson) return;
-    const level = arabicData.levels.find((item) => item.id === (lesson.levelId || arabicLevelId));
-    const levelLabel = lesson.levelLabel || level?.label || "";
+    if (!player || !activeArabicSession) return;
+    clearArabicAutoAdvance();
+    const { levelId, topicId, score, questions } = activeArabicSession;
+    const level = arabicData.levels.find((item) => item.id === levelId);
+    const topic = level?.topics.find((item) => item.id === topicId);
+    const progress = readArabicProgress();
+    const previous = progress.topics[topicId] || {};
+    progress.topics[topicId] = {
+      answered: questions.length,
+      bestScore: Math.max(Number(previous.bestScore || 0), score),
+      completed: true,
+      attempts: Number(previous.attempts || 0) + 1,
+      lastCompletedAt: new Date().toISOString(),
+    };
+    if (!progress.completed.includes(topicId)) {
+      progress.completed.push(topicId);
+      progress.xp += score * 2;
+    }
+    writeArabicProgress(progress);
+    localStorage.removeItem(ARABIC_SESSION_KEY);
     player.innerHTML = `
-      <div class="arabic-lesson-head">
-        <span>${escapeHtml(levelLabel)} • ${escapeHtml(lesson.audience || "Semua jenjang")}</span>
-        <h5>${escapeHtml(lesson.title)}</h5>
+      <section class="arabic-result-card">
+        <span class="badge">100 soal selesai</span>
+        <h5>${escapeHtml(topic?.title || "Latihan Bahasa Arab")}</h5>
+        <strong>${score}/100</strong>
+        <p>${score >= 85
+          ? "Sangat baik. Pemahaman pada tab ini sudah kuat."
+          : score >= 70
+            ? "Baik. Ulangi soal yang masih keliru agar kaidah semakin mantap."
+            : "Terus berlatih. Baca penjelasan setiap jawaban lalu ulangi tab ini."}</p>
+        <div class="arabic-result-actions">
+          <button class="cta btn-compact" type="button" data-arabic-retry>Ulangi 100 soal</button>
+          <button class="btn btn-compact" type="button" data-arabic-back>Kembali ke 100 tab</button>
+        </div>
+      </section>`;
+    player.querySelector("[data-arabic-retry]")?.addEventListener("click", () => {
+      startArabicTopic(level, topic, true);
+    });
+    player.querySelector("[data-arabic-back]")?.addEventListener("click", () => {
+      activeArabicSession = null;
+      renderArabicAcademy();
+      player.innerHTML = "<p>Pilih salah satu dari 100 tab untuk memulai latihan.</p>";
+      document.querySelector("#arabic-learning-path")?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+    });
+    const xp = document.querySelector("#arabic-xp");
+    if (xp) xp.textContent = `${progress.xp} XP`;
+    renderArabicAcademy();
+  }
+
+  function advanceArabicQuestion() {
+    if (!activeArabicSession || !activeArabicSession.locked) return;
+    clearArabicAutoAdvance();
+    activeArabicSession.index += 1;
+    activeArabicSession.locked = false;
+    saveArabicSession();
+    if (activeArabicSession.index >= activeArabicSession.questions.length) {
+      finishArabicTopic();
+      return;
+    }
+    renderArabicQuestion();
+  }
+
+  function answerArabicQuestion(selectedIndex) {
+    const player = document.querySelector("#arabic-lesson-player");
+    const question = currentArabicQuestion();
+    if (!player || !question || !activeArabicSession || activeArabicSession.locked) return;
+    activeArabicSession.locked = true;
+    const correct = selectedIndex === question.answer;
+    if (correct) activeArabicSession.score += 1;
+    activeArabicSession.answers.push({
+      questionId: question.id,
+      selectedIndex,
+      correct,
+    });
+    const progress = readArabicProgress();
+    const previousTopicProgress = progress.topics[activeArabicSession.topicId] || {};
+    progress.topics[activeArabicSession.topicId] = {
+      ...previousTopicProgress,
+      answered: Math.max(Number(previousTopicProgress.answered || 0), activeArabicSession.index + 1),
+      completed: Boolean(previousTopicProgress.completed),
+      lastAccessedAt: new Date().toISOString(),
+    };
+    writeArabicProgress(progress);
+    player.querySelectorAll("[data-arabic-answer]").forEach((button, index) => {
+      button.disabled = true;
+      button.classList.toggle("correct", index === question.answer);
+      button.classList.toggle("wrong", index === selectedIndex && !correct);
+    });
+    const feedback = player.querySelector("[data-arabic-feedback]");
+    if (feedback) {
+      feedback.innerHTML = `<strong>${correct ? "Benar." : "Belum tepat."}</strong> ${escapeHtml(question.explanation)}`;
+      feedback.className = `quiz-feedback ${correct ? "success" : "error"}`;
+    }
+    const nextButton = player.querySelector("[data-arabic-next-now]");
+    if (nextButton) nextButton.hidden = false;
+    saveArabicSession();
+    arabicAutoAdvanceTimer = window.setTimeout(advanceArabicQuestion, 1300);
+  }
+
+  function renderArabicQuestion() {
+    const player = document.querySelector("#arabic-lesson-player");
+    const question = currentArabicQuestion();
+    if (!player || !question || !activeArabicSession) return;
+    const level = arabicData.levels.find((item) => item.id === activeArabicSession.levelId);
+    const topic = level?.topics.find((item) => item.id === activeArabicSession.topicId);
+    const progressValue = Math.round(((activeArabicSession.index + 1) / activeArabicSession.questions.length) * 100);
+    player.innerHTML = `
+      <div class="arabic-quiz-toolbar">
+        <button class="btn btn-compact" type="button" data-arabic-exit>← Simpan dan kembali</button>
+        <span>${escapeHtml(level?.label || "")} • Tab ${topic?.number || ""}/100</span>
       </div>
-      <p class="arabic-phrase" lang="ar" dir="rtl">${escapeHtml(lesson.arabic)}</p>
-      <p class="arabic-transliteration">${escapeHtml(lesson.transliteration)}</p>
-      <p class="arabic-meaning">${escapeHtml(lesson.meaning)}</p>
-      <button class="btn btn-compact" type="button" data-play-arabic>🔊 Putar pelafalan</button>
-      <p class="save-status" data-arabic-audio-status aria-live="polite"></p>
-      <div class="arabic-practice">
-        <h5>Latihan cepat</h5>
-        <p>${escapeHtml(lesson.question)}</p>
+      <div class="arabic-lesson-head">
+        <span>${escapeHtml(topic?.section || "")}</span>
+        <h5>${escapeHtml(topic?.title || "")}</h5>
+      </div>
+      <div class="arabic-quiz-status">
+        <strong>Soal ${activeArabicSession.index + 1} dari 100</strong>
+        <span>Benar ${activeArabicSession.score}</span>
+      </div>
+      <div class="arabic-quiz-progress" aria-label="Kemajuan ${progressValue}%"><span style="width:${progressValue}%"></span></div>
+      <p class="arabic-phrase arabic-question-phrase" lang="ar" dir="rtl">${escapeHtml(question.arabicPrompt || "")}</p>
+      <div class="arabic-audio-row">
+        <button class="btn btn-compact" type="button" data-play-arabic>🔊 Putar teks Arab</button>
+        <p class="save-status" data-arabic-audio-status aria-live="polite"></p>
+      </div>
+      <div class="arabic-practice arabic-question-card">
+        <p class="arabic-question-prompt">${escapeHtml(question.prompt)}</p>
         <div class="arabic-options">
-          ${lesson.options.map((option, index) => `<button type="button" data-arabic-answer="${index}">${escapeHtml(option)}</button>`).join("")}
+          ${question.options.map((option, index) => `<button type="button" data-arabic-answer="${index}"><span>${String.fromCharCode(65 + index)}</span>${escapeHtml(option)}</button>`).join("")}
         </div>
         <p class="quiz-feedback" data-arabic-feedback aria-live="polite"></p>
+        <button class="btn btn-compact arabic-next-now" type="button" data-arabic-next-now hidden>Lanjut sekarang →</button>
       </div>`;
     const status = player.querySelector("[data-arabic-audio-status]");
-    player.querySelector("[data-play-arabic]")?.addEventListener("click", () => speakArabic(lesson.arabic, status));
+    player.querySelector("[data-play-arabic]")?.addEventListener("click", () => speakArabic(question.arabicPrompt, status));
     player.querySelectorAll("[data-arabic-answer]").forEach((button) => button.addEventListener("click", () => {
-      const correct = Number(button.dataset.arabicAnswer) === lesson.answer;
-      player.querySelectorAll("[data-arabic-answer]").forEach((item, index) => {
-        item.disabled = true;
-        item.classList.toggle("correct", index === lesson.answer);
-        item.classList.toggle("wrong", item === button && !correct);
-      });
-      const feedback = player.querySelector("[data-arabic-feedback]");
-      feedback.textContent = correct ? "Benar. Pelajaran selesai dan 20 XP ditambahkan." : `Belum tepat. Jawaban yang benar: ${lesson.options[lesson.answer]}.`;
-      feedback.className = `quiz-feedback ${correct ? "success" : "error"}`;
-      if (correct) {
-        const progress = readArabicProgress();
-        if (!progress.completed.includes(lesson.id)) {
-          progress.completed.push(lesson.id);
-          progress.xp = Number(progress.xp || 0) + 20;
-          writeArabicProgress(progress);
-        }
-        renderArabicAcademy();
-      }
+      answerArabicQuestion(Number(button.dataset.arabicAnswer));
     }));
-    switchTrackedResource("bahasa-arab", lesson.id, lesson.title);
+    player.querySelector("[data-arabic-next-now]")?.addEventListener("click", advanceArabicQuestion);
+    player.querySelector("[data-arabic-exit]")?.addEventListener("click", () => {
+      clearArabicAutoAdvance();
+      if (activeArabicSession.locked) {
+        activeArabicSession.index += 1;
+        activeArabicSession.locked = false;
+      }
+      saveArabicSession();
+      renderArabicAcademy();
+      player.innerHTML = `<p>Progres tab <strong>${escapeHtml(topic?.title || "")}</strong> tersimpan pada soal ${Math.min(activeArabicSession.index + 1, 100)}. Klik tab yang sama untuk melanjutkan.</p>`;
+    });
+  }
+
+  function startArabicTopic(level, topic, restart = false) {
+    if (!level || !topic || typeof arabicData.createQuestionSet !== "function") return;
+    clearArabicAutoAdvance();
+    const stored = safeJsonParse(localStorage.getItem(ARABIC_SESSION_KEY), null);
+    const canResume = !restart
+      && stored
+      && stored.levelId === level.id
+      && stored.topicId === topic.id
+      && Number(stored.index || 0) < 100;
+    const seed = canResume ? stored.seed : `${Date.now()}-${Math.random()}`;
+    const resumeIndex = canResume
+      ? Math.max(0, Number(stored.index || 0) + (stored.locked ? 1 : 0))
+      : 0;
+    activeArabicSession = {
+      levelId: level.id,
+      topicId: topic.id,
+      seed,
+      questions: arabicData.createQuestionSet(level.id, topic.id, seed),
+      index: resumeIndex,
+      score: canResume ? Math.max(0, Number(stored.score || 0)) : 0,
+      answers: canResume && Array.isArray(stored.answers) ? stored.answers : [],
+      locked: false,
+      startedAt: canResume ? stored.startedAt : new Date().toISOString(),
+    };
+    saveArabicSession();
+    if (activeArabicSession.index >= 100) {
+      finishArabicTopic();
+      return;
+    }
+    renderArabicQuestion();
+    document.querySelector("#arabic-lesson-player")?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+    switchTrackedResource("bahasa-arab", topic.id, `${level.label}: ${topic.title}`);
   }
 
   function renderArabicAcademy() {
@@ -3610,62 +3776,57 @@ if (workspace && appData) {
     const xp = document.querySelector("#arabic-xp");
     if (!tabs || !path || !arabicData.levels.length) return;
     const progress = readArabicProgress();
-    if (xp) xp.textContent = `${Number(progress.xp || 0)} XP`;
-    const allLessons = Array.isArray(arabicData.allLessons)
-      ? arabicData.allLessons
-      : arabicData.levels.flatMap((level) => level.lessons.map((lesson) => ({
-        ...lesson,
-        levelId: level.id,
-        levelLabel: level.label,
-      })));
-    const tabItems = [
-      { id: "semua", icon: "📚", label: `Semua ${allLessons.length}` },
-      ...arabicData.levels,
-    ];
-    tabs.innerHTML = tabItems.map((level) => `
+    if (xp) xp.textContent = `${progress.xp} XP`;
+    tabs.innerHTML = arabicData.levels.map((level) => `
       <button type="button" data-arabic-level="${escapeHtml(level.id)}" aria-pressed="${level.id === arabicLevelId}">
-        <span>${level.icon}</span>${escapeHtml(level.label)}
+        <span>${level.icon}</span><strong>${escapeHtml(level.label)}</strong><small>100 tab • 10.000 soal</small>
       </button>`).join("");
-    const selectedLevel = arabicData.levels.find((item) => item.id === arabicLevelId);
-    const level = selectedLevel || {
-      id: "semua",
-      label: "100 Pelajaran Bahasa Arab",
-      description: "Jalur bertahap untuk kebutuhan belajar SD, SMP, SMK, dan keterampilan lintas jenjang.",
-      lessons: allLessons,
-    };
-    const audienceCounts = allLessons.reduce((counts, lesson) => {
-      const key = lesson.audience || "Semua jenjang";
-      counts[key] = (counts[key] || 0) + 1;
-      return counts;
-    }, {});
+    const level = arabicData.levels.find((item) => item.id === arabicLevelId) || arabicData.levels[0];
+    const completedCount = level.topics.filter((topic) => progress.topics[topic.id]?.completed).length;
     path.innerHTML = `
       <div class="arabic-level-intro">
-        <strong>${escapeHtml(level.label)}</strong>
-        <p>${escapeHtml(level.description)}</p>
-        <div class="arabic-audience-summary" aria-label="Sebaran jenjang">
-          <span>SD ${audienceCounts.SD || 0}</span>
-          <span>SMP ${audienceCounts.SMP || 0}</span>
-          <span>SMK ${audienceCounts.SMK || 0}</span>
-          <span>Lintas jenjang ${audienceCounts["Semua jenjang"] || 0}</span>
+        <div>
+          <strong>${escapeHtml(level.label)} — 100 Tab Latihan</strong>
+          <p>${escapeHtml(level.description)}</p>
+        </div>
+        <div class="arabic-audience-summary" aria-label="Ringkasan tingkat">
+          <span>${escapeHtml(level.audience)}</span>
+          <span>${completedCount}/100 selesai</span>
+          <span>100 soal per tab</span>
         </div>
       </div>
+      <label class="arabic-topic-search">Cari dari 100 tab
+        <input type="search" data-arabic-topic-search placeholder="Contoh: kata benda, fi‘il, jumlah ismiyah">
+      </label>
       <div class="arabic-lesson-nodes">
-        ${level.lessons.map((lesson, index) => `
-          <button type="button" data-arabic-lesson="${escapeHtml(lesson.id)}" class="${progress.completed.includes(lesson.id) ? "is-complete" : ""}">
-            <span>${progress.completed.includes(lesson.id) ? "✓" : index + 1}</span>
-            <strong>${escapeHtml(lesson.title)}</strong>
-            <small>${progress.completed.includes(lesson.id) ? "Selesai" : `${escapeHtml(lesson.audience || "Semua jenjang")} • 20 XP`}</small>
-          </button>`).join("")}
+        ${level.topics.map((topic) => {
+          const topicProgress = progress.topics[topic.id] || {};
+          const answered = topicProgress.completed ? 100 : Number(topicProgress.answered || 0);
+          return `
+          <button type="button" data-arabic-topic="${escapeHtml(topic.id)}" data-topic-search="${escapeHtml(`${topic.section} ${topic.title}`.toLocaleLowerCase("id"))}" class="${topicProgress.completed ? "is-complete" : ""}">
+            <span>${topicProgress.completed ? "✓" : topic.number}</span>
+            <strong>${escapeHtml(topic.title)}</strong>
+            <small>${answered}/100 soal${topicProgress.bestScore !== undefined ? ` • terbaik ${topicProgress.bestScore}` : ""}</small>
+          </button>`;
+        }).join("")}
       </div>`;
     tabs.querySelectorAll("[data-arabic-level]").forEach((button) => button.addEventListener("click", () => {
       arabicLevelId = button.dataset.arabicLevel;
+      clearArabicAutoAdvance();
       renderArabicAcademy();
-      const selected = arabicData.levels.find((item) => item.id === arabicLevelId);
-      renderArabicLesson(selected?.lessons[0] || allLessons[0]);
+      const selectedLevel = arabicData.levels.find((item) => item.id === arabicLevelId);
+      const player = document.querySelector("#arabic-lesson-player");
+      if (player) player.innerHTML = `<p>Pilih salah satu dari 100 tab tingkat ${escapeHtml(selectedLevel?.label || "")}. Setiap tab berisi 100 soal.</p>`;
     }));
-    path.querySelectorAll("[data-arabic-lesson]").forEach((button) => button.addEventListener("click", () => {
-      const selected = level.lessons.find((lesson) => lesson.id === button.dataset.arabicLesson);
-      renderArabicLesson(selected);
+    path.querySelector("[data-arabic-topic-search]")?.addEventListener("input", (event) => {
+      const keyword = event.target.value.trim().toLocaleLowerCase("id");
+      path.querySelectorAll("[data-arabic-topic]").forEach((button) => {
+        button.hidden = Boolean(keyword) && !button.dataset.topicSearch.includes(keyword);
+      });
+    });
+    path.querySelectorAll("[data-arabic-topic]").forEach((button) => button.addEventListener("click", () => {
+      const topic = level.topics.find((item) => item.id === button.dataset.arabicTopic);
+      startArabicTopic(level, topic);
     }));
   }
 
@@ -5392,7 +5553,7 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=14");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=15");
       await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v16";
+const CACHE_NAME = "paibp-smart-core-v17";
 const CORE_ASSETS = [
   "./",
   "./index.html",

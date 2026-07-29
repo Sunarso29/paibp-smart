@@ -541,28 +541,44 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .access-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0}
 .access-filters label{display:grid;gap:5px;color:#36515a;font-size:11px;font-weight:800}
 .access-filters select,.access-filters input{min-height:40px;border:1px solid #adc6be;border-radius:10px;background:#fff;padding:8px}
-.arabic-level-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0}
-.arabic-level-tabs button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px;color:#36515a;font-weight:800;cursor:pointer}
+.arabic-level-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+.arabic-level-tabs button{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px;color:#36515a;text-align:left;font-weight:800;cursor:pointer}
+.arabic-level-tabs button>span{grid-row:1/3;font-size:22px}.arabic-level-tabs button strong{font-size:13px}.arabic-level-tabs button small{font-size:9px;color:var(--muted)}
 .arabic-level-tabs button[aria-pressed="true"]{border-color:var(--emerald);background:#e2f6ef;color:var(--emerald)}
 .arabic-learning-path{border-radius:20px;background:linear-gradient(160deg,#083a44,#087f68);padding:19px;color:#fff}
 .arabic-level-intro{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}
 .arabic-level-intro strong{font-size:20px}.arabic-level-intro p{margin:0;color:#d7eee8;font-size:12px}
 .arabic-audience-summary{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
 .arabic-audience-summary span{border:1px solid rgba(255,255,255,.24);border-radius:999px;background:rgba(255,255,255,.1);padding:5px 8px;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}
-.arabic-lesson-nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.arabic-topic-search{display:grid;grid-template-columns:auto minmax(190px,360px);align-items:center;justify-content:end;gap:10px;margin:0 0 13px;color:#fff;font-size:11px;font-weight:800}
+.arabic-topic-search input{min-height:39px;border:1px solid rgba(255,255,255,.28);border-radius:11px;background:#fff;padding:8px 11px;color:var(--navy)}
+.arabic-lesson-nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-height:690px;overflow:auto;padding:2px 5px 2px 2px}
 .arabic-lesson-nodes button{display:grid;grid-template-columns:auto 1fr;gap:2px 9px;align-items:center;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(255,255,255,.09);color:#fff;padding:11px;text-align:left;cursor:pointer}
 .arabic-lesson-nodes button>span{grid-row:1/3;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#fff;color:var(--emerald);font-weight:900}
 .arabic-lesson-nodes button strong{font-size:12px}.arabic-lesson-nodes button small{color:#cfe6e0;font-size:9px}
 .arabic-lesson-nodes button.is-complete{background:rgba(244,189,62,.22);border-color:#f4bd3e}
 .arabic-lesson-player{margin-top:14px;border:1px solid var(--line);border-radius:20px;background:#fff;padding:22px}
+.arabic-quiz-toolbar,.arabic-quiz-status,.arabic-audio-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.arabic-quiz-toolbar{margin-bottom:18px}.arabic-quiz-toolbar>span{color:var(--muted);font-size:11px;font-weight:800}
+.arabic-quiz-status{margin:14px 0 8px}.arabic-quiz-status strong{font-size:16px}.arabic-quiz-status span{color:var(--emerald);font-size:12px;font-weight:800}
+.arabic-quiz-progress{height:9px;border-radius:999px;background:#dfece8;overflow:hidden}
+.arabic-quiz-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--emerald),var(--gold));transition:width .25s ease}
 .arabic-lesson-head span{color:var(--emerald);font-size:10px;font-weight:850;text-transform:uppercase}
 .arabic-lesson-head h5{margin:3px 0;font-size:20px}
 .arabic-phrase{margin:20px 0 6px;font-family:"Noto Naskh Arabic","Traditional Arabic",serif;font-size:clamp(30px,5vw,48px);line-height:1.7;text-align:center;color:var(--navy)}
+.arabic-question-phrase{margin-block:12px 5px}.arabic-audio-row{justify-content:center;flex-wrap:wrap}.arabic-audio-row .save-status{margin:0}
 .arabic-transliteration{text-align:center;color:var(--emerald);font-style:italic}.arabic-meaning{text-align:center}
 .arabic-practice{margin-top:18px;border-radius:16px;background:#f0f8f5;padding:16px}
 .arabic-practice h5{margin:0;font-size:16px}.arabic-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .arabic-options button{border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px;cursor:pointer}
+.arabic-question-card .arabic-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+.arabic-question-prompt{margin-top:0;font-size:16px;font-weight:800;line-height:1.55}
+.arabic-question-card .arabic-options button{display:flex;align-items:center;gap:9px;min-height:54px;text-align:left;line-height:1.4}
+.arabic-question-card .arabic-options button>span{flex:0 0 auto;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:#e5f5ef;color:var(--emerald);font-weight:900}
 .arabic-options button.correct{border-color:#079b73;background:#e4f8f0}.arabic-options button.wrong{border-color:#d55e43;background:#fff0ec}
+.arabic-next-now{margin-top:10px}.arabic-result-card{text-align:center;padding:24px}
+.arabic-result-card h5{margin:12px 0 6px;font-size:24px}.arabic-result-card>strong{display:block;color:var(--emerald);font-size:52px}
+.arabic-result-card p{max-width:560px;margin:8px auto 18px;color:var(--muted)}.arabic-result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
 .daily-insight[role="button"]{cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}.daily-insight[role="button"]:hover,.daily-insight[role="button"]:focus-visible{transform:translateY(-2px);box-shadow:0 14px 32px rgba(8,44,54,.11);outline:2px solid rgba(8,127,104,.25)}
 .insight-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.insight-card-head small,.insight-click-hint{color:var(--muted);font-size:10px}.insight-click-hint{display:block;margin-top:14px;font-weight:750}.insight-next-button{margin-top:10px}
 .insight-arabic{margin:18px 0 8px;color:var(--navy);font-family:"Amiri","Noto Naskh Arabic",serif;font-size:26px;line-height:1.9;text-align:right}

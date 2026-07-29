@@ -329,18 +329,19 @@
   bank.history = historyFacts.map(factQuestion);
   bank.fiqh = fiqhFacts.map(factQuestion);
 
-  const arabicLessons = (window.PAIBP_ARABIC?.levels || [])
-    .flatMap((level) => level.lessons.map((lesson) => ({ ...lesson, level: level.label })))
-    .filter((_, index) => index % 4 === 0)
-    .slice(0, 20);
-  bank.arabic = arabicLessons.map((lesson, index) => {
-    const distractors = arabicLessons
-      .filter((_, otherIndex) => otherIndex !== index)
-      .slice((index + 3) % 10, ((index + 3) % 10) + 3)
-      .map((item) => item.meaning);
-    const [options, answer] = rotateOptions(lesson.meaning, distractors, index);
-    return [`Apakah arti ungkapan Arab berikut?\n${lesson.arabic}`, options, answer, `${lesson.transliteration}: ${lesson.meaning}`];
-  });
+  const arabicSource = window.PAIBP_ARABIC;
+  const arabicLevel = arabicSource?.levels?.[0];
+  const arabicTopic = arabicLevel?.topics?.[0];
+  bank.arabic = arabicLevel && arabicTopic && typeof arabicSource.createQuestionSet === "function"
+    ? arabicSource.createQuestionSet(arabicLevel.id, arabicTopic.id, 261078)
+      .slice(0, 20)
+      .map((question) => [
+        `${question.prompt}\n${question.arabicPrompt}`,
+        question.options,
+        question.answer,
+        question.explanation,
+      ])
+    : [];
   bank.verseMeaning = concepts.map((item, index) => {
     const distractors = concepts
       .filter((_, otherIndex) => otherIndex !== index)
