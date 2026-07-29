@@ -41,6 +41,7 @@ const appData = window.PAIBP_DATA;
 if (workspace && appData) {
   const { chapters, cp, academicCalendar } = appData;
   const islamicData = window.PAIBP_ISLAMIC || { dua: [], fastingRules: [], historicDates: [], dailyInsights: [] };
+  const hadithData = window.PAIBP_HADITH || { records: [] };
   const schoolData = window.PAIBP_SCHOOL || { school: null, teachers: [], staff: [], news: [] };
   const teacherSources = window.PAIBP_TEACHER_SOURCES || {};
   const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
@@ -179,6 +180,10 @@ if (workspace && appData) {
   let offlineQuranPromise = null;
   let activeOfflineSurah = null;
   let activeOfflineReference = null;
+  let activeOfflineHadith = null;
+  let studentLocationWatcher = null;
+  let studentLocationDetectionStarted = false;
+  let lastLocationEventAt = 0;
   let islamicCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let quizQuestions = [];
   let quizIndex = -1;
@@ -552,49 +557,106 @@ if (workspace && appData) {
     });
   }
 
-  function attachLocationConsent() {
-    const place = document.querySelector("#student-place-label");
-    const button = document.querySelector("#enable-student-location");
+  function studentLocationStatus(message) {
     const status = document.querySelector("#student-location-status");
-    if (!place || !button || !status) return;
+    if (status) status.textContent = message;
+  }
+
+  async function resolveApproximatePlaceName(latitude, longitude) {
+    const fallback = `Sekitar ${latitude}, ${longitude}`;
+    try {
+      const url = new URL("https://nominatim.openstreetmap.org/reverse");
+      url.searchParams.set("format", "jsonv2");
+      url.searchParams.set("lat", latitude);
+      url.searchParams.set("lon", longitude);
+      url.searchParams.set("zoom", "14");
+      url.searchParams.set("accept-language", "id");
+      const response = await fetch(url.toString(), {
+        cache: "force-cache",
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) return fallback;
+      const payload = await response.json();
+      const address = payload?.address || {};
+      const parts = [
+        address.village || address.town || address.city_district || address.city,
+        address.subdistrict || address.municipality || address.county,
+        address.state,
+      ].filter(Boolean);
+      return [...new Set(parts)].slice(0, 3).join(", ") || fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  async function recordStudentPosition(position, action = "location_update") {
+    if (!position?.coords || currentVisitorRole !== "murid") return;
+    const latitude = Number(position.coords.latitude).toFixed(3);
+    const longitude = Number(position.coords.longitude).toFixed(3);
+    const context = loadAccessContext();
+    const changed = context.latitude !== latitude || context.longitude !== longitude;
+    context.permissionGranted = true;
+    context.latitude = latitude;
+    context.longitude = longitude;
+    context.accuracy = Math.round(position.coords.accuracy || 0);
+    if (changed || !context.locationLabel) {
+      studentLocationStatus("Koordinat ditemukan. Menentukan perkiraan nama tempat…");
+      context.locationLabel = await resolveApproximatePlaceName(latitude, longitude);
+    }
+    context.updatedAt = new Date().toISOString();
+    saveAccessContext(context);
+    studentLocationStatus(`Lokasi otomatis aktif • ${context.locationLabel} • akurasi ± ${context.accuracy || "—"} m.`);
+    const now = Date.now();
+    if (changed || now - lastLocationEventAt >= 300000) {
+      lastLocationEventAt = now;
+      postRealtimeEvent("access", {
+        action,
+        resourceType: "lokasi-akses",
+        resourceId: "student-location",
+        resourceTitle: context.locationLabel,
+        durationSeconds: 0,
+      });
+    }
+  }
+
+  function startAutomaticStudentLocation() {
     const saved = loadAccessContext();
-    place.value = saved.locationLabel || "";
-    if (saved.permissionGranted) status.textContent = `Lokasi diizinkan • ${saved.locationLabel || "nama tempat belum dipilih"}.`;
-    place.addEventListener("change", () => {
-      const context = loadAccessContext();
-      context.locationLabel = place.value;
-      saveAccessContext(context);
-      status.textContent = context.permissionGranted
-        ? `Lokasi diizinkan • ${place.value || "pilih nama tempat"}.`
-        : "Nama tempat tersimpan; GPS belum dibagikan.";
-    });
-    button.addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        status.textContent = "Perangkat ini tidak mendukung izin lokasi.";
-        return;
+    if (saved.permissionGranted && saved.locationLabel) {
+      studentLocationStatus(`Lokasi terakhir • ${saved.locationLabel}. Memperbarui posisi…`);
+    } else {
+      studentLocationStatus("Mendeteksi lokasi akses secara otomatis…");
+    }
+    if (studentLocationDetectionStarted) return;
+    studentLocationDetectionStarted = true;
+    if (!navigator.geolocation) {
+      studentLocationStatus("Perangkat tidak menyediakan layanan lokasi; aktivitas belajar tetap direkam tanpa koordinat.");
+      return;
+    }
+    const options = { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 };
+    const onError = (error) => {
+      studentLocationDetectionStarted = false;
+      const denied = Number(error?.code) === 1;
+      studentLocationStatus(denied
+        ? "Lokasi tidak dibagikan karena izin ponsel ditolak. Fitur belajar tetap dapat digunakan."
+        : "Lokasi belum dapat diperbarui. Situs akan mencoba lagi ketika Ruang Murid dibuka.");
+    };
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      await recordStudentPosition(position, "location_auto_detected");
+      if (typeof navigator.geolocation.watchPosition === "function" && studentLocationWatcher === null) {
+        studentLocationWatcher = navigator.geolocation.watchPosition(
+          (nextPosition) => recordStudentPosition(nextPosition, "location_realtime_update"),
+          () => {},
+          { ...options, timeout: 30000 },
+        );
       }
-      status.textContent = "Menunggu izin lokasi dari perangkat…";
-      navigator.geolocation.getCurrentPosition((position) => {
-        const context = loadAccessContext();
-        context.permissionGranted = true;
-        context.locationLabel = place.value;
-        // Koordinat dibulatkan untuk mengurangi ketelitian lokasi pada rekap sekolah.
-        context.latitude = Number(position.coords.latitude).toFixed(3);
-        context.longitude = Number(position.coords.longitude).toFixed(3);
-        context.accuracy = Math.round(position.coords.accuracy || 0);
-        saveAccessContext(context);
-        status.textContent = `Lokasi diizinkan • ${place.value || "pilih nama tempat akses"}.`;
-        postRealtimeEvent("access", {
-          action: "location_consent",
-          resourceType: "privacy",
-          resourceId: "location",
-          resourceTitle: "Izin lokasi murid",
-          durationSeconds: 0,
-        });
-      }, () => {
-        status.textContent = "Izin lokasi tidak diberikan. Situs tetap dapat digunakan.";
-      }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 900000 });
-    });
+    }, onError, options);
+  }
+
+  function attachAutomaticLocationStatus() {
+    const saved = loadAccessContext();
+    if (saved.permissionGranted && saved.locationLabel) {
+      studentLocationStatus(`Lokasi terakhir • ${saved.locationLabel}.`);
+    }
   }
 
   function openPanel(name, { skipAuth = false } = {}) {
@@ -630,6 +692,7 @@ if (workspace && appData) {
     if (name === "student") {
       registerVisitorRole("murid");
       renderChapterCards();
+      startAutomaticStudentLocation();
       postRealtimeEvent("access", { action: "open_student_room", visitorRole: "murid" });
     }
     if (name === "teacher") {
@@ -852,8 +915,36 @@ if (workspace && appData) {
     };
   }
 
+  function normalizeDalilLookup(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("id")
+      .replace(/[^a-z0-9]/g, "");
+  }
+
+  function findHadithRecord(labelOrId) {
+    const requested = normalizeDalilLookup(labelOrId);
+    if (!requested) return null;
+    return hadithData.records.find((record) => {
+      if (normalizeDalilLookup(record.id) === requested) return true;
+      const sourceKey = normalizeDalilLookup(record.source);
+      if (sourceKey && requested.includes(sourceKey)) return true;
+      return (record.keywords || []).some((keyword) => requested.includes(normalizeDalilLookup(keyword)));
+    }) || null;
+  }
+
   function dalilReferenceHtml(item, index, { compact = false } = {}) {
     const parsed = parseQuranReference(item);
+    const hadith = !parsed ? findHadithRecord(item) : null;
+    if (hadith) {
+      const button = `
+        <button class="dalil-open-button hadith-open-button" type="button" data-open-hadith="${escapeHtml(hadith.id)}">
+          <span>${compact ? "📜" : index + 1}</span>
+          <span><strong>${escapeHtml(hadith.source)}</strong><small>${escapeHtml(hadith.title)} • buka teks, makna, dan bacaan luring</small></span>
+        </button>`;
+      return compact ? `<li class="summary-dalil-item">${button}</li>` : `<article class="is-clickable-dalil">${button}</article>`;
+    }
     if (!parsed) {
       return compact
         ? `<li>${escapeHtml(item)}</li>`
@@ -906,6 +997,48 @@ if (workspace && appData) {
         explanation: chapter.overview,
       },
     ];
+    const quranAndTajwidChapter = /qur|hadis|tajwid/i.test(`${chapter.element} ${chapter.title}`);
+    if (quranAndTajwidChapter) {
+      items.push(
+        {
+          question: "Mad thabi'i dibaca sepanjang …",
+          options: ["Dua harakat", "Empat atau lima harakat pada semua keadaan", "Enam harakat pada semua keadaan", "Tidak dipanjangkan"],
+          answer: 0,
+          explanation: "Mad thabi'i pada keadaan biasa dibaca dua harakat, misalnya ketika fathah diikuti alif, kasrah diikuti ya sukun, atau dammah diikuti waw sukun.",
+        },
+        {
+          question: "Hukum bacaan nun sukun atau tanwin ketika bertemu huruf ba adalah …",
+          options: ["Iqlab", "Idgham bighunnah", "Izhar halqi", "Ikhfa syafawi"],
+          answer: 0,
+          explanation: "Nun sukun atau tanwin yang bertemu ba dibaca iqlab: bunyi nun berubah mendekati mim disertai dengung.",
+        },
+        {
+          question: "Apabila mim sukun bertemu huruf mim, hukum bacaannya adalah …",
+          options: ["Idgham mimi", "Ikhfa haqiqi", "Iqlab", "Izhar halqi"],
+          answer: 0,
+          explanation: "Mim sukun yang bertemu mim dibaca idgham mimi dengan memasukkan bunyi mim dan mendengungkannya.",
+        },
+        {
+          question: "Huruf qalqalah dirangkum dalam kelompok …",
+          options: ["ق ط ب ج د", "ء ه ع ح غ خ", "ي ر م ل و ن", "ص ذ ث ك ج ش"],
+          answer: 0,
+          explanation: "Huruf qalqalah ialah qaf, tha, ba, jim, dan dal. Pantulan muncul ketika salah satu huruf tersebut dalam keadaan sukun.",
+        },
+        chapter.id === "VIII-1"
+          ? {
+            question: "Lafaz Allah dibaca tipis (tarqiq) apabila huruf sebelumnya berharakat …",
+            options: ["Kasrah", "Fathah", "Dammah", "Sukun tanpa melihat huruf sebelumnya"],
+            answer: 0,
+            explanation: "Lam pada lafaz Allah dibaca tipis apabila didahului kasrah; apabila didahului fathah atau dammah, lam dibaca tebal.",
+          }
+          : {
+            question: "Perbedaan pokok alif lam syamsiyah dan alif lam qamariyah adalah …",
+            options: ["Lam syamsiyah tidak dibaca jelas, sedangkan lam qamariyah dibaca jelas", "Keduanya selalu dibaca sama", "Lam qamariyah tidak dibaca jelas", "Keduanya hanya muncul pada akhir ayat"],
+            answer: 0,
+            explanation: "Pada alif lam syamsiyah, bunyi lam melebur ke huruf sesudahnya; pada alif lam qamariyah, bunyi lam dibaca jelas.",
+          },
+      );
+    }
     const sessionSeed = `${getAccessSessionId()}|${chapter.id}`;
     const seededShuffle = (values, suffix) => {
       let seed = `${sessionSeed}|${suffix}`.split("").reduce((hash, character) => (
@@ -927,9 +1060,10 @@ if (workspace && appData) {
   }
 
   function quickQuizHtml(chapter) {
+    const questions = quickQuizForChapter(chapter);
     return `
       <div class="chapter-quiz" data-quick-quiz>
-        ${quickQuizForChapter(chapter).map((item, questionIndex) => `
+        ${questions.map((item, questionIndex) => `
           <article class="chapter-quiz-question" data-quiz-question="${questionIndex}" data-correct="${item.answer}" data-explanation="${escapeHtml(item.explanation)}">
             <h4>${questionIndex + 1}. ${escapeHtml(item.question)}</h4>
             <div class="chapter-quiz-options">
@@ -938,7 +1072,7 @@ if (workspace && appData) {
             <p class="chapter-quiz-feedback" aria-live="polite"></p>
             <button class="text-button inline-answer-link no-print" type="button" data-scroll-submission>Jawab uraian dan kirim kepada guru ↓</button>
           </article>`).join("")}
-        <div class="chapter-quiz-score"><strong data-quiz-score>0 dari 5 benar</strong><span>Jawaban dapat diulang dengan membuka kembali tab Materi Bab.</span></div>
+        <div class="chapter-quiz-score"><strong data-quiz-score>0 dari ${questions.length} benar</strong><span>Jawaban dapat diulang dengan membuka kembali tab Materi Bab.</span></div>
       </div>`;
   }
 
@@ -989,12 +1123,12 @@ if (workspace && appData) {
       <section class="document-section">
         <h3>6. Dalil dan Sumber Penguatan</h3>
         <div class="dalil-grid">${references.map((item, index) => dalilReferenceHtml(item, index)).join("")}</div>
-        <p class="document-note">Dalil Al Qur'an Surat dapat diklik dan dibaca dari paket luring lengkap dengan terjemahan. Hadits Riwayat tetap dipelajari melalui sumber utuh, penjelasan buku, dan bimbingan guru. Daftar ini menjadi pintu kajian, bukan pengganti tafsir atau syarah.</p>
+        <p class="document-note">Dalil Al Qur'an Surat dan Hadits Riwayat dapat diklik untuk membuka teks, makna, sumber, serta bacaan Arab dari paket luring. Audio luring memakai paket suara Arab perangkat. Daftar ini menjadi pintu kajian, bukan pengganti tafsir, syarah, atau bimbingan guru.</p>
       </section>
       <section class="document-section">
         <h3>7. Pendalaman dan Penerapan</h3>
         <p>Belajar PAIBP tidak berhenti pada hafalan. Latih pemahaman melalui tindakan berikut:</p>
-        <ul class="application-list">${chapter.applications.map((item) => `<li>${escapeHtml(item)}.</li>`).join("")}</ul>
+        <ol class="application-list academic-list" type="a">${chapter.applications.map((item) => `<li>${escapeHtml(item)}.</li>`).join("")}</ol>
       </section>
       <section class="document-section">
         <h3>8. Ikhtisar</h3>
@@ -1004,7 +1138,7 @@ if (workspace && appData) {
       </section>
       <section class="document-section">
         <h3>9. Rajin Berlatih — Cek Langsung</h3>
-        <p>Pilih jawaban pada lima soal berikut. Hasil dan penjelasan akan tampil langsung tanpa menunggu guru.</p>
+        <p>Pilih jawaban pada ${quickQuizForChapter(chapter).length} soal berikut. Bab Al Qur'an dan Hadits dilengkapi latihan pemahaman tajwid yang relevan. Hasil serta penjelasan tampil langsung tanpa menunggu guru.</p>
         ${quickQuizHtml(chapter)}
       </section>
       <section class="document-section">
@@ -1516,6 +1650,7 @@ if (workspace && appData) {
   function attachQuickQuiz() {
     const quiz = document.querySelector("[data-quick-quiz]");
     if (!quiz || !currentChapter) return;
+    const totalQuestions = quiz.querySelectorAll("[data-quiz-question]").length;
     const savedQuiz = loadStudentWorks()[currentChapter.id]?.quickQuiz || {};
     const answered = new Map(
       Array.isArray(savedQuiz.answered)
@@ -1527,7 +1662,7 @@ if (workspace && appData) {
     );
     const refreshScore = () => {
       const correctCount = [...answered.values()].filter((item) => item.correct).length;
-      quiz.querySelector("[data-quiz-score]").textContent = `${correctCount} dari 5 benar • ${answered.size} soal sudah dijawab`;
+      quiz.querySelector("[data-quiz-score]").textContent = `${correctCount} dari ${totalQuestions} benar • ${answered.size} soal sudah dijawab`;
     };
     const persistQuiz = () => {
       saveCurrentStudentWork({ silent: true });
@@ -1541,7 +1676,8 @@ if (workspace && appData) {
           correct: value.correct,
         })),
         score: correctCount,
-        complete: answered.size === 5,
+        complete: answered.size === totalQuestions,
+        totalQuestions,
         savedAt: new Date().toISOString(),
       };
       allWorks[currentChapter.id] = work;
@@ -1588,9 +1724,7 @@ if (workspace && appData) {
   }
 
   function attachDalilReaders() {
-    document.querySelectorAll("[data-open-dalil]").forEach((button) => {
-      button.addEventListener("click", () => openOfflineDalil(button.dataset.openDalil));
-    });
+    // Pembaca memakai event delegation agar kartu yang dirender ulang tetap aktif.
   }
 
   function renderLesson() {
@@ -1657,6 +1791,7 @@ if (workspace && appData) {
     const videos = live?.videoSummaries || saved.videoSummaries || [];
     const viewedSections = saved.viewedSections || [];
     const quickQuiz = saved.quickQuiz || {};
+    const requiredQuickQuizQuestions = quickQuizForChapter(currentChapter).length;
     const checks = [
       {
         label: "Materi, Ringkasan, dan LKPD sudah dibuka",
@@ -1679,8 +1814,12 @@ if (workspace && appData) {
         passed: reflections.length === 3 && reflections.every((answer) => String(answer || "").trim().length >= 10),
       },
       {
-        label: "Lima soal cek langsung sudah dijawab",
-        passed: Boolean(quickQuiz.complete && Array.isArray(quickQuiz.answered) && quickQuiz.answered.length === 5),
+        label: `${requiredQuickQuizQuestions} soal cek langsung sudah dijawab`,
+        passed: Boolean(
+          quickQuiz.complete
+          && Array.isArray(quickQuiz.answered)
+          && quickQuiz.answered.length === requiredQuickQuizQuestions
+        ),
       },
       {
         label: "Dua ringkasan video masing-masing minimal 500 karakter",
@@ -2714,27 +2853,27 @@ if (workspace && appData) {
     let listItems = [];
     const flushList = () => {
       if (!listItems.length) return;
-      html += `<ul class="source-list">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+      html += `<ol class="source-list source-academic-list" type="a">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>`;
       listItems = [];
     };
-    blocks
-      .filter((block, index) => !isSignatureBlock(block, index, blocks.length))
-      .forEach((block) => {
+    const visibleBlocks = blocks.filter((block, index) => !isSignatureBlock(block, index, blocks.length));
+    for (let index = 0; index < visibleBlocks.length; index += 1) {
+      const block = visibleBlocks[index];
       if (block.type === "list") {
         listItems.push(block.text);
-        return;
+        continue;
       }
       flushList();
       if (block.type === "table") {
         const rows = Array.isArray(block.rows) ? block.rows : [];
-        if (!rows.length) return;
+        if (!rows.length) continue;
         const columnCount = Math.max(...rows.map((row) => row.length));
         html += `<div class="source-table-scroll"><table class="data-table source-table"><tbody>${rows.map((row, rowIndex) => {
           const cells = [...row, ...Array(Math.max(0, columnCount - row.length)).fill("")];
           const cellTag = rowIndex === 0 ? "th" : "td";
           return `<tr>${cells.map((cell) => `<${cellTag}>${escapeHtml(cell)}</${cellTag}>`).join("")}</tr>`;
         }).join("")}</tbody></table></div>`;
-        return;
+        continue;
       }
       let tag = {
         heading2: "h2",
@@ -2746,7 +2885,23 @@ if (workspace && appData) {
       // Hanya teks yang benar-benar berbentuk judul atau subjudul dipertahankan.
       if (tag !== "p" && !isSourceHeading(text, block.type)) tag = "p";
       html += `<${tag}>${escapeHtml(block.text)}</${tag}>`;
-    });
+      if (tag === "p" && /[:：]\s*$/.test(text)) {
+        const academicItems = [];
+        let nextIndex = index + 1;
+        while (nextIndex < visibleBlocks.length && academicItems.length < 18) {
+          const nextBlock = visibleBlocks[nextIndex];
+          if (nextBlock.type === "table" || nextBlock.type === "list") break;
+          const nextText = String(nextBlock.text || "").trim();
+          if (!nextText || isSourceHeading(nextText, nextBlock.type) || nextText.length > 300) break;
+          academicItems.push(nextText);
+          nextIndex += 1;
+        }
+        if (academicItems.length >= 2) {
+          html += `<ol class="source-list source-academic-list" type="a">${academicItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>`;
+          index = nextIndex - 1;
+        }
+      }
+    }
     flushList();
     return html;
   }
@@ -2780,7 +2935,7 @@ if (workspace && appData) {
         <p>Ditampilkan dari berkas perangkat ajar yang dilampirkan pengelola, dengan susunan paragraf dan tabel dipertahankan agar siap dibaca, dicetak, serta dikembangkan.</p>
         <div class="source-file-actions no-print">
           <button class="cta btn-compact" type="button" data-download-source>Unduh Berkas Sumber .docx</button>
-          <a class="btn btn-compact" href="${escapeHtml(source.downloadPath)}" target="_blank" rel="noopener">Buka berkas</a>
+          <button class="btn btn-compact" type="button" data-open-source>Buka berkas</button>
           <span>${escapeHtml(source.sourceName)}</span>
         </div>
         <p class="save-status no-print" id="source-download-status" aria-live="polite"></p>
@@ -2789,7 +2944,30 @@ if (workspace && appData) {
         <strong>Dokumen lengkap, bukan ringkasan generik.</strong>
         Isi web diadopsi dari berkas sumber kelas ${teacherGrade}. Penyesuaian istilah hanya dilakukan agar konsisten dengan bahasa portal; berkas asli tetap tersedia melalui tombol unduh.
       </div>
-      <section class="source-document">${sourceBlocksHtml(source.blocks)}</section>`;
+      <section class="source-document" id="source-document-start" tabindex="-1">${sourceBlocksHtml(source.blocks)}</section>`;
+  }
+
+  function teacherSourceDocxBlocks(source) {
+    let listNumber = 0;
+    return (source.blocks || [])
+      .filter((block, index) => !isSignatureBlock(block, index, source.blocks.length))
+      .flatMap((block) => {
+        if (block.type === "table") {
+          listNumber = 0;
+          return (block.rows || []).map((row) => ({ text: row.join(" | ") }));
+        }
+        const text = String(block.text || "").trim();
+        if (!text) return [];
+        if (block.type === "list") {
+          listNumber += 1;
+          return [{ text: `${listNumber}. ${text}` }];
+        }
+        listNumber = 0;
+        const style = isSourceHeading(text, block.type)
+          ? (block.type === "heading2" ? "Heading1" : block.type === "heading3" ? "Heading2" : "Heading3")
+          : "";
+        return [{ text, style }];
+      });
   }
 
   async function downloadSelectedTeacherSource() {
@@ -2806,8 +2984,23 @@ if (workspace && appData) {
       downloadBlob(blob, filename);
       if (status) status.textContent = "Berkas berhasil disiapkan. Periksa folder unduhan perangkat.";
     } catch {
-      if (status) status.textContent = "Unduhan otomatis gagal. Tombol “Buka berkas” dapat digunakan sebagai jalur cadangan.";
+      const filename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
+      const fallbackBlob = window.PAIBP_DOCX.createDocument({
+        title: source.label,
+        blocks: teacherSourceDocxBlocks(source),
+      });
+      downloadBlob(fallbackBlob, filename);
+      if (status) status.textContent = "Berkas Word dibuat dari isi sumber yang tersimpan di portal dan berhasil disiapkan.";
     }
+  }
+
+  function openSelectedTeacherSource() {
+    const sourceDocument = document.querySelector("#source-document-start");
+    const status = document.querySelector("#source-download-status");
+    if (!sourceDocument) return;
+    sourceDocument.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+    sourceDocument.focus({ preventScroll: true });
+    if (status) status.textContent = "Isi berkas lengkap dibuka di bawah tanpa berpindah ke halaman 404.";
   }
 
   function renderTeacherDocument() {
@@ -2828,6 +3021,7 @@ if (workspace && appData) {
       });
     }
     document.querySelector("[data-download-source]")?.addEventListener("click", downloadSelectedTeacherSource);
+    document.querySelector("[data-open-source]")?.addEventListener("click", openSelectedTeacherSource);
     if (teacherDoc === "calendar") attachAcademicCalendarManager();
     if (teacherDoc === "access") attachAccessRecap();
     if (teacherDoc === "submissions") attachSubmissionRecap();
@@ -3328,6 +3522,7 @@ if (workspace && appData) {
     const status = document.querySelector("#dalil-reader-status");
     const title = document.querySelector("#dalil-reader-title");
     if (!reference || !modal || !content || !status || !title) return;
+    activeOfflineHadith = null;
     activeOfflineReference = reference;
     activeOfflineSurah = null;
     modal.hidden = false;
@@ -3351,6 +3546,54 @@ if (workspace && appData) {
     }
   }
 
+  function renderOfflineHadith(record) {
+    const content = document.querySelector("#dalil-reader-content");
+    const title = document.querySelector("#dalil-reader-title");
+    const status = document.querySelector("#dalil-reader-status");
+    const fullButton = document.querySelector("#dalil-read-full-surah");
+    if (!content || !title || !status || !record) return;
+    title.textContent = record.source;
+    status.textContent = "Teks Arab, makna Bahasa Indonesia, dan keterangan dimuat dari paket luring di dalam situs.";
+    content.innerHTML = `
+      <article class="offline-hadith-card">
+        <span class="badge">Hadits Riwayat</span>
+        <h3>${escapeHtml(record.title)}</h3>
+        <p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(record.arabic)}</p>
+        <h4>Makna ringkas</h4>
+        <p class="offline-ayah-translation">${escapeHtml(record.meaning)}</p>
+        <h4>Keterangan belajar</h4>
+        <p>${escapeHtml(record.note)}</p>
+        <div class="offline-hadith-actions no-print">
+          <button class="btn btn-compact" type="button" data-speak-offline-hadith>🔊 Putar bacaan luring</button>
+          <a class="btn btn-compact" href="${escapeHtml(record.url)}" target="_blank" rel="noopener">Periksa sumber ↗</a>
+        </div>
+        <p class="audio-note" data-offline-hadith-status>Audio memakai suara Arab perangkat. Setelah paket suara Arab dipasang pada ponsel, fitur ini dapat dipakai tanpa internet.</p>
+      </article>`;
+    const audioStatus = content.querySelector("[data-offline-hadith-status]");
+    content.querySelector("[data-speak-offline-hadith]")?.addEventListener("click", () => {
+      speakArabic(record.arabic, audioStatus);
+    });
+    if (fullButton) {
+      fullButton.hidden = true;
+      fullButton.disabled = true;
+    }
+  }
+
+  function openOfflineHadith(labelOrId) {
+    const record = findHadithRecord(labelOrId);
+    const modal = document.querySelector("#dalil-reader-modal");
+    const content = document.querySelector("#dalil-reader-content");
+    const status = document.querySelector("#dalil-reader-status");
+    const title = document.querySelector("#dalil-reader-title");
+    if (!record || !modal || !content || !status || !title) return;
+    activeOfflineReference = null;
+    activeOfflineSurah = null;
+    activeOfflineHadith = record;
+    modal.hidden = false;
+    document.body.classList.add("has-modal");
+    renderOfflineHadith(record);
+  }
+
   function closeOfflineDalil() {
     const modal = document.querySelector("#dalil-reader-modal");
     if (!modal) return;
@@ -3361,7 +3604,22 @@ if (workspace && appData) {
   document.querySelectorAll("[data-close-dalil-reader]").forEach((button) => {
     button.addEventListener("click", closeOfflineDalil);
   });
-  document.querySelector("#dalil-read-full-surah")?.addEventListener("click", () => renderOfflineDalil({ fullSurah: true }));
+  document.querySelector("#dalil-read-full-surah")?.addEventListener("click", () => {
+    if (activeOfflineSurah && activeOfflineReference && !activeOfflineHadith) renderOfflineDalil({ fullSurah: true });
+  });
+  document.addEventListener("click", (event) => {
+    const quranButton = event.target.closest?.("[data-open-dalil]");
+    if (quranButton) {
+      event.preventDefault();
+      openOfflineDalil(quranButton.dataset.openDalil);
+      return;
+    }
+    const hadithButton = event.target.closest?.("[data-open-hadith]");
+    if (hadithButton) {
+      event.preventDefault();
+      openOfflineHadith(hadithButton.dataset.openHadith);
+    }
+  });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && document.querySelector("#dalil-reader-modal")?.hidden === false) closeOfflineDalil();
   });
@@ -3729,25 +3987,35 @@ if (workspace && appData) {
     dailyInsightIndex = normalizedIndex;
     const item = islamicData.dailyInsights[normalizedIndex];
     const variation = insightLearningVariation(normalizedIndex);
+    const variationLabel = variation.combinations >= 1_000_000_000_000
+      ? "lebih dari 1 triliun"
+      : variation.combinations >= 1_000_000_000
+        ? "lebih dari 1 miliar"
+        : variation.combinations.toLocaleString("id-ID");
     container.innerHTML = `
-      <div class="insight-card-head"><span class="badge">${escapeHtml(item.type)}</span><small>${normalizedIndex + 1} dari ${islamicData.dailyInsights.length}</small></div>
+      <div class="insight-card-head"><span class="badge">${escapeHtml(item.type)}</span><small>Sumber ${normalizedIndex + 1} dari ${islamicData.dailyInsights.length} • ${variationLabel} susunan refleksi</small></div>
       <blockquote>${escapeHtml(item.text)}</blockquote>
       ${item.url
         ? `<a class="insight-source" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.source)} ↗</a>`
         : `<strong>${escapeHtml(item.source)}</strong>`}
       <p>${escapeHtml(item.detail)}</p>
       <div class="insight-learning-variation">
-        <strong>Aktivitas penguatan hari ini</strong>
-        <p>${escapeHtml(variation.action)}; ${escapeHtml(variation.reflection)}. ${escapeHtml(variation.evidence)} dan ${escapeHtml(variation.habit)}.</p>
-        <small>Untuk ${escapeHtml(variation.audience)} ${escapeHtml(variation.context)} • ${escapeHtml(variation.duration)} • ${escapeHtml(variation.format)}.</small>
+        <strong>Renungan dan tindakan hari ini</strong>
+        <ol>
+          <li><span>Pahami:</span> ${escapeHtml(variation.action)} ${escapeHtml(variation.evidence)}.</li>
+          <li><span>Renungkan:</span> ${escapeHtml(variation.reflection)}.</li>
+          <li><span>Praktikkan:</span> ${escapeHtml(variation.habit)}, lalu ${escapeHtml(variation.format)}.</li>
+        </ol>
+        <small>Disusun untuk ${escapeHtml(variation.audience)} ${escapeHtml(variation.context)} • waktu ${escapeHtml(variation.duration)}.</small>
       </div>
-      <small class="insight-combination-count">Ruang variasi pembelajaran: ${variation.combinations.toLocaleString("id-ID")} kemungkinan susunan. Kutipan sumber tidak diubah.</small>
-      <span class="insight-click-hint">Klik kartu untuk menampilkan nasihat berikutnya.</span>`;
+      <small class="insight-combination-count">Bank memakai ${islamicData.dailyInsights.length} sumber yang dapat diperiksa dan ${variationLabel} kombinasi kegiatan. Teks sumber tidak diubah atau dikarang.</small>
+      <span class="insight-click-hint">Klik kartu atau tombol di bawah untuk mengacak nasihat berikutnya.</span>`;
   }
 
   function showNextDailyInsight() {
     dailyInsightVariantCounter += 1;
-    const next = Number.isInteger(dailyInsightIndex) ? dailyInsightIndex + 1 : 1;
+    const jump = Math.max(1, Math.floor(Math.random() * Math.max(1, islamicData.dailyInsights.length - 1)));
+    const next = Number.isInteger(dailyInsightIndex) ? dailyInsightIndex + jump : jump;
     renderDailyInsight(next);
   }
 
@@ -4820,7 +5088,7 @@ if (workspace && appData) {
   attachFeedbackForm();
   attachEditorControls();
   attachGalleryAdmin();
-  attachLocationConsent();
+  attachAutomaticLocationStatus();
   loadOnlineGallery();
   loadPublicFeedback();
   loadPublicContent();

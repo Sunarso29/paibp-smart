@@ -166,21 +166,12 @@
                     </div>
                   </div>
                   <div class="student-access-consent">
+                    <span class="student-location-icon" aria-hidden="true">⌖</span>
                     <div>
-                      <strong>Rekap kehadiran belajar</strong>
-                      <p>Nama tempat dan lokasi hanya dicatat setelah murid memberi izin. Guru dapat melihat waktu, durasi, dan bagian yang dibuka dari Ruang Guru.</p>
+                      <strong>Rekap kehadiran belajar otomatis</strong>
+                      <p>Ketika Ruang Murid dibuka, situs mendeteksi perkiraan tempat akses, waktu, durasi, dan bagian yang dipelajari. Ponsel tetap dapat menampilkan permintaan izin lokasi bawaan demi keamanan pengguna.</p>
+                      <span id="student-location-status" aria-live="polite">Menunggu Ruang Murid dibuka…</span>
                     </div>
-                    <label>Tempat akses
-                      <select id="student-place-label">
-                        <option value="">Pilih tempat</option>
-                        <option>SMP Negeri 1 Susukan</option>
-                        <option>Rumah</option>
-                        <option>Perpustakaan</option>
-                        <option>Tempat belajar lainnya</option>
-                      </select>
-                    </label>
-                    <button class="btn btn-compact" id="enable-student-location" type="button">Izinkan lokasi</button>
-                    <span id="student-location-status" aria-live="polite">Lokasi belum dibagikan.</span>
                   </div>
                 </div>
                 <div class="student-summary-row">
@@ -684,8 +675,8 @@
         <header class="dalil-reader-head">
           <div>
             <span class="badge">Pembaca Dalil Luring</span>
-            <h2 id="dalil-reader-title">Al Qur'an Surat dan Ayat</h2>
-            <p id="dalil-reader-status" aria-live="polite">Menyiapkan ayat dari paket luring…</p>
+            <h2 id="dalil-reader-title">Al Qur'an Surat dan Hadits Riwayat</h2>
+            <p id="dalil-reader-status" aria-live="polite">Menyiapkan teks dalil dari paket luring…</p>
           </div>
           <button class="teacher-auth-close" type="button" data-close-dalil-reader aria-label="Tutup pembaca dalil">×</button>
         </header>
@@ -704,6 +695,7 @@
     <script src="staff-images.js"></script>
     <script src="school-data.js"></script>
     <script src="islamic-data.js"></script>
+    <script src="hadith-data.js"></script>
     <script src="arabic-data.js"></script>
     <script src="game-data.js"></script>
     <script src="video-data.js"></script>

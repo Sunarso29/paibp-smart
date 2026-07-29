@@ -8,7 +8,7 @@ LANGKAH UPLOAD:
    Jangan unggah file ZIP-nya.
 5. Pastikan index.html, privacy.html, terms.html, support.html, contact.html,
    app-config.js, content-data.js, teacher-source-data.js, calendar-data.js, staff-images.js,
-   school-data.js, islamic-data.js,
+   school-data.js, islamic-data.js, hadith-data.js,
    styles.css, script.js, service-worker.js, robots.txt, sitemap.xml,
    dan semua folder terlihat.
 6. Isi commit message: Perbarui website PAIBP SMART SMP
@@ -33,7 +33,7 @@ PENTING:
   guru dan tenaga kependidikan selalu tampil.
 - Folder assets/perangkat wajib ikut diunggah karena berisi 48 dokumen
   sumber Ruang Guru.
-- Kata sandi standar Ruang Guru: 261078.
+- Ruang Guru dibuka dengan nama guru, unit kerja, dan NIP bila ada. Kata sandi 261078 hanya untuk Ruang Editor.
 - Rekap akses lintas perangkat belum aktif sampai URL Web App dan kunci baca
   diisi pada app-config.js. Ikuti PANDUAN_REKAP_REALTIME.md.
 - Sinkronisasi Spensus Terkini ke semua perangkat memakai integrasi yang sama.

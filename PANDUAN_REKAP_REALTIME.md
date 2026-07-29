@@ -4,7 +4,7 @@ GitHub Pages hanya menyajikan file statis. Karena itu, rekap akses dari telepon 
 
 ## Data yang dicatat
 
-Integrasi mencatat waktu, peran pengguna, identitas murid atau identitas guru, ruang/bab/bagian yang dibuka, serta potongan durasi aktif pada sheet **Aktivitas**. Identitas guru berisi nama, unit kerja, dan NIP bila diisi. Nama tempat dipilih murid. Koordinat yang sudah dibulatkan hanya dicatat setelah murid menekan **Izinkan lokasi** dan menyetujui permintaan browser. Ketika murid memilih **Kirim kepada guru**, satu paket jawaban berisi latihan, LKPD, refleksi, dan ringkasan video disimpan secara terpisah pada sheet **Pekerjaan** agar dapat dimuat oleh guru. Isi jawaban tidak dimasukkan ke log aktivitas.
+Integrasi mencatat waktu, peran pengguna, identitas murid atau identitas guru, ruang/bab/bagian yang dibuka, serta potongan durasi aktif pada sheet **Aktivitas**. Identitas guru berisi nama, unit kerja, dan NIP bila diisi. Ketika Ruang Murid dibuka, situs otomatis menjalankan deteksi lokasi; sistem operasi atau browser tetap dapat meminta persetujuan satu kali. Koordinat dibulatkan hingga tiga angka desimal dan nama wilayah perkiraan ditentukan otomatis. Ketika murid memilih **Kirim kepada guru**, satu paket jawaban berisi latihan, LKPD, refleksi, dan ringkasan video disimpan secara terpisah pada sheet **Pekerjaan** agar dapat dimuat oleh guru. Isi jawaban tidak dimasukkan ke log aktivitas.
 
 Editor admin **Spensus Terkini** memakai integrasi yang sama. Data judul, tanggal, dan ringkasan disimpan pada sheet **Spensus Terkini**, sedangkan foto kegiatan disimpan dalam folder Google Drive **PAIBP SMART — Spensus Terkini**. Tanpa integrasi, editor tetap berfungsi tetapi perubahan galeri hanya tersimpan pada perangkat admin tersebut.
 
@@ -47,7 +47,7 @@ Unggah kembali `app-config.js` ke root repository GitHub, tunggu GitHub Pages se
 
 1. Buka website dari telepon.
 2. Masuk Ruang Murid, buka satu bab, isi identitas, lalu kirim satu tugas.
-3. Pilih nama tempat akses. Jika pengujian lokasi diperlukan, tekan **Izinkan lokasi** dan setujui permintaan browser.
+3. Saat Ruang Murid dibuka, setujui permintaan lokasi bawaan ponsel apabila nama wilayah dan koordinat perkiraan akan direkam. Tidak ada pilihan tempat atau tombol lokasi manual.
 4. Di perangkat guru, buka Ruang Guru, lalu isi nama, unit kerja, dan NIP bila ada.
 5. Pilih **Rekap Akses Murid → Muat Ulang Rekap** dan pastikan waktu, aktivitas, durasi, tempat, serta pengiriman muncul.
 6. Pilih **Rekap Pekerjaan Murid → Muat Tugas Daring** dan pastikan isi pekerjaan masuk ke kelompok kelas yang sesuai.
