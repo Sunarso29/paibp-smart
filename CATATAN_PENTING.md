@@ -33,7 +33,7 @@ Ruang Editor dibuka dari Beranda menggunakan kata sandi admin standar `261078`. 
 - Teks dan audio murattal pada menu Al Qur'an juga dapat dimuat dari Al Quran Cloud. Audio murattal luring harus disimpan terlebih dahulu ketika internet tersedia.
 - Tombol bacaan luring pada pembaca dalil memakai suara bahasa Arab perangkat. Pastikan paket suara Arab telah terpasang pada pengaturan bahasa/teks-ke-suara telepon atau komputer.
 - Audio doa/dzikir memakai suara bahasa Arab pada perangkat. Situs menunggu daftar suara sampai siap dan memilih suara Arab secara otomatis; ketersediaannya tetap bergantung pada paket suara yang terpasang di sistem.
-- Akademi Bahasa Arab memuat 80 pelajaran dan menyimpan materi serta progres secara luring. Pelafalan dapat diputar luring bila paket suara Arab sudah terpasang pada perangkat.
+- Akademi Bahasa Arab memuat 100 pelajaran bertahap untuk SD, SMP, SMK, dan lintas jenjang serta menyimpan materi dan progres secara luring. Pelafalan dapat diputar luring bila paket suara Arab sudah terpasang pada perangkat.
 - Kalender Hijriah browser dapat berbeda satu hari dari keputusan resmi pemerintah atau hasil rukyat.
 - Halaman kitab sengaja tidak dicantumkan bila edisi belum terverifikasi karena nomor halaman berbeda antarcetakan.
 

@@ -163,7 +163,7 @@
 .portal-tab strong{font-size:17px;line-height:1.25}
 .portal-tab small{margin-top:4px;color:var(--muted);font-size:11px;font-weight:700;line-height:1.35}
 .portal-tab-editor{background:linear-gradient(145deg,#fff8dc,#fff)}
-.visitor-overview{margin-top:24px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,#f0faf6,#fff9de);padding:24px;display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr);gap:24px;align-items:center}
+.visitor-overview{margin-top:24px;margin-bottom:48px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,#f0faf6,#fff9de);padding:24px;display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr);gap:24px;align-items:center}
 .visitor-overview h2{margin:8px 0 5px}.visitor-overview p{margin:0;color:var(--muted)}
 .visitor-stat-grid,.editor-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .visitor-stat-grid article,.editor-stat-grid article{border:1px solid rgba(8,127,104,.17);border-radius:17px;background:rgba(255,255,255,.88);padding:17px;display:grid;gap:4px}
@@ -508,6 +508,7 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .source-original-details{margin-top:18px;border:1px solid var(--line);border-radius:16px;background:#fff}
 .source-original-details>summary{cursor:pointer;padding:15px 18px;color:var(--emerald);font-size:13px;font-weight:800}
 .source-original-details .source-document{border-top:1px solid var(--line);padding:20px}
+.source-completion-note{border-left:4px solid var(--gold);background:#fff8dd;padding:10px 12px;color:var(--muted)}
 .source-academic-list{list-style-type:lower-alpha}
 .source-academic-list li{padding-left:5px;margin:7px 0}
 .source-table-scroll{max-width:100%;overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:14px}
@@ -540,12 +541,14 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .access-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0}
 .access-filters label{display:grid;gap:5px;color:#36515a;font-size:11px;font-weight:800}
 .access-filters select,.access-filters input{min-height:40px;border:1px solid #adc6be;border-radius:10px;background:#fff;padding:8px}
-.arabic-level-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+.arabic-level-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0}
 .arabic-level-tabs button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px;color:#36515a;font-weight:800;cursor:pointer}
 .arabic-level-tabs button[aria-pressed="true"]{border-color:var(--emerald);background:#e2f6ef;color:var(--emerald)}
 .arabic-learning-path{border-radius:20px;background:linear-gradient(160deg,#083a44,#087f68);padding:19px;color:#fff}
 .arabic-level-intro{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}
 .arabic-level-intro strong{font-size:20px}.arabic-level-intro p{margin:0;color:#d7eee8;font-size:12px}
+.arabic-audience-summary{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.arabic-audience-summary span{border:1px solid rgba(255,255,255,.24);border-radius:999px;background:rgba(255,255,255,.1);padding:5px 8px;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}
 .arabic-lesson-nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .arabic-lesson-nodes button{display:grid;grid-template-columns:auto 1fr;gap:2px 9px;align-items:center;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(255,255,255,.09);color:#fff;padding:11px;text-align:left;cursor:pointer}
 .arabic-lesson-nodes button>span{grid-row:1/3;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#fff;color:var(--emerald);font-weight:900}

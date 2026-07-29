@@ -74,6 +74,11 @@
       ["Profesi", "أَبِي مُعَلِّمٌ", "abī mu'allimun", "Ayah saya seorang guru.", "Kata مُعَلِّمٌ berarti …", ["dokter", "guru", "petani"], 1],
       ["Kata sifat", "اَلْفَصْلُ وَاسِعٌ", "al-fashlu wāsi'un", "Kelas itu luas.", "Kata وَاسِعٌ berarti …", ["sempit", "luas", "tinggi"], 1],
       ["Ucapan terima kasih", "شُكْرًا جَزِيلًا", "syukran jazīlan", "Terima kasih banyak.", "Ungkapan ini digunakan untuk …", ["meminta maaf", "berterima kasih", "berpamitan"], 1],
+      ["Kegiatan belajar SD", "أَرْسُمُ فِي دَفْتَرِي", "arsumu fī daftarī", "Saya menggambar di buku tulis.", "Kegiatan pada kalimat ialah …", ["menggambar", "membaca", "berlari"], 0, "SD"],
+      ["Jadwal pelajaran SMP", "عِنْدِي دَرْسُ الْعُلُومِ الْيَوْمَ", "‘indī darsul-‘ulūmi al-yauma", "Saya memiliki pelajaran ilmu pengetahuan hari ini.", "Kata الْيَوْمَ berarti …", ["kemarin", "hari ini", "besok"], 1, "SMP"],
+      ["Laboratorium SMK", "هٰذَا مُخْتَبَرُ الْحَاسُوبِ", "hādzā mukhtabarul-ḥāsūbi", "Ini laboratorium komputer.", "Tempat pada kalimat ialah …", ["perpustakaan", "laboratorium komputer", "kantin"], 1, "SMK"],
+      ["Keselamatan kerja SMK", "أَلْبَسُ خُوذَةَ السَّلَامَةِ", "albasu khūdzatas-salāmati", "Saya memakai helm keselamatan.", "Benda yang dipakai ialah …", ["helm keselamatan", "seragam olahraga", "tas"], 0, "SMK"],
+      ["Cita-cita", "أُرِيدُ أَنْ أَكُونَ مُهَنْدِسًا", "urīdu an akūna muhandisan", "Saya ingin menjadi insinyur.", "Cita-cita pada kalimat ialah …", ["guru", "dokter", "insinyur"], 2, "Semua jenjang"],
     ],
     menengah: [
       ["Kata ganti", "هُوَ طَالِبٌ مُجْتَهِدٌ", "huwa thālibun mujtahidun", "Dia murid laki-laki yang rajin.", "Kata هُوَ berarti …", ["dia laki-laki", "dia perempuan", "mereka"], 0],
@@ -90,6 +95,11 @@
       ["Perpustakaan", "أَبْحَثُ عَنِ الْمَرْجِعِ", "abḥatsu 'anil-marji'i", "Saya mencari buku rujukan.", "Kata أَبْحَثُ berarti …", ["saya mencari", "saya meminjam", "saya mengembalikan"], 0],
       ["Menyatakan kemampuan", "أَسْتَطِيعُ أَنْ أَقْرَأَ", "astathī'u an aqra'a", "Saya mampu membaca.", "أَسْتَطِيعُ berarti …", ["saya ingin", "saya mampu", "saya harus"], 1],
       ["Menyatakan keinginan", "أُرِيدُ أَنْ أَتَعَلَّمَ", "urīdu an ata'allama", "Saya ingin belajar.", "Kata أُرِيدُ berarti …", ["saya ingin", "saya tahu", "saya selesai"], 0],
+      ["Aturan kelas SD", "نَرْفَعُ أَيْدِيَنَا قَبْلَ الْكَلَامِ", "narfa‘u aidiyanā qablal-kalāmi", "Kami mengangkat tangan sebelum berbicara.", "Kebiasaan baik pada kalimat ialah …", ["berbicara bersamaan", "mengangkat tangan lebih dahulu", "meninggalkan kelas"], 1, "SD"],
+      ["Organisasi murid SMP", "أَشْتَرِكُ فِي مَجْلِسِ الطُّلَّابِ", "asytariku fī majlisith-thullābi", "Saya mengikuti organisasi murid.", "Penutur mengikuti …", ["organisasi murid", "kursus memasak", "perjalanan"], 0, "SMP"],
+      ["Praktik bengkel SMK", "أَفْحَصُ الْأَدَوَاتِ قَبْلَ الْعَمَلِ", "afḥashul-adawāti qablal-‘amali", "Saya memeriksa alat sebelum bekerja.", "Kapan alat diperiksa?", ["setelah pulang", "sebelum bekerja", "ketika rusak saja"], 1, "SMK"],
+      ["Pelayanan pelanggan SMK", "أَسْتَمِعُ إِلَى الْعَمِيلِ بِاحْتِرَامٍ", "astami‘u ilal-‘amīli biḥtirāmin", "Saya mendengarkan pelanggan dengan hormat.", "Sikap profesional pada kalimat ialah …", ["mengabaikan", "mendengarkan dengan hormat", "memotong pembicaraan"], 1, "SMK"],
+      ["Proyek kolaboratif", "نُقَسِّمُ الْمَهَامَّ فِي الْمَشْرُوعِ", "nuqassimul-mahāmma fil-masyrū‘i", "Kami membagi tugas dalam proyek.", "Tindakan kelompok ialah …", ["membagi tugas", "bekerja sendiri", "menunda pekerjaan"], 0, "Semua jenjang"],
     ],
     mahir: [
       ["Gagasan utama", "اَلْعِلْمُ يَبْنِي الْمُسْتَقْبَلَ", "al-'ilmu yabnil-mustaqbala", "Ilmu membangun masa depan.", "Gagasan utama kalimat ialah …", ["masa depan dibangun dengan ilmu", "ilmu harus disimpan", "masa depan tidak penting"], 0],
@@ -106,6 +116,11 @@
       ["Menjaga bumi", "يَجِبُ أَنْ نَحْفَظَ الْأَرْضَ", "yajibu an naḥfaẓal-ardha", "Kita wajib menjaga bumi.", "Kata يَجِبُ menunjukkan …", ["kewajiban", "kemungkinan", "masa lalu"], 0],
       ["Teks sejarah", "اِزْدَهَرَ الْعِلْمُ فِي الْحَضَارَةِ الْإِسْلَامِيَّةِ", "izdaharal-'ilmu fil-ḥadhāratil-islāmiyyati", "Ilmu berkembang dalam peradaban Islam.", "Apa yang berkembang?", ["perdagangan", "ilmu", "perjalanan"], 1],
       ["Ajakan akademik", "لِنَقْرَأِ الْمَصْدَرَ قَبْلَ الْحُكْمِ", "linaqra'il-mashdara qablal-ḥukmi", "Mari membaca sumber sebelum menilai.", "Pesan utama kalimat ialah …", ["periksa sumber", "cepat menilai", "abaikan bukti"], 0],
+      ["Literasi informasi SD", "أَقْرَأُ الْعُنْوَانَ ثُمَّ أَسْأَلُ", "aqra’ul-‘unwāna tsumma as’alu", "Saya membaca judul kemudian bertanya.", "Urutan kegiatan ialah …", ["bertanya lalu membaca", "membaca lalu bertanya", "menyalin tanpa membaca"], 1, "SD"],
+      ["Anti-perundungan SMP", "نَرْفُضُ التَّنَمُّرَ وَنَحْمِي أَصْدِقَاءَنَا", "narfudhut-tanammura wa naḥmī ashdiqā’anā", "Kami menolak perundungan dan melindungi teman-teman.", "Sikap utama kalimat ialah …", ["membiarkan perundungan", "menolak perundungan", "menyalahkan korban"], 1, "SMP"],
+      ["Proposal proyek SMK", "يَتَضَمَّنُ الْمُقْتَرَحُ الْهَدَفَ وَالْخُطَّةَ", "yatadhammanul-muqtaraḥul-hadafa wal-khuththata", "Proposal memuat tujuan dan rencana.", "Isi proposal pada kalimat ialah …", ["tujuan dan rencana", "nilai dan absensi", "salam dan penutup"], 0, "SMK"],
+      ["Laporan praktik kerja SMK", "يَشْرَحُ التَّقْرِيرُ الْعَمَلَ وَالنَّتَائِجَ", "yasyraḥut-taqrīrul-‘amala wan-natā’ija", "Laporan menjelaskan pekerjaan dan hasilnya.", "Laporan menjelaskan …", ["pekerjaan dan hasil", "jadwal libur", "daftar belanja"], 0, "SMK"],
+      ["Presentasi solusi", "نُقَدِّمُ حَلًّا عَمَلِيًّا لِلْمُشْكِلَةِ", "nuqaddimu ḥallan ‘amaliyyan lil-musykilati", "Kami menyampaikan solusi praktis untuk masalah.", "Yang disampaikan ialah …", ["masalah baru", "solusi praktis", "permintaan izin"], 1, "Semua jenjang"],
     ],
     percakapan: [
       ["Berkenalan", "مَا اسْمُكَ؟ اِسْمِي عَلِيٌّ", "mā ismuka? ismī 'Aliyyun", "Siapa namamu? Nama saya Ali.", "Pertanyaan menanyakan …", ["alamat", "nama", "kelas"], 1],
@@ -122,12 +137,17 @@
       ["Meminta maaf", "أَعْتَذِرُ عَنْ خَطَئِي", "a'tadziru 'an khatha'ī", "Saya meminta maaf atas kesalahan saya.", "Penutur sedang …", ["berterima kasih", "meminta maaf", "mengundang"], 1],
       ["Memberi saran", "مِنَ الْأَفْضَلِ أَنْ تُرَاجِعَ دَرْسَكَ", "minal-afdhali an turāji'a darsaka", "Sebaiknya kamu mengulang pelajaranmu.", "Kalimat berisi …", ["saran", "larangan keras", "sapaan"], 0],
       ["Berpamitan", "إِلَى اللِّقَاءِ، فِي أَمَانِ اللَّهِ", "ilal-liqā', fī amānillāhi", "Sampai jumpa, semoga dalam penjagaan Allah Subhanahu Wata'ala.", "Ungkapan digunakan ketika …", ["bertemu", "berpamitan", "meminta bantuan"], 1],
+      ["Meminta bantuan guru SD", "هَلْ يُمْكِنُ أَنْ تُسَاعِدَنِي يَا أُسْتَاذُ؟", "hal yumkinu an tusā‘idanī yā ustādzu?", "Apakah Bapak Guru dapat membantu saya?", "Murid sedang …", ["meminta bantuan", "menolak tugas", "berpamitan"], 0, "SD"],
+      ["Diskusi kelompok SMP", "مَا رَأْيُكَ فِي هٰذِهِ الْفِكْرَةِ؟", "mā ra’yuka fī hādzihil-fikrati?", "Apa pendapatmu tentang gagasan ini?", "Percakapan digunakan untuk …", ["meminta pendapat", "menanyakan harga", "meminta arah"], 0, "SMP"],
+      ["Wawancara magang SMK", "لِمَاذَا تُرِيدُ التَّدَرُّبَ فِي هٰذِهِ الشَّرِكَةِ؟", "limādzā turīdut-tadarruba fī hādzihisy-syarikati?", "Mengapa Anda ingin magang di perusahaan ini?", "Pertanyaan berkaitan dengan …", ["wawancara magang", "jadwal sholat", "peminjaman buku"], 0, "SMK"],
+      ["Melayani pelanggan SMK", "كَيْفَ أَسْتَطِيعُ أَنْ أُسَاعِدَكَ؟", "kaifa astathī‘u an usā‘idaka?", "Bagaimana saya dapat membantu Anda?", "Ungkapan menunjukkan …", ["pelayanan", "penolakan", "perpisahan"], 0, "SMK"],
+      ["Presentasi hasil kerja", "سَأَشْرَحُ خُطُوَاتِ الْعَمَلِ وَنَتَائِجَهُ", "sa-asyraḥu khuthuwātil-‘amali wa natā’ijahu", "Saya akan menjelaskan langkah kerja dan hasilnya.", "Topik presentasi ialah …", ["langkah dan hasil kerja", "harga barang", "arah perjalanan"], 0, "Semua jenjang"],
     ],
   };
 
   const levels = baseLevels.map((level) => ({
     ...level,
-    lessons: [...level.lessons, ...(expansions[level.id] || [])].map(([title, arabic, transliteration, meaning, question, options, answer], index) => ({
+    lessons: [...level.lessons, ...(expansions[level.id] || [])].map(([title, arabic, transliteration, meaning, question, options, answer, audience], index) => ({
       id: `${level.id}-${index + 1}`,
       title,
       arabic,
@@ -136,8 +156,16 @@
       question,
       options,
       answer,
+      audience: audience || (index < 8 ? "SD" : index < 17 ? "SMP" : "SMK"),
     })),
   }));
 
-  window.PAIBP_ARABIC = { levels };
+  const allLessons = levels.flatMap((level) => level.lessons.map((lesson) => ({
+    ...lesson,
+    levelId: level.id,
+    levelLabel: level.label,
+    levelIcon: level.icon,
+  })));
+
+  window.PAIBP_ARABIC = { levels, allLessons, total: allLessons.length };
 })();

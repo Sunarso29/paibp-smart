@@ -123,26 +123,94 @@
     return decoder.decode(Uint8Array.from(binary, (character) => character.charCodeAt(0)));
   }
 
-  function paragraphXml(block) {
+  function paragraphXml(block, options = {}) {
     const normalized = typeof block === "string" ? { text: block } : (block || {});
     const style = normalized.style || "";
     const bold = Boolean(normalized.bold || /^Heading[123]$/.test(style));
-    const size = style === "Title" ? 34 : style === "Heading1" ? 30 : style === "Heading2" ? 26 : style === "Heading3" ? 23 : 21;
-    const spacingAfter = /^Heading|Title/.test(style) ? 150 : 90;
+    const size = Number(normalized.size || options.size || (style === "Title" ? 34 : style === "Heading1" ? 30 : style === "Heading2" ? 26 : style === "Heading3" ? 23 : 21));
+    const spacingAfter = Number(options.spacingAfter ?? (/^Heading|Title/.test(style) ? 150 : 90));
     const lines = String(normalized.text ?? "").split("\n");
     const runs = lines.map((line, index) => (
       `${index ? "<w:br/>" : ""}<w:t xml:space="preserve">${escapeXml(line)}</w:t>`
     )).join("");
-    return `<w:p><w:pPr>${style ? `<w:pStyle w:val="${escapeXml(style)}"/>` : ""}<w:spacing w:after="${spacingAfter}"/></w:pPr><w:r><w:rPr>${bold ? "<w:b/>" : ""}<w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr>${runs}</w:r></w:p>`;
+    return `<w:p><w:pPr>${style ? `<w:pStyle w:val="${escapeXml(style)}"/>` : ""}<w:spacing w:after="${spacingAfter}"/>${options.keepNext ? "<w:keepNext/>" : ""}</w:pPr><w:r><w:rPr>${bold ? "<w:b/>" : ""}<w:rFonts w:ascii="Cambria" w:hAnsi="Cambria" w:eastAsia="Cambria"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr>${runs}</w:r></w:p>`;
+  }
+
+  function normalizedTableCell(cell) {
+    if (cell && typeof cell === "object" && !Array.isArray(cell)) {
+      return {
+        text: String(cell.text ?? ""),
+        header: Boolean(cell.header),
+        gridSpan: Math.max(1, Number(cell.gridSpan || 1)),
+      };
+    }
+    return { text: String(cell ?? ""), header: false, gridSpan: 1 };
+  }
+
+  function tableColumnCount(block) {
+    return Math.max(0, ...(block.rows || []).map((row) => {
+      const cells = Array.isArray(row) ? row : (row.cells || []);
+      return cells.reduce((total, cell) => total + normalizedTableCell(cell).gridSpan, 0);
+    }));
+  }
+
+  function tableXml(block) {
+    const rows = Array.isArray(block.rows) ? block.rows : [];
+    if (!rows.length) return "";
+    const columnCount = Math.max(1, tableColumnCount(block));
+    const compact = columnCount >= 7;
+    const gridWidth = Math.max(720, Math.floor((compact ? 15000 : 9500) / columnCount));
+    const grid = Array.from({ length: columnCount }, () => `<w:gridCol w:w="${gridWidth}"/>`).join("");
+    const borders = ["top", "left", "bottom", "right", "insideH", "insideV"]
+      .map((side) => `<w:${side} w:val="single" w:sz="6" w:space="0" w:color="7FA99C"/>`)
+      .join("");
+    const body = rows.map((row, rowIndex) => {
+      const rowObject = Array.isArray(row) ? { cells: row } : row;
+      const isHeaderRow = Boolean(rowObject.header || rowIndex < Number(block.headerRows || 0));
+      const cells = (rowObject.cells || []).map((rawCell) => {
+        const cell = normalizedTableCell(rawCell);
+        const isHeader = isHeaderRow || cell.header;
+        const cellProperties = [
+          `<w:tcW w:w="0" w:type="auto"/>`,
+          cell.gridSpan > 1 ? `<w:gridSpan w:val="${cell.gridSpan}"/>` : "",
+          `<w:vAlign w:val="top"/>`,
+          isHeader ? `<w:shd w:val="clear" w:color="auto" w:fill="DFF5ED"/>` : "",
+        ].join("");
+        return `<w:tc><w:tcPr>${cellProperties}</w:tcPr>${paragraphXml(
+          { text: cell.text, bold: isHeader },
+          { size: compact ? 16 : 18, spacingAfter: 20 },
+        )}</w:tc>`;
+      }).join("");
+      return `<w:tr><w:trPr>${isHeaderRow ? "<w:tblHeader/>" : ""}<w:cantSplit/></w:trPr>${cells}</w:tr>`;
+    }).join("");
+    return `<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblLayout w:type="autofit"/><w:tblBorders>${borders}</w:tblBorders><w:tblCellMar><w:top w:w="70" w:type="dxa"/><w:left w:w="90" w:type="dxa"/><w:bottom w:w="70" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid}</w:tblGrid>${body}</w:tbl>${paragraphXml({ text: "" }, { spacingAfter: 30 })}`;
+  }
+
+  function blockXml(block) {
+    if (block?.type === "table") return tableXml(block);
+    if (block?.type === "list") {
+      return (block.items || []).map((item, index) => (
+        paragraphXml({ text: `${block.ordered ? `${index + 1}.` : "•"} ${item}` }, { spacingAfter: 35 })
+      )).join("");
+    }
+    return paragraphXml(block, { keepNext: /^Heading|Title/.test(String(block?.style || "")) });
   }
 
   function createDocument({ title = "Dokumen PAIBP SMART", blocks = [], customData = null } = {}) {
     const allBlocks = [{ text: title, style: "Title" }, ...blocks];
-    const body = allBlocks.map(paragraphXml).join("");
+    const body = allBlocks.map(blockXml).join("");
+    const widestTable = Math.max(0, ...blocks.filter((block) => block?.type === "table").map(tableColumnCount));
+    const landscape = widestTable >= 7;
+    const pageSize = landscape
+      ? `<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/>`
+      : `<w:pgSz w:w="11906" w:h="16838"/>`;
+    const pageMargin = landscape
+      ? `<w:pgMar w:top="567" w:right="567" w:bottom="567" w:left="567"/>`
+      : `<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/>`;
     const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>`;
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr>${pageSize}${pageMargin}</w:sectPr></w:body></w:document>`;
     const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Aptos" w:hAnsi="Aptos"/><w:lang w:val="id-ID"/></w:rPr></w:rPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/></w:style></w:styles>`;
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria" w:eastAsia="Cambria"/><w:lang w:val="id-ID"/></w:rPr></w:rPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/></w:style></w:styles>`;
     const customXml = customData === null
       ? null
       : `<?xml version="1.0" encoding="UTF-8"?><paibp-smart><payload encoding="base64">${utf8ToBase64(JSON.stringify(customData))}</payload></paibp-smart>`;
@@ -164,18 +232,42 @@
   function blocksFromElement(element) {
     if (!element) return [];
     const blocks = [];
-    element.querySelectorAll("h1,h2,h3,h4,p,li,tr").forEach((node) => {
+    const textFromNode = (node) => String(node.innerText || node.textContent || "").replace(/\u00a0/g, " ").trim();
+    element.querySelectorAll("h1,h2,h3,h4,p,ul,ol,table").forEach((node) => {
       if (node.closest(".no-print,[hidden]")) return;
-      const text = node.tagName === "TR"
-        ? [...node.children].map((cell) => cell.innerText.trim()).filter(Boolean).join(" | ")
-        : node.innerText.trim();
+      if (node.tagName !== "TABLE" && node.closest("table")) return;
+      if (!["UL", "OL"].includes(node.tagName) && node.closest("ul,ol")) return;
+      if (["UL", "OL"].includes(node.tagName) && node.parentElement?.closest("ul,ol")) return;
+      if (node.tagName === "TABLE") {
+        const rows = [...node.querySelectorAll("tr")].map((row) => ({
+          header: Boolean(row.closest("thead")) || [...row.children].every((cell) => cell.tagName === "TH"),
+          cells: [...row.children]
+            .filter((cell) => ["TH", "TD"].includes(cell.tagName))
+            .map((cell) => ({
+              text: textFromNode(cell),
+              header: cell.tagName === "TH",
+              gridSpan: Math.max(1, Number(cell.getAttribute("colspan") || 1)),
+            })),
+        })).filter((row) => row.cells.length);
+        if (rows.length) blocks.push({ type: "table", rows });
+        return;
+      }
+      if (["UL", "OL"].includes(node.tagName)) {
+        const items = [...node.children]
+          .filter((item) => item.tagName === "LI")
+          .map(textFromNode)
+          .filter(Boolean);
+        if (items.length) blocks.push({ type: "list", ordered: node.tagName === "OL", items });
+        return;
+      }
+      const text = textFromNode(node);
       if (!text) return;
       const style = node.tagName === "H1" ? "Heading1"
         : node.tagName === "H2" ? "Heading1"
           : node.tagName === "H3" ? "Heading2"
             : node.tagName === "H4" ? "Heading3"
               : "";
-      blocks.push({ text: node.tagName === "LI" ? `• ${text}` : text, style });
+      blocks.push({ text, style });
     });
     return blocks;
   }

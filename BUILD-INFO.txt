@@ -1,6 +1,6 @@
 PAIBP SMART SMP
-Versi paket: 13.0
-Tanggal paket: 29 Juli 2026
+Versi paket: 14.0
+Tanggal paket: 30 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
 Paket ini memuat:
@@ -17,7 +17,7 @@ Paket ini memuat:
 - ATP, Prota, Promes, dan KKTP kelas VII–IX dilengkapi tujuan, materi, durasi, keterangan, alokasi 120 JP, serta kolom KKTP kelas IX yang utuh
 - susunan judul, subjudul, tabel, dan daftar akademik pada perangkat guru dipertahankan dengan penomoran hierarkis; artefak Top of Form dan Bottom of Form dihapus
 - Al Qur'an, Hadits Riwayat, suara Arab perangkat, Hisnul Muslim, dzikir, kalender bertanda per tanggal, 6.316 teks dasar nasihat bersumber dengan lebih dari satu triliun susunan refleksi, serta jadwal sholat dengan waktu aktif dan hitung mundur
-- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dengan 80 pelajaran, XP, latihan, pemuatan suara Arab asinkron, serta petunjuk ketersediaan audio perangkat
+- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dengan 100 pelajaran untuk SD, SMP, SMK, dan lintas jenjang, dilengkapi XP, latihan, pemuatan suara Arab asinkron, serta petunjuk ketersediaan audio perangkat
 - 60 video penguatan (dua per bab) dengan ringkasan minimal 500 karakter yang ikut dalam paket tugas
 - 100 game edukatif dalam 10 kelompok dengan 15 mekanik, termasuk Sambung Ayat dari ayat pilihan yang mudah
 - setiap game memuat 20 soal dengan pengacakan kriptografis urutan soal/pilihan; ruang kombinasi sesi melebihi satu triliun
@@ -28,4 +28,6 @@ Paket ini memuat:
 - editor admin Spensus Terkini untuk foto, judul, tanggal, ringkasan, laporan Word, dan sinkronisasi opsional
 - galeri personel responsif dua baris pada telepon, tanpa filter mapel, dengan foto wajah tertanam
 - deteksi tempat akses dimulai otomatis ketika Ruang Murid dibuka; izin keamanan tetap dikendalikan ponsel dan rekap menyimpan waktu, durasi, wilayah perkiraan, serta bagian yang diakses
-- dukungan PWA dan mode luring dengan pemutus cache v13 agar unggahan baru tidak tertahan aset lama
+- unduhan ATP, Prota, Promes, KKTP, dan perangkat bertabel memakai tabel Word asli dengan garis, kepala tabel, gabungan sel, dan orientasi halaman yang menyesuaikan jumlah kolom
+- statistik pengunjung ditempatkan pada bagian paling akhir beranda setelah komentar dan rating
+- dukungan PWA dan mode luring dengan pemutus cache v14 agar unggahan baru tidak tertahan aset lama

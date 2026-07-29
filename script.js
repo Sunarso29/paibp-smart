@@ -202,7 +202,7 @@ if (workspace && appData) {
   let sessionStartedAt = Date.now();
   let currentGameMode = gameData?.arenas?.[0]?.id || "quiz";
   let activeGameSession = safeJsonParse(localStorage.getItem(GAME_SESSION_KEY), null);
-  let arabicLevelId = "dasar";
+  let arabicLevelId = "semua";
   let dailyInsightIndex = null;
   let recentTeacherVisits = [];
   let expandedInsightBankPromise = null;
@@ -2907,6 +2907,50 @@ if (workspace && appData) {
       && meaningful.every((word) => /^[A-ZÀ-ÖØ-Þ0-9"'(]/.test(word));
   }
 
+  function completedSourceTableRows(sourceRows = []) {
+    const rows = sourceRows.map((row) => (Array.isArray(row) ? [...row] : []));
+    const headerIndex = rows.findIndex((row) => row.some((cell) => /alokasi waktu/i.test(String(cell || ""))));
+    if (headerIndex < 0) return rows;
+    const allocationColumn = rows[headerIndex].findIndex((cell) => /alokasi waktu/i.test(String(cell || "")));
+    if (allocationColumn < 0) return rows;
+
+    const isObjective = (value) => /^(?:murid|peserta didik)\s+(?:mampu|dapat)\b/i.test(String(value || "").trim());
+    const isChapter = (value) => /^bab\s+\d+\b/i.test(String(value || "").trim());
+    const firstColumnValue = (row) => String(row?.[0] || "").replace(/\s+/g, " ").trim();
+    const allocationValue = (row) => String(row?.[allocationColumn] || "").trim();
+
+    // Tujuan pembelajaran yang masih kosong diberi estimasi baku tiga JP.
+    // Nilai hanya diterapkan pada salinan transkripsi, bukan pada berkas sumber.
+    rows.slice(headerIndex + 1).forEach((row) => {
+      const text = firstColumnValue(row);
+      const rowText = row.map((cell) => String(cell || "")).join(" ");
+      if (!allocationValue(row) && (isObjective(text) || isObjective(rowText))) {
+        row[allocationColumn] = "3 JP";
+      }
+    });
+
+    // Baris judul bab pada tabel program semester diisi dengan jumlah JP
+    // tujuan yang berada di bawahnya sampai judul bab berikutnya.
+    for (let index = headerIndex + 1; index < rows.length; index += 1) {
+      if (!isChapter(firstColumnValue(rows[index])) || allocationValue(rows[index])) continue;
+      let total = 0;
+      for (let nextIndex = index + 1; nextIndex < rows.length; nextIndex += 1) {
+        if (isChapter(firstColumnValue(rows[nextIndex]))) break;
+        const hours = Number(allocationValue(rows[nextIndex]).match(/(\d+(?:[.,]\d+)?)\s*JP/i)?.[1]?.replace(",", ".") || 0);
+        total += hours;
+      }
+      if (total > 0) rows[index][allocationColumn] = `${total} JP (total bab)`;
+    }
+    return rows;
+  }
+
+  function preparedSourceBlocks(blocks = []) {
+    return blocks.map((block) => {
+      if (block.type !== "table") return { ...block };
+      return { ...block, rows: completedSourceTableRows(block.rows) };
+    });
+  }
+
   function sourceBlocksHtml(blocks = []) {
     let html = "";
     let listItems = [];
@@ -3122,6 +3166,7 @@ if (workspace && appData) {
     const source = selectedTeacherSource();
     if (!source) return "";
     const operationalSupplement = operationalTeacherSupplementHtml(gradeChapters);
+    const preparedBlocks = preparedSourceBlocks(source.blocks);
     const modulePicker = teacherDoc === "module" ? `
       <section class="module-picker no-print">
         <label>Pilih modul/bab
@@ -3145,22 +3190,30 @@ if (workspace && appData) {
       </section>
       <div class="teacher-source-notice">
         <strong>Dokumen lengkap dan siap digunakan.</strong>
-        Isi web diadopsi dari berkas sumber kelas ${teacherGrade}, lalu dilengkapi untuk menutup kolom yang kosong, alokasi waktu yang belum terisi, serta penomoran yang belum hierarkis.
+        Isi web diadopsi dari berkas sumber kelas ${teacherGrade}. Kolom Alokasi Waktu yang kosong dilengkapi pada salinan tampilan dan unduhan berdasarkan tujuan pembelajaran; berkas sumber asli tetap utuh dan tidak diubah.
       </div>
       ${operationalSupplement}
       ${operationalSupplement
-        ? `<details class="source-original-details"><summary>Lihat transkripsi berkas lampiran asli</summary><section class="source-document"><h3>Isi Berkas Sumber</h3>${sourceBlocksHtml(source.blocks)}</section></details>`
-        : `<section class="source-document" id="source-document-start" tabindex="-1"><h3>Isi Berkas Sumber</h3>${sourceBlocksHtml(source.blocks)}</section>`}`;
+        ? `<details class="source-original-details"><summary>Lihat transkripsi berkas lampiran asli</summary><section class="source-document"><h3>Isi Berkas Sumber</h3><p class="source-completion-note">Catatan: isi, urutan, dan tabel mengikuti lampiran. Sel Alokasi Waktu yang kosong dilengkapi hanya pada salinan ini; berkas asli tidak diubah.</p>${sourceBlocksHtml(preparedBlocks)}</section></details>`
+        : `<section class="source-document" id="source-document-start" tabindex="-1"><h3>Isi Berkas Sumber</h3><p class="source-completion-note">Catatan: isi, urutan, dan tabel mengikuti lampiran. Sel Alokasi Waktu yang kosong dilengkapi hanya pada salinan ini; berkas asli tidak diubah.</p>${sourceBlocksHtml(preparedBlocks)}</section>`}`;
   }
 
   function teacherSourceDocxBlocks(source) {
     let listNumber = 0;
-    return (source.blocks || [])
-      .filter((block, index) => !isSignatureBlock(block, index, source.blocks.length) && !isSourceArtifact(block))
+    const preparedBlocks = preparedSourceBlocks(source.blocks);
+    return preparedBlocks
+      .filter((block, index) => !isSignatureBlock(block, index, preparedBlocks.length) && !isSourceArtifact(block))
       .flatMap((block) => {
         if (block.type === "table") {
           listNumber = 0;
-          return (block.rows || []).map((row) => ({ text: row.join(" | ") }));
+          return [{
+            type: "table",
+            headerRows: 1,
+            rows: (block.rows || []).map((row, rowIndex) => ({
+              header: rowIndex === 0,
+              cells: row.map((cell) => ({ text: String(cell || ""), header: rowIndex === 0 })),
+            })),
+          }];
         }
         const text = String(block.text || "").trim();
         if (!text) return [];
@@ -3189,11 +3242,11 @@ if (workspace && appData) {
         blocks: window.PAIBP_DOCX.blocksFromElement(documentElement),
       });
       const sourceFilename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
-      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v13.docx");
+      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v14.docx");
       downloadBlob(blob, filename);
       if (status) status.textContent = "Dokumen Word lengkap berhasil disiapkan langsung dari isi portal. Tidak ada tautan halaman 404.";
     } catch (error) {
-      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v13 lalu coba kembali.";
+      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v14 lalu coba kembali.";
     }
   }
 
@@ -3506,10 +3559,11 @@ if (workspace && appData) {
   function renderArabicLesson(lesson) {
     const player = document.querySelector("#arabic-lesson-player");
     if (!player || !lesson) return;
-    const level = arabicData.levels.find((item) => item.id === arabicLevelId);
+    const level = arabicData.levels.find((item) => item.id === (lesson.levelId || arabicLevelId));
+    const levelLabel = lesson.levelLabel || level?.label || "";
     player.innerHTML = `
       <div class="arabic-lesson-head">
-        <span>${escapeHtml(level?.label || "")}</span>
+        <span>${escapeHtml(levelLabel)} • ${escapeHtml(lesson.audience || "Semua jenjang")}</span>
         <h5>${escapeHtml(lesson.title)}</h5>
       </div>
       <p class="arabic-phrase" lang="ar" dir="rtl">${escapeHtml(lesson.arabic)}</p>
@@ -3557,26 +3611,57 @@ if (workspace && appData) {
     if (!tabs || !path || !arabicData.levels.length) return;
     const progress = readArabicProgress();
     if (xp) xp.textContent = `${Number(progress.xp || 0)} XP`;
-    tabs.innerHTML = arabicData.levels.map((level) => `
+    const allLessons = Array.isArray(arabicData.allLessons)
+      ? arabicData.allLessons
+      : arabicData.levels.flatMap((level) => level.lessons.map((lesson) => ({
+        ...lesson,
+        levelId: level.id,
+        levelLabel: level.label,
+      })));
+    const tabItems = [
+      { id: "semua", icon: "📚", label: `Semua ${allLessons.length}` },
+      ...arabicData.levels,
+    ];
+    tabs.innerHTML = tabItems.map((level) => `
       <button type="button" data-arabic-level="${escapeHtml(level.id)}" aria-pressed="${level.id === arabicLevelId}">
         <span>${level.icon}</span>${escapeHtml(level.label)}
       </button>`).join("");
-    const level = arabicData.levels.find((item) => item.id === arabicLevelId) || arabicData.levels[0];
+    const selectedLevel = arabicData.levels.find((item) => item.id === arabicLevelId);
+    const level = selectedLevel || {
+      id: "semua",
+      label: "100 Pelajaran Bahasa Arab",
+      description: "Jalur bertahap untuk kebutuhan belajar SD, SMP, SMK, dan keterampilan lintas jenjang.",
+      lessons: allLessons,
+    };
+    const audienceCounts = allLessons.reduce((counts, lesson) => {
+      const key = lesson.audience || "Semua jenjang";
+      counts[key] = (counts[key] || 0) + 1;
+      return counts;
+    }, {});
     path.innerHTML = `
-      <div class="arabic-level-intro"><strong>${escapeHtml(level.label)}</strong><p>${escapeHtml(level.description)}</p></div>
+      <div class="arabic-level-intro">
+        <strong>${escapeHtml(level.label)}</strong>
+        <p>${escapeHtml(level.description)}</p>
+        <div class="arabic-audience-summary" aria-label="Sebaran jenjang">
+          <span>SD ${audienceCounts.SD || 0}</span>
+          <span>SMP ${audienceCounts.SMP || 0}</span>
+          <span>SMK ${audienceCounts.SMK || 0}</span>
+          <span>Lintas jenjang ${audienceCounts["Semua jenjang"] || 0}</span>
+        </div>
+      </div>
       <div class="arabic-lesson-nodes">
         ${level.lessons.map((lesson, index) => `
           <button type="button" data-arabic-lesson="${escapeHtml(lesson.id)}" class="${progress.completed.includes(lesson.id) ? "is-complete" : ""}">
             <span>${progress.completed.includes(lesson.id) ? "✓" : index + 1}</span>
             <strong>${escapeHtml(lesson.title)}</strong>
-            <small>${progress.completed.includes(lesson.id) ? "Selesai" : "20 XP"}</small>
+            <small>${progress.completed.includes(lesson.id) ? "Selesai" : `${escapeHtml(lesson.audience || "Semua jenjang")} • 20 XP`}</small>
           </button>`).join("")}
       </div>`;
     tabs.querySelectorAll("[data-arabic-level]").forEach((button) => button.addEventListener("click", () => {
       arabicLevelId = button.dataset.arabicLevel;
       renderArabicAcademy();
       const selected = arabicData.levels.find((item) => item.id === arabicLevelId);
-      renderArabicLesson(selected?.lessons[0]);
+      renderArabicLesson(selected?.lessons[0] || allLessons[0]);
     }));
     path.querySelectorAll("[data-arabic-lesson]").forEach((button) => button.addEventListener("click", () => {
       const selected = level.lessons.find((lesson) => lesson.id === button.dataset.arabicLesson);
@@ -5307,7 +5392,7 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=13");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=14");
       await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;
