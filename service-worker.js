@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v9";
+const CACHE_NAME = "paibp-smart-core-v10";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -18,6 +18,8 @@ const CORE_ASSETS = [
   "./staff-images.js",
   "./school-data.js",
   "./islamic-data.js",
+  "./arabic-data.js",
+  "./video-data.js",
   "./script.js",
   "./logo-spensus.png",
   "./sunarso.jpeg",

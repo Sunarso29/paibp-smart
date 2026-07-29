@@ -452,6 +452,8 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .source-file-actions span{color:var(--muted);font-size:11px;font-weight:750}
 .teacher-source-notice{margin-bottom:18px;border-left:5px solid var(--emerald);border-radius:12px;background:#eaf8f3;padding:14px 16px}
 .source-document{overflow-wrap:anywhere}
+.source-document p,.source-document li,.source-document td{font-weight:400!important}
+.source-document h2,.source-document h3,.source-document h4,.source-document th{font-weight:800}
 .source-document>h2{margin:30px 0 10px;color:var(--navy);font-size:25px}
 .source-document>h3{margin:26px 0 9px;color:var(--emerald);font-size:20px}
 .source-document>h4{margin:20px 0 7px;color:#31535d;font-size:16px}
@@ -461,6 +463,57 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .source-table{margin:0;min-width:760px;border:0}
 .source-table th,.source-table td{white-space:normal;min-width:120px;font-size:12px;line-height:1.5}
 .source-table tr:first-child th{background:#dff5ed;color:#16463f}
+.student-access-consent{display:grid;grid-template-columns:minmax(220px,1fr) auto auto;align-items:end;gap:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.student-access-consent p{margin:3px 0 0;color:var(--muted);font-size:11px}
+.student-access-consent label{display:grid;gap:5px;color:#36515a;font-size:11px;font-weight:800}
+.student-access-consent select{min-height:40px;border:1px solid #adc6be;border-radius:10px;background:#fff;padding:8px}
+.student-access-consent>span{grid-column:2/-1;color:var(--muted);font-size:11px}
+.integrated-submission-head{margin-top:34px;border:2px solid var(--emerald);border-radius:20px;background:linear-gradient(145deg,#edf9f5,#fff9e6);padding:22px}
+.integrated-submission-head>p:first-child{margin:0;color:var(--emerald);font-size:11px;font-weight:850;letter-spacing:.05em}
+.inline-answer-link{display:block;margin-top:9px;color:var(--emerald)}
+.chapter-video-section{border-top:3px solid #dff2ec;padding-top:24px}
+.video-section-heading{display:flex;align-items:start;justify-content:space-between;gap:18px}
+.video-section-heading h3{margin-top:0}
+.online-badge{flex:0 0 auto;border-radius:999px;background:#fff0bc;color:#77560a;padding:7px 10px;font-size:10px;font-weight:850}
+.chapter-video-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.chapter-video-card{overflow:hidden;border:1px solid var(--line);border-radius:19px;background:#fbfdfc}
+.video-frame{position:relative;aspect-ratio:16/9;background:#071f2c}
+.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-card-copy{padding:15px 16px 5px}
+.video-card-copy span{color:var(--emerald);font-size:10px;font-weight:850;text-transform:uppercase}
+.video-card-copy h4{margin:5px 0;font-size:16px}
+.video-card-copy a{color:var(--emerald);font-size:11px;font-weight:800}
+.chapter-video-card .block-field{padding:12px 16px}
+.video-summary-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 16px 16px}
+.video-summary-footer>span{color:var(--muted);font-size:10px}
+.access-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0}
+.access-filters label{display:grid;gap:5px;color:#36515a;font-size:11px;font-weight:800}
+.access-filters select,.access-filters input{min-height:40px;border:1px solid #adc6be;border-radius:10px;background:#fff;padding:8px}
+.arabic-level-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+.arabic-level-tabs button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px;color:#36515a;font-weight:800;cursor:pointer}
+.arabic-level-tabs button[aria-pressed="true"]{border-color:var(--emerald);background:#e2f6ef;color:var(--emerald)}
+.arabic-learning-path{border-radius:20px;background:linear-gradient(160deg,#083a44,#087f68);padding:19px;color:#fff}
+.arabic-level-intro{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}
+.arabic-level-intro strong{font-size:20px}.arabic-level-intro p{margin:0;color:#d7eee8;font-size:12px}
+.arabic-lesson-nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.arabic-lesson-nodes button{display:grid;grid-template-columns:auto 1fr;gap:2px 9px;align-items:center;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(255,255,255,.09);color:#fff;padding:11px;text-align:left;cursor:pointer}
+.arabic-lesson-nodes button>span{grid-row:1/3;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#fff;color:var(--emerald);font-weight:900}
+.arabic-lesson-nodes button strong{font-size:12px}.arabic-lesson-nodes button small{color:#cfe6e0;font-size:9px}
+.arabic-lesson-nodes button.is-complete{background:rgba(244,189,62,.22);border-color:#f4bd3e}
+.arabic-lesson-player{margin-top:14px;border:1px solid var(--line);border-radius:20px;background:#fff;padding:22px}
+.arabic-lesson-head span{color:var(--emerald);font-size:10px;font-weight:850;text-transform:uppercase}
+.arabic-lesson-head h5{margin:3px 0;font-size:20px}
+.arabic-phrase{margin:20px 0 6px;font-family:"Noto Naskh Arabic","Traditional Arabic",serif;font-size:clamp(30px,5vw,48px);line-height:1.7;text-align:center;color:var(--navy)}
+.arabic-transliteration{text-align:center;color:var(--emerald);font-style:italic}.arabic-meaning{text-align:center}
+.arabic-practice{margin-top:18px;border-radius:16px;background:#f0f8f5;padding:16px}
+.arabic-practice h5{margin:0;font-size:16px}.arabic-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.arabic-options button{border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px;cursor:pointer}
+.arabic-options button.correct{border-color:#079b73;background:#e4f8f0}.arabic-options button.wrong{border-color:#d55e43;background:#fff0ec}
+.game-mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:18px 0}
+.game-mode-grid button{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;border:1px solid var(--line);border-radius:17px;background:#fff;padding:15px;text-align:left;color:var(--ink);cursor:pointer;box-shadow:0 7px 20px rgba(8,44,54,.05)}
+.game-mode-grid button>span{grid-row:1/3;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#e2f6ef,#fff2c5);font-size:21px}
+.game-mode-grid strong{font-size:13px}.game-mode-grid small{color:var(--muted);font-size:10px}
+.game-mode-grid button.is-active{border-color:var(--emerald);background:#eef9f5;box-shadow:0 9px 24px rgba(8,127,104,.13)}
 .teacher-auth{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
 .teacher-auth-backdrop{position:absolute;inset:0;background:rgba(4,25,34,.72);backdrop-filter:blur(7px)}
 .teacher-auth-dialog{position:relative;width:min(100%,430px);border:1px solid rgba(255,255,255,.35);border-radius:25px;background:#fff;padding:30px;box-shadow:0 30px 100px rgba(0,0,0,.38)}
@@ -497,6 +550,11 @@ body.has-modal{overflow:hidden}
   .news-grid{grid-template-columns:1fr 1fr}
   .school-facts{grid-template-columns:repeat(2,1fr)}
   .visual-learning-path{grid-template-columns:repeat(3,1fr)}
+  .student-access-consent{grid-template-columns:1fr 1fr}
+  .student-access-consent>div,.student-access-consent>span{grid-column:1/-1}
+  .chapter-video-grid{grid-template-columns:1fr}
+  .game-mode-grid{grid-template-columns:repeat(2,1fr)}
+  .arabic-lesson-nodes{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:560px){
   .portal-tabs{grid-template-columns:1fr;margin-top:18px}
@@ -542,6 +600,11 @@ body.has-modal{overflow:hidden}
   .gallery-form-grid,.dalil-grid,.ikhtisar-grid,.chapter-quiz-options{grid-template-columns:1fr}
   .visual-learning-path{grid-template-columns:repeat(2,1fr)}
   .chapter-quiz-score{align-items:flex-start;flex-direction:column}
+  .student-access-consent,.access-filters{grid-template-columns:1fr}
+  .student-access-consent>span{grid-column:1}
+  .video-section-heading,.video-summary-footer,.arabic-level-intro{align-items:flex-start;flex-direction:column}
+  .arabic-level-tabs{grid-template-columns:repeat(2,1fr)}
+  .arabic-lesson-nodes,.arabic-options,.game-mode-grid{grid-template-columns:1fr}
 }
 @media print{
   .topbar,.hero,.portal-tabs,.workspace-header,.lesson-viewer-head,.document-tabs,.teacher-controls,.teacher-doc-menu,.footer,.alt{display:none!important}

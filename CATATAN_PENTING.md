@@ -4,8 +4,8 @@
 
 GitHub Pages tidak menyediakan server basis data. Karena itu, tombol **Kirim kepada guru** memakai alur yang menjaga identitas murid:
 
-1. jawaban disimpan pada browser murid;
-2. situs membuat berkas `.paibp`;
+1. latihan, LKPD, refleksi, dan ringkasan video disimpan sebagai satu pekerjaan per bab pada browser murid;
+2. situs membuat satu berkas `.paibp`;
 3. murid membagikan berkas kepada guru melalui kanal kelas;
 4. guru mengimpor banyak berkas melalui **Ruang Guru → Rekap Pekerjaan Murid**;
 5. rekap, nilai, dan catatan tersimpan pada browser guru dan dapat diunduh sebagai CSV atau dicetak.
@@ -21,7 +21,7 @@ Ruang Guru menampilkan 48 dokumen yang diadopsi dari berkas perangkat terlampir:
 - 10 modul/bab kelas VIII;
 - 10 modul/bab kelas IX.
 
-Susunan paragraf dan tabel sumber dipertahankan dalam tampilan web. Setiap dokumen dapat dibaca, dicetak, disimpan sebagai PDF, diekspor dari tampilan web, atau diunduh kembali sebagai berkas sumber `.docx`.
+Susunan paragraf dan tabel sumber dipertahankan dalam tampilan web. Blok tanda tangan akhir telah dihapus dan bold dibatasi pada judul, subjudul, serta kepala tabel. Setiap dokumen dapat dibaca, dicetak, disimpan sebagai PDF, diekspor dari tampilan web, atau diunduh kembali sebagai berkas sumber `.docx`.
 
 ## Spensus Terkini
 
@@ -31,8 +31,13 @@ Editor galeri dibuka dari Beranda menggunakan kata sandi admin. Tanpa integrasi 
 
 - Teks dan audio Al Qur'an dimuat dari Al Quran Cloud. Surat yang pernah dibuka disimpan untuk dibaca luring. Audio luring harus disimpan terlebih dahulu ketika internet tersedia.
 - Audio doa/dzikir memakai suara bahasa Arab pada perangkat. Ketersediaannya bergantung pada suara yang terpasang di sistem.
+- Akademi Bahasa Arab menyimpan materi dan progres secara luring. Pelafalan dapat diputar luring bila paket suara Arab sudah terpasang pada perangkat.
 - Kalender Hijriah browser dapat berbeda satu hari dari keputusan resmi pemerintah atau hasil rukyat.
 - Halaman kitab sengaja tidak dicantumkan bila edisi belum terverifikasi karena nomor halaman berbeda antarcetakan.
+
+## Video pembelajaran
+
+Setiap bab memuat dua tautan video penguatan dan kolom ringkasan minimal 500 karakter. Metadata serta ringkasan dapat dibuka luring, tetapi video YouTube tidak boleh disalin atau dimasukkan ke cache situs. Pemutaran luring hanya tersedia melalui fitur resmi YouTube atau setelah pengelola memperoleh berkas video berizin dari pemiliknya.
 
 ## Data sekolah
 

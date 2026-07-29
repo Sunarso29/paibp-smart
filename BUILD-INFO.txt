@@ -1,18 +1,22 @@
 PAIBP SMART SMP
-Versi paket: 7.0
+Versi paket: 8.0
 Tanggal paket: 29 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
 Paket ini memuat:
 - 30 paket materi, dalil, ringkasan visual, latihan langsung, dan LKPD kelas VII–IX
-- formulir tugas murid dan berkas kirim .paibp
+- formulir latihan, LKPD, refleksi, dan ringkasan video yang menyatu sebagai satu paket tugas murid
 - rekap tugas guru, nilai, catatan, CSV, cadangan, dan cetak
 - Ruang Guru berkunci, rekap pekerjaan terpisah per kelas, serta integrasi opsional rekap akses dan pengiriman tugas lintas perangkat
 - 48 perangkat sumber kelas VII–IX: CP, ATP, KKTP, Prota, Promes, analisis alokasi waktu, dan 30 modul ajar lengkap
-- berkas sumber .docx dapat diunduh langsung dari Ruang Guru
+- 48 berkas sumber .docx telah dibersihkan dari blok tanda tangan; bold dibatasi pada judul, subjudul, dan kepala tabel
+- unduhan materi murid dan berkas sumber guru memiliki jalur unduh utama serta jalur buka cadangan
 - Al Qur'an, audio yang dapat disimpan luring, Hisnul Muslim, dzikir, kalender bertanda per tanggal, dan nasihat bersumber
-- profil sekolah, 37 guru, 14 kepala sekolah/tenaga kependidikan, dan Spensus Terkini khusus beranda
+- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dengan 24 pelajaran, XP, latihan, dan suara Arab perangkat
+- 60 video penguatan (dua per bab) dengan ringkasan minimal 500 karakter yang ikut dalam paket tugas
+- enam mode game PAIBP: cepat tepat, pasangan ilmu, urutan, luruskan pernyataan, jejak dalil, dan misi akhlak
+- profil sekolah, 38 tenaga pendidik termasuk kepala sekolah, 13 tenaga kependidikan, dan Spensus Terkini khusus beranda
 - editor admin Spensus Terkini untuk foto, judul, tanggal, ringkasan, cadangan, dan sinkronisasi opsional
 - galeri personel responsif dua baris pada telepon, tanpa filter mapel, dengan foto wajah tertanam
-- panduan Google Apps Script untuk mengaktifkan rekap akses murid secara daring
+- panduan Google Apps Script untuk mengaktifkan rekap waktu, tempat berbasis izin, durasi, bagian yang diakses, dan pekerjaan murid secara daring
 - dukungan PWA dan mode luring

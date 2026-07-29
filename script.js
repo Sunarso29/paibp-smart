@@ -44,6 +44,8 @@ if (workspace && appData) {
   const schoolData = window.PAIBP_SCHOOL || { school: null, teachers: [], staff: [], news: [] };
   const teacherSources = window.PAIBP_TEACHER_SOURCES || {};
   const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
+  const arabicData = window.PAIBP_ARABIC || { levels: [] };
+  const videoData = window.PAIBP_VIDEOS || {};
   const appConfig = window.PAIBP_CONFIG || { realtimeEndpoint: "", realtimeReadKey: "" };
   const STORAGE_KEY = "paibp-smart-progress-v3";
   const PRAYER_CACHE_KEY = "paibp-smart-prayer-cache-v1";
@@ -56,6 +58,8 @@ if (workspace && appData) {
   const TEACHER_SESSION_KEY = "paibp-smart-teacher-unlocked";
   const TEACHER_PASSWORD_HASH = "5a26e9c9bf1880cd3532883aad715e962d0b8c6cf06c4bfb61b44bcf0def3284";
   const ACCESS_SESSION_KEY = "paibp-smart-access-session-v1";
+  const ACCESS_CONTEXT_KEY = "paibp-smart-access-context-v1";
+  const ARABIC_PROGRESS_KEY = "paibp-smart-arabic-progress-v1";
   const QURAN_CACHE_NAME = "paibp-smart-quran-v1";
   const QURAN_AUDIO_CACHE_NAME = "paibp-smart-quran-audio-v1";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -95,12 +99,55 @@ if (workspace && appData) {
     ["Sikap yang tepat setelah menyebarkan informasi salah ialah…", ["Diam saja", "Mengoreksi, meminta maaf, dan mencegah penyebaran", "Menghapus tanpa penjelasan", "Menyalahkan pembaca"], 1, "Pemulihan memerlukan koreksi kepada pihak yang menerima informasi salah."],
   ];
 
+  const gameModeBanks = {
+    quiz: questionBank,
+    match: [
+      ["Pasangkan istilah tabayun dengan maknanya.", ["Memeriksa kebenaran informasi", "Membicarakan aib", "Menunda amanah", "Mencampur transaksi"], 0, "Tabayun berarti mencari kejelasan sebelum menyimpulkan atau menyebarkan."],
+      ["Pasangkan istilah rukhsah dengan maknanya.", ["Larangan mutlak", "Keringanan syariat dengan sebab yang diakui", "Pendapat tanpa dasar", "Perdebatan"], 1, "Rukhsah adalah keringanan yang memiliki sebab dan ketentuan."],
+      ["Pasangkan Al-Amin dengan keteladanan yang tepat.", ["Kecerdasan berhitung", "Kejujuran dan dapat dipercaya", "Keahlian berdagang saja", "Keberanian fisik"], 1, "Al-Amin menunjukkan pribadi yang jujur dan dapat dipercaya."],
+      ["Pasangkan khalifah fil ardh dengan tindakan tepat.", ["Menjaga bumi", "Menguasai tanpa batas", "Menghabiskan sumber daya", "Menghindari tanggung jawab"], 0, "Manusia memikul amanah untuk menjaga kemaslahatan bumi."],
+      ["Pasangkan muhasabah dengan kegiatannya.", ["Menilai dan memperbaiki diri", "Menilai aib orang lain", "Menyebarkan prasangka", "Menolak nasihat"], 0, "Muhasabah mengarahkan seseorang menilai amal dan memperbaiki diri."],
+      ["Pasangkan amanah dengan contoh sekolah.", ["Memalsukan izin", "Menjalankan piket dengan jujur", "Menyalin jawaban", "Menyembunyikan temuan"], 1, "Menjalankan tanggung jawab merupakan wujud amanah."],
+    ],
+    sequence: [
+      ["Urutan tabayun yang paling tepat ialah …", ["Bagikan–periksa–hapus", "Terima–periksa sumber–bandingkan bukti–simpulkan", "Simpulkan–marah–tanya", "Abaikan–tambahkan opini–bagikan"], 1, "Tabayun dimulai dengan menahan diri, memeriksa sumber dan bukti, lalu menyimpulkan."],
+      ["Urutan belajar yang sehat ialah …", ["Salin–kirim–lupakan", "Amati–pahami–latih–refleksi", "Ujian–belajar–bertanya", "Hafal–menolak koreksi–selesai"], 1, "Alur belajar menghubungkan pengamatan, pemahaman, latihan, dan refleksi."],
+      ["Urutan menyelesaikan tugas kelompok ialah …", ["Bagi peran–cari sumber–kerjakan–periksa", "Kirim–bagi peran–diskusi", "Salin–ganti nama–kirim", "Tunggu–menyalahkan–menghapus"], 0, "Perencanaan, pembagian peran, proses, dan pemeriksaan menjaga mutu kerja kelompok."],
+      ["Urutan bertobat setelah menyakiti orang lain ialah …", ["Menyadari–berhenti–menyesal–memperbaiki hak", "Menyangkal–mengulang–menghindar", "Menyalahkan–meminta pujian", "Melupakan–membenarkan diri"], 0, "Perbaikan mencakup berhenti, menyesal, bertekad, dan memulihkan hak."],
+      ["Urutan mengambil keputusan ialah …", ["Kenali masalah–kaji dalil/data–pertimbangkan dampak–putuskan", "Putuskan–cari alasan–abaikan dampak", "Ikuti ramai–bagikan", "Marah–menuduh–selesai"], 0, "Keputusan bertanggung jawab bertumpu pada masalah, sumber, dan dampaknya."],
+    ],
+    truefalse: [
+      ["“Tawakal berarti meninggalkan ikhtiar.” Pernyataan ini …", ["Benar", "Perlu diluruskan"], 1, "Tawakal dilakukan setelah ikhtiar yang layak."],
+      ["“Gibah dapat terjadi juga di ruang digital.” Pernyataan ini …", ["Benar", "Perlu diluruskan"], 0, "Tulisan, gambar, dan unggahan dapat menjadi sarana gibah."],
+      ["“Riba dan laba jual beli selalu sama.” Pernyataan ini …", ["Benar", "Perlu diluruskan"], 1, "Jual beli yang sah berbeda dari riba dan memiliki ketentuan akad."],
+      ["“Menjaga lingkungan termasuk tanggung jawab keagamaan.” Pernyataan ini …", ["Benar", "Perlu diluruskan"], 0, "Menjaga bumi merupakan bagian dari amanah manusia."],
+      ["“Perbedaan pendapat membolehkan saling merendahkan.” Pernyataan ini …", ["Benar", "Perlu diluruskan"], 1, "Perbedaan tetap harus dijalani dengan ilmu dan adab."],
+      ["“Sumber video perlu diperiksa sebelum dijadikan rujukan.” Pernyataan ini …", ["Benar", "Perlu diluruskan"], 0, "Kredibilitas pembicara, kanal, konteks, dan sumber perlu diperiksa."],
+    ],
+    dalil: [
+      ["Al Qur'an Surat Al-Hujurat ayat 6 paling berkaitan dengan …", ["Tabayun", "Pembagian waris", "Akikah", "Sholat gerhana"], 0, "Ayat tersebut mengajarkan pemeriksaan berita."],
+      ["Al Qur'an Surat Al-'Ankabut ayat 45 menguatkan tema …", ["Sholat mencegah perbuatan keji dan mungkar", "Jual beli", "Sejarah Andalusia", "Akikah"], 0, "Ayat ini menjelaskan pengaruh sholat dalam kehidupan."],
+      ["Al Qur'an Surat An-Nisa' ayat 58 menguatkan nilai …", ["Amanah dan keadilan", "Perjalanan", "Seni", "Perdagangan saja"], 0, "Ayat tersebut memerintahkan menunaikan amanah dan berlaku adil."],
+      ["Al Qur'an Surat Al-A'raf ayat 31 menguatkan sikap …", ["Tidak berlebih-lebihan", "Menunda pekerjaan", "Mengabaikan kebersihan", "Menyembunyikan ilmu"], 0, "Ayat tersebut melarang sikap berlebih-lebihan."],
+      ["Al Qur'an Surat Al-Mujadilah ayat 11 berkaitan dengan …", ["Keutamaan ilmu dan orang beriman", "Larangan belajar", "Riba", "Akikah"], 0, "Ayat ini menguatkan kemuliaan iman dan ilmu."],
+      ["Al Qur'an Surat Al-Baqarah ayat 275 membedakan …", ["Jual beli dan riba", "Sholat dan dzikir", "Zakat dan sedekah", "Sujud dan rukuk"], 0, "Ayat tersebut menegaskan kehalalan jual beli dan keharaman riba."],
+    ],
+    scenario: [
+      ["Teman mengirim kabar buruk tentang guru tanpa sumber. Tindakan terbaik ialah …", ["Sebarkan ke grup lain", "Tahan, periksa sumber, dan klarifikasi dengan santun", "Tambahkan komentar", "Simpan untuk mengejek"], 1, "Tabayun melindungi kehormatan dan mencegah kerugian."],
+      ["Kamu menemukan dompet di kelas. Tindakan terbaik ialah …", ["Ambil uangnya", "Serahkan kepada petugas/guru dan bantu mencari pemilik", "Biarkan", "Unggah identitas lengkap"], 1, "Amanah dijaga dengan melindungi barang dan privasi pemilik."],
+      ["Kelompok berbeda pendapat tentang isi tugas. Tindakan terbaik ialah …", ["Memutus pertemanan", "Bandingkan sumber dan sepakati alasan terkuat", "Memilih yang paling keras", "Menyalin kelompok lain"], 1, "Perbedaan diselesaikan dengan data, alasan, dan adab."],
+      ["Video yang ditonton menyampaikan klaim agama tanpa sumber. Tindakan terbaik ialah …", ["Langsung percaya", "Catat klaim dan periksa rujukan tepercaya", "Bagikan karena menarik", "Serang pembuatnya"], 1, "Literasi digital menuntut pemeriksaan isi dan sumber."],
+      ["Sampah berserakan setelah kegiatan kelas. Tindakan terbaik ialah …", ["Menunggu orang lain", "Ajak membersihkan dan evaluasi pengelolaan sampah", "Menyalahkan kelas lain", "Menutup pintu"], 1, "Amanah menjaga bumi diwujudkan melalui tindakan dan perbaikan sistem."],
+      ["Murid memakai bantuan AI untuk tugas. Sikap terbaik ialah …", ["Menyalin seluruhnya", "Memeriksa, menyunting, mencantumkan bantuan, dan memahami isi", "Menghapus sumber", "Mengaku tanpa membaca"], 1, "Teknologi dipakai secara jujur dan bertanggung jawab."],
+    ],
+  };
+
   const panelMeta = {
     welcome: ["Pilih ruang yang dibutuhkan", "Empat ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya."],
     student: ["Ruang Murid", "Buka materi, ringkasan, LKPD, tulis jawaban, simpan, cetak, dan kirim tugas dari 30 bab kelas VII–IX."],
     teacher: ["Ruang Guru", "Kelola perangkat, modul ajar lengkap, impor tugas murid, rekap, nilai, unduh, dan cetak."],
-    islamic: ["Fitur Islami", "Baca Al Qur'an, Hisnul Muslim, dzikir, kalender ibadah, jadwal sholat, dan nasihat bersumber."],
-    games: ["Fitur Games", "Kerjakan sepuluh soal acak, raih XP, dan pantau prestasi lokal."],
+    islamic: ["Fitur Islami", "Baca Al Qur'an, Hisnul Muslim, dzikir, kalender, dan belajar Bahasa Arab bertahap dengan dukungan luring."],
+    games: ["Fitur Games", "Pilih enam mode permainan PAIBP, raih XP, dan pantau prestasi lokal."],
   };
 
   const panels = [...document.querySelectorAll("[data-panel]")];
@@ -125,6 +172,10 @@ if (workspace && appData) {
   let pendingProtectedAction = "teacher";
   let galleryAdminOpen = false;
   let galleryPreviewData = "";
+  let activeResource = { type: "page", id: "home", title: "Beranda", startedAt: Date.now() };
+  let sessionStartedAt = Date.now();
+  let currentGameMode = "quiz";
+  let arabicLevelId = "dasar";
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -253,17 +304,35 @@ if (workspace && appData) {
     return /^https:\/\/script\.google\.com\/macros\/s\//.test(String(appConfig.realtimeEndpoint || ""));
   }
 
+  function loadAccessContext() {
+    try {
+      return safeJsonParse(localStorage.getItem(ACCESS_CONTEXT_KEY), {}) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveAccessContext(context) {
+    localStorage.setItem(ACCESS_CONTEXT_KEY, JSON.stringify(context));
+  }
+
   async function postRealtimeEvent(type, extra = {}) {
     if (!realtimeIsConfigured()) return false;
     const identity = loadStudentIdentity();
+    const accessContext = loadAccessContext();
     const payload = {
       type,
       timestamp: new Date().toISOString(),
       sessionId: getAccessSessionId(),
+      sessionStartedAt: new Date(sessionStartedAt).toISOString(),
       name: identity.name || "",
       attendance: identity.attendance || "",
       className: identity.className || "",
       page: location.pathname || "/",
+      locationLabel: accessContext.locationLabel || "",
+      latitude: accessContext.permissionGranted ? accessContext.latitude || "" : "",
+      longitude: accessContext.permissionGranted ? accessContext.longitude || "" : "",
+      accuracy: accessContext.permissionGranted ? accessContext.accuracy || "" : "",
       ...extra,
     };
     try {
@@ -277,6 +346,76 @@ if (workspace && appData) {
     } catch {
       return false;
     }
+  }
+
+  function resourceDurationSeconds() {
+    return Math.max(0, Math.round((Date.now() - activeResource.startedAt) / 1000));
+  }
+
+  function switchTrackedResource(type, id, title) {
+    const previous = activeResource;
+    if (previous && previous.id !== id) {
+      postRealtimeEvent("access", {
+        action: "resource_close",
+        resourceType: previous.type,
+        resourceId: previous.id,
+        resourceTitle: previous.title,
+        durationSeconds: resourceDurationSeconds(),
+      });
+    }
+    activeResource = { type, id, title, startedAt: Date.now() };
+    postRealtimeEvent("access", {
+      action: "resource_open",
+      resourceType: type,
+      resourceId: id,
+      resourceTitle: title,
+      durationSeconds: 0,
+    });
+  }
+
+  function attachLocationConsent() {
+    const place = document.querySelector("#student-place-label");
+    const button = document.querySelector("#enable-student-location");
+    const status = document.querySelector("#student-location-status");
+    if (!place || !button || !status) return;
+    const saved = loadAccessContext();
+    place.value = saved.locationLabel || "";
+    if (saved.permissionGranted) status.textContent = `Lokasi diizinkan • ${saved.locationLabel || "nama tempat belum dipilih"}.`;
+    place.addEventListener("change", () => {
+      const context = loadAccessContext();
+      context.locationLabel = place.value;
+      saveAccessContext(context);
+      status.textContent = context.permissionGranted
+        ? `Lokasi diizinkan • ${place.value || "pilih nama tempat"}.`
+        : "Nama tempat tersimpan; GPS belum dibagikan.";
+    });
+    button.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        status.textContent = "Perangkat ini tidak mendukung izin lokasi.";
+        return;
+      }
+      status.textContent = "Menunggu izin lokasi dari perangkat…";
+      navigator.geolocation.getCurrentPosition((position) => {
+        const context = loadAccessContext();
+        context.permissionGranted = true;
+        context.locationLabel = place.value;
+        // Koordinat dibulatkan untuk mengurangi ketelitian lokasi pada rekap sekolah.
+        context.latitude = Number(position.coords.latitude).toFixed(3);
+        context.longitude = Number(position.coords.longitude).toFixed(3);
+        context.accuracy = Math.round(position.coords.accuracy || 0);
+        saveAccessContext(context);
+        status.textContent = `Lokasi diizinkan • ${place.value || "pilih nama tempat akses"}.`;
+        postRealtimeEvent("access", {
+          action: "location_consent",
+          resourceType: "privacy",
+          resourceId: "location",
+          resourceTitle: "Izin lokasi murid",
+          durationSeconds: 0,
+        });
+      }, () => {
+        status.textContent = "Izin lokasi tidak diberikan. Situs tetap dapat digunakan.";
+      }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 900000 });
+    });
   }
 
   function openPanel(name, { skipAuth = false } = {}) {
@@ -306,6 +445,7 @@ if (workspace && appData) {
       loadPrayerTimes();
     }
     if (name === "games") updateProgress();
+    switchTrackedResource("ruang", name, panelMeta[name][0]);
     scrollToWorkspace();
   }
 
@@ -426,6 +566,7 @@ if (workspace && appData) {
       chapterId: currentChapter.id,
       chapterTitle: currentChapter.title,
     });
+    switchTrackedResource("bab", currentChapter.id, currentChapter.title);
     document.querySelector("#lesson-viewer").scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
   }
 
@@ -517,6 +658,7 @@ if (workspace && appData) {
               ${item.options.map((option, optionIndex) => `<button type="button" data-quiz-option="${optionIndex}"><span>${String.fromCharCode(65 + optionIndex)}</span>${escapeHtml(option)}</button>`).join("")}
             </div>
             <p class="chapter-quiz-feedback" aria-live="polite"></p>
+            <button class="text-button inline-answer-link no-print" type="button" data-scroll-submission>Jawab uraian dan kirim kepada guru ↓</button>
           </article>`).join("")}
         <div class="chapter-quiz-score"><strong data-quiz-score>0 dari 5 benar</strong><span>Jawaban dapat diulang dengan membuka kembali tab Materi Bab.</span></div>
       </div>`;
@@ -596,8 +738,9 @@ if (workspace && appData) {
         <h3>11. Inspirasiku dan Refleksi</h3>
         <p>Satu pengetahuan baru yang saya peroleh adalah ….</p>
         <p>Satu sikap yang akan saya biasakan setelah bab ini adalah ….</p>
-        <button class="cta no-print" type="button" data-open-submission>Tulis Jawaban dan Kirim kepada Guru</button>
-      </section>`;
+        <button class="cta no-print" type="button" data-scroll-submission>Tulis Jawaban dan Kirim kepada Guru</button>
+      </section>
+      ${lessonSubmissionHtml(chapter, { compact: true })}`;
   }
 
   function lessonSummaryHtml(chapter) {
@@ -628,8 +771,9 @@ if (workspace && appData) {
       <section class="document-section">
         <h3>Refleksi</h3>
         <p>Setelah mempelajari bab ini, pemahaman yang paling penting bagi saya adalah …, dan tindakan yang akan saya biasakan ialah ….</p>
-        <button class="cta no-print" type="button" data-open-submission>Kerjakan Latihan dan Kirim</button>
-      </section>`;
+        <button class="cta no-print" type="button" data-scroll-submission>Kerjakan Latihan dan Kirim</button>
+      </section>
+      ${lessonSubmissionHtml(chapter, { compact: true })}`;
   }
 
   function lessonWorksheetHtml(chapter) {
@@ -662,10 +806,11 @@ if (workspace && appData) {
           ${chapter.concepts.map(([title]) => `<span>${escapeHtml(title)}</span>`).join("")}
         </div>
         <div class="answer-space tall"></div>
+        <button class="text-button inline-answer-link no-print" type="button" data-scroll-submission>Isi jawaban digital ↓</button>
       </section>
       <section class="document-section worksheet-activity">
         <h3>D. Aktivitas 2 — Analisis</h3>
-        <ol>${chapter.questions.map((item) => `<li>${escapeHtml(item)}<div class="answer-space"></div></li>`).join("")}</ol>
+        <ol>${chapter.questions.map((item) => `<li>${escapeHtml(item)}<div class="answer-space"></div><button class="text-button inline-answer-link no-print" type="button" data-scroll-submission>Jawab dan kirim kepada guru ↓</button></li>`).join("")}</ol>
       </section>
       <section class="document-section worksheet-activity">
         <h3>E. Aktivitas 3 — Produk Bermakna</h3>
@@ -697,8 +842,9 @@ if (workspace && appData) {
             <tr><td>Integritas</td><td>Sumber dan proses transparan</td><td>Sumber dicantumkan</td><td>Sumber belum lengkap</td><td>Menyalin tanpa pengakuan</td></tr>
           </tbody>
         </table>
-        <button class="cta no-print" type="button" data-open-submission>Isi LKPD Digital dan Kirim kepada Guru</button>
-      </section>`;
+        <button class="cta no-print" type="button" data-scroll-submission>Isi LKPD Digital dan Kirim kepada Guru</button>
+      </section>
+      ${lessonSubmissionHtml(chapter, { compact: true })}`;
   }
 
   function loadStudentIdentity() {
@@ -713,16 +859,60 @@ if (workspace && appData) {
     return safeJsonParse(localStorage.getItem(STUDENT_WORK_KEY), null) || {};
   }
 
-  function lessonSubmissionHtml(chapter) {
+  function chapterVideosHtml(chapter, summaries = []) {
+    const videos = Array.isArray(videoData[chapter.id]) ? videoData[chapter.id] : [];
+    if (!videos.length) return "";
+    return `
+      <section class="document-section chapter-video-section">
+        <div class="video-section-heading">
+          <div>
+            <h3>D. Video Penguatan dan Ringkasan Murid</h3>
+            <p>Dua video dipilih agar selaras dengan tema bab. Tonton secara kritis, lalu tulis ringkasan minimal 500 karakter untuk setiap video.</p>
+          </div>
+          <span class="online-badge">Video memerlukan internet</span>
+        </div>
+        <div class="chapter-video-grid">
+          ${videos.map((video, index) => `
+            <article class="chapter-video-card">
+              <div class="video-frame">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/${escapeHtml(video.id)}"
+                  title="${escapeHtml(video.title)}"
+                  loading="lazy"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+              <div class="video-card-copy">
+                <span>Video ${index + 1} • ${escapeHtml(video.channel)}</span>
+                <h4>${escapeHtml(video.title)}</h4>
+                <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener">Buka di YouTube ↗</a>
+              </div>
+              <label class="block-field">Ringkasan video ${index + 1}
+                <textarea name="video-summary-${index}" rows="9" data-video-summary="${index}" data-min-length="500" aria-describedby="video-count-${index}" required>${escapeHtml(summaries[index] || "")}</textarea>
+              </label>
+              <div class="video-summary-footer">
+                <span id="video-count-${index}" data-video-count="${index}">0 karakter • minimal 500</span>
+                <button class="btn btn-compact no-print" type="submit">Kirim ringkasan kepada guru</button>
+              </div>
+            </article>`).join("")}
+        </div>
+        <p class="document-note">Judul, tautan, dan ringkasan tetap tersedia saat luring. Video YouTube tidak disalin ke penyimpanan situs; pemutaran luring hanya dapat menggunakan fitur resmi YouTube atau berkas video berizin yang diberikan pemiliknya.</p>
+      </section>`;
+  }
+
+  function lessonSubmissionHtml(chapter, { compact = false } = {}) {
     const identity = loadStudentIdentity();
     const work = loadStudentWorks()[chapter.id] || {};
     const answers = Array.isArray(work.answers) ? work.answers : [];
     const reflections = Array.isArray(work.reflections) ? work.reflections : [];
+    const videoSummaries = Array.isArray(work.videoSummaries) ? work.videoSummaries : [];
     return `
-      <form id="student-work-form" class="student-work-form">
-        <section class="document-cover worksheet-cover">
+      <form id="student-work-form" class="student-work-form inline-student-work">
+        <section class="${compact ? "document-section integrated-submission-head" : "document-cover worksheet-cover"}" id="integrated-submission">
           <p>JAWABAN DAN PENGIRIMAN TUGAS • PAIBP SMART SMP</p>
-          <h2>${escapeHtml(chapter.title)}</h2>
+          <h2>${compact ? "Jawab dan Kirim kepada Guru" : escapeHtml(chapter.title)}</h2>
+          ${compact ? `<p>Latihan, LKPD, refleksi, dan ringkasan video disimpan sebagai satu paket pekerjaan bab ${escapeHtml(chapter.id)}.</p>` : ""}
           <div class="student-identity-form">
             <label>Nama lengkap
               <input name="studentName" autocomplete="name" maxlength="80" value="${escapeHtml(identity.name)}" required>
@@ -766,6 +956,7 @@ if (workspace && appData) {
               <textarea name="reflection-${index}" rows="4" maxlength="2500" required>${escapeHtml(reflections[index] || "")}</textarea>
             </label>`).join("")}
         </section>
+        ${chapterVideosHtml(chapter, videoSummaries)}
         <section class="document-section submission-actions no-print">
           <button class="btn" type="button" data-save-work>Simpan di perangkat</button>
           <button class="btn" type="button" data-print-work>Cetak / Simpan PDF</button>
@@ -785,11 +976,22 @@ if (workspace && appData) {
     };
     const answers = currentChapter.questions.map((_, index) => fieldValue(`answer-${index}`));
     const reflections = [0, 1, 2].map((index) => fieldValue(`reflection-${index}`));
+    const videos = Array.isArray(videoData[currentChapter.id]) ? videoData[currentChapter.id] : [];
+    const videoSummaries = videos.map((_, index) => fieldValue(`video-summary-${index}`));
+    const previous = loadStudentWorks()[currentChapter.id] || {};
+    const identityKey = `${identity.name}|${identity.attendance}|${identity.className}`.trim().toLocaleLowerCase("id");
     return {
       identity,
       answers,
       projectPlan: fieldValue("projectPlan"),
       reflections,
+      videoSummaries,
+      identityKey,
+      submissionId: previous.identityKey === identityKey && previous.submissionId ? previous.submissionId : (
+        typeof window.crypto?.randomUUID === "function"
+          ? window.crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(16).slice(2)}`
+      ),
       savedAt: new Date().toISOString(),
     };
   }
@@ -804,7 +1006,7 @@ if (workspace && appData) {
   function saveCurrentStudentWork({ silent = false } = {}) {
     const work = collectStudentWork();
     if (!work || !currentChapter) {
-      if (!silent) setStudentStatus("Buka tab “Jawaban & Kirim” untuk mengisi pekerjaan.", true);
+      if (!silent) setStudentStatus("Buka Materi, Ringkasan, atau LKPD lalu isi formulir di bagian bawah.", true);
       return null;
     }
     localStorage.setItem(STUDENT_IDENTITY_KEY, JSON.stringify(work.identity));
@@ -813,6 +1015,9 @@ if (workspace && appData) {
       answers: work.answers,
       projectPlan: work.projectPlan,
       reflections: work.reflections,
+      videoSummaries: work.videoSummaries,
+      submissionId: work.submissionId,
+      identityKey: work.identityKey,
       savedAt: work.savedAt,
     };
     localStorage.setItem(STUDENT_WORK_KEY, JSON.stringify(allWorks));
@@ -821,13 +1026,11 @@ if (workspace && appData) {
   }
 
   function buildSubmission(work) {
-    const randomPart = typeof window.crypto?.randomUUID === "function"
-      ? window.crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const videos = Array.isArray(videoData[currentChapter.id]) ? videoData[currentChapter.id] : [];
     return {
       schema: "paibp-smart-submission",
       version: 1,
-      submissionId: randomPart,
+      submissionId: work.submissionId,
       createdAt: new Date().toISOString(),
       school: { name: "SMP Negeri 1 Susukan", npsn: "20304047" },
       subject: "Pendidikan Agama Islam dan Budi Pekerti",
@@ -850,22 +1053,26 @@ if (workspace && appData) {
           ["Bagian yang masih perlu saya pelajari", work.reflections[1]],
           ["Tindakan nyata yang akan saya lakukan", work.reflections[2]],
         ].map(([prompt, answer]) => ({ prompt, answer })),
+        videoSummaries: videos.map((video, index) => ({
+          videoId: video.id,
+          title: video.title,
+          channel: video.channel,
+          url: video.url,
+          summary: work.videoSummaries[index] || "",
+        })),
       },
     };
   }
 
   async function exportAndShareStudentWork() {
     if (!currentChapter) return;
-    if (currentLessonView !== "submission") {
-      currentLessonView = "submission";
-      renderLesson();
-      setStudentStatus("Lengkapi identitas dan seluruh jawaban, lalu pilih “Kirim kepada guru” sekali lagi.", true);
-      document.querySelector("[name='studentName']")?.focus();
-      return;
-    }
     const form = document.querySelector("#student-work-form");
+    form?.querySelectorAll("[data-video-summary]").forEach((textarea) => {
+      const valid = textarea.value.trim().length >= 500;
+      textarea.setCustomValidity?.(valid ? "" : "Ringkasan video harus berisi minimal 500 karakter.");
+    });
     if (!form?.reportValidity()) {
-      setStudentStatus("Lengkapi identitas dan seluruh jawaban sebelum mengirim.", true);
+      setStudentStatus("Lengkapi identitas, seluruh jawaban, dan ringkasan video minimal 500 karakter sebelum mengirim.", true);
       return;
     }
     const work = saveCurrentStudentWork({ silent: true });
@@ -874,6 +1081,10 @@ if (workspace && appData) {
       action: "send_assignment",
       chapterId: currentChapter.id,
       chapterTitle: currentChapter.title,
+      resourceType: "tugas",
+      resourceId: submission.submissionId,
+      resourceTitle: `Paket jawaban ${currentChapter.id}`,
+      durationSeconds: 0,
       submissionData: submission,
     });
     const filename = `Tugas-PAIBP-${currentChapter.id}-${work.identity.className}-${work.identity.attendance}-${work.identity.name}`
@@ -920,6 +1131,17 @@ if (workspace && appData) {
       saveCurrentStudentWork({ silent: true });
       printStudentWork();
     });
+    form.querySelectorAll("[data-video-summary]").forEach((textarea) => {
+      const index = textarea.dataset.videoSummary;
+      const counter = form.querySelector(`[data-video-count="${index}"]`);
+      const updateCounter = () => {
+        const count = textarea.value.trim().length;
+        if (counter) counter.textContent = `${count.toLocaleString("id-ID")} karakter • minimal 500`;
+        textarea.setCustomValidity?.(count >= 500 ? "" : "Ringkasan video harus berisi minimal 500 karakter.");
+      };
+      textarea.addEventListener("input", updateCounter);
+      updateCounter();
+    });
   }
 
   function attachQuickQuiz() {
@@ -950,11 +1172,10 @@ if (workspace && appData) {
   }
 
   function attachLessonNavigation() {
-    document.querySelectorAll("[data-open-submission]").forEach((button) => {
+    document.querySelectorAll("[data-scroll-submission]").forEach((button) => {
       button.addEventListener("click", () => {
-        currentLessonView = "submission";
-        renderLesson();
-        document.querySelector("#lesson-content")?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+        document.querySelector("#integrated-submission")?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+        document.querySelector("[name='studentName']")?.focus({ preventScroll: true });
       });
     });
   }
@@ -966,12 +1187,20 @@ if (workspace && appData) {
     const content = document.querySelector("#lesson-content");
     if (currentLessonView === "summary") content.innerHTML = lessonSummaryHtml(currentChapter);
     else if (currentLessonView === "worksheet") content.innerHTML = lessonWorksheetHtml(currentChapter);
-    else if (currentLessonView === "submission") content.innerHTML = lessonSubmissionHtml(currentChapter);
     else content.innerHTML = lessonMaterialHtml(currentChapter);
-    if (currentLessonView === "submission") attachStudentWorkForm();
+    attachStudentWorkForm();
     if (currentLessonView === "material") attachQuickQuiz();
     attachLessonNavigation();
-    setStudentStatus(currentLessonView === "submission" ? "Jawaban tersimpan otomatis saat diketik." : "");
+    setStudentStatus("Jawaban pada bab ini tersimpan otomatis saat diketik.");
+    postRealtimeEvent("access", {
+      action: "open_lesson_section",
+      chapterId: currentChapter.id,
+      chapterTitle: currentChapter.title,
+      resourceType: "bagian-bab",
+      resourceId: `${currentChapter.id}-${currentLessonView}`,
+      resourceTitle: `${currentChapter.title} — ${currentLessonView}`,
+      durationSeconds: 0,
+    });
     updateLessonCompleteButton();
   }
 
@@ -996,12 +1225,6 @@ if (workspace && appData) {
     updateLessonCompleteButton();
   });
   document.querySelector("#save-student-work")?.addEventListener("click", () => {
-    if (currentLessonView !== "submission") {
-      currentLessonView = "submission";
-      renderLesson();
-      setStudentStatus("Isi jawaban pada formulir; situs akan menyimpannya otomatis.");
-      return;
-    }
     saveCurrentStudentWork();
   });
   document.querySelector("#send-student-work")?.addEventListener("click", exportAndShareStudentWork);
@@ -1079,6 +1302,17 @@ if (workspace && appData) {
   document.querySelector("#print-lesson")?.addEventListener("click", () => {
     if (!currentChapter) return;
     printDocument(`${currentChapter.title} — ${currentLessonView}`, currentPrintableLessonHtml());
+  });
+  document.querySelector("#download-lesson")?.addEventListener("click", () => {
+    if (!currentChapter) return;
+    const title = `Materi-PAIBP-${currentChapter.id}-${currentLessonView}`;
+    const html = `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+      <style>body{font-family:Arial,sans-serif;line-height:1.6;color:#142d35}h1,h2,h3,h4{font-weight:700}
+      p,li,td{font-weight:400}table{width:100%;border-collapse:collapse}th,td{border:1px solid #9eaaa6;padding:8px;text-align:left}
+      section{margin:20px 0}.no-print,iframe,button{display:none}.printed-answer{white-space:pre-wrap;border:1px solid #ccd8d4;padding:10px}</style>
+      </head><body>${currentPrintableLessonHtml()}</body></html>`;
+    downloadBlob(new Blob(["\ufeff", html], { type: "application/msword;charset=utf-8" }), `${title}.doc`);
+    setStudentStatus("Materi berhasil disiapkan sebagai dokumen. Periksa folder unduhan perangkat.");
   });
 
   const teacherGradeButtons = [...document.querySelectorAll("[data-teacher-grade]")];
@@ -1529,6 +1763,9 @@ if (workspace && appData) {
     if (payload.work.questions.length > 20 || payload.work.reflections.length > 10) return false;
     if (payload.work.questions.some((item) => String(item?.answer || "").length > 4000)) return false;
     if (String(payload.work.project?.answer || "").length > 6000) return false;
+    if (payload.work.videoSummaries && !Array.isArray(payload.work.videoSummaries)) return false;
+    if ((payload.work.videoSummaries || []).length > 4) return false;
+    if ((payload.work.videoSummaries || []).some((item) => String(item?.summary || "").length > 500000)) return false;
     return true;
   }
 
@@ -1546,6 +1783,7 @@ if (workspace && appData) {
       ...submission.work.questions.map((item) => item.answer),
       submission.work.project?.answer,
       ...submission.work.reflections.map((item) => item.answer),
+      ...(submission.work.videoSummaries || []).map((item) => item.summary),
     ];
     if (!values.length) return 0;
     return Math.round((values.filter((value) => String(value || "").trim()).length / values.length) * 100);
@@ -1568,19 +1806,32 @@ if (workspace && appData) {
           <button class="btn" id="refresh-access-recap" type="button" ${configured ? "" : "disabled"}>Muat Ulang Rekap</button>
           <button class="btn" id="export-access-csv" type="button" disabled>Unduh CSV Akses</button>
         </div>
+        <div class="access-filters no-print">
+          <label>Kelas <select id="access-class-filter"><option value="">Semua kelas</option></select></label>
+          <label>Aktivitas
+            <select id="access-action-filter">
+              <option value="">Semua aktivitas</option>
+              <option value="submission">Pengiriman tugas</option>
+              <option value="bab">Bab/materi</option>
+              <option value="bagian-bab">Bagian bab</option>
+              <option value="ruang">Ruang portal</option>
+            </select>
+          </label>
+          <label>Tanggal <input id="access-date-filter" type="date"></label>
+        </div>
         <p class="save-status" id="access-recap-status" aria-live="polite">${configured ? "Belum memuat data." : "Alamat sinkronisasi belum diisi di app-config.js."}</p>
       </section>
       <section class="document-section">
         <div class="access-summary" id="access-summary"></div>
         <div class="table-scroll">
           <table class="data-table access-table">
-            <thead><tr><th>Waktu</th><th>Nama/Absen</th><th>Kelas</th><th>Aktivitas</th><th>Bab</th></tr></thead>
-            <tbody id="access-recap-body"><tr><td colspan="5">${configured ? "Pilih Muat Ulang Rekap." : "Aktifkan integrasi daring terlebih dahulu."}</td></tr></tbody>
+            <thead><tr><th>Waktu</th><th>Nama/Absen</th><th>Kelas</th><th>Aktivitas yang Diakses</th><th>Durasi</th><th>Tempat</th><th>Koordinat dengan Izin</th></tr></thead>
+            <tbody id="access-recap-body"><tr><td colspan="7">${configured ? "Pilih Muat Ulang Rekap." : "Aktifkan integrasi daring terlebih dahulu."}</td></tr></tbody>
           </table>
         </div>
       </section>
       <section class="document-section">
-        <div class="warning"><strong>Perlindungan data:</strong> rekap akses hanya menyimpan waktu, identitas yang diisi murid, kelas, dan aktivitas. Isi jawaban tidak dikirim ke log akses.</div>
+        <div class="warning"><strong>Perlindungan data:</strong> nama tempat dipilih murid. Koordinat dibulatkan dan hanya dikirim setelah izin lokasi diberikan oleh murid pada perangkatnya. Isi jawaban tidak dimasukkan ke log aktivitas.</div>
       </section>`;
   }
 
@@ -1597,16 +1848,26 @@ if (workspace && appData) {
         action: String(item.action || ""),
         chapterId: String(item.chapterId || ""),
         chapterTitle: String(item.chapterTitle || ""),
+        resourceType: String(item.resourceType || ""),
+        resourceId: String(item.resourceId || ""),
+        resourceTitle: String(item.resourceTitle || ""),
+        durationSeconds: Math.max(0, Number(item.durationSeconds) || 0),
+        locationLabel: String(item.locationLabel || ""),
+        latitude: String(item.latitude || ""),
+        longitude: String(item.longitude || ""),
+        accuracy: String(item.accuracy || ""),
       }))
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }
 
   function accessRowsCsv(rows) {
     const lines = [
-      ["Waktu", "Nama", "Nomor Absen", "Kelas", "Jenis", "Aktivitas", "Bab", "Judul Bab"],
+      ["Waktu", "Nama", "Nomor Absen", "Kelas", "Jenis", "Aktivitas", "Jenis Akses", "ID Akses", "Judul Akses", "Durasi Detik", "Tempat", "Lintang", "Bujur", "Akurasi Meter"],
       ...rows.map((item) => [
         item.timestamp, item.name, item.attendance, item.className,
-        item.type, item.action, item.chapterId, item.chapterTitle,
+        item.type, item.action, item.resourceType, item.resourceId,
+        item.resourceTitle || item.chapterTitle, item.durationSeconds,
+        item.locationLabel, item.latitude, item.longitude, item.accuracy,
       ]),
     ].map((row) => row.map(csvCell).join(","));
     return `\ufeff${lines.join("\r\n")}`;
@@ -1632,27 +1893,54 @@ if (workspace && appData) {
         result[label] = (result[label] || 0) + 1;
         return result;
       }, {});
-      summary.innerHTML = `
-        <article><span>Total aktivitas</span><strong>${rows.length}</strong></article>
-        <article><span>Kunjungan</span><strong>${rows.filter((item) => item.type === "access").length}</strong></article>
-        <article><span>Pengiriman tugas</span><strong>${rows.filter((item) => item.type === "submission").length}</strong></article>
-        <article><span>Kelas terpantau</span><strong>${Object.keys(classes).length}</strong></article>`;
-      body.innerHTML = rows.length ? rows.map((item) => `
+      const classFilter = document.querySelector("#access-class-filter");
+      const actionFilter = document.querySelector("#access-action-filter");
+      const dateFilter = document.querySelector("#access-date-filter");
+      if (classFilter) {
+        classFilter.innerHTML = `<option value="">Semua kelas</option>${Object.keys(classes).sort((a, b) => a.localeCompare(b, "id", { numeric: true })).map((name) => `<option>${escapeHtml(name)}</option>`).join("")}`;
+      }
+      const formatDuration = (seconds) => {
+        if (!seconds) return "—";
+        const minutes = Math.floor(seconds / 60);
+        const rest = seconds % 60;
+        return minutes ? `${minutes} m ${rest} d` : `${rest} detik`;
+      };
+      const renderRows = () => {
+        const visible = rows.filter((item) => {
+          if (classFilter?.value && (item.className || "Belum mengisi kelas") !== classFilter.value) return false;
+          if (actionFilter?.value === "submission" && item.type !== "submission") return false;
+          if (actionFilter?.value && actionFilter.value !== "submission" && item.resourceType !== actionFilter.value) return false;
+          if (dateFilter?.value && !item.timestamp.startsWith(dateFilter.value)) return false;
+          return true;
+        });
+        const uniqueStudents = new Set(visible.filter((item) => item.name).map((item) => `${item.name}|${item.className}|${item.attendance}`));
+        const totalDuration = visible.reduce((total, item) => total + item.durationSeconds, 0);
+        summary.innerHTML = `
+          <article><span>Aktivitas tampil</span><strong>${visible.length}</strong></article>
+          <article><span>Murid terpantau</span><strong>${uniqueStudents.size}</strong></article>
+          <article><span>Pengiriman tugas</span><strong>${visible.filter((item) => item.type === "submission").length}</strong></article>
+          <article><span>Durasi tercatat</span><strong>${formatDuration(totalDuration)}</strong></article>`;
+        body.innerHTML = visible.length ? visible.map((item) => `
         <tr>
           <td>${item.timestamp ? new Date(item.timestamp).toLocaleString("id-ID") : "—"}</td>
           <td><strong>${escapeHtml(item.name || "Belum mengisi nama")}</strong>${item.attendance ? `<br><small>Absen ${escapeHtml(item.attendance)}</small>` : ""}</td>
           <td>${escapeHtml(item.className || "—")}</td>
-          <td><span class="activity-badge ${item.type === "submission" ? "is-submission" : ""}">${item.type === "submission" ? "Mengirim tugas" : "Membuka situs"}</span></td>
-          <td>${escapeHtml(item.chapterId || "—")}${item.chapterTitle ? `<br><small>${escapeHtml(item.chapterTitle)}</small>` : ""}</td>
-        </tr>`).join("") : "<tr><td colspan='5'>Belum ada aktivitas murid yang tercatat.</td></tr>";
+          <td><span class="activity-badge ${item.type === "submission" ? "is-submission" : ""}">${item.type === "submission" ? "Mengirim tugas" : escapeHtml(item.resourceType || item.action || "Membuka situs")}</span><br><small>${escapeHtml(item.resourceTitle || item.chapterTitle || item.resourceId || item.chapterId || "—")}</small></td>
+          <td>${formatDuration(item.durationSeconds)}</td>
+          <td>${escapeHtml(item.locationLabel || "Tidak dibagikan")}</td>
+          <td>${item.latitude && item.longitude ? `${escapeHtml(item.latitude)}, ${escapeHtml(item.longitude)}${item.accuracy ? `<br><small>± ${escapeHtml(item.accuracy)} m</small>` : ""}` : "Tidak dibagikan"}</td>
+        </tr>`).join("") : "<tr><td colspan='7'>Belum ada aktivitas murid yang sesuai filter.</td></tr>";
+        if (exportButton) {
+          exportButton.disabled = !visible.length;
+          exportButton.onclick = () => downloadBlob(
+            new Blob([accessRowsCsv(visible)], { type: "text/csv;charset=utf-8" }),
+            `Rekap-Akses-PAIBP-${new Date().toISOString().slice(0, 10)}.csv`,
+          );
+        }
+      };
+      [classFilter, actionFilter, dateFilter].forEach((input) => input?.addEventListener("change", renderRows));
+      renderRows();
       status.textContent = `${rows.length} aktivitas dimuat pada ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}.`;
-      if (exportButton) {
-        exportButton.disabled = !rows.length;
-        exportButton.onclick = () => downloadBlob(
-          new Blob([accessRowsCsv(rows)], { type: "text/csv;charset=utf-8" }),
-          `Rekap-Akses-PAIBP-${new Date().toISOString().slice(0, 10)}.csv`,
-        );
-      }
     } catch {
       status.textContent = "Rekap daring belum dapat dimuat. Periksa URL Web App, kunci baca, dan izin deployment.";
       status.classList.add("error");
@@ -1757,7 +2045,14 @@ if (workspace && appData) {
       <p>${escapeHtml(item.work.project?.prompt || "")}</p>
       <div class="submitted-answer">${escapeHtml(item.work.project?.answer || "")}</div>
       <h4>Refleksi</h4>
-      ${item.work.reflections.map((entry) => `<p><strong>${escapeHtml(entry.prompt)}</strong></p><div class="submitted-answer">${escapeHtml(entry.answer)}</div>`).join("")}`;
+      ${item.work.reflections.map((entry) => `<p><strong>${escapeHtml(entry.prompt)}</strong></p><div class="submitted-answer">${escapeHtml(entry.answer)}</div>`).join("")}
+      ${(item.work.videoSummaries || []).length ? `
+        <h4>Ringkasan video</h4>
+        ${(item.work.videoSummaries || []).map((entry) => `
+          <article class="submitted-video-summary">
+            <p><strong>${escapeHtml(entry.title)}</strong> • ${escapeHtml(entry.channel)}</p>
+            <div class="submitted-answer">${escapeHtml(entry.summary)}</div>
+          </article>`).join("")}` : ""}`;
     container.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
   }
 
@@ -1874,6 +2169,41 @@ if (workspace && appData) {
     });
   }
 
+  function sourceBlockText(block) {
+    if (block?.type === "table") return (block.rows || []).flat().join(" ");
+    return String(block?.text || "");
+  }
+
+  function isSignatureBlock(block, index, total) {
+    const text = sourceBlockText(block).replace(/\s+/g, " ").trim();
+    if (!text) return false;
+    const markers = [
+      /mengetahui/i,
+      /kepala sekolah/i,
+      /guru (?:mata pelajaran|paibp|pendidikan agama)/i,
+      /\bNIP\.?\s*\d/i,
+      /susukan.{0,30}20\d{2}/i,
+    ];
+    const matches = markers.filter((pattern) => pattern.test(text)).length;
+    if (block.type === "table") return matches >= 2;
+    if (index < Math.max(0, total - 35)) return false;
+    return matches >= 1;
+  }
+
+  function isSourceHeading(text, blockType) {
+    if (!/^heading/.test(String(blockType || ""))) return false;
+    const value = String(text || "").trim();
+    const words = value.split(/\s+/).filter(Boolean);
+    if (!value || value.length > 125 || words.length > 16 || /[.!?;:]\s*$/.test(value)) return false;
+    const cue = /^(?:BAB\b|MODUL\b|PERTEMUAN\b|KEGIATAN\b|ASESMEN\b|CAPAIAN\b|TUJUAN\b|ALUR\b|PROGRAM\b|KRITERIA\b|IDENTITAS\b|INFORMASI\b|KOMPONEN\b|LAMPIRAN\b|DESAIN\b|TOPIK\b|PRAKTIK\b|LINGKUNGAN\b|PEMANFAATAN\b|REFLEKSI\b|MODEL PEMBELAJARAN\b|PENDEKATAN PEMBELAJARAN\b|METODE PEMBELAJARAN\b|STRATEGI PEMBELAJARAN\b|DIFERENSIASI\b|[A-Z]\.\s|[IVX]+\.\s|\d+(?:\.\d+)*[.)]\s)/i;
+    if (cue.test(value)) return true;
+    const letters = [...value].filter((character) => /\p{L}/u.test(character));
+    if (letters.length && letters.filter((character) => character === character.toUpperCase()).length / letters.length > 0.72) return true;
+    const meaningful = words.filter((word) => !/^(?:dan|atau|yang|dalam|dengan|pada|ke|dari|untuk)$/i.test(word));
+    return words.length >= 2 && meaningful.length > 0
+      && meaningful.every((word) => /^[A-ZÀ-ÖØ-Þ0-9"'(]/.test(word));
+  }
+
   function sourceBlocksHtml(blocks = []) {
     let html = "";
     let listItems = [];
@@ -1882,7 +2212,9 @@ if (workspace && appData) {
       html += `<ul class="source-list">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
       listItems = [];
     };
-    blocks.forEach((block) => {
+    blocks
+      .filter((block, index) => !isSignatureBlock(block, index, blocks.length))
+      .forEach((block) => {
       if (block.type === "list") {
         listItems.push(block.text);
         return;
@@ -1899,11 +2231,15 @@ if (workspace && appData) {
         }).join("")}</tbody></table></div>`;
         return;
       }
-      const tag = {
+      let tag = {
         heading2: "h2",
         heading3: "h3",
         heading4: "h4",
       }[block.type] || "p";
+      const text = String(block.text || "").trim();
+      // Sebagian berkas Word memakai bold/heading untuk paragraf dan butir biasa.
+      // Hanya teks yang benar-benar berbentuk judul atau subjudul dipertahankan.
+      if (tag !== "p" && !isSourceHeading(text, block.type)) tag = "p";
       html += `<${tag}>${escapeHtml(block.text)}</${tag}>`;
     });
     flushList();
@@ -1938,15 +2274,35 @@ if (workspace && appData) {
         <h2>${escapeHtml(source.label)}</h2>
         <p>Ditampilkan dari berkas perangkat ajar yang dilampirkan pengelola, dengan susunan paragraf dan tabel dipertahankan agar siap dibaca, dicetak, serta dikembangkan.</p>
         <div class="source-file-actions no-print">
-          <a class="cta btn-compact" href="${escapeHtml(encodeURI(source.downloadPath))}" download>Unduh Berkas Sumber .docx</a>
+          <button class="cta btn-compact" type="button" data-download-source>Unduh Berkas Sumber .docx</button>
+          <a class="btn btn-compact" href="${escapeHtml(source.downloadPath)}" target="_blank" rel="noopener">Buka berkas</a>
           <span>${escapeHtml(source.sourceName)}</span>
         </div>
+        <p class="save-status no-print" id="source-download-status" aria-live="polite"></p>
       </section>
       <div class="teacher-source-notice">
         <strong>Dokumen lengkap, bukan ringkasan generik.</strong>
         Isi web diadopsi dari berkas sumber kelas ${teacherGrade}. Penyesuaian istilah hanya dilakukan agar konsisten dengan bahasa portal; berkas asli tetap tersedia melalui tombol unduh.
       </div>
       <section class="source-document">${sourceBlocksHtml(source.blocks)}</section>`;
+  }
+
+  async function downloadSelectedTeacherSource() {
+    const source = selectedTeacherSource();
+    const status = document.querySelector("#source-download-status");
+    if (!source) return;
+    if (status) status.textContent = "Menyiapkan berkas sumber…";
+    try {
+      const response = await fetch(new URL(source.downloadPath, location.href), { cache: "no-store" });
+      if (!response.ok) throw new Error("Berkas tidak ditemukan");
+      const blob = await response.blob();
+      if (!blob.size) throw new Error("Berkas kosong");
+      const filename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
+      downloadBlob(blob, filename);
+      if (status) status.textContent = "Berkas berhasil disiapkan. Periksa folder unduhan perangkat.";
+    } catch {
+      if (status) status.textContent = "Unduhan otomatis gagal. Tombol “Buka berkas” dapat digunakan sebagai jalur cadangan.";
+    }
   }
 
   function renderTeacherDocument() {
@@ -1966,6 +2322,7 @@ if (workspace && appData) {
         renderTeacherDocument();
       });
     }
+    document.querySelector("[data-download-source]")?.addEventListener("click", downloadSelectedTeacherSource);
     if (teacherDoc === "calendar") attachAcademicCalendarManager();
     if (teacherDoc === "access") attachAccessRecap();
     if (teacherDoc === "submissions") attachSubmissionRecap();
@@ -2116,7 +2473,9 @@ if (workspace && appData) {
     const buttons = [...document.querySelectorAll("[data-islamic-view]")];
     setPressed(buttons, "islamicView", name);
     if (name === "calendar") renderHijriCalendar();
+    if (name === "arabic") renderArabicAcademy();
     if (name === "insights") renderDailyInsight();
+    switchTrackedResource("fitur-islami", name, `Fitur Islami — ${name}`);
   }
 
   document.querySelectorAll("[data-islamic-view]").forEach((button) => {
@@ -2142,6 +2501,95 @@ if (workspace && appData) {
       statusElement.textContent = "Suara bahasa Arab tidak tersedia. Pasang suara Arab pada perangkat untuk memakai audio luring.";
     };
     window.speechSynthesis.speak(utterance);
+  }
+
+  function readArabicProgress() {
+    return safeJsonParse(localStorage.getItem(ARABIC_PROGRESS_KEY), { completed: [], xp: 0 }) || { completed: [], xp: 0 };
+  }
+
+  function writeArabicProgress(progress) {
+    localStorage.setItem(ARABIC_PROGRESS_KEY, JSON.stringify(progress));
+  }
+
+  function renderArabicLesson(lesson) {
+    const player = document.querySelector("#arabic-lesson-player");
+    if (!player || !lesson) return;
+    const level = arabicData.levels.find((item) => item.id === arabicLevelId);
+    player.innerHTML = `
+      <div class="arabic-lesson-head">
+        <span>${escapeHtml(level?.label || "")}</span>
+        <h5>${escapeHtml(lesson.title)}</h5>
+      </div>
+      <p class="arabic-phrase" lang="ar" dir="rtl">${escapeHtml(lesson.arabic)}</p>
+      <p class="arabic-transliteration">${escapeHtml(lesson.transliteration)}</p>
+      <p class="arabic-meaning">${escapeHtml(lesson.meaning)}</p>
+      <button class="btn btn-compact" type="button" data-play-arabic>🔊 Putar pelafalan</button>
+      <p class="save-status" data-arabic-audio-status aria-live="polite"></p>
+      <div class="arabic-practice">
+        <h5>Latihan cepat</h5>
+        <p>${escapeHtml(lesson.question)}</p>
+        <div class="arabic-options">
+          ${lesson.options.map((option, index) => `<button type="button" data-arabic-answer="${index}">${escapeHtml(option)}</button>`).join("")}
+        </div>
+        <p class="quiz-feedback" data-arabic-feedback aria-live="polite"></p>
+      </div>`;
+    const status = player.querySelector("[data-arabic-audio-status]");
+    player.querySelector("[data-play-arabic]")?.addEventListener("click", () => speakArabic(lesson.arabic, status));
+    player.querySelectorAll("[data-arabic-answer]").forEach((button) => button.addEventListener("click", () => {
+      const correct = Number(button.dataset.arabicAnswer) === lesson.answer;
+      player.querySelectorAll("[data-arabic-answer]").forEach((item, index) => {
+        item.disabled = true;
+        item.classList.toggle("correct", index === lesson.answer);
+        item.classList.toggle("wrong", item === button && !correct);
+      });
+      const feedback = player.querySelector("[data-arabic-feedback]");
+      feedback.textContent = correct ? "Benar. Pelajaran selesai dan 20 XP ditambahkan." : `Belum tepat. Jawaban yang benar: ${lesson.options[lesson.answer]}.`;
+      feedback.className = `quiz-feedback ${correct ? "success" : "error"}`;
+      if (correct) {
+        const progress = readArabicProgress();
+        if (!progress.completed.includes(lesson.id)) {
+          progress.completed.push(lesson.id);
+          progress.xp = Number(progress.xp || 0) + 20;
+          writeArabicProgress(progress);
+        }
+        renderArabicAcademy();
+      }
+    }));
+    switchTrackedResource("bahasa-arab", lesson.id, lesson.title);
+  }
+
+  function renderArabicAcademy() {
+    const tabs = document.querySelector("#arabic-level-tabs");
+    const path = document.querySelector("#arabic-learning-path");
+    const xp = document.querySelector("#arabic-xp");
+    if (!tabs || !path || !arabicData.levels.length) return;
+    const progress = readArabicProgress();
+    if (xp) xp.textContent = `${Number(progress.xp || 0)} XP`;
+    tabs.innerHTML = arabicData.levels.map((level) => `
+      <button type="button" data-arabic-level="${escapeHtml(level.id)}" aria-pressed="${level.id === arabicLevelId}">
+        <span>${level.icon}</span>${escapeHtml(level.label)}
+      </button>`).join("");
+    const level = arabicData.levels.find((item) => item.id === arabicLevelId) || arabicData.levels[0];
+    path.innerHTML = `
+      <div class="arabic-level-intro"><strong>${escapeHtml(level.label)}</strong><p>${escapeHtml(level.description)}</p></div>
+      <div class="arabic-lesson-nodes">
+        ${level.lessons.map((lesson, index) => `
+          <button type="button" data-arabic-lesson="${escapeHtml(lesson.id)}" class="${progress.completed.includes(lesson.id) ? "is-complete" : ""}">
+            <span>${progress.completed.includes(lesson.id) ? "✓" : index + 1}</span>
+            <strong>${escapeHtml(lesson.title)}</strong>
+            <small>${progress.completed.includes(lesson.id) ? "Selesai" : "20 XP"}</small>
+          </button>`).join("")}
+      </div>`;
+    tabs.querySelectorAll("[data-arabic-level]").forEach((button) => button.addEventListener("click", () => {
+      arabicLevelId = button.dataset.arabicLevel;
+      renderArabicAcademy();
+      const selected = arabicData.levels.find((item) => item.id === arabicLevelId);
+      renderArabicLesson(selected?.lessons[0]);
+    }));
+    path.querySelectorAll("[data-arabic-lesson]").forEach((button) => button.addEventListener("click", () => {
+      const selected = level.lessons.find((lesson) => lesson.id === button.dataset.arabicLesson);
+      renderArabicLesson(selected);
+    }));
   }
 
   function renderDuaList(containerId, category) {
@@ -2466,14 +2914,18 @@ if (workspace && appData) {
   }
 
   function startQuiz() {
-    quizQuestions = shuffle(questionBank).slice(0, 10);
+    const bank = gameModeBanks[currentGameMode] || questionBank;
+    quizQuestions = shuffle(bank).slice(0, Math.min(10, bank.length));
     quizIndex = 0;
     quizScore = 0;
     quizLocked = false;
     document.querySelector("#quiz-start").hidden = true;
     document.querySelector("#quiz-next").hidden = true;
     document.querySelector("#quiz-score").textContent = "0";
+    const modeButton = document.querySelector(`[data-game-mode="${currentGameMode}"]`);
+    document.querySelector("#quiz-question").textContent = `Menyiapkan ${modeButton?.querySelector("strong")?.textContent || "permainan"}…`;
     renderQuizQuestion();
+    switchTrackedResource("game", currentGameMode, modeButton?.querySelector("strong")?.textContent || "Games PAIBP");
   }
 
   function renderQuizQuestion() {
@@ -2485,7 +2937,7 @@ if (workspace && appData) {
     document.querySelector("#quiz-feedback").className = "quiz-feedback";
     document.querySelector("#quiz-question").textContent = question;
     document.querySelector("#quiz-number").textContent = `Soal ${quizIndex + 1} dari ${quizQuestions.length}`;
-    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}`;
+    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/10`;
     document.querySelector("#quiz-progress-bar").style.width = `${((quizIndex + 1) / quizQuestions.length) * 100}%`;
     options.forEach((option, optionIndex) => {
       const button = document.createElement("button");
@@ -2533,8 +2985,9 @@ if (workspace && appData) {
   }
 
   function finishQuiz() {
-    if (quizScore > state.gameBest) {
-      state.gameBest = quizScore;
+    const normalizedScore = Math.round((quizScore / Math.max(1, quizQuestions.length)) * 10);
+    if (normalizedScore > state.gameBest) {
+      state.gameBest = normalizedScore;
       saveState();
     }
     document.querySelector("#quiz-question").textContent = `Games selesai: ${quizScore} dari ${quizQuestions.length} jawaban benar.`;
@@ -2543,7 +2996,7 @@ if (workspace && appData) {
     feedback.textContent = quizScore >= 8 ? "Hebat! Pemahamanmu sangat baik." : "Terus berlatih. Buka kembali materi yang belum dikuasai.";
     feedback.className = `quiz-feedback ${quizScore >= 8 ? "success" : "error"}`;
     document.querySelector("#quiz-number").textContent = "Hasil akhir";
-    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}`;
+    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/10`;
     document.querySelector("#quiz-progress-bar").style.width = "100%";
     const start = document.querySelector("#quiz-start");
     start.textContent = "Main Lagi";
@@ -2553,6 +3006,21 @@ if (workspace && appData) {
 
   document.querySelector("#quiz-start")?.addEventListener("click", startQuiz);
   document.querySelector("#quiz-next")?.addEventListener("click", nextQuiz);
+  document.querySelectorAll("[data-game-mode]").forEach((button) => button.addEventListener("click", () => {
+    currentGameMode = button.dataset.gameMode;
+    document.querySelectorAll("[data-game-mode]").forEach((item) => item.classList.toggle("is-active", item === button));
+    const title = button.querySelector("strong")?.textContent || "Games";
+    const description = button.querySelector("small")?.textContent || "";
+    document.querySelector("#quiz-question").textContent = `${title}: ${description}. Tekan “Mulai Games”.`;
+    document.querySelector("#quiz-options").replaceChildren();
+    document.querySelector("#quiz-feedback").textContent = "";
+    document.querySelector("#quiz-start").textContent = "Mulai Games";
+    document.querySelector("#quiz-start").hidden = false;
+    document.querySelector("#quiz-next").hidden = true;
+    document.querySelector("#quiz-number").textContent = "Mode dipilih";
+    switchTrackedResource("game", currentGameMode, title);
+  }));
+  document.querySelector('[data-game-mode="quiz"]')?.classList.add("is-active");
   document.querySelector("#reset-progress")?.addEventListener("click", () => {
     if (!window.confirm("Hapus seluruh progres bab dan skor games pada perangkat ini?")) return;
     state = { completed: [], gameBest: 0 };
@@ -2574,7 +3042,7 @@ if (workspace && appData) {
     const bar = document.querySelector("#overall-progress-bar");
     bar.value = percent;
     bar.textContent = `${percent}%`;
-    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}`;
+    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/10`;
     const badges = [
       ["🌱", "Langkah Pertama", "Selesaikan 1 bab", completed >= 1],
       ["📚", "Tekun Belajar", "Selesaikan 5 bab", completed >= 5],
@@ -2901,6 +3369,32 @@ if (workspace && appData) {
     }
   }
 
+  function sendSessionClose() {
+    if (!realtimeIsConfigured() || !navigator.sendBeacon) return;
+    const identity = loadStudentIdentity();
+    const accessContext = loadAccessContext();
+    const payload = {
+      type: "access",
+      timestamp: new Date().toISOString(),
+      sessionId: getAccessSessionId(),
+      sessionStartedAt: new Date(sessionStartedAt).toISOString(),
+      name: identity.name || "",
+      attendance: identity.attendance || "",
+      className: identity.className || "",
+      action: "session_close",
+      page: location.pathname || "/",
+      resourceType: activeResource.type,
+      resourceId: activeResource.id,
+      resourceTitle: activeResource.title,
+      durationSeconds: resourceDurationSeconds(),
+      locationLabel: accessContext.locationLabel || "",
+      latitude: accessContext.permissionGranted ? accessContext.latitude || "" : "",
+      longitude: accessContext.permissionGranted ? accessContext.longitude || "" : "",
+      accuracy: accessContext.permissionGranted ? accessContext.accuracy || "" : "",
+    };
+    navigator.sendBeacon(appConfig.realtimeEndpoint, new Blob([JSON.stringify(payload)], { type: "text/plain;charset=utf-8" }));
+  }
+
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
@@ -2923,7 +3417,32 @@ if (workspace && appData) {
   renderDailyInsight();
   renderSchoolProfile();
   attachGalleryAdmin();
+  attachLocationConsent();
   loadOnlineGallery();
   postRealtimeEvent("access", { action: "site_open" });
+  window.setInterval(() => {
+    if (document.visibilityState !== "visible") return;
+    postRealtimeEvent("access", {
+      action: "heartbeat",
+      resourceType: activeResource.type,
+      resourceId: activeResource.id,
+      resourceTitle: activeResource.title,
+      durationSeconds: resourceDurationSeconds(),
+    });
+    activeResource.startedAt = Date.now();
+  }, 60000);
+  window.addEventListener("pagehide", sendSessionClose);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      postRealtimeEvent("access", {
+        action: "visibility_pause",
+        resourceType: activeResource.type,
+        resourceId: activeResource.id,
+        resourceTitle: activeResource.title,
+        durationSeconds: resourceDurationSeconds(),
+      });
+    }
+    activeResource.startedAt = Date.now();
+  });
   registerServiceWorker();
 }

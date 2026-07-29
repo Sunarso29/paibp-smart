@@ -25,6 +25,7 @@
   };
 
   const teachers = [
+    ["Hari Teguh Wibowo, S.Pd., M.Si.", "Kepala Sekolah", "../tendik/tendik-04.webp"],
     ["Dyah Rakhmawati, S.Pd.", "Bahasa Indonesia", "guru-01.webp"],
     ["Sri Mulyani, S.Pd.", "Bahasa Indonesia", "guru-02.webp"],
     ["Sri Narti, S.Pd.", "Bahasa Indonesia", "guru-03.webp"],
@@ -65,19 +66,20 @@
   ].map(([name, subject, image]) => ({
     name,
     subject,
-    image: `assets/staff/guru/${image}`,
+    image: image.startsWith("../")
+      ? `assets/staff/${image.replace("../", "")}`
+      : `assets/staff/guru/${image}`,
   }));
 
   const staff = [
+    ["Ruru Mulyanto, S.Sos.", "Tenaga Kependidikan", "tendik-09.webp"],
     ["Basiran", "Tenaga Kependidikan", "tendik-01.webp"],
     ["Dwi Putri Puspitasari", "Tenaga Kependidikan", "tendik-02.webp"],
     ["Fitria Aprili Nurhasanah Putri", "Tenaga Kependidikan", "tendik-03.webp"],
-    ["Hari Teguh Wibowo, S.Pd., M.Si.", "Kepala Sekolah", "tendik-04.webp"],
     ["Jatmiko Tri Wiyono", "Tenaga Kependidikan", "tendik-05.webp"],
     ["Likun", "Tenaga Kependidikan", "tendik-06.webp"],
     ["Mangen", "Tenaga Kependidikan", "tendik-07.webp"],
     ["Rudi Haryadi Hamzah", "Tenaga Kependidikan", "tendik-08.webp"],
-    ["Ruru Mulyanto, S.Sos.", "Tenaga Kependidikan", "tendik-09.webp"],
     ["Sairan", "Tenaga Kependidikan", "tendik-10.webp"],
     ["Slamet Utomo", "Tenaga Kependidikan", "tendik-11.webp"],
     ["Soekasno", "Tenaga Kependidikan", "tendik-12.webp"],

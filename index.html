@@ -144,6 +144,23 @@
                       <button type="button" data-semester-filter="Genap" aria-pressed="false">Genap</button>
                     </div>
                   </div>
+                  <div class="student-access-consent">
+                    <div>
+                      <strong>Rekap kehadiran belajar</strong>
+                      <p>Nama tempat dan lokasi hanya dicatat setelah murid memberi izin. Guru dapat melihat waktu, durasi, dan bagian yang dibuka dari Ruang Guru.</p>
+                    </div>
+                    <label>Tempat akses
+                      <select id="student-place-label">
+                        <option value="">Pilih tempat</option>
+                        <option>SMP Negeri 1 Susukan</option>
+                        <option>Rumah</option>
+                        <option>Perpustakaan</option>
+                        <option>Tempat belajar lainnya</option>
+                      </select>
+                    </label>
+                    <button class="btn btn-compact" id="enable-student-location" type="button">Izinkan lokasi</button>
+                    <span id="student-location-status" aria-live="polite">Lokasi belum dibagikan.</span>
+                  </div>
                 </div>
                 <div class="student-summary-row">
                   <p class="result-summary" id="material-summary" aria-live="polite"></p>
@@ -157,6 +174,7 @@
                   <button class="text-button" type="button" id="back-to-library">← Kembali ke daftar bab</button>
                   <div class="lesson-actions">
                     <button class="btn btn-compact" type="button" id="print-lesson">Cetak / Simpan PDF</button>
+                    <button class="btn btn-compact" type="button" id="download-lesson">Unduh Materi</button>
                     <button class="btn btn-compact" type="button" id="save-student-work">Simpan jawaban</button>
                     <button class="cta btn-compact" type="button" id="send-student-work">Kirim kepada guru</button>
                     <button class="btn btn-compact" type="button" id="toggle-lesson-complete">Tandai selesai</button>
@@ -171,7 +189,6 @@
                   <button type="button" data-lesson-view="material" aria-pressed="true">📖 Materi Bab</button>
                   <button type="button" data-lesson-view="summary" aria-pressed="false">📝 Ringkasan</button>
                   <button type="button" data-lesson-view="worksheet" aria-pressed="false">📋 LKPD</button>
-                  <button type="button" data-lesson-view="submission" aria-pressed="false">✍️ Jawaban &amp; Kirim</button>
                 </div>
                 <p class="save-status" id="student-save-status" aria-live="polite"></p>
                 <div class="lesson-content printable-document" id="lesson-content"></div>
@@ -238,6 +255,7 @@
                   <button type="button" data-islamic-view="morning" aria-pressed="false">🌤️ Dzikir Pagi</button>
                   <button type="button" data-islamic-view="evening" aria-pressed="false">🌙 Dzikir Petang</button>
                   <button type="button" data-islamic-view="calendar" aria-pressed="false">🗓️ Kalender Hijriah</button>
+                  <button type="button" data-islamic-view="arabic" aria-pressed="false">🔤 Bahasa Arab</button>
                   <button type="button" data-islamic-view="insights" aria-pressed="false">💡 Nasihat Harian</button>
                 </nav>
                 <div class="islamic-content">
@@ -319,6 +337,22 @@
                     <div class="fasting-guide" id="fasting-guide"></div>
                   </section>
 
+                  <section data-islamic-page="arabic" hidden>
+                    <div class="subheading-row">
+                      <div>
+                        <h4>Akademi Bahasa Arab</h4>
+                        <p>Jalur belajar Dasar, Menengah, Mahir, dan Percakapan dengan latihan bertahap, XP, serta suara Arab perangkat.</p>
+                      </div>
+                      <span class="live-badge" id="arabic-xp">0 XP</span>
+                    </div>
+                    <div class="arabic-level-tabs" id="arabic-level-tabs"></div>
+                    <div class="arabic-learning-path" id="arabic-learning-path"></div>
+                    <article class="arabic-lesson-player" id="arabic-lesson-player">
+                      <p>Pilih pelajaran untuk mulai belajar.</p>
+                    </article>
+                    <p class="document-note">Materi dan progres tersedia luring. Audio memakai suara Arab pada perangkat; agar dapat diputar tanpa internet, pasang suara Arab luring pada pengaturan bahasa ponsel atau komputer.</p>
+                  </section>
+
                   <section data-islamic-page="insights" hidden>
                     <div class="subheading-row"><div><h4>Nasihat Harian Bersumber</h4><p>Berubah otomatis setiap hari. Nomor hadits/bab ditampilkan; halaman hanya dicantumkan bila edisi sudah diverifikasi.</p></div></div>
                     <article class="daily-insight" id="daily-insight"></article>
@@ -332,10 +366,18 @@
               <div class="panel-heading">
                 <div>
                   <span class="panel-kicker">🎮 Fitur Games</span>
-                  <h3>Tantangan Cerdas PAIBP</h3>
-                  <p>Sepuluh soal acak dari materi kelas VII–IX. Setiap permainan memberi skor, XP, dan catatan prestasi lokal.</p>
+                  <h3>Laboratorium Games PAIBP</h3>
+                  <p>Pilih permainan cepat tepat, pasangan ilmu, urutan ibadah, benar atau perlu diluruskan, jejak dalil, atau misi akhlak.</p>
                 </div>
                 <div class="mini-progress"><strong id="quiz-score">0</strong><span>skor saat ini</span></div>
+              </div>
+              <div class="game-mode-grid" id="game-mode-grid">
+                <button type="button" data-game-mode="quiz"><span>⚡</span><strong>Cepat Tepat</strong><small>10 soal pilihan ganda</small></button>
+                <button type="button" data-game-mode="match"><span>🧩</span><strong>Pasangan Ilmu</strong><small>Cocokkan istilah dan makna</small></button>
+                <button type="button" data-game-mode="sequence"><span>🔢</span><strong>Urutkan Hikmah</strong><small>Susun langkah dengan tepat</small></button>
+                <button type="button" data-game-mode="truefalse"><span>🔎</span><strong>Luruskan Pernyataan</strong><small>Benar atau perlu diperbaiki</small></button>
+                <button type="button" data-game-mode="dalil"><span>📖</span><strong>Jejak Dalil</strong><small>Temukan dalil yang relevan</small></button>
+                <button type="button" data-game-mode="scenario"><span>🌱</span><strong>Misi Akhlak</strong><small>Pilih tindakan terbaik</small></button>
               </div>
               <div class="quiz-card">
                 <div class="quiz-meta">
@@ -397,17 +439,17 @@
           <div class="school-profile" id="school-profile"></div>
           <div class="staff-section">
             <div class="subheading-row">
-              <div><h3>Kepala Sekolah dan Tenaga Kependidikan</h3><p>Profil keluarga besar SMP Negeri 1 Susukan.</p></div>
-            </div>
-            <p class="staff-swipe-hint">Geser ke samping untuk melihat profil lainnya.</p>
-            <div class="staff-grid" id="staff-grid"></div>
-          </div>
-          <div class="staff-section">
-            <div class="subheading-row">
-              <div><h3>Tenaga Pendidik</h3><p>Profil guru SMP Negeri 1 Susukan disajikan ringkas dan mudah ditelusuri.</p></div>
+              <div><h3>Tenaga Pendidik</h3><p>Kepala sekolah dan profil guru SMP Negeri 1 Susukan disajikan ringkas dan mudah ditelusuri.</p></div>
             </div>
             <p class="staff-swipe-hint">Geser ke samping untuk melihat profil lainnya.</p>
             <div class="staff-grid" id="teacher-grid"></div>
+          </div>
+          <div class="staff-section">
+            <div class="subheading-row">
+              <div><h3>Tenaga Kependidikan</h3><p>Profil tenaga kependidikan SMP Negeri 1 Susukan.</p></div>
+            </div>
+            <p class="staff-swipe-hint">Geser ke samping untuk melihat profil lainnya.</p>
+            <div class="staff-grid" id="staff-grid"></div>
           </div>
           <div class="staff-section">
             <div class="subheading-row">
@@ -507,6 +549,8 @@
     <script src="staff-images.js"></script>
     <script src="school-data.js"></script>
     <script src="islamic-data.js"></script>
+    <script src="arabic-data.js"></script>
+    <script src="video-data.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -4,7 +4,7 @@ GitHub Pages hanya menyajikan file statis. Karena itu, rekap akses dari telepon 
 
 ## Data yang dicatat
 
-Integrasi mencatat waktu, nama/nomor absen/kelas yang pernah diisi murid, jenis aktivitas, dan bab yang dibuka atau dikirim pada sheet **Aktivitas**. Ketika murid memilih **Kirim kepada guru**, salinan jawaban lengkap disimpan secara terpisah pada sheet **Pekerjaan** agar dapat dimuat oleh guru. Isi jawaban tidak dimasukkan ke log akses.
+Integrasi mencatat waktu, nama/nomor absen/kelas yang pernah diisi murid, ruang/bab/bagian yang dibuka, serta potongan durasi aktif pada sheet **Aktivitas**. Nama tempat dipilih murid. Koordinat yang sudah dibulatkan hanya dicatat setelah murid menekan **Izinkan lokasi** dan menyetujui permintaan browser. Ketika murid memilih **Kirim kepada guru**, satu paket jawaban berisi latihan, LKPD, refleksi, dan ringkasan video disimpan secara terpisah pada sheet **Pekerjaan** agar dapat dimuat oleh guru. Isi jawaban tidak dimasukkan ke log aktivitas.
 
 Editor admin **Spensus Terkini** memakai integrasi yang sama. Data judul, tanggal, dan ringkasan disimpan pada sheet **Spensus Terkini**, sedangkan foto kegiatan disimpan dalam folder Google Drive **PAIBP SMART — Spensus Terkini**. Tanpa integrasi, editor tetap berfungsi tetapi perubahan galeri hanya tersimpan pada perangkat admin tersebut.
 
@@ -15,7 +15,7 @@ Editor admin **Spensus Terkini** memakai integrasi yang sama. Data judul, tangga
 3. Hapus contoh kode, lalu salin seluruh isi `google-apps-script/Code.gs`.
 4. Simpan proyek dengan nama **PAIBP SMART Rekap**.
 5. Pilih fungsi `setup`, lalu klik **Run**.
-6. Berikan izin yang diminta. Fungsi ini membuat satu Google Sheet rekap dan satu folder Google Drive untuk foto kegiatan.
+6. Berikan izin yang diminta. Fungsi ini membuat satu Google Sheet rekap, satu folder Google Drive untuk foto kegiatan, dan satu folder privat untuk paket tugas yang melebihi batas sel Google Sheets.
 7. Buka **Execution log**. Salin nilai `spreadsheetUrl` untuk membuka rekap mentah dan `readKey` untuk konfigurasi website.
 
 ## 2. Deploy
@@ -45,11 +45,16 @@ Unggah kembali `app-config.js` ke root repository GitHub, tunggu GitHub Pages se
 
 1. Buka website dari telepon.
 2. Masuk Ruang Murid, buka satu bab, isi identitas, lalu kirim satu tugas.
-3. Di perangkat guru, buka Ruang Guru dengan kata sandi.
-4. Pilih **Rekap Akses Murid → Muat Ulang Rekap** dan pastikan kunjungan serta aktivitas pengiriman muncul.
-5. Pilih **Rekap Pekerjaan Murid → Muat Tugas Daring** dan pastikan isi pekerjaan masuk ke kelompok kelas yang sesuai.
-6. Kembali ke Beranda, pilih **Kelola Galeri**, masukkan kata sandi admin, tambahkan satu foto uji, lalu buka website dari perangkat lain untuk memastikan dokumentasi tampil.
+3. Pilih nama tempat akses. Jika pengujian lokasi diperlukan, tekan **Izinkan lokasi** dan setujui permintaan browser.
+4. Di perangkat guru, buka Ruang Guru dengan kata sandi.
+5. Pilih **Rekap Akses Murid → Muat Ulang Rekap** dan pastikan waktu, aktivitas, durasi, tempat, serta pengiriman muncul.
+6. Pilih **Rekap Pekerjaan Murid → Muat Tugas Daring** dan pastikan isi pekerjaan masuk ke kelompok kelas yang sesuai.
+7. Kembali ke Beranda, pilih **Kelola Galeri**, masukkan kata sandi admin, tambahkan satu foto uji, lalu buka website dari perangkat lain untuk memastikan dokumentasi tampil.
+
+## Memperbarui deployment
+
+Setiap kali `google-apps-script/Code.gs` diperbarui, buka **Deploy → Manage deployments → Edit**, pilih **New version**, lalu klik **Deploy**. URL `/exec` tetap sama. Jalankan `setup()` sekali lagi agar kolom aktivitas baru dan folder tugas tersedia.
 
 ## Catatan keamanan
 
-Kata sandi Ruang Guru dan Editor Galeri pada GitHub Pages adalah penghalang praktis agar murid tidak membuka menu secara tidak sengaja, bukan sistem akun berkeamanan tinggi. Jangan menyimpan data sensitif, dokumen rahasia, atau nilai final yang belum boleh dipublikasikan di dalam file repository. Untuk keamanan tingkat akun, versi berikutnya memerlukan backend dengan login guru terautentikasi.
+Kata sandi Ruang Guru dan Editor Galeri pada GitHub Pages adalah penghalang praktis agar murid tidak membuka menu secara tidak sengaja, bukan sistem akun berkeamanan tinggi. Izin lokasi harus bersifat sukarela dan pengguna perlu mengetahui tujuan pencatatannya. Jangan menyimpan data sensitif, dokumen rahasia, atau nilai final yang belum boleh dipublikasikan di dalam file repository. Untuk keamanan tingkat akun, versi berikutnya memerlukan backend dengan login guru terautentikasi.
