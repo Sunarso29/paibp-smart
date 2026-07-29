@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v14";
+const CACHE_NAME = "paibp-smart-core-v15";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -68,7 +68,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (requestUrl.pathname.endsWith("/app-config.js")) {
+  if (/\.(?:js|css|json|webmanifest)$/i.test(requestUrl.pathname)) {
     event.respondWith(
       fetch(request, { cache: "no-store" })
         .then((response) => {

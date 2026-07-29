@@ -5,12 +5,12 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 ## Fitur Utama
 
 - Ruang Murid: 30 paket belajar dengan pendahuluan, pengertian, dalil, infografis, ikhtisar, latihan, LKPD yang langsung dapat diketik, dua video per bab, unduhan materi, serta validasi tujuh syarat sebelum bab dapat ditandai selesai.
-- Ruang Guru: akses melalui nama, unit kerja, dan NIP opsional; CP, KKTP, ATP, Prota, Promes, analisis alokasi waktu, 30 modul lengkap, Kalender Pendidikan, kendali aktivitas, dan rekap tugas terpisah per kelas.
+- Ruang Guru: akses melalui nama, unit kerja, dan NIP opsional; CP, KKTP, ATP, Prota, Promes dengan tabel operasional 120 JP, analisis alokasi waktu, 30 modul lengkap, Kalender Pendidikan, kendali aktivitas, dan rekap tugas terpisah per kelas.
 - Ruang Editor: akses admin standar `261078` untuk menyunting teks beranda, galeri kegiatan, statistik, komentar, rating, balasan, dan moderasi.
-- Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat dengan penanda waktu aktif dan hitung mundur, kalender bertanda per tanggal, nasihat bersumber dengan ruang variasi pembelajaran lebih dari satu triliun susunan, dan Akademi Bahasa Arab empat tingkat.
+- Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat dengan penanda waktu aktif dan hitung mundur, kalender bertanda per tanggal, 6.316 teks dasar nasihat bersumber dengan ruang variasi pembelajaran lebih dari satu triliun susunan, dan Akademi Bahasa Arab empat tingkat.
 - Fitur Games: 100 game dalam 10 kelompok dan 15 mekanik, termasuk Sambung Ayat, 20 soal acak per sesi, penguncian sesi sampai tuntas, skor, XP, level, dan lencana.
 - Dalil materi: rujukan Al Qur'an Surat dan ayat dapat diklik untuk membuka teks Arab, terjemahan Bahasa Indonesia, surat lengkap, serta pelafalan luring dari suara Arab perangkat.
-- Spensus: selayang pandang sekolah, 38 tenaga pendidik termasuk kepala sekolah, 13 tenaga kependidikan, galeri dua baris pada telepon, serta editor admin dokumentasi kegiatan.
+- Spensus: selayang pandang sekolah, 38 tenaga pendidik termasuk kepala sekolah, 13 tenaga kependidikan, galeri dua baris pada telepon, ticker tamu guru, komentar/rating di akhir beranda, serta editor admin dokumentasi kegiatan.
 
 ## Halaman
 

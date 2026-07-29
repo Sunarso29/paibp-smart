@@ -204,6 +204,8 @@ if (workspace && appData) {
   let activeGameSession = safeJsonParse(localStorage.getItem(GAME_SESSION_KEY), null);
   let arabicLevelId = "dasar";
   let dailyInsightIndex = null;
+  let recentTeacherVisits = [];
+  let expandedInsightBankPromise = null;
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -426,6 +428,55 @@ if (workspace && appData) {
     setText("#editor-feedback-count", Number(stats.feedbackCount ?? stats.ratingCount ?? 0).toLocaleString("id-ID"));
   }
 
+  function localRecentTeacherVisits() {
+    return Object.values(readVisitorLedger().sessions || {})
+      .filter((entry) => !entry.admin && entry.roles?.includes("guru") && entry.teacher?.name)
+      .map((entry) => ({
+        name: entry.teacher.name,
+        workUnit: entry.teacher.workUnit || "Unit kerja tidak dicantumkan",
+        lastAccess: entry.lastAccess || entry.firstAccess || new Date().toISOString(),
+      }))
+      .sort((a, b) => String(b.lastAccess).localeCompare(String(a.lastAccess)))
+      .slice(0, 12);
+  }
+
+  function relativeVisitTime(value) {
+    const timestamp = new Date(value).getTime();
+    if (!Number.isFinite(timestamp)) return "baru berkunjung";
+    const elapsedSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+    if (elapsedSeconds < 60) return "baru saja";
+    const minutes = Math.floor(elapsedSeconds / 60);
+    if (minutes < 60) return `${minutes} menit yang lalu`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} jam yang lalu`;
+    const days = Math.floor(hours / 24);
+    return `${days} hari yang lalu`;
+  }
+
+  function renderRecentTeacherVisits(items = null) {
+    const track = document.querySelector("#teacher-visit-track");
+    if (!track) return;
+    if (Array.isArray(items)) recentTeacherVisits = items;
+    if (!recentTeacherVisits.length) recentTeacherVisits = localRecentTeacherVisits();
+    const cleanItems = recentTeacherVisits
+      .filter((item) => item?.name)
+      .map((item) => ({
+        name: String(item.name).trim(),
+        workUnit: String(item.workUnit || "Unit kerja tidak dicantumkan").trim(),
+        lastAccess: item.lastAccess || item.timestamp || new Date().toISOString(),
+      }))
+      .slice(0, 12);
+    if (!cleanItems.length) {
+      track.classList.add("is-static");
+      track.innerHTML = "<span>Belum ada kunjungan guru yang tercatat.</span>";
+      return;
+    }
+    const message = (item) => `<span><strong>${escapeHtml(item.name)}</strong> • ${escapeHtml(item.workUnit)} • berkunjung ${escapeHtml(relativeVisitTime(item.lastAccess))}</span>`;
+    const rendered = cleanItems.map(message).join("");
+    track.classList.toggle("is-static", cleanItems.length === 1);
+    track.innerHTML = cleanItems.length === 1 ? rendered : `${rendered}${rendered}`;
+  }
+
   function registerVisitorRole(role) {
     const sessionId = getAccessSessionId();
     const ledger = readVisitorLedger();
@@ -468,10 +519,12 @@ if (workspace && appData) {
       // Abaikan pembatasan penyimpanan sesi.
     }
     renderVisitorStats();
+    renderRecentTeacherVisits();
   }
 
   async function refreshPublicStats() {
     renderVisitorStats();
+    renderRecentTeacherVisits();
     const status = document.querySelector("#visitor-stats-status");
     if (!realtimeIsConfigured()) {
       if (status) status.textContent = "Statistik perangkat ini ditampilkan; aktifkan sinkronisasi untuk angka lintas perangkat.";
@@ -484,6 +537,7 @@ if (workspace && appData) {
       const payload = await response.json();
       if (!payload.ok || !payload.stats) throw new Error("Data statistik belum tersedia.");
       renderVisitorStats(payload.stats);
+      renderRecentTeacherVisits(payload.recentTeachers || payload.stats.recentTeachers || []);
       if (status) status.textContent = `Diperbarui ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}.`;
     } catch {
       if (status) status.textContent = "Statistik daring belum dapat dimuat; angka perangkat ini tetap ditampilkan.";
@@ -2818,6 +2872,11 @@ if (workspace && appData) {
     return String(block?.text || "");
   }
 
+  function isSourceArtifact(block) {
+    const text = sourceBlockText(block).replace(/\s+/g, " ").trim();
+    return /^(?:top of form|bottom of form)$/i.test(text);
+  }
+
   function isSignatureBlock(block, index, total) {
     const text = sourceBlockText(block).replace(/\s+/g, " ").trim();
     if (!text) return false;
@@ -2853,10 +2912,22 @@ if (workspace && appData) {
     let listItems = [];
     const flushList = () => {
       if (!listItems.length) return;
-      html += `<ol class="source-list source-academic-list" type="a">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>`;
+      html += `<ul class="source-list source-bullet-list">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
       listItems = [];
     };
-    const visibleBlocks = blocks.filter((block, index) => !isSignatureBlock(block, index, blocks.length));
+    const listForIntro = (intro, items) => {
+      const safeItems = items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+      if (/bertujuan|meliputi|mencakup|sebagai berikut|antara lain/i.test(intro)) {
+        return `<ul class="source-list source-bullet-list">${safeItems}</ul>`;
+      }
+      if (/langkah|tahap|urutan|pertemuan|prosedur/i.test(intro)) {
+        return `<ol class="source-list source-number-list">${safeItems}</ol>`;
+      }
+      return `<ol class="source-list source-academic-list" type="a">${safeItems}</ol>`;
+    };
+    const visibleBlocks = blocks.filter((block, index) => (
+      !isSignatureBlock(block, index, blocks.length) && !isSourceArtifact(block)
+    ));
     for (let index = 0; index < visibleBlocks.length; index += 1) {
       const block = visibleBlocks[index];
       if (block.type === "list") {
@@ -2888,16 +2959,16 @@ if (workspace && appData) {
       if (tag === "p" && /[:：]\s*$/.test(text)) {
         const academicItems = [];
         let nextIndex = index + 1;
-        while (nextIndex < visibleBlocks.length && academicItems.length < 18) {
+        while (nextIndex < visibleBlocks.length && academicItems.length < 24) {
           const nextBlock = visibleBlocks[nextIndex];
-          if (nextBlock.type === "table" || nextBlock.type === "list") break;
+          if (nextBlock.type === "table") break;
           const nextText = String(nextBlock.text || "").trim();
-          if (!nextText || isSourceHeading(nextText, nextBlock.type) || nextText.length > 300) break;
+          if (!nextText || isSourceHeading(nextText, nextBlock.type) || nextText.length > 420) break;
           academicItems.push(nextText);
           nextIndex += 1;
         }
         if (academicItems.length >= 2) {
-          html += `<ol class="source-list source-academic-list" type="a">${academicItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>`;
+          html += listForIntro(text, academicItems);
           index = nextIndex - 1;
         }
       }
@@ -2916,9 +2987,141 @@ if (workspace && appData) {
     return gradeSource[teacherDoc] || null;
   }
 
+  function objectiveHourRows(chapter) {
+    const objectives = chapter.objectives?.length ? chapter.objectives : ["Mencapai tujuan pembelajaran bab."];
+    const base = Math.floor(chapter.allocation / objectives.length);
+    const remainder = chapter.allocation % objectives.length;
+    return objectives.map((objective, index) => ({
+      objective,
+      hours: base + (index < remainder ? 1 : 0),
+    }));
+  }
+
+  function teacherPlanningRows(gradeChapters) {
+    const protaSource = teacherSources[teacherGrade]?.prota;
+    const extracted = [];
+    const seen = new Set();
+    (protaSource?.blocks || []).filter((block) => block.type === "table").forEach((block) => {
+      const rows = Array.isArray(block.rows) ? block.rows : [];
+      const headerIndex = rows.findIndex((row) => row.some((cell) => /alur (?:dan )?tujuan pembelajaran/i.test(String(cell))));
+      if (headerIndex < 0) return;
+      const headers = rows[headerIndex].map((cell) => String(cell || "").trim());
+      const chapterColumn = headers.findIndex((cell) => /^bab$/i.test(cell));
+      const objectiveColumn = headers.findIndex((cell) => /alur (?:dan )?tujuan pembelajaran/i.test(cell));
+      const materialColumn = headers.findIndex((cell) => /^materi$/i.test(cell));
+      const allocationColumn = headers.findIndex((cell) => /alokasi waktu/i.test(cell));
+      let currentChapter = null;
+      rows.slice(headerIndex + 1).forEach((row) => {
+        const chapterText = chapterColumn >= 0 ? String(row[chapterColumn] || "").trim() : "";
+        const chapterMatch = chapterText.match(/\bBab\s+(\d+)(?::\s*(.*))?/i);
+        if (chapterMatch) currentChapter = Number(chapterMatch[1]);
+        const objective = objectiveColumn >= 0 ? String(row[objectiveColumn] || "").replace(/\s+/g, " ").trim() : "";
+        if (!currentChapter || !/^murid mampu/i.test(objective)) return;
+        const chapter = gradeChapters.find((item) => item.number === currentChapter);
+        if (!chapter) return;
+        const key = `${currentChapter}|${objective.toLocaleLowerCase("id")}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        const allocationText = allocationColumn >= 0 ? String(row[allocationColumn] || "").trim() : "";
+        const parsedHours = Number(allocationText.match(/(\d+)\s*JP/i)?.[1] || 3);
+        extracted.push({
+          chapter,
+          objective,
+          material: materialColumn >= 0
+            ? String(row[materialColumn] || "").replace(/\s+/g, " ").trim() || chapter.title
+            : chapter.title,
+          hours: parsedHours > 0 ? parsedHours : 3,
+        });
+      });
+    });
+    if (extracted.length >= 30) return extracted;
+    return gradeChapters.flatMap((chapter) => objectiveHourRows(chapter).map(({ objective, hours }) => ({
+      chapter,
+      objective,
+      material: chapter.title,
+      hours,
+    })));
+  }
+
+  function operationalTeacherSupplementHtml(gradeChapters) {
+    const planningRows = teacherPlanningRows(gradeChapters);
+    const totalHours = planningRows.reduce((sum, row) => sum + row.hours, 0);
+    const purposeItems = [
+      "Meningkatkan keimanan, ketakwaan kepada Allah Subhanahu Wata'ala, serta membiasakan akhlak mulia dalam kehidupan sehari-hari;",
+      "Memahami prinsip-prinsip ajaran Islam berdasarkan Al Qur'an, Hadits Riwayat, akidah Ahl al-Sunnah wa al-Jama'ah, fikih, akhlak, dan sejarah peradaban Islam secara utuh, benar, dan bertanggung jawab;",
+      "Menghayati nilai-nilai ajaran Islam sehingga mampu mengambil keputusan berdasarkan pertimbangan syariat, kemaslahatan, dan hikmah dalam menghadapi berbagai persoalan kehidupan;",
+      "Menerapkan kemampuan bernalar kritis, kreatif, komunikatif, kolaboratif, dan reflektif dalam memahami, menganalisis, serta menyelesaikan permasalahan berdasarkan nilai-nilai Islam;",
+      "Membangun sikap moderat (wasatiyyah), toleran, menghargai keberagaman, serta menjunjung tinggi persatuan dalam kehidupan bermasyarakat, berbangsa, dan bernegara;",
+      "Mengembangkan kepedulian terhadap lingkungan sebagai amanah Allah Subhanahu Wata'ala dengan menjalankan fungsi manusia sebagai khalifah di muka bumi;",
+      "Menumbuhkan semangat menuntut ilmu, berinovasi, berkarya, serta mengambil ibrah dari perkembangan sejarah peradaban Islam sebagai inspirasi dalam membangun peradaban masa depan;",
+      "Membentuk pribadi muslim yang mampu mengintegrasikan iman, ilmu, amal saleh, dan akhlak mulia secara konsisten dalam kehidupan nyata.",
+    ];
+    if (teacherDoc === "cp") {
+      return `<section class="source-operational" id="source-document-start" tabindex="-1">
+        <h3>A. Tujuan Mata Pelajaran</h3>
+        <p>Mata Pelajaran Pendidikan Agama Islam dan Budi Pekerti bertujuan membimbing murid agar mampu:</p>
+        <ul class="source-list source-bullet-list">${purposeItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        <h3>B. Keterkaitan dengan Fase D</h3>
+        <p>Tujuan mata pelajaran dijabarkan secara hierarkis melalui Capaian Pembelajaran, tujuan pembelajaran, alur tujuan pembelajaran, asesmen, dan tindak lanjut kelas VII, VIII, serta IX.</p>
+      </section>`;
+    }
+    if (teacherDoc === "atp") {
+      let cumulative = 0;
+      return `<section class="source-operational" id="source-document-start" tabindex="-1">
+        <h3>ATP Operasional Lengkap Kelas ${teacherGrade}</h3>
+        <p>Alur disusun dari pemahaman konsep menuju analisis, penerapan, karya, dan refleksi:</p>
+        <div class="source-table-scroll"><table class="data-table"><thead><tr><th>No.</th><th>Semester</th><th>Elemen dan Bab</th><th>Tujuan Pembelajaran</th><th>Materi</th><th>Alokasi Waktu</th><th>Estimasi Pertemuan</th></tr></thead><tbody>
+          ${planningRows.map((row, index) => {
+            cumulative += row.hours;
+            return `<tr><td>${index + 1}</td><td>Semester ${row.chapter.semester}</td><td>${escapeHtml(row.chapter.element)}<br>${row.chapter.number}. ${escapeHtml(row.chapter.title)}</td><td>${escapeHtml(row.objective)}</td><td>${escapeHtml(row.material)}</td><td>${row.hours} JP<br><small>Kumulatif ${cumulative} JP</small></td><td>${Math.ceil(row.hours / 3)} pertemuan</td></tr>`;
+          }).join("")}
+          <tr class="total-row"><td colspan="5">Jumlah Kelas ${teacherGrade}</td><td>${totalHours} JP</td><td>${Math.ceil(totalHours / 3)} pertemuan</td></tr>
+        </tbody></table></div>
+      </section>`;
+    }
+    if (teacherDoc === "prota") {
+      return `<section class="source-operational" id="source-document-start" tabindex="-1">
+        <h3>Program Tahunan Lengkap Kelas ${teacherGrade}</h3>
+        <div class="source-table-scroll"><table class="data-table"><thead><tr><th>No.</th><th>Semester</th><th>Bab</th><th>Alur Tujuan Pembelajaran</th><th>Materi</th><th>Alokasi Waktu</th><th>Durasi</th><th>Keterangan</th></tr></thead><tbody>
+          ${planningRows.map((row, index) => `<tr><td>${index + 1}</td><td>Semester ${row.chapter.semester}</td><td>${row.chapter.number}. ${escapeHtml(row.chapter.title)}</td><td>${escapeHtml(row.objective)}</td><td>${escapeHtml(row.material)}</td><td>${row.hours} JP</td><td>${Math.ceil(row.hours / 3)} pertemuan</td><td>Materi, latihan, LKPD, asesmen formatif, refleksi, dan tindak lanjut.</td></tr>`).join("")}
+          <tr class="total-row"><td colspan="5">Jumlah Alokasi Materi Inti</td><td>${totalHours} JP</td><td>${Math.ceil(totalHours / 3)} pertemuan</td><td>Diselaraskan dengan minggu efektif dan agenda satuan pendidikan.</td></tr>
+        </tbody></table></div>
+      </section>`;
+    }
+    if (teacherDoc === "promes") {
+      const months = { Gasal: ["Juli", "Agustus", "September", "Oktober", "November"], Genap: ["Januari", "Februari", "Maret", "April", "Mei"] };
+      const chapterOccurrences = {};
+      return `<section class="source-operational" id="source-document-start" tabindex="-1">
+        <h3>Program Semester Lengkap Kelas ${teacherGrade}</h3>
+        <div class="source-table-scroll"><table class="data-table"><thead><tr><th>No.</th><th>Semester</th><th>Bulan Target</th><th>Bab</th><th>Tujuan Pembelajaran</th><th>Alokasi Waktu</th><th>Durasi</th><th>Minggu Target</th><th>Keterangan</th></tr></thead><tbody>
+          ${planningRows.map((row, index) => {
+            const monthIndex = (row.chapter.number - 1) % 5;
+            const year = row.chapter.semester === "Gasal" ? "2026" : "2027";
+            const occurrence = (chapterOccurrences[row.chapter.number] || 0) + 1;
+            chapterOccurrences[row.chapter.number] = occurrence;
+            return `<tr><td>${index + 1}</td><td>Semester ${row.chapter.semester}</td><td>${months[row.chapter.semester][monthIndex]} ${year}</td><td>${row.chapter.number}. ${escapeHtml(row.chapter.title)}</td><td>${escapeHtml(row.objective)}</td><td>${row.hours} JP</td><td>${Math.ceil(row.hours / 3)} pertemuan</td><td>Minggu efektif ke-${occurrence}</td><td>Materi, latihan, LKPD, asesmen, refleksi, remedial, dan pengayaan.</td></tr>`;
+          }).join("")}
+          <tr class="total-row"><td colspan="5">Jumlah Program Semester Gasal dan Genap</td><td>${totalHours} JP</td><td>${Math.ceil(totalHours / 3)} pertemuan</td><td colspan="2">Tanggal rinci mengikuti Kalender Pendidikan dan jadwal sekolah.</td></tr>
+        </tbody></table></div>
+      </section>`;
+    }
+    if (teacherDoc === "kktp") {
+      const rows = planningRows.map((row, index) => `<tr><td>${index + 1}</td><td>${row.chapter.number}. ${escapeHtml(row.chapter.title)}<br><small>${escapeHtml(row.chapter.element)}</small></td><td>${escapeHtml(row.objective)}</td><td>Konsep benar, alasan relevan, penerapan tepat, dan hasil dapat dipertanggungjawabkan.</td><td>${escapeHtml(row.material)}; latihan; LKPD; observasi; produk/proyek; dan refleksi.</td><td>Perlu Bimbingan; Berkembang; Cakap; Mahir</td><td>${row.hours} JP</td></tr>`);
+      return `<section class="source-operational" id="source-document-start" tabindex="-1">
+        <h3>KKTP Operasional Lengkap Kelas ${teacherGrade}</h3>
+        <p>Setiap tujuan memiliki indikator, bukti belajar, interval deskriptif, dan alokasi waktu agar kolom kelas IX maupun kelas lain tetap utuh:</p>
+        <div class="source-table-scroll"><table class="data-table"><thead><tr><th>No.</th><th>Bab/Elemen</th><th>Tujuan Pembelajaran</th><th>Kriteria Cakap</th><th>Bukti/Asesmen</th><th>Interval Deskriptif</th><th>Alokasi Waktu</th></tr></thead><tbody>${rows.join("")}
+          <tr class="total-row"><td colspan="6">Jumlah Alokasi Kelas ${teacherGrade}</td><td>${totalHours} JP</td></tr>
+        </tbody></table></div>
+      </section>`;
+    }
+    return "";
+  }
+
   function teacherSourceDocument(gradeChapters) {
     const source = selectedTeacherSource();
     if (!source) return "";
+    const operationalSupplement = operationalTeacherSupplementHtml(gradeChapters);
     const modulePicker = teacherDoc === "module" ? `
       <section class="module-picker no-print">
         <label>Pilih modul/bab
@@ -2932,25 +3135,28 @@ if (workspace && appData) {
       <section class="document-cover source-cover">
         <p>PERANGKAT AJAR SUMBER • KELAS ${teacherGrade}</p>
         <h2>${escapeHtml(source.label)}</h2>
-        <p>Ditampilkan dari berkas perangkat ajar yang dilampirkan pengelola, dengan susunan paragraf dan tabel dipertahankan agar siap dibaca, dicetak, serta dikembangkan.</p>
+        <p>Isi sumber dilengkapi susunan operasional, alokasi JP, penomoran ilmiah, dan tabel utuh agar siap dibaca, dicetak, serta dikembangkan.</p>
         <div class="source-file-actions no-print">
-          <button class="cta btn-compact" type="button" data-download-source>Unduh Berkas Sumber .docx</button>
-          <button class="btn btn-compact" type="button" data-open-source>Buka berkas</button>
-          <span>${escapeHtml(source.sourceName)}</span>
+          <button class="cta btn-compact" type="button" data-download-source>Unduh Dokumen Lengkap .docx</button>
+          <button class="btn btn-compact" type="button" data-open-source>Baca Isi Dokumen</button>
+          <span>Sumber pengolahan: ${escapeHtml(source.sourceName)}</span>
         </div>
         <p class="save-status no-print" id="source-download-status" aria-live="polite"></p>
       </section>
       <div class="teacher-source-notice">
-        <strong>Dokumen lengkap, bukan ringkasan generik.</strong>
-        Isi web diadopsi dari berkas sumber kelas ${teacherGrade}. Penyesuaian istilah hanya dilakukan agar konsisten dengan bahasa portal; berkas asli tetap tersedia melalui tombol unduh.
+        <strong>Dokumen lengkap dan siap digunakan.</strong>
+        Isi web diadopsi dari berkas sumber kelas ${teacherGrade}, lalu dilengkapi untuk menutup kolom yang kosong, alokasi waktu yang belum terisi, serta penomoran yang belum hierarkis.
       </div>
-      <section class="source-document" id="source-document-start" tabindex="-1">${sourceBlocksHtml(source.blocks)}</section>`;
+      ${operationalSupplement}
+      ${operationalSupplement
+        ? `<details class="source-original-details"><summary>Lihat transkripsi berkas lampiran asli</summary><section class="source-document"><h3>Isi Berkas Sumber</h3>${sourceBlocksHtml(source.blocks)}</section></details>`
+        : `<section class="source-document" id="source-document-start" tabindex="-1"><h3>Isi Berkas Sumber</h3>${sourceBlocksHtml(source.blocks)}</section>`}`;
   }
 
   function teacherSourceDocxBlocks(source) {
     let listNumber = 0;
     return (source.blocks || [])
-      .filter((block, index) => !isSignatureBlock(block, index, source.blocks.length))
+      .filter((block, index) => !isSignatureBlock(block, index, source.blocks.length) && !isSourceArtifact(block))
       .flatMap((block) => {
         if (block.type === "table") {
           listNumber = 0;
@@ -2974,23 +3180,20 @@ if (workspace && appData) {
     const source = selectedTeacherSource();
     const status = document.querySelector("#source-download-status");
     if (!source) return;
-    if (status) status.textContent = "Menyiapkan berkas sumber…";
+    if (status) status.textContent = "Menyiapkan dokumen Word lengkap…";
     try {
-      const response = await fetch(new URL(source.downloadPath, location.href), { cache: "no-store" });
-      if (!response.ok) throw new Error("Berkas tidak ditemukan");
-      const blob = await response.blob();
-      if (!blob.size) throw new Error("Berkas kosong");
-      const filename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
-      downloadBlob(blob, filename);
-      if (status) status.textContent = "Berkas berhasil disiapkan. Periksa folder unduhan perangkat.";
-    } catch {
-      const filename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
-      const fallbackBlob = window.PAIBP_DOCX.createDocument({
-        title: source.label,
-        blocks: teacherSourceDocxBlocks(source),
+      const documentElement = document.querySelector("#source-document-start");
+      if (!documentElement) throw new Error("Isi dokumen belum tersedia");
+      const blob = window.PAIBP_DOCX.createDocument({
+        title: `${source.label} Kelas ${teacherGrade}`,
+        blocks: window.PAIBP_DOCX.blocksFromElement(documentElement),
       });
-      downloadBlob(fallbackBlob, filename);
-      if (status) status.textContent = "Berkas Word dibuat dari isi sumber yang tersimpan di portal dan berhasil disiapkan.";
+      const sourceFilename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
+      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v13.docx");
+      downloadBlob(blob, filename);
+      if (status) status.textContent = "Dokumen Word lengkap berhasil disiapkan langsung dari isi portal. Tidak ada tautan halaman 404.";
+    } catch (error) {
+      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v13 lalu coba kembali.";
     }
   }
 
@@ -3964,36 +4167,78 @@ if (workspace && appData) {
   };
   let dailyInsightVariantCounter = 0;
 
-  function insightLearningVariation(itemIndex) {
+  function insightLearningVariation(itemIndex, sourceCount = islamicData.dailyInsights.length) {
     const keys = Object.keys(insightVariantDimensions);
     const base = (Math.floor(Date.now() / 86400000) * 131) + (itemIndex * 97) + (dailyInsightVariantCounter * 53);
     const values = Object.fromEntries(keys.map((key, index) => {
       const options = insightVariantDimensions[key];
       return [key, options[Math.abs(base + (index * 67)) % options.length]];
     }));
-    const combinations = islamicData.dailyInsights.length
+    const combinations = sourceCount
       * keys.reduce((product, key) => product * insightVariantDimensions[key].length, 1);
     return { ...values, combinations };
   }
 
-  function renderDailyInsight(nextIndex = null) {
+  async function expandedInsightBank() {
+    if (expandedInsightBankPromise) return expandedInsightBankPromise;
+    expandedInsightBankPromise = loadOfflineQuran()
+      .then((surahs) => {
+        const quranItems = surahs.flatMap((surah) => surah.verses.map((verse, index) => ({
+          type: "Al Qur'an",
+          text: verse.translation,
+          arabic: verse.text,
+          source: `Al Qur'an Surat ${surah.transliteration} ayat ${index + 1}`,
+          detail: "Baca ayat bersama rangkaian ayat sebelum dan sesudahnya; gunakan tafsir tepercaya serta bimbingan guru untuk memahami konteksnya.",
+          url: "",
+        })));
+        const hadithItems = (hadithData.records || []).map((record) => ({
+          type: "Hadits Riwayat",
+          text: record.meaning,
+          arabic: record.arabic,
+          source: record.source,
+          detail: record.note,
+          url: record.url,
+        }));
+        const unique = new Map();
+        [...islamicData.dailyInsights, ...quranItems, ...hadithItems].forEach((item) => {
+          const key = `${item.source}|${item.text}`;
+          if (!unique.has(key)) unique.set(key, item);
+        });
+        return [...unique.values()];
+      })
+      .catch(() => [...islamicData.dailyInsights, ...(hadithData.records || []).map((record) => ({
+        type: "Hadits Riwayat",
+        text: record.meaning,
+        arabic: record.arabic,
+        source: record.source,
+        detail: record.note,
+        url: record.url,
+      }))]);
+    return expandedInsightBankPromise;
+  }
+
+  async function renderDailyInsight(nextIndex = null) {
     const container = document.querySelector("#daily-insight");
     if (!container || !islamicData.dailyInsights.length) return;
+    container.innerHTML = "<p>Menyiapkan bank nasihat bersumber…</p>";
+    const insightBank = await expandedInsightBank();
+    if (!insightBank.length) return;
     if (Number.isInteger(nextIndex)) dailyInsightIndex = nextIndex;
     if (!Number.isInteger(dailyInsightIndex)) {
-      dailyInsightIndex = Math.floor(Date.now() / 86400000) % islamicData.dailyInsights.length;
+      dailyInsightIndex = Math.floor(Date.now() / 86400000) % insightBank.length;
     }
-    const normalizedIndex = ((dailyInsightIndex % islamicData.dailyInsights.length) + islamicData.dailyInsights.length) % islamicData.dailyInsights.length;
+    const normalizedIndex = ((dailyInsightIndex % insightBank.length) + insightBank.length) % insightBank.length;
     dailyInsightIndex = normalizedIndex;
-    const item = islamicData.dailyInsights[normalizedIndex];
-    const variation = insightLearningVariation(normalizedIndex);
+    const item = insightBank[normalizedIndex];
+    const variation = insightLearningVariation(normalizedIndex, insightBank.length);
     const variationLabel = variation.combinations >= 1_000_000_000_000
       ? "lebih dari 1 triliun"
       : variation.combinations >= 1_000_000_000
         ? "lebih dari 1 miliar"
         : variation.combinations.toLocaleString("id-ID");
     container.innerHTML = `
-      <div class="insight-card-head"><span class="badge">${escapeHtml(item.type)}</span><small>Sumber ${normalizedIndex + 1} dari ${islamicData.dailyInsights.length} • ${variationLabel} susunan refleksi</small></div>
+      <div class="insight-card-head"><span class="badge">${escapeHtml(item.type)}</span><small>Sumber ${normalizedIndex + 1} dari ${insightBank.length.toLocaleString("id-ID")} • ${variationLabel} susunan refleksi</small></div>
+      ${item.arabic ? `<p class="insight-arabic" lang="ar" dir="rtl">${escapeHtml(item.arabic)}</p>` : ""}
       <blockquote>${escapeHtml(item.text)}</blockquote>
       ${item.url
         ? `<a class="insight-source" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.source)} ↗</a>`
@@ -4008,13 +4253,14 @@ if (workspace && appData) {
         </ol>
         <small>Disusun untuk ${escapeHtml(variation.audience)} ${escapeHtml(variation.context)} • waktu ${escapeHtml(variation.duration)}.</small>
       </div>
-      <small class="insight-combination-count">Bank memakai ${islamicData.dailyInsights.length} sumber yang dapat diperiksa dan ${variationLabel} kombinasi kegiatan. Teks sumber tidak diubah atau dikarang.</small>
+      <small class="insight-combination-count">Bank memakai ${insightBank.length.toLocaleString("id-ID")} teks dasar yang dapat diperiksa dan ${variationLabel} kombinasi kegiatan. Jumlah besar berasal dari ayat, Hadits Riwayat, serta variasi refleksi—bukan kutipan palsu.</small>
       <span class="insight-click-hint">Klik kartu atau tombol di bawah untuk mengacak nasihat berikutnya.</span>`;
   }
 
-  function showNextDailyInsight() {
+  async function showNextDailyInsight() {
+    const insightBank = await expandedInsightBank();
     dailyInsightVariantCounter += 1;
-    const jump = Math.max(1, Math.floor(Math.random() * Math.max(1, islamicData.dailyInsights.length - 1)));
+    const jump = Math.max(1, Math.floor(Math.random() * Math.max(1, insightBank.length - 1)));
     const next = Number.isInteger(dailyInsightIndex) ? dailyInsightIndex + jump : jump;
     renderDailyInsight(next);
   }
@@ -5061,7 +5307,8 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=13");
+      await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;
     } catch {
@@ -5085,6 +5332,7 @@ if (workspace && appData) {
   applyHomepageCopy();
   renderPublicFeedback();
   renderVisitorStats();
+  renderRecentTeacherVisits();
   attachFeedbackForm();
   attachEditorControls();
   attachGalleryAdmin();
@@ -5104,6 +5352,10 @@ if (workspace && appData) {
       durationSeconds: resourceDurationSeconds(),
     });
     activeResource.startedAt = Date.now();
+  }, 60000);
+  window.setInterval(() => {
+    renderRecentTeacherVisits();
+    refreshPublicStats();
   }, 60000);
   window.addEventListener("pagehide", sendSessionClose);
   document.addEventListener("visibilitychange", () => {

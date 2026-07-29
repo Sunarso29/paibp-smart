@@ -8,7 +8,7 @@ Integrasi mencatat waktu, peran pengguna, identitas murid atau identitas guru, r
 
 Editor admin **Spensus Terkini** memakai integrasi yang sama. Data judul, tanggal, dan ringkasan disimpan pada sheet **Spensus Terkini**, sedangkan foto kegiatan disimpan dalam folder Google Drive **PAIBP SMART — Spensus Terkini**. Tanpa integrasi, editor tetap berfungsi tetapi perubahan galeri hanya tersimpan pada perangkat admin tersebut.
 
-Komentar/rating disimpan pada sheet **Tanggapan**, sedangkan teks beranda hasil suntingan disimpan pada sheet **Konten Editor**. Statistik publik hanya menghitung sesi non-admin dan tidak membuka identitas pengguna.
+Komentar/rating disimpan pada sheet **Tanggapan**, sedangkan teks beranda hasil suntingan disimpan pada sheet **Konten Editor**. Statistik publik hanya menghitung sesi non-admin. Beranda menampilkan nama dan unit kerja maksimal 12 tamu guru terbaru; NIP tidak pernah dikirim pada data publik dan hanya tersedia dalam rekap editor.
 
 ## 1. Buat Web App
 
@@ -48,7 +48,7 @@ Unggah kembali `app-config.js` ke root repository GitHub, tunggu GitHub Pages se
 1. Buka website dari telepon.
 2. Masuk Ruang Murid, buka satu bab, isi identitas, lalu kirim satu tugas.
 3. Saat Ruang Murid dibuka, setujui permintaan lokasi bawaan ponsel apabila nama wilayah dan koordinat perkiraan akan direkam. Tidak ada pilihan tempat atau tombol lokasi manual.
-4. Di perangkat guru, buka Ruang Guru, lalu isi nama, unit kerja, dan NIP bila ada.
+4. Di perangkat guru, buka Ruang Guru, lalu isi nama, unit kerja, dan NIP bila ada. Kembali ke beranda dan pastikan nama serta unit kerja tampil pada **Tamu Guru Terkini**.
 5. Pilih **Rekap Akses Murid → Muat Ulang Rekap** dan pastikan waktu, aktivitas, durasi, tempat, serta pengiriman muncul.
 6. Pilih **Rekap Pekerjaan Murid → Muat Tugas Daring** dan pastikan isi pekerjaan masuk ke kelompok kelas yang sesuai.
 7. Kembali ke Beranda, buka **Ruang Editor** dengan kata sandi standar `261078`, tambahkan satu foto uji, kirim satu komentar/rating, dan ubah teks beranda untuk memastikan sinkronisasi lintas perangkat.

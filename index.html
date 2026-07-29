@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=13">
   </head>
   <body>
     <a class="skip" href="#main">Lewati ke konten</a>
@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v13</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -101,6 +101,18 @@
           <article><span>Rating</span><strong id="visitor-rating">—</strong><small id="visitor-rating-count">Belum ada penilaian</small></article>
         </div>
         <p class="save-status" id="visitor-stats-status" aria-live="polite"></p>
+      </section>
+
+      <section class="container teacher-visit-strip" data-home-only aria-labelledby="teacher-visit-title">
+        <div class="teacher-visit-label">
+          <span class="badge">Tamu Guru Terkini</span>
+          <h2 id="teacher-visit-title">Kunjungan guru</h2>
+        </div>
+        <div class="teacher-visit-window" aria-live="polite">
+          <div class="teacher-visit-track" id="teacher-visit-track">
+            <span>Belum ada kunjungan guru yang tercatat.</span>
+          </div>
+        </div>
       </section>
 
       <section class="section portal-section" id="portal" aria-labelledby="workspace-title">
@@ -487,44 +499,6 @@
         </div>
       </section>
 
-      <section class="section feedback-section" data-home-only id="tanggapan">
-        <div class="container feedback-layout">
-          <div>
-            <span class="badge">Suara Pengguna</span>
-            <h2>Komentar dan rating</h2>
-            <p class="lead">Bagikan pengalaman menggunakan PAIBP SMART SMP. Masukan yang santun membantu portal ini terus berkembang.</p>
-            <form class="feedback-form" id="feedback-form">
-              <div class="feedback-form-row">
-                <label>Nama <input id="feedback-name" maxlength="80" placeholder="Boleh nama lengkap atau inisial"></label>
-                <label>Peran
-                  <select id="feedback-role" required>
-                    <option value="murid">Murid</option>
-                    <option value="guru">Guru</option>
-                    <option value="umum">Pengunjung umum</option>
-                  </select>
-                </label>
-                <label>Rating
-                  <select id="feedback-rating" required>
-                    <option value="5">5 — Sangat baik</option>
-                    <option value="4">4 — Baik</option>
-                    <option value="3">3 — Cukup</option>
-                    <option value="2">2 — Perlu perbaikan</option>
-                    <option value="1">1 — Kurang</option>
-                  </select>
-                </label>
-              </div>
-              <label>Komentar<textarea id="feedback-comment" rows="4" maxlength="1500" required placeholder="Tuliskan apresiasi, kendala, atau usulan secara spesifik."></textarea></label>
-              <button class="cta" type="submit">Kirim tanggapan</button>
-              <p class="save-status" id="feedback-status" aria-live="polite"></p>
-            </form>
-          </div>
-          <div class="public-feedback">
-            <h3>Tanggapan terbaru</h3>
-            <div id="public-feedback-list"><p>Belum ada tanggapan.</p></div>
-          </div>
-        </div>
-      </section>
-
       <section class="section alt" data-home-only>
         <div class="container feature">
           <div>
@@ -620,6 +594,44 @@
           </div>
         </div>
       </section>
+
+      <section class="section feedback-section" data-home-only id="tanggapan">
+        <div class="container feedback-layout">
+          <div>
+            <span class="badge">Suara Pengguna</span>
+            <h2>Komentar dan rating</h2>
+            <p class="lead">Bagikan pengalaman menggunakan PAIBP SMART SMP. Masukan yang santun membantu portal ini terus berkembang.</p>
+            <form class="feedback-form" id="feedback-form">
+              <div class="feedback-form-row">
+                <label>Nama <input id="feedback-name" maxlength="80" placeholder="Boleh nama lengkap atau inisial"></label>
+                <label>Peran
+                  <select id="feedback-role" required>
+                    <option value="murid">Murid</option>
+                    <option value="guru">Guru</option>
+                    <option value="umum">Pengunjung umum</option>
+                  </select>
+                </label>
+                <label>Rating
+                  <select id="feedback-rating" required>
+                    <option value="5">5 — Sangat baik</option>
+                    <option value="4">4 — Baik</option>
+                    <option value="3">3 — Cukup</option>
+                    <option value="2">2 — Perlu perbaikan</option>
+                    <option value="1">1 — Kurang</option>
+                  </select>
+                </label>
+              </div>
+              <label>Komentar<textarea id="feedback-comment" rows="4" maxlength="1500" required placeholder="Tuliskan apresiasi, kendala, atau usulan secara spesifik."></textarea></label>
+              <button class="cta" type="submit">Kirim tanggapan</button>
+              <p class="save-status" id="feedback-status" aria-live="polite"></p>
+            </form>
+          </div>
+          <div class="public-feedback">
+            <h3>Tanggapan terbaru</h3>
+            <div id="public-feedback-list"><p>Belum ada tanggapan.</p></div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
@@ -644,6 +656,7 @@
         <span class="auth-icon" aria-hidden="true">🔐</span>
         <h2 id="teacher-auth-title">Identitas Akses Guru</h2>
         <p id="teacher-auth-description">Isi nama dan unit kerja agar kunjungan guru dapat tercatat. NIP bersifat opsional.</p>
+        <p class="teacher-visit-privacy">Nama dan unit kerja akan ditampilkan pada daftar tamu guru di beranda. NIP hanya tersedia bagi editor dan tidak ditampilkan kepada publik.</p>
         <form id="teacher-access-form">
           <label for="teacher-name">Nama guru</label>
           <input id="teacher-name" name="teacher-name" type="text" maxlength="80" autocomplete="name" required>
@@ -688,18 +701,18 @@
       </section>
     </div>
 
-    <script src="app-config.js"></script>
-    <script src="content-data.js"></script>
-    <script src="teacher-source-data.js"></script>
-    <script src="calendar-data.js"></script>
-    <script src="staff-images.js"></script>
-    <script src="school-data.js"></script>
-    <script src="islamic-data.js"></script>
-    <script src="hadith-data.js"></script>
-    <script src="arabic-data.js"></script>
-    <script src="game-data.js"></script>
-    <script src="video-data.js"></script>
-    <script src="docx-export.js"></script>
-    <script src="script.js"></script>
+    <script src="app-config.js?v=13"></script>
+    <script src="content-data.js?v=13"></script>
+    <script src="teacher-source-data.js?v=13"></script>
+    <script src="calendar-data.js?v=13"></script>
+    <script src="staff-images.js?v=13"></script>
+    <script src="school-data.js?v=13"></script>
+    <script src="islamic-data.js?v=13"></script>
+    <script src="hadith-data.js?v=13"></script>
+    <script src="arabic-data.js?v=13"></script>
+    <script src="game-data.js?v=13"></script>
+    <script src="video-data.js?v=13"></script>
+    <script src="docx-export.js?v=13"></script>
+    <script src="script.js?v=13"></script>
   </body>
 </html>

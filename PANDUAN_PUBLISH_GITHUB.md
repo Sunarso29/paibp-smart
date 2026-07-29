@@ -6,6 +6,7 @@
 2. Buka repository tersebut.
 3. Sebagai cadangan, klik **Code** lalu **Download ZIP**.
 4. Ekstrak paket website versi final di komputer.
+5. Jika situs lama sudah memakai rekap lintas perangkat, buka `app-config.js` lama dan salin nilai `realtimeEndpoint` serta `realtimeReadKey`. Tempelkan kedua nilai tersebut ke `app-config.js` paket v13 sebelum mengunggah.
 
 ## B. Mengunggah Versi Final
 
@@ -16,7 +17,7 @@
 5. Tarik seluruh file ke halaman unggah GitHub.
 6. Jangan mengunggah file ZIP.
 7. Pastikan `index.html` terlihat langsung di halaman utama repository, bukan berada di dalam folder tambahan.
-8. Pastikan `app-config.js`, `content-data.js`, `teacher-source-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `hadith-data.js`, `game-data.js`, `docx-export.js`, `script.js`, `styles.css`, `manifest.webmanifest`, `service-worker.js`, serta seluruh folder `assets` ikut terunggah. Folder `assets/perangkat` berisi 48 dokumen sumber Ruang Guru. `staff-images.js` berada di root repository dan menjadi cadangan tertanam agar seluruh foto guru dan tenaga kependidikan tetap tampil.
+8. Pastikan `app-config.js`, `content-data.js`, `teacher-source-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `hadith-data.js`, `game-data.js`, `docx-export.js`, `script.js`, `styles.css`, `manifest.webmanifest`, `service-worker.js`, serta seluruh folder `assets` ikut terunggah. Bila sinkronisasi lama sudah aktif, pastikan `app-config.js` yang diunggah tetap memuat URL dan kunci lama—jangan gunakan nilai kosong. Folder `assets/perangkat` berisi 48 dokumen sumber Ruang Guru. `staff-images.js` berada di root repository dan menjadi cadangan tertanam agar seluruh foto guru dan tenaga kependidikan tetap tampil.
 9. Isi keterangan perubahan:
 
    `Perbarui portal Ruang Murid dan Ruang Guru PAIBP SMART SMP`
@@ -63,8 +64,10 @@ Uji alur tugas menggunakan data percobaan:
 4. Jika masih terlihat versi lama, buka website pada jendela samaran/incognito lalu muat ulang.
 5. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
 6. Pastikan `index.html`, `app-config.js`, `content-data.js`, `teacher-source-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `hadith-data.js`, `game-data.js`, `docx-export.js`, `script.js`, `styles.css`, `manifest.webmanifest`, dan `service-worker.js` berada pada root repository.
-7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 12.0`.
-8. Periksa kembali pengaturan **Settings → Pages**.
+7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 13.0`.
+8. Pada beranda, periksa baris merek dan pastikan tertulis **Paket v13**.
+9. Jika `BUILD-INFO.txt` sudah 13.0 tetapi tampilan masih lama, buka pengaturan browser → data situs → hapus data untuk `sunarso29.github.io`, lalu buka kembali situs.
+10. Periksa kembali pengaturan **Settings → Pages**.
 
 ## Mengaktifkan rekap akses lintas perangkat
 
@@ -81,6 +84,8 @@ GitHub Pages tidak memiliki basis data. Website menampilkan status mode lokal sa
 - Kalender Pendidikan dan analisis hari efektif harus diselaraskan dengan keputusan resmi Dindikpora Banjarnegara yang diterima sekolah.
 - Pada Fitur Games, pastikan katalog memuat 100 game, cari **Sambung Ayat**, mulai salah satu game, dan pastikan tampil `Soal 1 dari 20`, perpindahan ruang terkunci, serta tombol keluar baru tersedia setelah soal ke-20.
 - Pada materi bab, klik salah satu rujukan Al Qur'an Surat dan satu Hadits Riwayat untuk memastikan teks Arab, makna, sumber, dan tombol bacaan luring tampil.
+- Pada Ruang Guru, pastikan tombol yang tampil adalah **Baca Isi Dokumen**, bukan tautan **Buka berkas** versi lama. Uji KKTP, ATP, Prota, dan Promes kelas IX; tabel utama harus berisi 120 JP dan tidak memiliki kolom kosong.
+- Pada Fitur Islami, buka Nasihat Harian dan pastikan jumlah sumber lebih dari 6.000, bukan 63.
 
 ## G. Mengelola Spensus Terkini
 
