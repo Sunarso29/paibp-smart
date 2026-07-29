@@ -63,7 +63,7 @@ Uji alur tugas menggunakan data percobaan:
 4. Jika masih terlihat versi lama, buka website pada jendela samaran/incognito lalu muat ulang.
 5. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
 6. Pastikan `index.html`, `app-config.js`, `content-data.js`, `teacher-source-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, dan `service-worker.js` berada pada root repository.
-7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 7.0`.
+7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 10.0`.
 8. Periksa kembali pengaturan **Settings → Pages**.
 
 ## Mengaktifkan rekap akses lintas perangkat
@@ -79,6 +79,8 @@ GitHub Pages tidak memiliki basis data. Website menampilkan status mode lokal sa
 - Setiap pembaruan pada branch `main` akan diterbitkan ulang secara otomatis oleh GitHub Pages.
 - Jadwal sholat mengambil data dari layanan daring. Karena itu, cocokkan kembali dengan jadwal masjid atau Kementerian Agama setempat.
 - Kalender Pendidikan dan analisis hari efektif harus diselaraskan dengan keputusan resmi Dindikpora Banjarnegara yang diterima sekolah.
+- Pada Fitur Games, mulai salah satu arena dan pastikan tampil `Soal 1 dari 20`, perpindahan ruang terkunci, serta tombol keluar baru tersedia setelah soal ke-20.
+- Pada materi bab, klik salah satu rujukan Al Qur'an Surat untuk memastikan ayat, terjemahan, pilihan surat lengkap, dan tombol bacaan luring tampil.
 
 ## G. Mengelola Spensus Terkini
 

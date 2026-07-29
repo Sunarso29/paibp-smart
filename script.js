@@ -61,6 +61,8 @@ if (workspace && appData) {
   const ACCESS_SESSION_KEY = "paibp-smart-access-session-v1";
   const ACCESS_CONTEXT_KEY = "paibp-smart-access-context-v1";
   const ARABIC_PROGRESS_KEY = "paibp-smart-arabic-progress-v1";
+  const GAME_SESSION_KEY = "paibp-smart-game-session-v2";
+  const GAME_PROGRESS_KEY = "paibp-smart-game-progress-v2";
   const QURAN_CACHE_NAME = "paibp-smart-quran-v1";
   const QURAN_AUDIO_CACHE_NAME = "paibp-smart-quran-audio-v1";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -149,7 +151,7 @@ if (workspace && appData) {
     student: ["Ruang Murid", "Buka materi, ringkasan, LKPD, tulis jawaban, simpan, cetak, dan kirim tugas dari 30 bab kelas VII–IX."],
     teacher: ["Ruang Guru", "Kelola perangkat, modul ajar lengkap, impor tugas murid, rekap, nilai, unduh, dan cetak."],
     islamic: ["Fitur Islami", "Baca Al Qur'an, Hisnul Muslim, dzikir, kalender, dan belajar Bahasa Arab bertahap dengan dukungan luring."],
-    games: ["Fitur Games", "Pilih enam mode permainan PAIBP, raih XP, dan pantau prestasi lokal."],
+    games: ["Fitur Games", "Pilih 14 arena PAIBP, tuntaskan 20 soal per arena, raih XP, dan pantau prestasi lokal."],
   };
 
   const panels = [...document.querySelectorAll("[data-panel]")];
@@ -168,6 +170,9 @@ if (workspace && appData) {
   let currentPrayerTimings = null;
   let prayerCountdownTimer = null;
   let currentQuranPayload = null;
+  let offlineQuranPromise = null;
+  let activeOfflineSurah = null;
+  let activeOfflineReference = null;
   let islamicCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let quizQuestions = [];
   let quizIndex = -1;
@@ -179,6 +184,7 @@ if (workspace && appData) {
   let activeResource = { type: "page", id: "home", title: "Beranda", startedAt: Date.now() };
   let sessionStartedAt = Date.now();
   let currentGameMode = "quiz";
+  let activeGameSession = safeJsonParse(localStorage.getItem(GAME_SESSION_KEY), null);
   let arabicLevelId = "dasar";
   let dailyInsightIndex = null;
 
@@ -215,7 +221,7 @@ if (workspace && appData) {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       return {
         completed: Array.isArray(saved?.completed) ? saved.completed.filter((id) => chapters.some((chapter) => chapter.id === id)) : [],
-        gameBest: Number.isInteger(saved?.gameBest) ? Math.min(10, Math.max(0, saved.gameBest)) : 0,
+        gameBest: Number.isInteger(saved?.gameBest) ? Math.min(20, Math.max(0, saved.gameBest)) : 0,
       };
     } catch {
       return { completed: [], gameBest: 0 };
@@ -227,7 +233,7 @@ if (workspace && appData) {
   }
 
   function calculateXp() {
-    return state.completed.length * 50 + state.gameBest * 20;
+    return state.completed.length * 50 + state.gameBest * 10;
   }
 
   function getLevel(xp) {
@@ -424,6 +430,14 @@ if (workspace && appData) {
   }
 
   function openPanel(name, { skipAuth = false } = {}) {
+    if (name !== "games" && isGameSessionBlocking()) {
+      const feedback = document.querySelector("#quiz-feedback");
+      if (feedback) {
+        feedback.textContent = "Arena sedang dikunci. Selesaikan seluruh 20 soal sebelum berpindah ruang.";
+        feedback.className = "quiz-feedback error";
+      }
+      return;
+    }
     if (name === "teacher" && !skipAuth && !isTeacherUnlocked()) {
       pendingProtectedAction = "teacher";
       setTeacherAuthVisible(true, "teacher");
@@ -612,6 +626,32 @@ if (workspace && appData) {
     return chapter.references?.length ? chapter.references : (chapterDalil[chapter.id] || []);
   }
 
+  function parseQuranReference(label) {
+    const match = String(label || "").match(/Al Qur'an Surat (.+?) ayat (\d+)(?:[–-](\d+))?/i);
+    if (!match) return null;
+    return {
+      label: match[0],
+      surahName: match[1].trim(),
+      start: Number(match[2]),
+      end: Number(match[3] || match[2]),
+    };
+  }
+
+  function dalilReferenceHtml(item, index, { compact = false } = {}) {
+    const parsed = parseQuranReference(item);
+    if (!parsed) {
+      return compact
+        ? `<li>${escapeHtml(item)}</li>`
+        : `<article><span>${index + 1}</span><p>${escapeHtml(item)}</p></article>`;
+    }
+    const button = `
+      <button class="dalil-open-button" type="button" data-open-dalil="${escapeHtml(parsed.label)}">
+        <span>${compact ? "📖" : index + 1}</span>
+        <span><strong>${escapeHtml(parsed.label)}</strong><small>Klik untuk membuka ayat, terjemahan, dan bacaan luring</small></span>
+      </button>`;
+    return compact ? `<li class="summary-dalil-item">${button}</li>` : `<article class="is-clickable-dalil">${button}</article>`;
+  }
+
   function chapterKeywords(chapter) {
     return chapter.concepts.map(([title]) => title).slice(0, 6);
   }
@@ -715,8 +755,8 @@ if (workspace && appData) {
       </section>
       <section class="document-section">
         <h3>6. Dalil dan Sumber Penguatan</h3>
-        <div class="dalil-grid">${references.map((item, index) => `<article><span>${index + 1}</span><p>${escapeHtml(item)}</p></article>`).join("")}</div>
-        <p class="document-note">Buka dan baca ayat atau Hadits Riwayat dalam sumber utuh bersama terjemah, penjelasan buku, dan bimbingan guru. Daftar ini menjadi pintu kajian, bukan pengganti tafsir atau syarah.</p>
+        <div class="dalil-grid">${references.map((item, index) => dalilReferenceHtml(item, index)).join("")}</div>
+        <p class="document-note">Dalil Al Qur'an Surat dapat diklik dan dibaca dari paket luring lengkap dengan terjemahan. Hadits Riwayat tetap dipelajari melalui sumber utuh, penjelasan buku, dan bimbingan guru. Daftar ini menjadi pintu kajian, bukan pengganti tafsir atau syarah.</p>
       </section>
       <section class="document-section">
         <h3>7. Pendalaman dan Penerapan</h3>
@@ -767,7 +807,7 @@ if (workspace && appData) {
       </section>
       <section class="document-section">
         <h3>Dalil Pokok</h3>
-        <ul>${references.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        <ul class="summary-dalil-list">${references.map((item, index) => dalilReferenceHtml(item, index, { compact: true })).join("")}</ul>
       </section>
       <section class="document-section">
         <h3>Kata Kunci dan Tindakan</h3>
@@ -1285,6 +1325,12 @@ if (workspace && appData) {
     });
   }
 
+  function attachDalilReaders() {
+    document.querySelectorAll("[data-open-dalil]").forEach((button) => {
+      button.addEventListener("click", () => openOfflineDalil(button.dataset.openDalil));
+    });
+  }
+
   function renderLesson() {
     if (!currentChapter) return;
     const buttons = [...document.querySelectorAll("[data-lesson-view]")];
@@ -1295,6 +1341,7 @@ if (workspace && appData) {
     else content.innerHTML = lessonMaterialHtml(currentChapter);
     attachStudentWorkForm();
     attachLkpdEditors();
+    attachDalilReaders();
     const allWorks = loadStudentWorks();
     const chapterWork = allWorks[currentChapter.id] || {};
     chapterWork.viewedSections = [...new Set([...(chapterWork.viewedSections || []), currentLessonView])];
@@ -2895,10 +2942,192 @@ if (workspace && appData) {
     }));
   }
 
+  function normalizeSurahName(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("id")
+      .replace(/[^a-z0-9]/g, "");
+  }
+
+  async function loadOfflineQuran() {
+    if (offlineQuranPromise) return offlineQuranPromise;
+    offlineQuranPromise = fetch("./assets/data/quran-id.json", { cache: "force-cache" })
+      .then((response) => {
+        if (!response.ok) throw new Error("Paket Al Qur'an luring tidak dapat dibaca.");
+        return response.json();
+      })
+      .then((items) => {
+        if (!Array.isArray(items) || items.length !== 114) throw new Error("Paket Al Qur'an luring tidak lengkap.");
+        return items;
+      })
+      .catch((error) => {
+        offlineQuranPromise = null;
+        throw error;
+      });
+    return offlineQuranPromise;
+  }
+
+  function findOfflineSurah(items, requestedName) {
+    const aliases = {
+      almujadilah: "almujadila",
+      alhasyr: "alhashr",
+      attaubah: "attawbah",
+      alkautsar: "alkawthar",
+      alanbiya: "alanbya",
+    };
+    const requested = normalizeSurahName(requestedName);
+    const target = aliases[requested] || requested;
+    return items.find((item) => normalizeSurahName(item.transliteration) === target);
+  }
+
+  function offlineVerseHtml(surah, verse, verseNumber, highlighted = false) {
+    return `
+      <article class="offline-ayah-card ${highlighted ? "is-highlighted" : ""}" data-offline-ayah="${verseNumber}">
+        <div class="offline-ayah-meta">
+          <span>${surah.id}:${verseNumber}</span>
+          <button class="btn btn-compact" type="button" data-speak-offline-ayah="${verseNumber}">🔊 Putar bacaan luring</button>
+        </div>
+        <p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(verse.text)}</p>
+        <p class="offline-ayah-translation">${escapeHtml(verse.translation || "Terjemahan belum tersedia.")}</p>
+        <p class="audio-note" data-offline-audio-status="${verseNumber}">Audio memakai suara Arab perangkat dan dapat diputar tanpa internet bila paket suara Arab telah terpasang.</p>
+      </article>`;
+  }
+
+  function attachOfflineVerseAudio(container, surah) {
+    container.querySelectorAll("[data-speak-offline-ayah]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const verseNumber = Number(button.dataset.speakOfflineAyah);
+        const verse = surah.verses[verseNumber - 1];
+        const status = container.querySelector(`[data-offline-audio-status="${verseNumber}"]`);
+        if (verse && status) speakArabic(verse.text, status);
+      });
+    });
+  }
+
+  function renderOfflineDalil({ fullSurah = false } = {}) {
+    const content = document.querySelector("#dalil-reader-content");
+    const title = document.querySelector("#dalil-reader-title");
+    const status = document.querySelector("#dalil-reader-status");
+    const fullButton = document.querySelector("#dalil-read-full-surah");
+    if (!content || !activeOfflineSurah || !activeOfflineReference) return;
+    const surah = activeOfflineSurah;
+    const reference = activeOfflineReference;
+    const verseEntries = fullSurah
+      ? surah.verses.map((verse, index) => ({ verse, verseNumber: index + 1 }))
+      : surah.verses
+        .map((verse, index) => ({ verse, verseNumber: index + 1 }))
+        .filter(({ verseNumber }) => verseNumber >= reference.start && verseNumber <= reference.end);
+    title.textContent = fullSurah
+      ? `Al Qur'an Surat ${surah.transliteration} — ${surah.total_verses} ayat`
+      : reference.label;
+    status.textContent = fullSurah
+      ? "Seluruh surat dimuat dari paket luring di dalam situs."
+      : "Ayat dan terjemahan dimuat langsung dari paket luring di dalam situs.";
+    content.innerHTML = `
+      <section class="offline-surah-heading">
+        <span>Surat ${surah.id} • ${escapeHtml(surah.type === "meccan" ? "Makkiyah" : "Madaniyah")}</span>
+        <strong lang="ar" dir="rtl">${escapeHtml(surah.name)}</strong>
+        <p>${escapeHtml(surah.transliteration)} • ${escapeHtml(surah.translation)}</p>
+      </section>
+      <div class="offline-ayah-list">
+        ${verseEntries.map(({ verse, verseNumber }) => offlineVerseHtml(
+          surah,
+          verse,
+          verseNumber,
+          verseNumber >= reference.start && verseNumber <= reference.end,
+        )).join("")}
+      </div>
+      <p class="quran-data-attribution">Teks Utsmani dan terjemahan Bahasa Indonesia tersedia luring. Sumber data:
+        <a href="https://www.npmjs.com/package/quran-json" target="_blank" rel="noopener">quran-json 3.1.2</a>;
+        terjemahan Kementerian Agama Republik Indonesia melalui The Noble Qur'an Encyclopedia; lisensi CC BY-SA 4.0.</p>`;
+    attachOfflineVerseAudio(content, surah);
+    if (fullButton) {
+      fullButton.hidden = fullSurah;
+      fullButton.disabled = fullSurah;
+    }
+    if (fullSurah) {
+      window.setTimeout(() => content.querySelector(`[data-offline-ayah="${reference.start}"]`)?.scrollIntoView({
+        behavior: reduceMotion.matches ? "auto" : "smooth",
+        block: "center",
+      }), 50);
+    }
+  }
+
+  async function openOfflineDalil(label) {
+    const reference = parseQuranReference(label);
+    const modal = document.querySelector("#dalil-reader-modal");
+    const content = document.querySelector("#dalil-reader-content");
+    const status = document.querySelector("#dalil-reader-status");
+    const title = document.querySelector("#dalil-reader-title");
+    if (!reference || !modal || !content || !status || !title) return;
+    activeOfflineReference = reference;
+    activeOfflineSurah = null;
+    modal.hidden = false;
+    document.body.classList.add("has-modal");
+    title.textContent = reference.label;
+    status.textContent = "Menyiapkan ayat dari paket luring…";
+    content.innerHTML = '<div class="dalil-loading"><span>📖</span><p>Membuka Al Qur\'an Surat dan ayat…</p></div>';
+    try {
+      const items = await loadOfflineQuran();
+      const surah = findOfflineSurah(items, reference.surahName);
+      if (!surah) throw new Error("Nama surat tidak ditemukan dalam paket luring.");
+      const start = Math.max(1, reference.start);
+      const end = Math.min(Number(surah.total_verses || surah.verses.length), reference.end);
+      if (start > end) throw new Error("Nomor ayat tidak tersedia pada surat ini.");
+      activeOfflineReference = { ...reference, start, end };
+      activeOfflineSurah = surah;
+      renderOfflineDalil();
+    } catch (error) {
+      status.textContent = "Pembaca dalil belum dapat dibuka.";
+      content.innerHTML = `<div class="warning"><strong>Terjadi kendala:</strong> ${escapeHtml(error.message || "Paket luring tidak dapat dibaca.")}</div>`;
+    }
+  }
+
+  function closeOfflineDalil() {
+    const modal = document.querySelector("#dalil-reader-modal");
+    if (!modal) return;
+    modal.hidden = true;
+    if (document.querySelector("#teacher-auth")?.hidden !== false) document.body.classList.remove("has-modal");
+  }
+
+  document.querySelectorAll("[data-close-dalil-reader]").forEach((button) => {
+    button.addEventListener("click", closeOfflineDalil);
+  });
+  document.querySelector("#dalil-read-full-surah")?.addEventListener("click", () => renderOfflineDalil({ fullSurah: true }));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && document.querySelector("#dalil-reader-modal")?.hidden === false) closeOfflineDalil();
+  });
+
   async function getCachedQuranResponse(request) {
     if (!("caches" in window)) return null;
     const cache = await caches.open(QURAN_CACHE_NAME);
     return cache.match(request);
+  }
+
+  async function offlineQuranSurahPayload(surahNumber) {
+    const items = await loadOfflineQuran();
+    const surah = items.find((item) => Number(item.id) === Number(surahNumber));
+    if (!surah) throw new Error("Surat tidak tersedia dalam paket luring.");
+    return {
+      offlineBundle: true,
+      data: [
+        {
+          number: surah.id,
+          name: surah.name,
+          englishName: surah.transliteration,
+          revelationType: surah.type === "meccan" ? "Makkiyah" : "Madaniyah",
+          numberOfAyahs: surah.total_verses,
+          edition: { identifier: "quran-uthmani" },
+          ayahs: surah.verses.map((verse, index) => ({ text: verse.text, numberInSurah: index + 1 })),
+        },
+        {
+          number: surah.id,
+          edition: { identifier: "id.indonesian" },
+          ayahs: surah.verses.map((verse, index) => ({ text: verse.translation, numberInSurah: index + 1 })),
+        },
+      ],
+    };
   }
 
   async function fetchQuranSurah(surahNumber) {
@@ -2907,7 +3136,7 @@ if (workspace && appData) {
       { mode: "cors" },
     );
     const cached = await getCachedQuranResponse(request);
-    if (!navigator.onLine && cached) return cached.json();
+    if (!navigator.onLine) return cached ? cached.json() : offlineQuranSurahPayload(surahNumber);
     try {
       const response = await fetch(request);
       if (!response.ok) throw new Error("Surat tidak dapat dimuat");
@@ -2918,7 +3147,7 @@ if (workspace && appData) {
       return response.json();
     } catch (error) {
       if (cached) return cached.json();
-      throw error;
+      return offlineQuranSurahPayload(surahNumber);
     }
   }
 
@@ -2951,7 +3180,9 @@ if (workspace && appData) {
             </article>`;
         }).join("")}
       </div>`;
-    status.textContent = navigator.onLine
+    status.textContent = payload.offlineBundle
+      ? `Surat ${arabic.englishName} dimuat dari paket Al Qur'an luring di dalam situs.`
+      : navigator.onLine
       ? `Surat ${arabic.englishName} berhasil dimuat dan teksnya disimpan untuk akses luring.`
       : `Mode luring: menampilkan Surat ${arabic.englishName} dari penyimpanan perangkat.`;
   }
@@ -3159,7 +3390,7 @@ if (workspace && appData) {
             </div>
           </article>`).join("") : "<p>Tidak ada penanda khusus pada bulan ini.</p>"}
       </div>
-      <div class="warning"><strong>Catatan:</strong> puasa qadha, nazar, kafarat, dan Puasa Nabi Dawud tidak ditandai pada tanggal umum karena jadwalnya bergantung pada kewajiban atau pola ibadah masing-masing orang.</div>`;
+      <div class="warning"><strong>Catatan:</strong> puasa qadha, nazar, kafarat, dan Puasa Nabi Dawud 'Alaihissalam tidak ditandai pada tanggal umum karena jadwalnya bergantung pada kewajiban atau pola ibadah masing-masing orang.</div>`;
   }
 
   document.querySelector("#calendar-prev")?.addEventListener("click", () => {
@@ -3216,32 +3447,149 @@ if (workspace && appData) {
     return copy;
   }
 
+  function isGameSessionBlocking() {
+    return Boolean(activeGameSession?.active);
+  }
+
+  function saveGameSession() {
+    if (activeGameSession?.active) {
+      localStorage.setItem(GAME_SESSION_KEY, JSON.stringify(activeGameSession));
+    } else {
+      localStorage.removeItem(GAME_SESSION_KEY);
+    }
+  }
+
+  function gameModeTitle(mode = currentGameMode) {
+    return document.querySelector(`[data-game-mode="${mode}"] strong`)?.textContent || "Games PAIBP";
+  }
+
+  function readGameProgress() {
+    return safeJsonParse(localStorage.getItem(GAME_PROGRESS_KEY), { modes: {} }) || { modes: {} };
+  }
+
+  function renderGameModeProgress() {
+    const progress = readGameProgress();
+    document.querySelectorAll("[data-game-mode]").forEach((button) => {
+      const modeProgress = progress.modes?.[button.dataset.gameMode] || {};
+      let record = button.querySelector(".game-mode-record");
+      if (!record) {
+        record = document.createElement("em");
+        record.className = "game-mode-record";
+        button.append(record);
+      }
+      record.textContent = Number(modeProgress.completed || 0) > 0
+        ? `✓ Tuntas ${modeProgress.completed}× • terbaik ${modeProgress.best}/20`
+        : "Belum dituntaskan";
+      record.classList.toggle("is-complete", Number(modeProgress.completed || 0) > 0);
+    });
+  }
+
+  function markGameModeProgress() {
+    const progress = readGameProgress();
+    const previous = progress.modes?.[currentGameMode] || {};
+    progress.modes = progress.modes || {};
+    progress.modes[currentGameMode] = {
+      completed: Number(previous.completed || 0) + 1,
+      best: Math.max(Number(previous.best || 0), quizScore),
+      lastCompletedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(GAME_PROGRESS_KEY, JSON.stringify(progress));
+    renderGameModeProgress();
+  }
+
+  function applyGameSessionLock() {
+    const running = isGameSessionBlocking();
+    const finished = running && activeGameSession.status === "finished";
+    document.body.classList.toggle("game-session-active", running);
+    document.querySelector("#quiz-card")?.classList.toggle("is-running", running);
+    const lock = document.querySelector("#game-session-lock");
+    if (lock) lock.hidden = !running;
+    const title = document.querySelector("#game-session-title");
+    if (title) title.textContent = finished
+      ? `${gameModeTitle()} selesai — pintu keluar sudah terbuka`
+      : `${gameModeTitle()} sedang berlangsung`;
+    document.querySelectorAll("[data-game-mode]").forEach((button) => {
+      button.disabled = running;
+      button.classList.toggle("is-locked", running && button.dataset.gameMode !== currentGameMode);
+    });
+    const exitButton = document.querySelector("#game-finish-exit");
+    if (exitButton) {
+      exitButton.hidden = !finished;
+      exitButton.disabled = !finished;
+    }
+    const reset = document.querySelector("#reset-progress");
+    if (reset) reset.hidden = running;
+  }
+
   function startQuiz() {
+    if (isGameSessionBlocking()) return;
     const bank = gameModeBanks[currentGameMode] || questionBank;
-    quizQuestions = shuffle(bank).slice(0, Math.min(10, bank.length));
+    quizQuestions = shuffle(bank).slice(0, 20);
+    if (quizQuestions.length < 20) {
+      document.querySelector("#quiz-feedback").textContent = "Arena belum memiliki 20 soal lengkap.";
+      document.querySelector("#quiz-feedback").className = "quiz-feedback error";
+      return;
+    }
     quizIndex = 0;
     quizScore = 0;
     quizLocked = false;
+    activeGameSession = {
+      active: true,
+      status: "running",
+      mode: currentGameMode,
+      title: gameModeTitle(),
+      questions: quizQuestions,
+      index: 0,
+      score: 0,
+      answers: [],
+      startedAt: new Date().toISOString(),
+    };
+    saveGameSession();
+    applyGameSessionLock();
     document.querySelector("#quiz-start").hidden = true;
     document.querySelector("#quiz-next").hidden = true;
     document.querySelector("#quiz-score").textContent = "0";
-    const modeButton = document.querySelector(`[data-game-mode="${currentGameMode}"]`);
-    document.querySelector("#quiz-question").textContent = `Menyiapkan ${modeButton?.querySelector("strong")?.textContent || "permainan"}…`;
+    document.querySelector("#quiz-question").textContent = `Menyiapkan ${gameModeTitle()}…`;
     renderQuizQuestion();
-    switchTrackedResource("game", currentGameMode, modeButton?.querySelector("strong")?.textContent || "Games PAIBP");
+    switchTrackedResource("game", currentGameMode, gameModeTitle());
+  }
+
+  function applyQuizAnswerVisual(selectedIndex) {
+    const [, , answer, explanation] = quizQuestions[quizIndex];
+    const buttons = [...document.querySelectorAll("#quiz-options .quiz-option")];
+    buttons.forEach((button, index) => {
+      button.disabled = true;
+      if (index === answer) button.classList.add("correct");
+      if (index === selectedIndex) button.classList.add("selected");
+      if (index === selectedIndex && selectedIndex !== answer) button.classList.add("wrong");
+    });
+    const feedback = document.querySelector("#quiz-feedback");
+    const correct = selectedIndex === answer;
+    feedback.textContent = `${correct ? "Benar." : "Belum tepat."} ${explanation}`;
+    feedback.className = `quiz-feedback ${correct ? "success" : "error"}`;
+    const next = document.querySelector("#quiz-next");
+    next.hidden = false;
+    next.textContent = quizIndex === quizQuestions.length - 1 ? "Selesaikan Arena" : "Soal Berikutnya";
   }
 
   function renderQuizQuestion() {
-    const [question, options] = quizQuestions[quizIndex];
-    quizLocked = false;
+    const current = quizQuestions[quizIndex];
+    if (!current) {
+      finishQuiz();
+      return;
+    }
+    const [question, options] = current;
+    const savedAnswer = activeGameSession?.answers?.[quizIndex];
+    quizLocked = Boolean(savedAnswer);
     const optionContainer = document.querySelector("#quiz-options");
     optionContainer.replaceChildren();
     document.querySelector("#quiz-feedback").textContent = "";
     document.querySelector("#quiz-feedback").className = "quiz-feedback";
     document.querySelector("#quiz-question").textContent = question;
-    document.querySelector("#quiz-number").textContent = `Soal ${quizIndex + 1} dari ${quizQuestions.length}`;
-    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/10`;
-    document.querySelector("#quiz-progress-bar").style.width = `${((quizIndex + 1) / quizQuestions.length) * 100}%`;
+    document.querySelector("#quiz-number").textContent = `Soal ${quizIndex + 1} dari 20 • ${gameModeTitle()}`;
+    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/20`;
+    document.querySelector("#quiz-progress-bar").style.width = `${((quizIndex + 1) / 20) * 100}%`;
+    document.querySelector("#quiz-score").textContent = quizScore;
     options.forEach((option, optionIndex) => {
       const button = document.createElement("button");
       button.className = "quiz-option";
@@ -3251,86 +3599,147 @@ if (workspace && appData) {
       button.addEventListener("click", () => answerQuiz(optionIndex, button));
       optionContainer.append(button);
     });
+    if (savedAnswer) applyQuizAnswerVisual(Number(savedAnswer.selected));
   }
 
-  function answerQuiz(selectedIndex, selectedButton) {
-    if (quizLocked) return;
+  function answerQuiz(selectedIndex) {
+    if (quizLocked || activeGameSession?.status !== "running") return;
     quizLocked = true;
-    const [, , answer, explanation] = quizQuestions[quizIndex];
-    const buttons = [...document.querySelectorAll("#quiz-options .quiz-option")];
-    buttons.forEach((button, index) => {
-      button.disabled = true;
-      if (index === answer) button.classList.add("correct");
-    });
-    selectedButton.classList.add("selected");
-    const feedback = document.querySelector("#quiz-feedback");
-    if (selectedIndex === answer) {
-      quizScore += 1;
-      document.querySelector("#quiz-score").textContent = quizScore;
-      feedback.textContent = `Benar. ${explanation}`;
-      feedback.classList.add("success");
-    } else {
-      selectedButton.classList.add("wrong");
-      feedback.textContent = `Belum tepat. ${explanation}`;
-      feedback.classList.add("error");
-    }
-    const next = document.querySelector("#quiz-next");
-    next.hidden = false;
-    next.textContent = quizIndex === quizQuestions.length - 1 ? "Lihat Hasil" : "Soal Berikutnya";
+    const [, , answer] = quizQuestions[quizIndex];
+    const correct = selectedIndex === answer;
+    if (correct) quizScore += 1;
+    activeGameSession.answers[quizIndex] = { selected: selectedIndex, correct };
+    activeGameSession.score = quizScore;
+    activeGameSession.index = quizIndex;
+    saveGameSession();
+    document.querySelector("#quiz-score").textContent = quizScore;
+    applyQuizAnswerVisual(selectedIndex);
   }
 
   function nextQuiz() {
-    if (!quizLocked) return;
+    if (!quizLocked || activeGameSession?.status !== "running") return;
     quizIndex += 1;
+    activeGameSession.index = quizIndex;
+    saveGameSession();
     document.querySelector("#quiz-next").hidden = true;
-    if (quizIndex >= quizQuestions.length) finishQuiz();
+    if (quizIndex >= 20) finishQuiz();
     else renderQuizQuestion();
   }
 
-  function finishQuiz() {
-    const normalizedScore = Math.round((quizScore / Math.max(1, quizQuestions.length)) * 10);
-    if (normalizedScore > state.gameBest) {
-      state.gameBest = normalizedScore;
-      saveState();
-    }
-    document.querySelector("#quiz-question").textContent = `Games selesai: ${quizScore} dari ${quizQuestions.length} jawaban benar.`;
+  function renderFinishedGame() {
+    document.querySelector("#quiz-question").textContent = `Arena selesai: ${quizScore} dari 20 jawaban benar.`;
     document.querySelector("#quiz-options").replaceChildren();
     const feedback = document.querySelector("#quiz-feedback");
-    feedback.textContent = quizScore >= 8 ? "Hebat! Pemahamanmu sangat baik." : "Terus berlatih. Buka kembali materi yang belum dikuasai.";
-    feedback.className = `quiz-feedback ${quizScore >= 8 ? "success" : "error"}`;
-    document.querySelector("#quiz-number").textContent = "Hasil akhir";
-    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/10`;
+    feedback.textContent = quizScore >= 16
+      ? "Hebat! Arena telah dituntaskan dengan pemahaman yang sangat baik."
+      : "Arena telah dituntaskan. Pelajari kembali penjelasan yang belum dikuasai sebelum mencoba ulang.";
+    feedback.className = `quiz-feedback ${quizScore >= 16 ? "success" : "error"}`;
+    document.querySelector("#quiz-number").textContent = "20 dari 20 soal selesai";
+    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/20`;
     document.querySelector("#quiz-progress-bar").style.width = "100%";
-    const start = document.querySelector("#quiz-start");
-    start.textContent = "Main Lagi";
-    start.hidden = false;
+    document.querySelector("#quiz-start").hidden = true;
+    document.querySelector("#quiz-next").hidden = true;
+    applyGameSessionLock();
+  }
+
+  function finishQuiz() {
+    if (activeGameSession?.status === "finished") {
+      renderFinishedGame();
+      return;
+    }
+    if (quizQuestions.length !== 20 || activeGameSession?.answers?.filter(Boolean).length !== 20) return;
+    if (quizScore > state.gameBest) {
+      state.gameBest = quizScore;
+      saveState();
+    }
+    markGameModeProgress();
+    activeGameSession.status = "finished";
+    activeGameSession.completedAt = new Date().toISOString();
+    activeGameSession.score = quizScore;
+    saveGameSession();
+    renderFinishedGame();
     updateProgress();
+  }
+
+  function exitFinishedGame() {
+    if (activeGameSession?.status !== "finished") return;
+    activeGameSession = null;
+    saveGameSession();
+    quizQuestions = [];
+    quizIndex = -1;
+    quizScore = 0;
+    quizLocked = false;
+    applyGameSessionLock();
+    document.querySelector("#quiz-score").textContent = "0";
+    document.querySelector("#quiz-question").textContent = "Pilih salah satu dari 14 arena, lalu tekan “Mulai Games”.";
+    document.querySelector("#quiz-options").replaceChildren();
+    document.querySelector("#quiz-feedback").textContent = "";
+    document.querySelector("#quiz-number").textContent = "Siap bermain • 20 soal per arena";
+    document.querySelector("#quiz-progress-bar").style.width = "0%";
+    const start = document.querySelector("#quiz-start");
+    start.textContent = "Mulai 20 Soal";
+    start.hidden = false;
+  }
+
+  function restoreGameSession() {
+    if (!activeGameSession?.active) return;
+    const bankExists = Boolean(gameModeBanks[activeGameSession.mode]);
+    const validQuestions = Array.isArray(activeGameSession.questions) && activeGameSession.questions.length === 20;
+    if (!bankExists || !validQuestions) {
+      activeGameSession = null;
+      saveGameSession();
+      return;
+    }
+    currentGameMode = activeGameSession.mode;
+    quizQuestions = activeGameSession.questions;
+    quizIndex = Math.min(20, Math.max(0, Number(activeGameSession.index || 0)));
+    quizScore = Math.min(20, Math.max(0, Number(activeGameSession.score || 0)));
+    document.querySelectorAll("[data-game-mode]").forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.gameMode === currentGameMode);
+    });
+    openPanel("games");
+    applyGameSessionLock();
+    document.querySelector("#quiz-start").hidden = true;
+    if (activeGameSession.status === "finished") renderFinishedGame();
+    else renderQuizQuestion();
   }
 
   document.querySelector("#quiz-start")?.addEventListener("click", startQuiz);
   document.querySelector("#quiz-next")?.addEventListener("click", nextQuiz);
+  document.querySelector("#game-finish-exit")?.addEventListener("click", exitFinishedGame);
   document.querySelectorAll("[data-game-mode]").forEach((button) => button.addEventListener("click", () => {
+    if (isGameSessionBlocking()) return;
     currentGameMode = button.dataset.gameMode;
     document.querySelectorAll("[data-game-mode]").forEach((item) => item.classList.toggle("is-active", item === button));
     const title = button.querySelector("strong")?.textContent || "Games";
     const description = button.querySelector("small")?.textContent || "";
-    document.querySelector("#quiz-question").textContent = `${title}: ${description}. Tekan “Mulai Games”.`;
+    document.querySelector("#quiz-question").textContent = `${title}: ${description}. Arena berisi 20 soal dan harus diselesaikan sampai akhir.`;
     document.querySelector("#quiz-options").replaceChildren();
     document.querySelector("#quiz-feedback").textContent = "";
-    document.querySelector("#quiz-start").textContent = "Mulai Games";
+    document.querySelector("#quiz-start").textContent = "Mulai 20 Soal";
     document.querySelector("#quiz-start").hidden = false;
     document.querySelector("#quiz-next").hidden = true;
-    document.querySelector("#quiz-number").textContent = "Mode dipilih";
+    document.querySelector("#quiz-number").textContent = "Mode dipilih • 20 soal";
     switchTrackedResource("game", currentGameMode, title);
   }));
   document.querySelector('[data-game-mode="quiz"]')?.classList.add("is-active");
+  renderGameModeProgress();
   document.querySelector("#reset-progress")?.addEventListener("click", () => {
+    if (isGameSessionBlocking()) return;
     if (!window.confirm("Hapus seluruh progres bab dan skor games pada perangkat ini?")) return;
     state = { completed: [], gameBest: 0 };
+    localStorage.removeItem(GAME_PROGRESS_KEY);
     saveState();
     renderChapterCards();
+    renderGameModeProgress();
     updateProgress();
   });
+  window.addEventListener("beforeunload", (event) => {
+    if (activeGameSession?.status !== "running") return;
+    event.preventDefault();
+    event.returnValue = "";
+  });
+  restoreGameSession();
 
   function updateProgress() {
     const completed = state.completed.length;
@@ -3340,16 +3749,16 @@ if (workspace && appData) {
     document.querySelector("#progress-completed").textContent = `${completed}/30`;
     document.querySelector("#progress-xp").textContent = `${xp} XP`;
     document.querySelector("#progress-level").textContent = getLevel(xp);
-    document.querySelector("#progress-game").textContent = `${state.gameBest}/10`;
+    document.querySelector("#progress-game").textContent = `${state.gameBest}/20`;
     document.querySelector("#progress-percent").textContent = `${percent}%`;
     const bar = document.querySelector("#overall-progress-bar");
     bar.value = percent;
     bar.textContent = `${percent}%`;
-    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/10`;
+    document.querySelector("#quiz-best").textContent = `Skor terbaik: ${state.gameBest}/20`;
     const badges = [
       ["🌱", "Langkah Pertama", "Selesaikan 1 bab", completed >= 1],
       ["📚", "Tekun Belajar", "Selesaikan 5 bab", completed >= 5],
-      ["🎯", "Penakluk Games", "Raih skor minimal 8", state.gameBest >= 8],
+      ["🎯", "Penakluk Games", "Raih skor minimal 16", state.gameBest >= 16],
       ["🏆", "Cendekia PAIBP", "Selesaikan 30 bab", completed >= 30],
     ];
     const grid = document.querySelector("#badge-grid");

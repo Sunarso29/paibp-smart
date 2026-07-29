@@ -7,7 +7,8 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 - Ruang Murid: 30 paket belajar dengan pendahuluan, pengertian, dalil, infografis, ikhtisar, latihan, LKPD yang langsung dapat diketik, dua video per bab, unduhan materi, serta validasi tujuh syarat sebelum bab dapat ditandai selesai.
 - Ruang Guru: akses berkunci, CP, KKTP, ATP, Prota, Promes, analisis alokasi waktu, dan 30 modul lengkap yang diadopsi dari 48 berkas sumber kelas VII–IX, Kalender Pendidikan, kendali aktivitas, serta rekap tugas terpisah per kelas.
 - Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat dengan penanda waktu aktif dan hitung mundur, kalender bertanda per tanggal, 60 nasihat bersumber yang dapat diganti dengan klik, dan Akademi Bahasa Arab empat tingkat.
-- Fitur Games: enam mode permainan dengan bank 120 soal, skor, XP, level, dan lencana.
+- Fitur Games: 14 arena permainan dengan bank 280 soal, 20 soal per sesi, penguncian sesi sampai tuntas, skor, XP, level, dan lencana.
+- Dalil materi: rujukan Al Qur'an Surat dan ayat dapat diklik untuk membuka teks Arab, terjemahan Bahasa Indonesia, surat lengkap, serta pelafalan luring dari suara Arab perangkat.
 - Spensus: selayang pandang sekolah, 38 tenaga pendidik termasuk kepala sekolah, 13 tenaga kependidikan, galeri dua baris pada telepon, serta editor admin dokumentasi kegiatan.
 
 ## Halaman
@@ -19,7 +20,9 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 - `calendar-data.js` — libur, peringatan, dan Kaldik bertanggal
 - `islamic-data.js` — doa, dzikir, kalender puasa/sejarah, dan nasihat bersumber
 - `arabic-data.js` — 80 pelajaran Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan
-- `game-data.js` — bank 120 soal untuk enam mode games
+- `game-data.js` — bank 280 soal untuk 14 arena games
+- `assets/data/quran-id.json` — 114 surat dan 6.236 ayat untuk pembaca dalil luring
+- `assets/data/QURAN-DATA-LICENSE.txt` — atribusi dan lisensi CC BY-SA 4.0 data Al Qur'an
 - `video-data.js` — kurasi dua video penguatan untuk setiap bab kelas VII–IX
 - `school-data.js` — identitas sekolah serta data kepala sekolah, guru, dan tenaga kependidikan
 - `script.js` — fungsi tab, materi, LKPD, perangkat guru, kalkulator, jadwal, dan games

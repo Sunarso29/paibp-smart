@@ -449,6 +449,13 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .dalil-grid article{display:flex;gap:11px;align-items:flex-start;border:1px solid #d8e7e2;border-radius:14px;background:#fbfdfc;padding:13px}
 .dalil-grid article>span{flex:0 0 auto;width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:#fff1be;color:#795a08;font-weight:900}
 .dalil-grid p{margin:2px 0;font-weight:750}
+.dalil-grid article.is-clickable-dalil{padding:0;overflow:hidden;border-color:#99c8b9;background:#f5fcf9}
+.dalil-open-button{display:grid;grid-template-columns:auto 1fr;gap:11px;align-items:center;width:100%;border:0;background:transparent;padding:13px;text-align:left;color:var(--ink);cursor:pointer}
+.dalil-open-button:hover,.dalil-open-button:focus-visible{background:#e7f7f1;outline:0}
+.dalil-open-button>span:first-child{width:31px;height:31px;display:grid;place-items:center;border-radius:9px;background:#fff1be;color:#795a08;font-weight:900}
+.dalil-open-button>span:last-child{display:grid;gap:3px}
+.dalil-open-button strong{font-size:12px}.dalil-open-button small{color:var(--emerald);font-size:9px;font-weight:800}
+.summary-dalil-list{padding:0;list-style:none}.summary-dalil-item{margin:8px 0;border:1px solid #b7d7cd;border-radius:13px;overflow:hidden}
 .ikhtisar-grid article{border-left:4px solid var(--emerald);border-radius:10px;background:#eff9f5;padding:13px}
 .ikhtisar-grid p{margin:4px 0 0;color:#445d65;font-size:13px}
 .reflection-card{border:1px solid #ead087;border-radius:17px;background:#fff9e8;padding:18px}
@@ -528,12 +535,41 @@ progress.progress-track::-moz-progress-bar{background:linear-gradient(90deg,var(
 .arabic-options button.correct{border-color:#079b73;background:#e4f8f0}.arabic-options button.wrong{border-color:#d55e43;background:#fff0ec}
 .daily-insight[role="button"]{cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}.daily-insight[role="button"]:hover,.daily-insight[role="button"]:focus-visible{transform:translateY(-2px);box-shadow:0 14px 32px rgba(8,44,54,.11);outline:2px solid rgba(8,127,104,.25)}
 .insight-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.insight-card-head small,.insight-click-hint{color:var(--muted);font-size:10px}.insight-click-hint{display:block;margin-top:14px;font-weight:750}.insight-next-button{margin-top:10px}
-.game-mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:18px 0}
+.game-mode-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:18px 0}
 .game-mode-grid button{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;border:1px solid var(--line);border-radius:17px;background:#fff;padding:15px;text-align:left;color:var(--ink);cursor:pointer;box-shadow:0 7px 20px rgba(8,44,54,.05)}
 .game-mode-grid button>span{grid-row:1/3;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#e2f6ef,#fff2c5);font-size:21px}
 .game-mode-grid strong{font-size:13px}.game-mode-grid small{color:var(--muted);font-size:10px}
+.game-mode-record{grid-column:2;display:block;margin-top:5px;color:#667c83;font-size:9px;font-style:normal;font-weight:800;letter-spacing:.01em}.game-mode-record.is-complete{color:var(--emerald)}
 .game-mode-grid button.is-active{border-color:var(--emerald);background:#eef9f5;box-shadow:0 9px 24px rgba(8,127,104,.13)}
+.game-mode-grid button:nth-child(4n+2)>span{background:linear-gradient(145deg,#e7ecff,#fef3d1)}
+.game-mode-grid button:nth-child(4n+3)>span{background:linear-gradient(145deg,#ffe7df,#e6f7f1)}
+.game-mode-grid button:nth-child(4n)>span{background:linear-gradient(145deg,#f2e6ff,#e7f5ff)}
+.game-mode-grid button:disabled{cursor:not-allowed;opacity:.48}.game-mode-grid button.is-active:disabled{opacity:1}
 .game-bank-summary{display:grid;min-width:150px;border-radius:16px;background:#e6f6f0;padding:12px 15px;text-align:right}.game-bank-summary strong{color:var(--emerald);font-size:21px}.game-bank-summary span{color:var(--muted);font-size:9px}
+.game-session-lock{border:2px solid #f4bd3e;border-radius:18px;background:#fff8dc;padding:15px 18px;box-shadow:0 14px 35px rgba(73,55,7,.2)}
+.game-session-lock:not([hidden]){display:flex;align-items:center;gap:12px;position:fixed;z-index:101;top:10px;left:50%;width:min(1100px,calc(100% - 24px));transform:translateX(-50%)}
+.game-session-lock>span{font-size:27px}.game-session-lock strong{display:block;color:#604706}.game-session-lock p{margin:2px 0 0;color:#765f22;font-size:11px}
+body.game-session-active{overflow:hidden}
+.quiz-card.is-running{position:fixed;z-index:100;top:89px;bottom:12px;left:50%;width:min(1100px,calc(100% - 24px));max-width:none;transform:translateX(-50%);overflow:auto;border:2px solid #087f68;background:linear-gradient(160deg,#fff,#eef9f5);box-shadow:0 30px 100px rgba(3,27,35,.38)}
+.quiz-card.is-running .quiz-meta{position:sticky;top:-26px;z-index:3;margin:-26px -26px 18px;padding:18px 26px;background:#083d48;color:#fff}.quiz-card.is-running .quiz-meta span{color:#fff}
+.quiz-card.is-running .quiz-progress{position:sticky;top:34px;z-index:3;margin:0 0 25px;background:#cfe3dd}
+.quiz-card.is-running h4{font-size:clamp(20px,3vw,30px)}
+.quiz-card.is-running .quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.game-finish-exit{margin-left:auto}
+.dalil-reader-modal{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:16px}.dalil-reader-modal[hidden]{display:none}
+.dalil-reader-backdrop{position:absolute;inset:0;background:rgba(3,25,34,.78);backdrop-filter:blur(6px)}
+.dalil-reader-dialog{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;width:min(980px,100%);max-height:calc(100vh - 32px);border:1px solid rgba(255,255,255,.35);border-radius:24px;background:#f8fcfa;overflow:hidden;box-shadow:0 30px 100px rgba(0,0,0,.4)}
+.dalil-reader-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:22px 25px;border-bottom:1px solid var(--line);background:#fff}
+.dalil-reader-head h2{margin:7px 0 3px}.dalil-reader-head p{margin:0;color:var(--muted);font-size:12px}
+.dalil-reader-content{overflow:auto;padding:20px 25px;scroll-behavior:smooth}
+.dalil-reader-actions{display:flex;justify-content:flex-end;gap:9px;padding:14px 25px;border-top:1px solid var(--line);background:#fff}
+.dalil-loading{display:grid;place-items:center;min-height:260px;color:var(--muted)}.dalil-loading span{font-size:48px}
+.offline-surah-heading{display:grid;place-items:center;border-radius:18px;background:linear-gradient(135deg,#063a45,#087f68);padding:20px;color:#fff;text-align:center}
+.offline-surah-heading>span{font-size:10px;text-transform:uppercase}.offline-surah-heading>strong{font-family:"Amiri Quran","Noto Naskh Arabic",serif;font-size:38px;line-height:1.7}.offline-surah-heading p{margin:0;color:#d8eee8}
+.offline-ayah-list{display:grid;gap:12px;margin-top:16px}.offline-ayah-card{border:1px solid var(--line);border-radius:17px;background:#fff;padding:17px}
+.offline-ayah-card.is-highlighted{border:2px solid #f4bd3e;background:#fffdf4;box-shadow:0 8px 24px rgba(141,107,14,.09)}
+.offline-ayah-meta{display:flex;align-items:center;justify-content:space-between;gap:10px}.offline-ayah-meta>span{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:#e2f5ef;color:#087554;font-size:11px;font-weight:900}
+.offline-ayah-translation{color:#36515a;line-height:1.7}.quran-data-attribution{margin:18px 0 0;color:var(--muted);font-size:9px;line-height:1.5}
 .teacher-auth{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
 .teacher-auth-backdrop{position:absolute;inset:0;background:rgba(4,25,34,.72);backdrop-filter:blur(7px)}
 .teacher-auth-dialog{position:relative;width:min(100%,430px);border:1px solid rgba(255,255,255,.35);border-radius:25px;background:#fff;padding:30px;box-shadow:0 30px 100px rgba(0,0,0,.38)}
@@ -553,6 +589,7 @@ body.has-modal{overflow:hidden}
   .teacher-layout{grid-template-columns:1fr}
   .teacher-doc-menu{position:static;grid-template-columns:repeat(4,1fr)}
   .staff-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .game-mode-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:800px){
   .rich-chapter-list{grid-template-columns:1fr}
@@ -627,9 +664,12 @@ body.has-modal{overflow:hidden}
   .arabic-level-tabs{grid-template-columns:repeat(2,1fr)}
   .arabic-lesson-nodes,.arabic-options,.game-mode-grid{grid-template-columns:1fr}
   .prayer-countdown{grid-template-columns:1fr}.prayer-countdown>span:first-child{grid-row:auto;width:max-content}
+  .quiz-card.is-running{top:110px}.quiz-card.is-running .quiz-options{grid-template-columns:1fr}
+  .game-session-lock:not([hidden]){align-items:flex-start}
+  .dalil-reader-head,.dalil-reader-actions{padding:16px}.dalil-reader-content{padding:14px}.dalil-reader-actions{flex-wrap:wrap}.offline-ayah-meta{align-items:flex-start;flex-direction:column}
 }
 @media print{
-  .topbar,.hero,.portal-tabs,.workspace-header,.lesson-viewer-head,.document-tabs,.teacher-controls,.teacher-doc-menu,.footer,.alt{display:none!important}
+  .topbar,.hero,.portal-tabs,.workspace-header,.lesson-viewer-head,.document-tabs,.teacher-controls,.teacher-doc-menu,.footer,.alt,.dalil-reader-modal,.game-session-lock{display:none!important}
   .portal-section,.workspace-shell,.workspace-panel,.lesson-viewer,.printable-document{display:block!important;background:#fff!important;border:0!important;box-shadow:none!important;padding:0!important}
   .workspace-panel[hidden]{display:none!important}
   .no-print{display:none!important}

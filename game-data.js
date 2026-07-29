@@ -251,9 +251,138 @@
     }),
   };
 
+  const factQuestion = ([question, correct, distractors, explanation], index) => {
+    const [options, answer] = rotateOptions(correct, distractors, index);
+    return [question, options, answer, explanation];
+  };
+
+  const prophetFacts = [
+    ["Nabi pertama dan manusia pertama adalah …", "Nabi Adam 'Alaihissalam", ["Nabi Nuh 'Alaihissalam", "Nabi Ibrahim 'Alaihissalam", "Nabi Musa 'Alaihissalam"], "Nabi Adam 'Alaihissalam merupakan nabi dan manusia pertama."],
+    ["Nabi yang berdakwah sangat lama dan membuat bahtera atas perintah Allah Subhanahu Wata'ala adalah …", "Nabi Nuh 'Alaihissalam", ["Nabi Hud 'Alaihissalam", "Nabi Shalih 'Alaihissalam", "Nabi Yunus 'Alaihissalam"], "Nabi Nuh 'Alaihissalam membuat bahtera sebagai bagian dari perintah Allah Subhanahu Wata'ala."],
+    ["Nabi yang dikenal sebagai khalilullah dan menjadi teladan tauhid adalah …", "Nabi Ibrahim 'Alaihissalam", ["Nabi Ismail 'Alaihissalam", "Nabi Ishaq 'Alaihissalam", "Nabi Ya'qub 'Alaihissalam"], "Nabi Ibrahim 'Alaihissalam dikenal sebagai khalilullah dan teladan keteguhan tauhid."],
+    ["Nabi yang membantu Nabi Ibrahim 'Alaihissalam meninggikan fondasi Ka'bah adalah …", "Nabi Ismail 'Alaihissalam", ["Nabi Ishaq 'Alaihissalam", "Nabi Yusuf 'Alaihissalam", "Nabi Harun 'Alaihissalam"], "Nabi Ismail 'Alaihissalam membantu Nabi Ibrahim 'Alaihissalam membangun Ka'bah."],
+    ["Nabi yang menghadapi ujian sumur, perbudakan, dan penjara sebelum menjadi pejabat di Mesir adalah …", "Nabi Yusuf 'Alaihissalam", ["Nabi Ayyub 'Alaihissalam", "Nabi Yunus 'Alaihissalam", "Nabi Zakariya 'Alaihissalam"], "Kisah Nabi Yusuf 'Alaihissalam mengajarkan kesabaran, kehormatan diri, dan pemaafan."],
+    ["Nabi yang menerima Kitab Taurat adalah …", "Nabi Musa 'Alaihissalam", ["Nabi Dawud 'Alaihissalam", "Nabi Isa 'Alaihissalam", "Nabi Muhammad Sholallohu 'Alaihi Wasallam"], "Kitab Taurat diturunkan kepada Nabi Musa 'Alaihissalam."],
+    ["Nabi yang mendampingi Nabi Musa 'Alaihissalam menghadapi Fir'aun adalah …", "Nabi Harun 'Alaihissalam", ["Nabi Ilyas 'Alaihissalam", "Nabi Ilyasa 'Alaihissalam", "Nabi Luth 'Alaihissalam"], "Nabi Harun 'Alaihissalam menjadi pendamping dakwah Nabi Musa 'Alaihissalam."],
+    ["Nabi yang menerima Kitab Zabur adalah …", "Nabi Dawud 'Alaihissalam", ["Nabi Sulaiman 'Alaihissalam", "Nabi Isa 'Alaihissalam", "Nabi Idris 'Alaihissalam"], "Kitab Zabur diturunkan kepada Nabi Dawud 'Alaihissalam."],
+    ["Nabi yang diberi kerajaan besar dan kemampuan memahami bahasa makhluk adalah …", "Nabi Sulaiman 'Alaihissalam", ["Nabi Dawud 'Alaihissalam", "Nabi Ayyub 'Alaihissalam", "Nabi Yahya 'Alaihissalam"], "Nabi Sulaiman 'Alaihissalam diberi kerajaan dan berbagai karunia yang digunakan dalam ketaatan."],
+    ["Nabi yang berdoa dari dalam perut ikan adalah …", "Nabi Yunus 'Alaihissalam", ["Nabi Zakariya 'Alaihissalam", "Nabi Shalih 'Alaihissalam", "Nabi Hud 'Alaihissalam"], "Nabi Yunus 'Alaihissalam berdoa dan bertasbih ketika berada dalam perut ikan."],
+    ["Nabi yang menjadi teladan kesabaran ketika mengalami sakit dan kehilangan adalah …", "Nabi Ayyub 'Alaihissalam", ["Nabi Yusuf 'Alaihissalam", "Nabi Yunus 'Alaihissalam", "Nabi Idris 'Alaihissalam"], "Nabi Ayyub 'Alaihissalam tetap sabar dan kembali kepada Allah Subhanahu Wata'ala."],
+    ["Nabi yang berdoa memohon keturunan pada usia lanjut dan dikaruniai Nabi Yahya 'Alaihissalam adalah …", "Nabi Zakariya 'Alaihissalam", ["Nabi Ya'qub 'Alaihissalam", "Nabi Ishaq 'Alaihissalam", "Nabi Luth 'Alaihissalam"], "Nabi Zakariya 'Alaihissalam berdoa dengan penuh harap dan dikaruniai Nabi Yahya 'Alaihissalam."],
+    ["Nabi yang menerima Kitab Injil adalah …", "Nabi Isa 'Alaihissalam", ["Nabi Musa 'Alaihissalam", "Nabi Dawud 'Alaihissalam", "Nabi Muhammad Sholallohu 'Alaihi Wasallam"], "Kitab Injil diturunkan kepada Nabi Isa 'Alaihissalam."],
+    ["Nabi dan rasul terakhir yang menerima Al Qur'an adalah …", "Nabi Muhammad Sholallohu 'Alaihi Wasallam", ["Nabi Isa 'Alaihissalam", "Nabi Musa 'Alaihissalam", "Nabi Ibrahim 'Alaihissalam"], "Nabi Muhammad Sholallohu 'Alaihi Wasallam adalah penutup para nabi dan rasul."],
+    ["Sahabat yang menjadi khalifah pertama setelah wafatnya Nabi Muhammad Sholallohu 'Alaihi Wasallam adalah …", "Abu Bakar Ash-Shiddiq", ["Umar bin Khattab", "Utsman bin Affan", "Ali bin Abi Thalib"], "Abu Bakar Ash-Shiddiq menjadi khalifah pertama dalam Khulafaur Rasyidin."],
+    ["Khalifah kedua yang dikenal tegas dalam keadilan adalah …", "Umar bin Khattab", ["Abu Bakar Ash-Shiddiq", "Utsman bin Affan", "Ali bin Abi Thalib"], "Umar bin Khattab menjadi khalifah kedua dan dikenal menjaga keadilan."],
+    ["Khalifah yang memimpin standardisasi mushaf Al Qur'an adalah …", "Utsman bin Affan", ["Abu Bakar Ash-Shiddiq", "Umar bin Khattab", "Ali bin Abi Thalib"], "Pada masa Utsman bin Affan, mushaf distandardisasi dan disebarkan ke berbagai wilayah."],
+    ["Sepupu sekaligus menantu Nabi Muhammad Sholallohu 'Alaihi Wasallam yang menjadi khalifah keempat adalah …", "Ali bin Abi Thalib", ["Abu Bakar Ash-Shiddiq", "Umar bin Khattab", "Utsman bin Affan"], "Ali bin Abi Thalib menjadi khalifah keempat dalam Khulafaur Rasyidin."],
+    ["Ulama penyusun kitab Shahih Al-Bukhari adalah …", "Imam Al-Bukhari", ["Imam Muslim", "Imam Abu Dawud", "Imam At-Tirmidzi"], "Imam Al-Bukhari menyusun salah satu kitab Hadits Riwayat paling dikenal, Shahih Al-Bukhari."],
+    ["Ulama penyusun kitab Shahih Muslim adalah …", "Imam Muslim", ["Imam Al-Bukhari", "Imam An-Nasa'i", "Imam Ibnu Majah"], "Imam Muslim menyusun kitab Shahih Muslim dengan metode periwayatan yang ketat."],
+  ];
+
+  const historyFacts = [
+    ["Perpindahan Nabi Muhammad Sholallohu 'Alaihi Wasallam dari Makkah ke Madinah disebut …", "Hijrah", ["Isra", "Mi'raj", "Fathu Makkah"], "Hijrah menjadi tonggak pembentukan masyarakat Muslim di Madinah."],
+    ["Masjid yang dibangun dalam perjalanan hijrah dan dikenal sebagai masjid pertama ialah …", "Masjid Quba", ["Masjidil Haram", "Masjid Al-Aqsha", "Masjid Qiblatain"], "Masjid Quba dibangun ketika Nabi Muhammad Sholallohu 'Alaihi Wasallam tiba di wilayah Quba."],
+    ["Kesepakatan yang mengatur kehidupan bersama masyarakat Madinah dikenal sebagai …", "Piagam Madinah", ["Perjanjian Hudaibiyah", "Baiat Aqabah", "Deklarasi Arafah"], "Piagam Madinah memuat pengaturan hidup bersama kelompok-kelompok di Madinah."],
+    ["Perang besar pertama kaum Muslim setelah hijrah adalah …", "Perang Badar", ["Perang Uhud", "Perang Khandaq", "Perang Hunain"], "Perang Badar merupakan peristiwa penting pada masa awal Madinah."],
+    ["Peristiwa yang mengajarkan pentingnya menaati arahan pemimpin pasukan pemanah adalah …", "Perang Uhud", ["Perang Badar", "Fathu Makkah", "Perang Tabuk"], "Perang Uhud mengajarkan disiplin, kesabaran, dan akibat mengabaikan arahan."],
+    ["Strategi menggali parit diterapkan dalam …", "Perang Khandaq", ["Perang Badar", "Perang Uhud", "Perang Hunain"], "Parit digunakan sebagai strategi pertahanan Madinah dalam Perang Khandaq."],
+    ["Perjanjian yang membuka jalan dakwah damai sebelum Fathu Makkah adalah …", "Perjanjian Hudaibiyah", ["Piagam Madinah", "Baiat Ridwan", "Perjanjian Aqabah Pertama"], "Perjanjian Hudaibiyah menunjukkan kebijaksanaan, kesabaran, dan pandangan jauh."],
+    ["Pembebasan Kota Makkah dikenal dengan istilah …", "Fathu Makkah", ["Hijrah", "Isra", "Haji Wada"], "Fathu Makkah memperlihatkan pemaafan dan penghormatan terhadap manusia."],
+    ["Empat khalifah awal setelah Nabi Muhammad Sholallohu 'Alaihi Wasallam disebut …", "Khulafaur Rasyidin", ["Bani Umayyah", "Bani Abbasiyah", "Dinasti Ayyubiyah"], "Khulafaur Rasyidin terdiri atas Abu Bakar, Umar, Utsman, dan Ali."],
+    ["Pusat pemerintahan Daulah Umayyah berada di …", "Damaskus", ["Baghdad", "Kairo", "Cordoba"], "Damaskus menjadi pusat pemerintahan Daulah Umayyah."],
+    ["Pusat pemerintahan Daulah Abbasiyah yang berkembang sebagai kota ilmu adalah …", "Baghdad", ["Madinah", "Damaskus", "Isfahan"], "Baghdad berkembang sebagai pusat pemerintahan dan ilmu pada masa Abbasiyah."],
+    ["Lembaga ilmu yang dikenal berkembang pada masa Abbasiyah adalah …", "Baitul Hikmah", ["Darun Nadwah", "Suffah", "Nizam Al-Mulk"], "Baitul Hikmah dikenal sebagai pusat kegiatan ilmu dan penerjemahan."],
+    ["Wilayah Muslim di Semenanjung Iberia dikenal sebagai …", "Andalusia", ["Anatolia", "Maghrib", "Khurasan"], "Andalusia menjadi salah satu pusat peradaban dan ilmu Islam."],
+    ["Kota yang dikenal sebagai pusat penting peradaban Islam di Andalusia adalah …", "Cordoba", ["Makkah", "Baghdad", "Bukhara"], "Cordoba berkembang dalam pendidikan, arsitektur, dan ilmu pengetahuan."],
+    ["Kota Konstantinopel ditaklukkan pada masa Daulah Usmani oleh …", "Sultan Muhammad Al-Fatih", ["Sultan Salahuddin Al-Ayyubi", "Harun Ar-Rasyid", "Umar bin Abdul Aziz"], "Sultan Muhammad Al-Fatih memimpin penaklukan Konstantinopel."],
+    ["Daulah Safawi berkembang terutama di wilayah …", "Persia", ["Andalusia", "Mesir", "Hijaz"], "Daulah Safawi berkembang di wilayah Persia."],
+    ["Daulah Mughal berkembang terutama di wilayah …", "India", ["Afrika Utara", "Syam", "Anatolia"], "Daulah Mughal berkembang di anak benua India."],
+    ["Kerajaan Islam yang sering disebut sebagai salah satu kerajaan Islam awal di Nusantara adalah …", "Samudra Pasai", ["Majapahit", "Sriwijaya", "Kutai"], "Samudra Pasai dikenal sebagai salah satu pusat Islam awal di Nusantara."],
+    ["Kesultanan yang menjadi pusat penyebaran Islam di Jawa pada abad ke-15 dan ke-16 ialah …", "Kesultanan Demak", ["Kesultanan Samudra Pasai", "Kesultanan Ternate", "Kesultanan Banjar"], "Kesultanan Demak berperan dalam perkembangan Islam di Jawa."],
+    ["Tokoh-tokoh dakwah yang dikenal berperan dalam penyebaran Islam di Jawa disebut …", "Wali Songo", ["Khulafaur Rasyidin", "Ahlus Suffah", "Muhajirin"], "Wali Songo dikenal menggunakan pendekatan dakwah yang dekat dengan masyarakat."],
+  ];
+
+  const fiqhFacts = [
+    ["Bersuci dari hadats kecil pada keadaan normal dilakukan dengan …", "Wudhu", ["Tayamum", "Mandi wajib", "Istinja saja"], "Wudhu menjadi cara bersuci dari hadats kecil ketika air tersedia dan dapat digunakan."],
+    ["Tayamum dapat dilakukan ketika …", "Air tidak tersedia atau tidak dapat digunakan karena alasan yang dibenarkan", ["Sedang terburu-buru bermain", "Tidak ingin terkena air", "Lupa membawa handuk"], "Tayamum merupakan keringanan dengan sebab dan tata cara yang ditentukan."],
+    ["Sholat wajib dalam sehari semalam berjumlah …", "Lima waktu", ["Tiga waktu", "Empat waktu", "Enam waktu"], "Sholat wajib sehari semalam terdiri atas Subuh, Dzuhur, Ashar, Maghrib, dan Isya."],
+    ["Jumlah rakaat sholat Subuh adalah …", "Dua rakaat", ["Tiga rakaat", "Empat rakaat", "Lima rakaat"], "Sholat Subuh terdiri atas dua rakaat."],
+    ["Jumlah rakaat sholat Maghrib adalah …", "Tiga rakaat", ["Dua rakaat", "Empat rakaat", "Lima rakaat"], "Sholat Maghrib terdiri atas tiga rakaat."],
+    ["Sujud yang dilakukan karena kelupaan tertentu dalam sholat disebut …", "Sujud sahwi", ["Sujud syukur", "Sujud tilawah", "Sujud biasa"], "Sujud sahwi berkaitan dengan sebab kelupaan tertentu dalam sholat."],
+    ["Sujud ketika membaca atau mendengar ayat sajdah disebut …", "Sujud tilawah", ["Sujud sahwi", "Sujud syukur", "Sujud rukun"], "Sujud tilawah berkaitan dengan ayat sajdah."],
+    ["Sujud sebagai ungkapan syukur atas nikmat atau keselamatan disebut …", "Sujud syukur", ["Sujud tilawah", "Sujud sahwi", "Sujud qiraah"], "Sujud syukur merupakan salah satu bentuk ungkapan syukur."],
+    ["Menggabungkan dua sholat wajib dalam satu waktu disebut …", "Jamak", ["Qashar", "Qadha", "I'adah"], "Jamak menggabungkan dua sholat tertentu dengan sebab dan ketentuan."],
+    ["Meringkas sholat empat rakaat menjadi dua rakaat bagi musafir yang memenuhi syarat disebut …", "Qashar", ["Jamak", "Qadha", "I'adah"], "Qashar merupakan keringanan bagi musafir dengan ketentuan."],
+    ["Puasa wajib pada bulan Ramadhan dimulai sejak …", "Terbit fajar", ["Matahari terbit", "Waktu Dzuhur", "Setelah sahur selesai tanpa melihat waktu"], "Puasa dimulai sejak terbit fajar dan berakhir saat matahari terbenam."],
+    ["Puasa sunnah pada tanggal 9 Dzulhijjah bagi orang yang tidak berhaji disebut …", "Puasa Arafah", ["Puasa Asyura", "Puasa Syawal", "Puasa Ayyamul Bidh"], "Puasa Arafah dilakukan pada 9 Dzulhijjah bagi yang tidak sedang berhaji."],
+    ["Puasa sunnah pada tanggal 10 Muharram disebut …", "Puasa Asyura", ["Puasa Arafah", "Puasa Syawal", "Puasa Senin"], "Puasa Asyura dilakukan pada 10 Muharram dan dianjurkan disertai hari lain sesuai tuntunan."],
+    ["Zakat fitrah ditunaikan berkaitan dengan …", "Akhir Ramadhan menjelang Idul Fitri", ["Awal Muharram", "Idul Adha saja", "Setiap awal bulan"], "Zakat fitrah berkaitan dengan akhir Ramadhan dan memiliki batas waktu penunaian."],
+    ["Pihak yang bertugas mengelola zakat disebut …", "Amil", ["Muzakki", "Mustahik", "Muallaf"], "Amil bertugas dalam pengelolaan zakat sesuai ketentuan."],
+    ["Orang yang menunaikan zakat disebut …", "Muzakki", ["Amil", "Mustahik", "Gharim"], "Muzakki adalah orang yang menunaikan zakat."],
+    ["Penyembelihan hewan sebagai ibadah pada Idul Adha dan hari tasyrik disebut …", "Kurban", ["Akikah", "Dam", "Walimah"], "Kurban dilaksanakan pada waktu dan dengan hewan yang memenuhi ketentuan."],
+    ["Penyembelihan hewan yang berkaitan dengan kelahiran anak disebut …", "Akikah", ["Kurban", "Dam", "Kafarat"], "Akikah berkaitan dengan kelahiran anak dan memiliki ketentuan tersendiri."],
+    ["Transaksi harus didasarkan pada kejelasan dan …", "Kerelaan para pihak", ["Paksaan penjual", "Penyembunyian cacat", "Ketidakjelasan harga"], "Muamalah yang baik menjaga kejelasan dan kerelaan para pihak."],
+    ["Tambahan yang diharamkan dalam transaksi tertentu disebut …", "Riba", ["Laba", "Sedekah", "Hibah"], "Riba berbeda dari laba jual beli yang sah dan memiliki ketentuan pembahasan fikih."],
+  ];
+
+  bank.prophets = prophetFacts.map(factQuestion);
+  bank.history = historyFacts.map(factQuestion);
+  bank.fiqh = fiqhFacts.map(factQuestion);
+
+  const arabicLessons = (window.PAIBP_ARABIC?.levels || [])
+    .flatMap((level) => level.lessons.map((lesson) => ({ ...lesson, level: level.label })))
+    .filter((_, index) => index % 4 === 0)
+    .slice(0, 20);
+  bank.arabic = arabicLessons.map((lesson, index) => {
+    const distractors = arabicLessons
+      .filter((_, otherIndex) => otherIndex !== index)
+      .slice((index + 3) % 10, ((index + 3) % 10) + 3)
+      .map((item) => item.meaning);
+    const [options, answer] = rotateOptions(lesson.meaning, distractors, index);
+    return [`Apakah arti ungkapan Arab berikut?\n${lesson.arabic}`, options, answer, `${lesson.transliteration}: ${lesson.meaning}`];
+  });
+  bank.verseMeaning = concepts.map((item, index) => {
+    const distractors = concepts
+      .filter((_, otherIndex) => otherIndex !== index)
+      .slice((index + 5) % 9, ((index + 5) % 9) + 3)
+      .map((entry) => entry.term);
+    const [options, answer] = rotateOptions(item.term, distractors, index + 1);
+    return [`Tema utama yang dikuatkan oleh ${item.dalil} ialah …`, options, answer, `${item.dalil} digunakan untuk menguatkan tema ${item.term}.`];
+  });
+  bank.digital = concepts.map((item, index) => {
+    const distractors = [
+      "Menyebarkan informasi secepat mungkin agar menjadi yang pertama.",
+      "Menggunakan identitas orang lain agar tidak diketahui.",
+      "Mengabaikan sumber dan dampak karena berada di ruang digital.",
+    ];
+    const correct = `${item.action} Setelah itu, catat sumber dan dampaknya secara jujur.`;
+    const [options, answer] = rotateOptions(correct, distractors, index + 2);
+    return [`Detektif informasi menghadapi situasi berikut: ${item.scenario} Keputusan digital paling aman dan berakhlak ialah …`, options, answer, correct];
+  });
+  bank.worshipPuzzle = concepts.map((item, index) => {
+    const distractors = [
+      "Mulai tanpa niat–abaikan syarat–lakukan tergesa-gesa–selesai",
+      "Ikuti tebakan–tinggalkan sumber–salin tindakan–abaikan evaluasi",
+      "Pilih yang termudah–abaikan sebab–menyalahkan orang lain–ulang",
+    ];
+    const [options, answer] = rotateOptions(item.sequence, distractors, index + 3);
+    return [`Puzzle penerapan “${item.term}”: pilih susunan langkah yang dapat dipertanggungjawabkan.`, options, answer, `Susunan yang tepat: ${item.sequence}.`];
+  });
+  bank.boss = concepts.map((item, index) => {
+    const distractors = [
+      `Menghafal istilah ${item.term} tetapi tidak mengubah tindakan.`,
+      "Menunggu penilaian orang lain sebelum berbuat benar.",
+      "Memilih tindakan yang paling cepat meskipun merugikan pihak lain.",
+    ];
+    const correct = `${item.application} Langkah ini menunjukkan pemahaman, alasan, dan tindakan yang selaras.`;
+    const [options, answer] = rotateOptions(correct, distractors, index);
+    return [`Boss Battle ${index + 1}: bukti penguasaan tema ${item.term} yang paling utuh ialah …`, options, answer, correct];
+  });
+
   window.PAIBP_GAME_BANK = {
     bank,
     total: Object.values(bank).reduce((total, items) => total + items.length, 0),
     perMode: 20,
+    modeCount: Object.keys(bank).length,
   };
 })();

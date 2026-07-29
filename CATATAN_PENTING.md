@@ -29,11 +29,20 @@ Editor galeri dibuka dari Beranda menggunakan kata sandi admin. Tanpa integrasi 
 
 ## Fitur Islami
 
-- Teks dan audio Al Qur'an dimuat dari Al Quran Cloud. Surat yang pernah dibuka disimpan untuk dibaca luring. Audio luring harus disimpan terlebih dahulu ketika internet tersedia.
+- Paket situs memuat lengkap 114 Al Qur'an Surat dan 6.236 ayat beserta terjemahan Bahasa Indonesia. Dalil pada setiap materi dapat diklik dan langsung dibaca luring, termasuk pilihan membuka seluruh surat.
+- Teks dan audio murattal pada menu Al Qur'an juga dapat dimuat dari Al Quran Cloud. Audio murattal luring harus disimpan terlebih dahulu ketika internet tersedia.
+- Tombol bacaan luring pada pembaca dalil memakai suara bahasa Arab perangkat. Pastikan paket suara Arab telah terpasang pada pengaturan bahasa/teks-ke-suara telepon atau komputer.
 - Audio doa/dzikir memakai suara bahasa Arab pada perangkat. Situs menunggu daftar suara sampai siap dan memilih suara Arab secara otomatis; ketersediaannya tetap bergantung pada paket suara yang terpasang di sistem.
 - Akademi Bahasa Arab memuat 80 pelajaran dan menyimpan materi serta progres secara luring. Pelafalan dapat diputar luring bila paket suara Arab sudah terpasang pada perangkat.
 - Kalender Hijriah browser dapat berbeda satu hari dari keputusan resmi pemerintah atau hasil rukyat.
 - Halaman kitab sengaja tidak dicantumkan bila edisi belum terverifikasi karena nomor halaman berbeda antarcetakan.
+
+## Fitur Games
+
+- Tersedia 14 arena dengan total 280 soal; setiap arena selalu menjalankan 20 soal.
+- Setelah arena dimulai, pemilihan arena lain, perpindahan ruang, dan tombol keluar dikunci sampai soal ke-20 selesai.
+- Sesi aktif disimpan pada perangkat. Jika halaman tidak sengaja dimuat ulang atau browser ditutup, arena dilanjutkan dari soal terakhir saat situs dibuka kembali.
+- Browser tetap dapat ditutup paksa oleh sistem operasi. Penguncian yang diterapkan adalah penguncian alur situs dan pemulihan sesi, bukan pengambilalihan kendali perangkat.
 
 ## Video pembelajaran
 

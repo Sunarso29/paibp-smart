@@ -379,20 +379,32 @@
               <div class="panel-heading">
                 <div>
                   <span class="panel-kicker">🎮 Fitur Games</span>
-                  <h3>Laboratorium Games PAIBP</h3>
-                  <p>Pilih permainan cepat tepat, pasangan ilmu, urutan ibadah, benar atau perlu diluruskan, jejak dalil, atau misi akhlak.</p>
+                  <h3>PAIBP Quest — 14 Arena Tantangan</h3>
+                  <p>Setiap arena berisi 20 soal utuh. Setelah dimulai, selesaikan seluruh soal sebelum membuka arena lain atau keluar.</p>
                 </div>
-                <div class="game-bank-summary"><strong><span id="quiz-score">0</span>/10</strong><span>skor saat ini • bank 120 soal</span></div>
+                <div class="game-bank-summary"><strong><span id="quiz-score">0</span>/20</strong><span>skor saat ini • bank 280 soal</span></div>
               </div>
               <div class="game-mode-grid" id="game-mode-grid">
-                <button type="button" data-game-mode="quiz"><span>⚡</span><strong>Cepat Tepat</strong><small>10 soal pilihan ganda</small></button>
-                <button type="button" data-game-mode="match"><span>🧩</span><strong>Pasangan Ilmu</strong><small>Cocokkan istilah dan makna</small></button>
-                <button type="button" data-game-mode="sequence"><span>🔢</span><strong>Urutkan Hikmah</strong><small>Susun langkah dengan tepat</small></button>
-                <button type="button" data-game-mode="truefalse"><span>🔎</span><strong>Luruskan Pernyataan</strong><small>Benar atau perlu diperbaiki</small></button>
-                <button type="button" data-game-mode="dalil"><span>📖</span><strong>Jejak Dalil</strong><small>Temukan dalil yang relevan</small></button>
-                <button type="button" data-game-mode="scenario"><span>🌱</span><strong>Misi Akhlak</strong><small>Pilih tindakan terbaik</small></button>
+                <button type="button" data-game-mode="quiz"><span>⚡</span><strong>Cepat Tepat</strong><small>20 soal konsep inti</small></button>
+                <button type="button" data-game-mode="match"><span>🧩</span><strong>Pasangan Ilmu</strong><small>20 pasangan istilah dan makna</small></button>
+                <button type="button" data-game-mode="sequence"><span>🔢</span><strong>Urutkan Hikmah</strong><small>20 susunan langkah</small></button>
+                <button type="button" data-game-mode="truefalse"><span>🔎</span><strong>Luruskan Pernyataan</strong><small>20 pernyataan kritis</small></button>
+                <button type="button" data-game-mode="dalil"><span>📖</span><strong>Jejak Dalil</strong><small>20 pencarian dalil</small></button>
+                <button type="button" data-game-mode="scenario"><span>🌱</span><strong>Misi Akhlak</strong><small>20 keputusan kehidupan</small></button>
+                <button type="button" data-game-mode="prophets"><span>🧭</span><strong>Tebak Tokoh</strong><small>20 nabi, sahabat, dan ulama</small></button>
+                <button type="button" data-game-mode="history"><span>🏛️</span><strong>Jelajah Sejarah</strong><small>20 tonggak peradaban Islam</small></button>
+                <button type="button" data-game-mode="fiqh"><span>🕌</span><strong>Fikih Praktis</strong><small>20 persoalan ibadah dan muamalah</small></button>
+                <button type="button" data-game-mode="arabic"><span>🔤</span><strong>Bahasa Arab Kilat</strong><small>20 tantangan kosakata</small></button>
+                <button type="button" data-game-mode="verseMeaning"><span>💡</span><strong>Sambung Makna Ayat</strong><small>20 tema Al Qur'an Surat</small></button>
+                <button type="button" data-game-mode="digital"><span>🛡️</span><strong>Detektif Informasi</strong><small>20 misi adab digital</small></button>
+                <button type="button" data-game-mode="worshipPuzzle"><span>🧠</span><strong>Puzzle Ibadah</strong><small>20 susunan penerapan</small></button>
+                <button type="button" data-game-mode="boss"><span>👑</span><strong>Boss Battle PAIBP</strong><small>20 tantangan penguasaan akhir</small></button>
               </div>
-              <div class="quiz-card">
+              <div class="game-session-lock" id="game-session-lock" hidden>
+                <span aria-hidden="true">🔒</span>
+                <div><strong id="game-session-title">Arena dikunci</strong><p>Selesaikan 20 soal. Pemilihan arena dan tombol keluar akan terbuka setelah soal terakhir.</p></div>
+              </div>
+              <div class="quiz-card" id="quiz-card">
                 <div class="quiz-meta">
                   <span id="quiz-number">Siap bermain</span>
                   <span id="quiz-best">Skor terbaik: 0</span>
@@ -404,6 +416,7 @@
                 <div class="actions">
                   <button class="cta" id="quiz-start" type="button">Mulai Games</button>
                   <button class="btn" id="quiz-next" type="button" hidden>Soal Berikutnya</button>
+                  <button class="cta game-finish-exit" id="game-finish-exit" type="button" hidden disabled>✓ Selesai dan Kembali ke Pilihan Games</button>
                   <button class="text-button danger-button" id="reset-progress" type="button">Hapus progres lokal</button>
                 </div>
               </div>
@@ -411,7 +424,7 @@
                 <article><span>Bab selesai</span><strong id="progress-completed">0/30</strong></article>
                 <article><span>Total XP</span><strong id="progress-xp">0 XP</strong></article>
                 <article><span>Level</span><strong id="progress-level">Pemula</strong></article>
-                <article><span>Skor terbaik</span><strong id="progress-game">0/10</strong></article>
+                <article><span>Skor terbaik</span><strong id="progress-game">0/20</strong></article>
               </div>
               <div class="overall-progress">
                 <div><span>Ketuntasan materi</span><strong id="progress-percent">0%</strong></div>
@@ -552,6 +565,25 @@
             <button class="cta" type="submit">Buka Ruang Guru</button>
           </div>
         </form>
+      </section>
+    </div>
+
+    <div class="dalil-reader-modal" id="dalil-reader-modal" hidden>
+      <div class="dalil-reader-backdrop" data-close-dalil-reader></div>
+      <section class="dalil-reader-dialog" role="dialog" aria-modal="true" aria-labelledby="dalil-reader-title">
+        <header class="dalil-reader-head">
+          <div>
+            <span class="badge">Pembaca Dalil Luring</span>
+            <h2 id="dalil-reader-title">Al Qur'an Surat dan Ayat</h2>
+            <p id="dalil-reader-status" aria-live="polite">Menyiapkan ayat dari paket luring…</p>
+          </div>
+          <button class="teacher-auth-close" type="button" data-close-dalil-reader aria-label="Tutup pembaca dalil">×</button>
+        </header>
+        <div class="dalil-reader-content" id="dalil-reader-content"></div>
+        <footer class="dalil-reader-actions">
+          <button class="btn" id="dalil-read-full-surah" type="button" hidden>Baca Surat Lengkap Luring</button>
+          <button class="btn" type="button" data-close-dalil-reader>Tutup</button>
+        </footer>
       </section>
     </div>
 
