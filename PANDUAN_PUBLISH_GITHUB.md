@@ -16,7 +16,7 @@
 5. Tarik seluruh file ke halaman unggah GitHub.
 6. Jangan mengunggah file ZIP.
 7. Pastikan `index.html` terlihat langsung di halaman utama repository, bukan berada di dalam folder tambahan.
-8. Pastikan `app-config.js`, `content-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, `service-worker.js`, serta folder `assets` ikut terunggah. `staff-images.js` berada di root repository dan menjadi cadangan tertanam agar seluruh foto guru dan tenaga kependidikan tetap tampil. Berkas dan folder tersebut diperlukan agar materi, LKPD, rekap, foto sekolah, Fitur Islami, games, progres, kalender, dan mode luring berfungsi.
+8. Pastikan `app-config.js`, `content-data.js`, `teacher-source-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, `service-worker.js`, serta seluruh folder `assets` ikut terunggah. Folder `assets/perangkat` berisi 48 dokumen sumber Ruang Guru. `staff-images.js` berada di root repository dan menjadi cadangan tertanam agar seluruh foto guru dan tenaga kependidikan tetap tampil.
 9. Isi keterangan perubahan:
 
    `Perbarui portal Ruang Murid dan Ruang Guru PAIBP SMART SMP`
@@ -62,8 +62,8 @@ Uji alur tugas menggunakan data percobaan:
 3. Tekan `Ctrl + F5` pada Windows untuk memuat ulang tanpa cache.
 4. Jika masih terlihat versi lama, buka website pada jendela samaran/incognito lalu muat ulang.
 5. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
-6. Pastikan `index.html`, `app-config.js`, `content-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, dan `service-worker.js` berada pada root repository.
-7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 6.0`.
+6. Pastikan `index.html`, `app-config.js`, `content-data.js`, `teacher-source-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `script.js`, `styles.css`, `manifest.webmanifest`, dan `service-worker.js` berada pada root repository.
+7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 7.0`.
 8. Periksa kembali pengaturan **Settings → Pages**.
 
 ## Mengaktifkan rekap akses lintas perangkat
@@ -80,10 +80,13 @@ GitHub Pages tidak memiliki basis data. Website menampilkan status mode lokal sa
 - Jadwal sholat mengambil data dari layanan daring. Karena itu, cocokkan kembali dengan jadwal masjid atau Kementerian Agama setempat.
 - Kalender Pendidikan dan analisis hari efektif harus diselaraskan dengan keputusan resmi Dindikpora Banjarnegara yang diterima sekolah.
 
-## G. Menambah Spensus Terkini
+## G. Mengelola Spensus Terkini
 
-1. Siapkan foto berukuran web dan beri nama sederhana, misalnya `muharram-2026.webp`.
-2. Unggah foto ke folder `assets/news`.
-3. Buka `school-data.js`, lalu tambahkan data pada bagian `const news = []` mengikuti contoh komentar yang sudah tersedia: judul, tanggal, lokasi foto, dan ringkasan.
-4. Commit perubahan dan tunggu GitHub Pages selesai menerbitkan ulang.
-5. Jangan menampilkan foto/data pribadi murid tanpa dasar izin dan kebijakan sekolah yang sesuai.
+1. Dari Beranda, pilih **Kelola Galeri**.
+2. Masukkan kata sandi admin standar `261078`.
+3. Isi judul, tanggal, ringkasan, dan pilih foto kegiatan.
+4. Pilih **Simpan dan Terbitkan**. Foto otomatis diperkecil agar ringan dibuka dari telepon.
+5. Gunakan tombol **Edit** atau **Hapus** pada kartu dokumentasi bila diperlukan.
+6. Gunakan **Cadangkan Galeri** secara berkala.
+7. Agar dokumentasi tampil pada semua perangkat, aktifkan Google Apps Script sesuai `PANDUAN_REKAP_REALTIME.md`. Tanpa integrasi, perubahan hanya tersimpan pada browser admin.
+8. Jangan menampilkan foto atau data pribadi murid tanpa dasar izin dan kebijakan sekolah yang sesuai.

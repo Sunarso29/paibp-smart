@@ -4,17 +4,18 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 
 ## Fitur Utama
 
-- Ruang Murid: 30 ringkasan materi hasil pengolahan modul, latihan, LKPD interaktif, jawaban lokal, cetak, dan kirim tugas.
-- Ruang Guru: akses berkunci, CP terbaru, KKTP, ATP, Prota, Promes, Kalender Pendidikan, analisis hari efektif, 30 Modul Ajar Lengkap, rekap akses, dan rekap tugas terpisah per kelas.
+- Ruang Murid: 30 paket belajar dengan pendahuluan, pengertian, dalil, infografis, ikhtisar, latihan langsung, LKPD interaktif, jawaban lokal, cetak, dan kirim tugas.
+- Ruang Guru: akses berkunci, CP, KKTP, ATP, Prota, Promes, analisis alokasi waktu, dan 30 modul lengkap yang diadopsi dari 48 berkas sumber kelas VII–IX, Kalender Pendidikan, rekap akses, serta rekap tugas terpisah per kelas.
 - Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat, kalender bertanda per tanggal, dan nasihat bersumber.
 - Fitur Games: 10 soal acak, skor, XP, level, dan lencana.
-- Spensus: selayang pandang sekolah, kepala sekolah, tenaga kependidikan, 39 guru, galeri dua baris pada telepon, dan ruang dokumentasi kegiatan.
+- Spensus: selayang pandang sekolah, kepala sekolah, tenaga kependidikan, 37 guru, galeri dua baris pada telepon, serta editor admin dokumentasi kegiatan.
 
 ## Halaman
 
 - `index.html` — beranda serta empat ruang utama
 - `app-config.js` — konfigurasi opsional sinkronisasi rekap
-- `content-data.js` — data lengkap 30 bab dan perangkat guru
+- `content-data.js` — data lengkap 30 bab Ruang Murid
+- `teacher-source-data.js` — tampilan terstruktur 48 perangkat sumber Ruang Guru
 - `calendar-data.js` — libur, peringatan, dan Kaldik bertanggal
 - `islamic-data.js` — doa, dzikir, kalender puasa/sejarah, dan nasihat bersumber
 - `school-data.js` — identitas sekolah serta data kepala sekolah, guru, dan tenaga kependidikan
@@ -23,6 +24,7 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 - `service-worker.js` — dukungan konten inti saat koneksi terbatas
 - `manifest.webmanifest` — pemasangan situs sebagai aplikasi web
 - `assets/staff/` — foto web tenaga pendidik dan kependidikan
+- `assets/perangkat/` — 48 berkas sumber `.docx` kelas VII–IX
 - `google-apps-script/Code.gs` — backend opsional rekap akses lintas perangkat
 - `PANDUAN_REKAP_REALTIME.md` — langkah aktivasi backend
 - `privacy.html` — Kebijakan Privasi

@@ -368,7 +368,7 @@
         </div>
       </section>
 
-      <section class="section alt">
+      <section class="section alt" data-home-only>
         <div class="container feature">
           <div>
             <span class="badge">Identitas dan Arah Pengembangan</span>
@@ -387,7 +387,7 @@
         </div>
       </section>
 
-      <section class="section" id="spensus">
+      <section class="section" id="spensus" data-home-only>
         <div class="container">
           <div class="section-heading">
             <span class="badge">Selayang Pandang</span>
@@ -410,12 +410,57 @@
             <div class="staff-grid" id="teacher-grid"></div>
           </div>
           <div class="staff-section">
-            <span class="badge">Spensus Terkini</span>
-            <h3>Dokumentasi Kegiatan</h3>
+            <div class="subheading-row">
+              <div>
+                <span class="badge">Spensus Terkini</span>
+                <h3>Dokumentasi Kegiatan</h3>
+                <p>Informasi dan dokumentasi kegiatan terbaru SMP Negeri 1 Susukan.</p>
+              </div>
+              <button class="btn btn-compact" id="open-gallery-admin" type="button">🔐 Kelola Galeri</button>
+            </div>
             <div class="news-placeholder" id="news-gallery">
               <span aria-hidden="true">📸</span>
-              <div><strong>Galeri siap diisi</strong><p>Bagian ini telah disiapkan untuk foto, judul, tanggal, dan ringkasan kegiatan Spensus berikutnya.</p></div>
+              <div><strong>Belum ada dokumentasi yang diterbitkan</strong><p>Pengelola dapat menambahkan foto, judul, tanggal, dan ringkasan kegiatan melalui akses admin.</p></div>
             </div>
+            <section class="gallery-admin no-print" id="gallery-admin" hidden aria-labelledby="gallery-admin-title">
+              <div class="gallery-admin-head">
+                <div>
+                  <span class="badge">Akses Admin</span>
+                  <h4 id="gallery-admin-title">Editor Spensus Terkini</h4>
+                  <p>Tambahkan foto dan informasi kegiatan. Perubahan tersimpan pada perangkat ini dan dapat disinkronkan apabila rekap daring telah diaktifkan.</p>
+                </div>
+                <button class="text-button" id="close-gallery-admin" type="button">Tutup editor</button>
+              </div>
+              <form id="gallery-form">
+                <input id="gallery-item-id" type="hidden">
+                <div class="gallery-form-grid">
+                  <label>Judul kegiatan
+                    <input id="gallery-title" type="text" maxlength="120" required placeholder="Contoh: Pesantren Kilat Ramadhan">
+                  </label>
+                  <label>Tanggal kegiatan
+                    <input id="gallery-date" type="date" required>
+                  </label>
+                  <label class="gallery-summary-field">Ringkasan
+                    <textarea id="gallery-summary" rows="4" maxlength="600" required placeholder="Tuliskan kegiatan, tujuan, dan hasil utamanya."></textarea>
+                  </label>
+                  <label>Foto kegiatan
+                    <input id="gallery-photo" type="file" accept="image/jpeg,image/png,image/webp">
+                    <small>JPG, PNG, atau WebP. Foto otomatis diperkecil agar ringan dibuka dari hape.</small>
+                  </label>
+                  <div class="gallery-photo-preview" id="gallery-photo-preview" aria-live="polite">
+                    <span aria-hidden="true">🖼️</span>
+                    <small>Pratinjau foto</small>
+                  </div>
+                </div>
+                <p class="save-status" id="gallery-admin-status" aria-live="polite"></p>
+                <div class="actions">
+                  <button class="cta" type="submit">Simpan dan Terbitkan</button>
+                  <button class="btn" id="cancel-gallery-edit" type="button">Bersihkan Formulir</button>
+                  <button class="btn" id="export-gallery" type="button">Cadangkan Galeri</button>
+                  <label class="btn file-button">Pulihkan Galeri<input id="import-gallery" type="file" accept="application/json,.json"></label>
+                </div>
+              </form>
+            </section>
           </div>
         </div>
       </section>
@@ -457,6 +502,7 @@
 
     <script src="app-config.js"></script>
     <script src="content-data.js"></script>
+    <script src="teacher-source-data.js"></script>
     <script src="calendar-data.js"></script>
     <script src="staff-images.js"></script>
     <script src="school-data.js"></script>

@@ -1,16 +1,18 @@
 PAIBP SMART SMP
-Versi paket: 6.0
+Versi paket: 7.0
 Tanggal paket: 29 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
 Paket ini memuat:
-- 30 paket materi, latihan, dan LKPD kelas VII–IX
+- 30 paket materi, dalil, ringkasan visual, latihan langsung, dan LKPD kelas VII–IX
 - formulir tugas murid dan berkas kirim .paibp
 - rekap tugas guru, nilai, catatan, CSV, cadangan, dan cetak
 - Ruang Guru berkunci, rekap pekerjaan terpisah per kelas, serta integrasi opsional rekap akses dan pengiriman tugas lintas perangkat
-- 30 Modul Ajar Lengkap yang dapat dicetak/diunduh
+- 48 perangkat sumber kelas VII–IX: CP, ATP, KKTP, Prota, Promes, analisis alokasi waktu, dan 30 modul ajar lengkap
+- berkas sumber .docx dapat diunduh langsung dari Ruang Guru
 - Al Qur'an, audio yang dapat disimpan luring, Hisnul Muslim, dzikir, kalender bertanda per tanggal, dan nasihat bersumber
-- profil sekolah, 39 guru, 14 kepala sekolah/tenaga kependidikan, dan Spensus Terkini
+- profil sekolah, 37 guru, 14 kepala sekolah/tenaga kependidikan, dan Spensus Terkini khusus beranda
+- editor admin Spensus Terkini untuk foto, judul, tanggal, ringkasan, cadangan, dan sinkronisasi opsional
 - galeri personel responsif dua baris pada telepon, tanpa filter mapel, dengan foto wajah tertanam
 - panduan Google Apps Script untuk mengaktifkan rekap akses murid secara daring
 - dukungan PWA dan mode luring

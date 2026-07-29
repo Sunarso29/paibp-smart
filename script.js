@@ -42,6 +42,7 @@ if (workspace && appData) {
   const { chapters, cp, academicCalendar } = appData;
   const islamicData = window.PAIBP_ISLAMIC || { dua: [], fastingRules: [], historicDates: [], dailyInsights: [] };
   const schoolData = window.PAIBP_SCHOOL || { school: null, teachers: [], staff: [], news: [] };
+  const teacherSources = window.PAIBP_TEACHER_SOURCES || {};
   const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
   const appConfig = window.PAIBP_CONFIG || { realtimeEndpoint: "", realtimeReadKey: "" };
   const STORAGE_KEY = "paibp-smart-progress-v3";
@@ -51,6 +52,7 @@ if (workspace && appData) {
   const STUDENT_IDENTITY_KEY = "paibp-smart-student-identity-v1";
   const SUBMISSION_RECAP_KEY = "paibp-smart-submission-recap-v1";
   const CUSTOM_CALENDAR_KEY = "paibp-smart-custom-calendar-v1";
+  const GALLERY_STORAGE_KEY = "paibp-smart-gallery-v1";
   const TEACHER_SESSION_KEY = "paibp-smart-teacher-unlocked";
   const TEACHER_PASSWORD_HASH = "5a26e9c9bf1880cd3532883aad715e962d0b8c6cf06c4bfb61b44bcf0def3284";
   const ACCESS_SESSION_KEY = "paibp-smart-access-session-v1";
@@ -120,6 +122,9 @@ if (workspace && appData) {
   let quizIndex = -1;
   let quizScore = 0;
   let quizLocked = false;
+  let pendingProtectedAction = "teacher";
+  let galleryAdminOpen = false;
+  let galleryPreviewData = "";
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -189,12 +194,23 @@ if (workspace && appData) {
     }
   }
 
-  function setTeacherAuthVisible(visible) {
+  function setTeacherAuthVisible(visible, purpose = pendingProtectedAction) {
     const modal = document.querySelector("#teacher-auth");
     if (!modal) return;
     modal.hidden = !visible;
     document.body.classList.toggle("has-modal", visible);
     if (visible) {
+      const title = document.querySelector("#teacher-auth-title");
+      const description = document.querySelector("#teacher-auth-description");
+      const submit = document.querySelector("#teacher-auth-form button[type='submit']");
+      const galleryPurpose = purpose === "gallery";
+      if (title) title.textContent = galleryPurpose ? "Akses Admin Spensus Terkini" : "Akses Khusus Ruang Guru";
+      if (description) {
+        description.textContent = galleryPurpose
+          ? "Masukkan kata sandi admin untuk menambah atau menyunting dokumentasi kegiatan."
+          : "Masukkan kata sandi untuk membuka perangkat pembelajaran dan rekap murid.";
+      }
+      if (submit) submit.textContent = galleryPurpose ? "Buka Editor Galeri" : "Buka Ruang Guru";
       const input = document.querySelector("#teacher-password");
       const error = document.querySelector("#teacher-auth-error");
       if (error) error.textContent = "";
@@ -265,7 +281,8 @@ if (workspace && appData) {
 
   function openPanel(name, { skipAuth = false } = {}) {
     if (name === "teacher" && !skipAuth && !isTeacherUnlocked()) {
-      setTeacherAuthVisible(true);
+      pendingProtectedAction = "teacher";
+      setTeacherAuthVisible(true, "teacher");
       return;
     }
     const target = document.querySelector(`[data-panel="${name}"]`);
@@ -276,6 +293,9 @@ if (workspace && appData) {
     openButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.openPanel === name));
     workspaceTitle.textContent = panelMeta[name][0];
     workspaceDescription.textContent = panelMeta[name][1];
+    document.querySelectorAll("[data-home-only]").forEach((section) => {
+      section.hidden = name !== "welcome";
+    });
     if (name === "student") {
       renderChapterCards();
       postRealtimeEvent("access", { action: "open_student_room" });
@@ -301,7 +321,11 @@ if (workspace && appData) {
         // The room remains open for the current interaction even if storage is unavailable.
       }
       setTeacherAuthVisible(false);
-      openPanel("teacher", { skipAuth: true });
+      if (pendingProtectedAction === "gallery") {
+        setGalleryAdminVisible(true);
+      } else {
+        openPanel("teacher", { skipAuth: true });
+      }
       return;
     }
     if (error) error.textContent = "Kata sandi tidak sesuai. Silakan periksa kembali.";
@@ -326,6 +350,9 @@ if (workspace && appData) {
     openButtons.forEach((button) => button.classList.remove("is-active"));
     workspaceTitle.textContent = panelMeta.welcome[0];
     workspaceDescription.textContent = panelMeta.welcome[1];
+    document.querySelectorAll("[data-home-only]").forEach((section) => {
+      section.hidden = false;
+    });
     workspace.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
   });
 
@@ -404,19 +431,103 @@ if (workspace && appData) {
 
   function moduleSourceNote(chapter) {
     if (chapter.grade === "VII") {
-      return "Ringkasan materi, latihan, dan LKPD ini diolah dari Perangkat Ajar PAIBP Kelas VII Revisi CP Terbaru yang dilampirkan pengelola.";
+      return chapter.number === 1
+        ? "Disarikan secara mandiri dari struktur Buku PAIBP Kelas VII halaman 2–27 dan Modul Ajar Bab 1 yang dilampirkan. Materi disajikan ulang sebagai visual, ikhtisar, latihan, dan LKPD; bukan salinan halaman buku."
+        : "Diolah dari Buku PAIBP Kelas VII dan perangkat Bab yang dilampirkan dengan pola lengkap: tujuan, pemantik, pengertian, dalil, pendalaman, ikhtisar, latihan, proyek, dan refleksi.";
     }
-    if (chapter.number <= 2) {
-      return `Diolah dari Modul ${chapter.number} Kelas ${chapter.grade} yang menjadi acuan komposisi lengkap CP 2026.`;
-    }
-    return `Diolah dari Modul ${chapter.number} Kelas ${chapter.grade}; perangkat gurunya telah dilengkapi mengikuti komposisi Modul 1–2 tanpa mengubah topik asli bab.`;
+    return `Diolah dari Modul Ajar Bab ${chapter.number} Kelas ${chapter.grade} dalam berkas perangkat CP terbaru yang dilampirkan, kemudian disajikan ulang sebagai ringkasan visual dan latihan interaktif.`;
+  }
+
+  const chapterDalil = {
+    "VII-2": ["Al Qur'an Surat Al-A'raf ayat 180", "Al Qur'an Surat Al-Hasyr ayat 22–24", "Hadits Riwayat tentang sembilan puluh sembilan nama Allah Subhanahu Wata'ala"],
+    "VII-3": ["Al Qur'an Surat Al-'Ankabut ayat 45", "Al Qur'an Surat Al-Ahzab ayat 41–42", "Al Qur'an Surat Al-Baqarah ayat 152"],
+    "VII-4": ["Al Qur'an Surat Al-Hajj ayat 77", "Al Qur'an Surat Al-Isra' ayat 107–109", "Hadits Riwayat tentang sujud syukur, sahwi, dan tilawah"],
+    "VII-5": ["Al Qur'an Surat Ali 'Imran ayat 137", "Al Qur'an Surat Al-Hasyr ayat 18", "Sumber sejarah Daulah Umayyah pada buku dan modul resmi"],
+    "VII-7": ["Al Qur'an Surat Al-Hasyr ayat 18", "Al Qur'an Surat Qaf ayat 18", "Hadits Riwayat tentang muhasabah dan tanggung jawab amal"],
+    "VII-9": ["Al Qur'an Surat Al-Baqarah ayat 185", "Al Qur'an Surat An-Nisa' ayat 101", "Hadits Riwayat tentang mengambil keringanan syariat"],
+    "VII-10": ["Al Qur'an Surat Ali 'Imran ayat 137", "Al Qur'an Surat At-Taubah ayat 122", "Sumber sejarah Andalusia pada buku dan modul resmi"],
+    "VIII-2": ["Al Qur'an Surat Al-Baqarah ayat 4", "Al Qur'an Surat Al-Ma'idah ayat 48", "Hadits Riwayat tentang berpegang pada petunjuk Allah Subhanahu Wata'ala"],
+    "VIII-3": ["Al Qur'an Surat An-Nisa' ayat 58", "Al Qur'an Surat At-Taubah ayat 119", "Hadits Riwayat tentang kejujuran yang menuntun kepada kebaikan"],
+    "VIII-4": ["Al Qur'an Surat Fussilat ayat 37", "Al Qur'an Surat Al-Ma'idah ayat 32", "Hadits Riwayat tentang sholat gerhana, istisqa, dan jenazah"],
+    "VIII-5": ["Al Qur'an Surat Al-'Alaq ayat 1–5", "Al Qur'an Surat Az-Zumar ayat 9", "Sumber sejarah budaya literasi Daulah Abbasiyah"],
+    "VIII-7": ["Al Qur'an Surat An-Nisa' ayat 136", "Al Qur'an Surat Al-Baqarah ayat 285", "Hadits Riwayat tentang kesatuan risalah para nabi"],
+    "VIII-8": ["Al Qur'an Surat Al-Kafirun ayat 6", "Al Qur'an Surat Al-Hujurat ayat 13", "Al Qur'an Surat Al-Mumtahanah ayat 8"],
+    "VIII-9": ["Al Qur'an Surat Al-Baqarah ayat 275", "Al Qur'an Surat Al-Baqarah ayat 282", "Al Qur'an Surat An-Nisa' ayat 29"],
+    "VIII-10": ["Al Qur'an Surat Al-'Alaq ayat 1–5", "Al Qur'an Surat Al-Mujadilah ayat 11", "Sumber sejarah ilmuwan Muslim pada modul resmi"],
+    "IX-2": ["Al Qur'an Surat Al-Baqarah ayat 4", "Al Qur'an Surat Az-Zalzalah ayat 1–8", "Al Qur'an Surat Al-Baqarah ayat 155–156"],
+    "IX-4": ["Al Qur'an Surat Al-Kautsar ayat 2", "Al Qur'an Surat Al-Hajj ayat 36–37", "Hadits Riwayat tentang akikah dan kurban"],
+    "IX-5": ["Al Qur'an Surat Ali 'Imran ayat 26", "Al Qur'an Surat Yusuf ayat 111", "Sumber sejarah Daulah Usmani pada modul resmi"],
+    "IX-8": ["Al Qur'an Surat Al-A'raf ayat 31", "Al Qur'an Surat An-Nahl ayat 125", "Hadits Riwayat tentang keindahan dan akhlak yang baik"],
+    "IX-9": ["Al Qur'an Surat An-Nisa' ayat 59", "Al Qur'an Surat An-Nahl ayat 43", "Sumber biografi dan metode keilmuan imam mazhab"],
+    "IX-10": ["Al Qur'an Surat Yusuf ayat 111", "Al Qur'an Surat Al-Hasyr ayat 18", "Sumber sejarah Daulah Safawi dan Mughal pada modul resmi"],
+  };
+
+  function referencesForChapter(chapter) {
+    return chapter.references?.length ? chapter.references : (chapterDalil[chapter.id] || []);
+  }
+
+  function chapterKeywords(chapter) {
+    return chapter.concepts.map(([title]) => title).slice(0, 6);
+  }
+
+  function quickQuizForChapter(chapter) {
+    const concepts = chapter.concepts;
+    const applications = chapter.applications;
+    return [
+      {
+        question: `Pernyataan yang paling tepat menjelaskan “${concepts[0][0]}” adalah …`,
+        options: [concepts[0][1], concepts[1][1], "Cukup dihafalkan tanpa dipahami atau diterapkan.", "Tidak memiliki hubungan dengan kehidupan sehari-hari."],
+        answer: 0,
+        explanation: concepts[0][1],
+      },
+      {
+        question: `Konsep apakah yang sesuai dengan uraian berikut: “${concepts[1][1]}”`,
+        options: [concepts[1][0], concepts[2][0], concepts[0][0], concepts[3][0]],
+        answer: 0,
+        explanation: `Uraian tersebut merupakan penjelasan tentang ${concepts[1][0]}.`,
+      },
+      {
+        question: "Tindakan yang paling sesuai dengan isi bab ini adalah …",
+        options: [applications[0], "Menunggu orang lain berbuat baik terlebih dahulu.", "Mengabaikan bukti dan nasihat yang dapat dipercaya.", "Menerapkan konsep hanya ketika dinilai guru."],
+        answer: 0,
+        explanation: `${applications[0]} merupakan bentuk penerapan yang dapat dilatih secara nyata.`,
+      },
+      {
+        question: "Bagaimana cara menunjukkan bahwa materi sudah dipahami secara utuh?",
+        options: ["Menjelaskan konsep, menunjukkan dasar, dan menerapkannya secara bertanggung jawab.", "Menghafal judul tanpa memahami makna.", "Menyalin jawaban teman agar cepat selesai.", "Menghindari pertanyaan dan refleksi."],
+        answer: 0,
+        explanation: "Pemahaman utuh menghubungkan pengetahuan, dalil, alasan, sikap, dan tindakan.",
+      },
+      {
+        question: "Kesimpulan utama bab ini yang paling tepat adalah …",
+        options: [chapter.overview, "Materi agama hanya diperlukan saat ujian.", "Semua persoalan dapat diselesaikan tanpa belajar dari sumber.", "Pengetahuan tidak perlu memengaruhi perilaku."],
+        answer: 0,
+        explanation: chapter.overview,
+      },
+    ];
+  }
+
+  function quickQuizHtml(chapter) {
+    return `
+      <div class="chapter-quiz" data-quick-quiz>
+        ${quickQuizForChapter(chapter).map((item, questionIndex) => `
+          <article class="chapter-quiz-question" data-quiz-question="${questionIndex}" data-correct="${item.answer}" data-explanation="${escapeHtml(item.explanation)}">
+            <h4>${questionIndex + 1}. ${escapeHtml(item.question)}</h4>
+            <div class="chapter-quiz-options">
+              ${item.options.map((option, optionIndex) => `<button type="button" data-quiz-option="${optionIndex}"><span>${String.fromCharCode(65 + optionIndex)}</span>${escapeHtml(option)}</button>`).join("")}
+            </div>
+            <p class="chapter-quiz-feedback" aria-live="polite"></p>
+          </article>`).join("")}
+        <div class="chapter-quiz-score"><strong data-quiz-score>0 dari 5 benar</strong><span>Jawaban dapat diulang dengan membuka kembali tab Materi Bab.</span></div>
+      </div>`;
   }
 
   function lessonMaterialHtml(chapter) {
+    const references = referencesForChapter(chapter);
     return `
       <section class="document-cover">
-        <p>PAIBP SMART SMP • MATERI HASIL PENGOLAHAN MODUL</p>
-        <h2>${chapter.title}</h2>
+        <p>PAIBP SMART SMP • PAKET BELAJAR UTUH</p>
+        <h2>${escapeHtml(chapter.title)}</h2>
         <div class="identity-grid">
           <span><small>Kelas</small><strong>${chapter.grade}</strong></span>
           <span><small>Semester</small><strong>${chapter.semester}</strong></span>
@@ -426,67 +537,98 @@ if (workspace && appData) {
         <p class="document-note">${escapeHtml(moduleSourceNote(chapter))}</p>
       </section>
       <section class="document-section">
-        <h3>A. Tujuan Pembelajaran</h3>
-        <ol>${chapter.objectives.map((item) => `<li>${item}.</li>`).join("")}</ol>
-      </section>
-      ${chapter.references?.length ? `
-        <section class="document-section">
-          <h3>Dalil dan Sumber Pokok Modul</h3>
-          <ul>${chapter.references.map((item) => `<li>${escapeHtml(item)}.</li>`).join("")}</ul>
-          <p class="document-note">Baca teks dan penjelasan lengkap melalui Al Qur'an, kitab hadits, buku teks resmi, dan bimbingan guru; jangan mengambil kesimpulan hanya dari potongan terjemahan.</p>
-        </section>` : ""}
-      <section class="document-section">
-        <h3>B. Pengantar Kontekstual</h3>
-        <p>${chapter.overview}</p>
-        <div class="thinking-prompt"><strong>Pertanyaan pemantik:</strong> Bagaimana tema bab ini memengaruhi keputusan, kebiasaan, dan tanggung jawab murid dalam kehidupan nyata?</div>
+        <h3>1. Tujuan Pembelajaran</h3>
+        <ol>${chapter.objectives.map((item) => `<li>${escapeHtml(item)}.</li>`).join("")}</ol>
       </section>
       <section class="document-section">
-        <h3>C. Materi Inti</h3>
+        <h3>2. Infografis Alur Belajar</h3>
+        <div class="visual-learning-path" aria-label="Alur belajar bab">
+          <span><b>1</b>Amati</span><span><b>2</b>Pahami</span><span><b>3</b>Telusuri dalil</span>
+          <span><b>4</b>Terapkan</span><span><b>5</b>Berlatih</span><span><b>6</b>Refleksi</span>
+        </div>
+      </section>
+      <section class="document-section">
+        <h3>3. Mari Bertafakur — Ringkasan Pendahuluan</h3>
+        <p class="summary-lead">${escapeHtml(chapter.overview)}</p>
+        <div class="thinking-prompt"><strong>Pertanyaan pemantik:</strong> Di manakah tema ini dapat kamu temukan di rumah, sekolah, masyarakat, atau ruang digital? Keputusan apa yang seharusnya berubah setelah memahaminya?</div>
+      </section>
+      <section class="document-section">
+        <h3>4. Titik Fokus</h3>
+        <div class="keyword-cloud">${chapterKeywords(chapter).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+      </section>
+      <section class="document-section">
+        <h3>5. Pengertian dan Konsep Utama</h3>
         <div class="concept-stack">
           ${chapter.concepts.map(([title, body], index) => `
             <article>
               <span>${index + 1}</span>
-              <div><h4>${title}</h4><p>${body}</p></div>
+              <div><h4>${escapeHtml(title)}</h4><p>${escapeHtml(body)}</p></div>
             </article>`).join("")}
         </div>
       </section>
       <section class="document-section">
-        <h3>D. Penerapan dalam Kehidupan</h3>
-        <p>Pemahaman dinilai bermakna ketika dapat diterapkan secara sadar. Contoh tindakan yang dapat dilatih:</p>
-        <ul class="application-list">${chapter.applications.map((item) => `<li>${item}.</li>`).join("")}</ul>
+        <h3>6. Dalil dan Sumber Penguatan</h3>
+        <div class="dalil-grid">${references.map((item, index) => `<article><span>${index + 1}</span><p>${escapeHtml(item)}</p></article>`).join("")}</div>
+        <p class="document-note">Buka dan baca ayat atau Hadits Riwayat dalam sumber utuh bersama terjemah, penjelasan buku, dan bimbingan guru. Daftar ini menjadi pintu kajian, bukan pengganti tafsir atau syarah.</p>
       </section>
       <section class="document-section">
-        <h3>E. Cek Pemahaman</h3>
-        <ol>${chapter.questions.map((item) => `<li>${item}</li>`).join("")}</ol>
+        <h3>7. Pendalaman dan Penerapan</h3>
+        <p>Belajar PAIBP tidak berhenti pada hafalan. Latih pemahaman melalui tindakan berikut:</p>
+        <ul class="application-list">${chapter.applications.map((item) => `<li>${escapeHtml(item)}.</li>`).join("")}</ul>
       </section>
       <section class="document-section">
-        <h3>F. Tugas Produk</h3>
-        <div class="project-box"><strong>Proyek bab:</strong> ${chapter.project}</div>
-        <p><strong>Kriteria umum:</strong> isi benar, bukti atau alasan jelas, karya rapi, sumber dicantumkan, dan proses dilakukan dengan jujur.</p>
+        <h3>8. Ikhtisar</h3>
+        <div class="ikhtisar-grid">
+          ${chapter.concepts.map(([title, body]) => `<article><strong>${escapeHtml(title)}</strong><p>${escapeHtml(body)}</p></article>`).join("")}
+        </div>
+      </section>
+      <section class="document-section">
+        <h3>9. Rajin Berlatih — Cek Langsung</h3>
+        <p>Pilih jawaban pada lima soal berikut. Hasil dan penjelasan akan tampil langsung tanpa menunggu guru.</p>
+        ${quickQuizHtml(chapter)}
+      </section>
+      <section class="document-section">
+        <h3>10. Siap Berkreasi</h3>
+        <div class="project-box"><strong>Proyek bab:</strong> ${escapeHtml(chapter.project)}</div>
+        <p><strong>Kriteria:</strong> isi benar, alasan atau bukti jelas, karya rapi, sumber dicantumkan, dan proses dilakukan dengan jujur.</p>
+      </section>
+      <section class="document-section reflection-card">
+        <h3>11. Inspirasiku dan Refleksi</h3>
+        <p>Satu pengetahuan baru yang saya peroleh adalah ….</p>
+        <p>Satu sikap yang akan saya biasakan setelah bab ini adalah ….</p>
+        <button class="cta no-print" type="button" data-open-submission>Tulis Jawaban dan Kirim kepada Guru</button>
       </section>`;
   }
 
   function lessonSummaryHtml(chapter) {
+    const references = referencesForChapter(chapter);
     return `
       <section class="document-cover compact-cover">
         <p>RINGKASAN BAB • KELAS ${chapter.grade}</p>
-        <h2>${chapter.title}</h2>
+        <h2>${escapeHtml(chapter.title)}</h2>
+        <p>${escapeHtml(moduleSourceNote(chapter))}</p>
       </section>
       <section class="document-section summary-sheet">
-        <h3>Inti Pemahaman</h3>
-        <p class="summary-lead">${chapter.overview}</p>
+        <h3>Ringkasan Pendahuluan</h3>
+        <p class="summary-lead">${escapeHtml(chapter.overview)}</p>
+        <h3>Pengertian dan Inti Pemahaman</h3>
         <div class="summary-points">
           ${chapter.concepts.map(([title, body], index) => `
-            <article><span>${index + 1}</span><div><strong>${title}</strong><p>${body}</p></div></article>`).join("")}
+            <article><span>${index + 1}</span><div><strong>${escapeHtml(title)}</strong><p>${escapeHtml(body)}</p></div></article>`).join("")}
         </div>
       </section>
       <section class="document-section">
-        <h3>Kata Kunci Tindakan</h3>
-        <div class="keyword-cloud">${chapter.applications.map((item) => `<span>${item}</span>`).join("")}</div>
+        <h3>Dalil Pokok</h3>
+        <ul>${references.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
       </section>
       <section class="document-section">
-        <h3>Kalimat Refleksi</h3>
+        <h3>Kata Kunci dan Tindakan</h3>
+        <div class="keyword-cloud">${chapter.applications.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+      </section>
+      <section class="document-section">
+        <h3>Refleksi</h3>
         <p>Setelah mempelajari bab ini, pemahaman yang paling penting bagi saya adalah …, dan tindakan yang akan saya biasakan ialah ….</p>
+        <button class="cta no-print" type="button" data-open-submission>Kerjakan Latihan dan Kirim</button>
       </section>`;
   }
 
@@ -494,7 +636,7 @@ if (workspace && appData) {
     return `
       <section class="document-cover worksheet-cover">
         <p>LEMBAR KERJA MURID • PAIBP SMART SMP</p>
-        <h2>LKPD: ${chapter.title}</h2>
+        <h2>LKPD: ${escapeHtml(chapter.title)}</h2>
         <table class="identity-table">
           <tr><th>Nama</th><td>....................................................................</td><th>Kelas</th><td>....................</td></tr>
           <tr><th>Kelompok</th><td>....................................................................</td><th>Tanggal</th><td>....................</td></tr>
@@ -502,7 +644,7 @@ if (workspace && appData) {
       </section>
       <section class="document-section">
         <h3>A. Tujuan LKPD</h3>
-        <ul>${chapter.objectives.map((item) => `<li>${item}.</li>`).join("")}</ul>
+        <ul>${chapter.objectives.map((item) => `<li>${escapeHtml(item)}.</li>`).join("")}</ul>
       </section>
       <section class="document-section">
         <h3>B. Petunjuk</h3>
@@ -517,17 +659,17 @@ if (workspace && appData) {
         <h3>C. Aktivitas 1 — Peta Konsep</h3>
         <p>Hubungkan empat konsep berikut dan jelaskan hubungan antarkonsep dengan kalimat sendiri.</p>
         <div class="concept-map">
-          ${chapter.concepts.map(([title]) => `<span>${title}</span>`).join("")}
+          ${chapter.concepts.map(([title]) => `<span>${escapeHtml(title)}</span>`).join("")}
         </div>
         <div class="answer-space tall"></div>
       </section>
       <section class="document-section worksheet-activity">
         <h3>D. Aktivitas 2 — Analisis</h3>
-        <ol>${chapter.questions.map((item) => `<li>${item}<div class="answer-space"></div></li>`).join("")}</ol>
+        <ol>${chapter.questions.map((item) => `<li>${escapeHtml(item)}<div class="answer-space"></div></li>`).join("")}</ol>
       </section>
       <section class="document-section worksheet-activity">
         <h3>E. Aktivitas 3 — Produk Bermakna</h3>
-        <div class="project-box">${chapter.project}</div>
+        <div class="project-box">${escapeHtml(chapter.project)}</div>
         <table class="planning-table">
           <tr><th>Tujuan produk</th><td></td></tr>
           <tr><th>Pembagian tugas</th><td></td></tr>
@@ -555,6 +697,7 @@ if (workspace && appData) {
             <tr><td>Integritas</td><td>Sumber dan proses transparan</td><td>Sumber dicantumkan</td><td>Sumber belum lengkap</td><td>Menyalin tanpa pengakuan</td></tr>
           </tbody>
         </table>
+        <button class="cta no-print" type="button" data-open-submission>Isi LKPD Digital dan Kirim kepada Guru</button>
       </section>`;
   }
 
@@ -779,6 +922,43 @@ if (workspace && appData) {
     });
   }
 
+  function attachQuickQuiz() {
+    const quiz = document.querySelector("[data-quick-quiz]");
+    if (!quiz) return;
+    const answered = new Map();
+    quiz.querySelectorAll("[data-quiz-question]").forEach((question) => {
+      question.querySelectorAll("[data-quiz-option]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const questionIndex = question.dataset.quizQuestion;
+          const selected = Number(button.dataset.quizOption);
+          const correct = Number(question.dataset.correct);
+          answered.set(questionIndex, selected === correct);
+          question.querySelectorAll("[data-quiz-option]").forEach((option) => {
+            const optionIndex = Number(option.dataset.quizOption);
+            option.classList.toggle("is-correct", optionIndex === correct);
+            option.classList.toggle("is-wrong", optionIndex === selected && selected !== correct);
+            option.setAttribute("aria-pressed", String(optionIndex === selected));
+          });
+          const feedback = question.querySelector(".chapter-quiz-feedback");
+          feedback.className = `chapter-quiz-feedback ${selected === correct ? "correct" : "wrong"}`;
+          feedback.textContent = `${selected === correct ? "Benar." : "Belum tepat."} ${question.dataset.explanation}`;
+          const correctCount = [...answered.values()].filter(Boolean).length;
+          quiz.querySelector("[data-quiz-score]").textContent = `${correctCount} dari 5 benar • ${answered.size} soal sudah dijawab`;
+        });
+      });
+    });
+  }
+
+  function attachLessonNavigation() {
+    document.querySelectorAll("[data-open-submission]").forEach((button) => {
+      button.addEventListener("click", () => {
+        currentLessonView = "submission";
+        renderLesson();
+        document.querySelector("#lesson-content")?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+      });
+    });
+  }
+
   function renderLesson() {
     if (!currentChapter) return;
     const buttons = [...document.querySelectorAll("[data-lesson-view]")];
@@ -789,6 +969,8 @@ if (workspace && appData) {
     else if (currentLessonView === "submission") content.innerHTML = lessonSubmissionHtml(currentChapter);
     else content.innerHTML = lessonMaterialHtml(currentChapter);
     if (currentLessonView === "submission") attachStudentWorkForm();
+    if (currentLessonView === "material") attachQuickQuiz();
+    attachLessonNavigation();
     setStudentStatus(currentLessonView === "submission" ? "Jawaban tersimpan otomatis saat diketik." : "");
     updateLessonCompleteButton();
   }
@@ -903,6 +1085,7 @@ if (workspace && appData) {
   const teacherDocButtons = [...document.querySelectorAll("[data-teacher-doc]")];
   teacherGradeButtons.forEach((button) => button.addEventListener("click", () => {
     teacherGrade = button.dataset.teacherGrade;
+    if (teacherDoc === "module") teacherModuleChapterId = `${teacherGrade}-1`;
     setPressed(teacherGradeButtons, "teacherGrade", teacherGrade);
     renderTeacherDocument();
   }));
@@ -1691,23 +1874,92 @@ if (workspace && appData) {
     });
   }
 
+  function sourceBlocksHtml(blocks = []) {
+    let html = "";
+    let listItems = [];
+    const flushList = () => {
+      if (!listItems.length) return;
+      html += `<ul class="source-list">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+      listItems = [];
+    };
+    blocks.forEach((block) => {
+      if (block.type === "list") {
+        listItems.push(block.text);
+        return;
+      }
+      flushList();
+      if (block.type === "table") {
+        const rows = Array.isArray(block.rows) ? block.rows : [];
+        if (!rows.length) return;
+        const columnCount = Math.max(...rows.map((row) => row.length));
+        html += `<div class="source-table-scroll"><table class="data-table source-table"><tbody>${rows.map((row, rowIndex) => {
+          const cells = [...row, ...Array(Math.max(0, columnCount - row.length)).fill("")];
+          const cellTag = rowIndex === 0 ? "th" : "td";
+          return `<tr>${cells.map((cell) => `<${cellTag}>${escapeHtml(cell)}</${cellTag}>`).join("")}</tr>`;
+        }).join("")}</tbody></table></div>`;
+        return;
+      }
+      const tag = {
+        heading2: "h2",
+        heading3: "h3",
+        heading4: "h4",
+      }[block.type] || "p";
+      html += `<${tag}>${escapeHtml(block.text)}</${tag}>`;
+    });
+    flushList();
+    return html;
+  }
+
+  function selectedTeacherSource() {
+    const gradeSource = teacherSources[teacherGrade];
+    if (!gradeSource) return null;
+    if (teacherDoc === "module") {
+      const chapterNumber = Number(String(teacherModuleChapterId).split("-")[1]) || 1;
+      return gradeSource.modules?.[String(chapterNumber)] || null;
+    }
+    return gradeSource[teacherDoc] || null;
+  }
+
+  function teacherSourceDocument(gradeChapters) {
+    const source = selectedTeacherSource();
+    if (!source) return "";
+    const modulePicker = teacherDoc === "module" ? `
+      <section class="module-picker no-print">
+        <label>Pilih modul/bab
+          <select id="module-chapter-select">
+            ${gradeChapters.map((item) => `<option value="${item.id}"${item.id === teacherModuleChapterId ? " selected" : ""}>Bab ${item.number} — ${escapeHtml(item.title)}</option>`).join("")}
+          </select>
+        </label>
+        <span class="live-badge">10 modul sumber lengkap</span>
+      </section>` : "";
+    return `${modulePicker}
+      <section class="document-cover source-cover">
+        <p>PERANGKAT AJAR SUMBER • KELAS ${teacherGrade}</p>
+        <h2>${escapeHtml(source.label)}</h2>
+        <p>Ditampilkan dari berkas perangkat ajar yang dilampirkan pengelola, dengan susunan paragraf dan tabel dipertahankan agar siap dibaca, dicetak, serta dikembangkan.</p>
+        <div class="source-file-actions no-print">
+          <a class="cta btn-compact" href="${escapeHtml(encodeURI(source.downloadPath))}" download>Unduh Berkas Sumber .docx</a>
+          <span>${escapeHtml(source.sourceName)}</span>
+        </div>
+      </section>
+      <div class="teacher-source-notice">
+        <strong>Dokumen lengkap, bukan ringkasan generik.</strong>
+        Isi web diadopsi dari berkas sumber kelas ${teacherGrade}. Penyesuaian istilah hanya dilakukan agar konsisten dengan bahasa portal; berkas asli tetap tersedia melalui tombol unduh.
+      </div>
+      <section class="source-document">${sourceBlocksHtml(source.blocks)}</section>`;
+  }
+
   function renderTeacherDocument() {
     const gradeChapters = chapters.filter((chapter) => chapter.grade === teacherGrade);
     let html = "";
-    if (teacherDoc === "kktp") html = kktpDocument(gradeChapters);
-    else if (teacherDoc === "atp") html = atpDocument(gradeChapters);
-    else if (teacherDoc === "prota") html = protaDocument(gradeChapters);
-    else if (teacherDoc === "promes") html = promesDocument(gradeChapters);
+    if (selectedTeacherSource()) html = teacherSourceDocument(gradeChapters);
     else if (teacherDoc === "calendar") html = calendarDocument();
-    else if (teacherDoc === "effective") html = effectiveDocument();
-    else if (teacherDoc === "module") html = moduleDocument(gradeChapters);
     else if (teacherDoc === "access") html = accessDocument();
     else if (teacherDoc === "submissions") html = submissionsDocument();
     else html = cpDocument();
     const container = document.querySelector("#teacher-document");
     if (!container) return;
     container.innerHTML = html;
-    if (teacherDoc === "effective") attachEffectiveCalculator();
     if (teacherDoc === "module") {
       document.querySelector("#module-chapter-select")?.addEventListener("change", (event) => {
         teacherModuleChapterId = event.target.value;
@@ -2368,6 +2620,255 @@ if (workspace && appData) {
     });
   }
 
+  function readGalleryItems() {
+    const saved = safeJsonParse(localStorage.getItem(GALLERY_STORAGE_KEY), null);
+    if (Array.isArray(saved)) return saved;
+    return Array.isArray(schoolData.news) ? schoolData.news : [];
+  }
+
+  function writeGalleryItems(items) {
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(items.slice(0, 30)));
+  }
+
+  function formatGalleryDate(value) {
+    const date = new Date(`${value}T12:00:00`);
+    return Number.isNaN(date.getTime())
+      ? value
+      : date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function renderGallery() {
+    const newsGallery = document.querySelector("#news-gallery");
+    if (!newsGallery) return;
+    const items = readGalleryItems()
+      .filter((item) => item?.title && item?.date && item?.summary)
+      .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    if (!items.length) {
+      newsGallery.className = "news-placeholder";
+      newsGallery.innerHTML = `
+        <span aria-hidden="true">📸</span>
+        <div><strong>Belum ada dokumentasi yang diterbitkan</strong><p>Pengelola dapat menambahkan foto, judul, tanggal, dan ringkasan kegiatan melalui akses admin.</p></div>`;
+      return;
+    }
+    newsGallery.className = "news-grid";
+    newsGallery.innerHTML = items.map((item) => `
+      <article class="news-card">
+        ${item.image ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async">` : `<div class="news-image-fallback" aria-hidden="true">📸</div>`}
+        <div>
+          <time datetime="${escapeHtml(item.date)}">${escapeHtml(formatGalleryDate(item.date))}</time>
+          <h4>${escapeHtml(item.title)}</h4>
+          <p>${escapeHtml(item.summary)}</p>
+          ${galleryAdminOpen ? `<div class="news-admin-actions no-print">
+            <button class="btn btn-compact" type="button" data-edit-gallery="${escapeHtml(item.id)}">Edit</button>
+            <button class="text-button danger-button" type="button" data-delete-gallery="${escapeHtml(item.id)}">Hapus</button>
+          </div>` : ""}
+        </div>
+      </article>`).join("");
+    attachGalleryItemActions();
+  }
+
+  function resetGalleryForm() {
+    const form = document.querySelector("#gallery-form");
+    form?.reset();
+    const id = document.querySelector("#gallery-item-id");
+    if (id) id.value = "";
+    galleryPreviewData = "";
+    const preview = document.querySelector("#gallery-photo-preview");
+    if (preview) preview.innerHTML = `<span aria-hidden="true">🖼️</span><small>Pratinjau foto</small>`;
+    const status = document.querySelector("#gallery-admin-status");
+    if (status) status.textContent = "";
+  }
+
+  function setGalleryAdminVisible(visible) {
+    if (visible && !isTeacherUnlocked()) {
+      pendingProtectedAction = "gallery";
+      setTeacherAuthVisible(true, "gallery");
+      return;
+    }
+    galleryAdminOpen = visible;
+    const admin = document.querySelector("#gallery-admin");
+    if (admin) admin.hidden = !visible;
+    renderGallery();
+    if (visible) {
+      admin?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+      document.querySelector("#gallery-title")?.focus();
+    } else {
+      resetGalleryForm();
+    }
+  }
+
+  function optimizeGalleryImage(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !/^image\/(jpeg|png|webp)$/.test(file.type)) {
+        reject(new Error("Pilih foto JPG, PNG, atau WebP."));
+        return;
+      }
+      if (file.size > 12 * 1024 * 1024) {
+        reject(new Error("Ukuran foto maksimal 12 MB."));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("Foto tidak dapat dibaca."));
+      reader.onload = () => {
+        const image = new Image();
+        image.onerror = () => reject(new Error("Format foto tidak dapat diproses."));
+        image.onload = () => {
+          const maxWidth = 1440;
+          const maxHeight = 1080;
+          const scale = Math.min(1, maxWidth / image.width, maxHeight / image.height);
+          const width = Math.max(1, Math.round(image.width * scale));
+          const height = Math.max(1, Math.round(image.height * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext("2d").drawImage(image, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/webp", 0.8));
+        };
+        image.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function syncGalleryMutation(action, item) {
+    if (!realtimeIsConfigured()) return false;
+    try {
+      await fetch(appConfig.realtimeEndpoint, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          type: "gallery",
+          key: appConfig.realtimeReadKey,
+          action,
+          item,
+        }),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function loadOnlineGallery() {
+    if (!realtimeIsConfigured() || !appConfig.realtimeReadKey) return;
+    try {
+      const url = new URL(appConfig.realtimeEndpoint);
+      url.searchParams.set("action", "gallery");
+      url.searchParams.set("key", appConfig.realtimeReadKey);
+      url.searchParams.set("_", String(Date.now()));
+      const response = await fetch(url);
+      const result = await response.json();
+      if (result.ok && Array.isArray(result.gallery)) {
+        writeGalleryItems(result.gallery);
+        renderGallery();
+      }
+    } catch {
+      // Galeri lokal tetap dapat dipakai saat koneksi atau endpoint belum tersedia.
+    }
+  }
+
+  function attachGalleryItemActions() {
+    document.querySelectorAll("[data-edit-gallery]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const item = readGalleryItems().find((entry) => entry.id === button.dataset.editGallery);
+        if (!item) return;
+        document.querySelector("#gallery-item-id").value = item.id;
+        document.querySelector("#gallery-title").value = item.title;
+        document.querySelector("#gallery-date").value = item.date;
+        document.querySelector("#gallery-summary").value = item.summary;
+        galleryPreviewData = item.image || "";
+        const preview = document.querySelector("#gallery-photo-preview");
+        preview.innerHTML = item.image
+          ? `<img src="${escapeHtml(item.image)}" alt="Pratinjau ${escapeHtml(item.title)}">`
+          : `<span aria-hidden="true">🖼️</span><small>Tambahkan foto</small>`;
+        document.querySelector("#gallery-form")?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+      });
+    });
+    document.querySelectorAll("[data-delete-gallery]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        if (!window.confirm("Hapus dokumentasi kegiatan ini?")) return;
+        const id = button.dataset.deleteGallery;
+        writeGalleryItems(readGalleryItems().filter((item) => item.id !== id));
+        renderGallery();
+        const synced = await syncGalleryMutation("delete", { id });
+        const status = document.querySelector("#gallery-admin-status");
+        if (status) status.textContent = synced ? "Dokumentasi dihapus dan permintaan sinkronisasi dikirim." : "Dokumentasi dihapus dari perangkat ini.";
+      });
+    });
+  }
+
+  function attachGalleryAdmin() {
+    document.querySelector("#open-gallery-admin")?.addEventListener("click", () => {
+      pendingProtectedAction = "gallery";
+      setGalleryAdminVisible(true);
+    });
+    document.querySelector("#close-gallery-admin")?.addEventListener("click", () => setGalleryAdminVisible(false));
+    document.querySelector("#cancel-gallery-edit")?.addEventListener("click", resetGalleryForm);
+    document.querySelector("#gallery-photo")?.addEventListener("change", async (event) => {
+      const status = document.querySelector("#gallery-admin-status");
+      try {
+        galleryPreviewData = await optimizeGalleryImage(event.target.files?.[0]);
+        document.querySelector("#gallery-photo-preview").innerHTML = `<img src="${escapeHtml(galleryPreviewData)}" alt="Pratinjau foto kegiatan">`;
+        if (status) status.textContent = "Foto siap digunakan.";
+      } catch (error) {
+        galleryPreviewData = "";
+        if (status) status.textContent = error.message;
+      }
+    });
+    document.querySelector("#gallery-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const idInput = document.querySelector("#gallery-item-id");
+      const currentItems = readGalleryItems();
+      const existing = currentItems.find((item) => item.id === idInput.value);
+      if (!galleryPreviewData && !existing?.image) {
+        document.querySelector("#gallery-admin-status").textContent = "Tambahkan satu foto kegiatan sebelum menerbitkan.";
+        return;
+      }
+      const item = {
+        id: existing?.id || (typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `gallery-${Date.now()}`),
+        title: document.querySelector("#gallery-title").value.trim(),
+        date: document.querySelector("#gallery-date").value,
+        summary: document.querySelector("#gallery-summary").value.trim(),
+        image: galleryPreviewData || existing?.image || "",
+        updatedAt: new Date().toISOString(),
+      };
+      const nextItems = existing
+        ? currentItems.map((entry) => entry.id === item.id ? item : entry)
+        : [item, ...currentItems];
+      try {
+        writeGalleryItems(nextItems);
+      } catch {
+        document.querySelector("#gallery-admin-status").textContent = "Penyimpanan perangkat penuh. Cadangkan galeri lalu hapus foto lama atau gunakan foto berukuran lebih kecil.";
+        return;
+      }
+      renderGallery();
+      resetGalleryForm();
+      const synced = await syncGalleryMutation("save", item);
+      document.querySelector("#gallery-admin-status").textContent = synced
+        ? "Dokumentasi disimpan dan permintaan sinkronisasi daring dikirim."
+        : "Dokumentasi disimpan pada perangkat ini. Aktifkan rekap daring agar tampil pada semua perangkat.";
+    });
+    document.querySelector("#export-gallery")?.addEventListener("click", () => {
+      downloadBlob(
+        new Blob([JSON.stringify(readGalleryItems(), null, 2)], { type: "application/json" }),
+        `Cadangan-Spensus-Terkini-${new Date().toISOString().slice(0, 10)}.json`,
+      );
+    });
+    document.querySelector("#import-gallery")?.addEventListener("change", async (event) => {
+      try {
+        const parsed = JSON.parse(await event.target.files?.[0]?.text());
+        if (!Array.isArray(parsed) || parsed.some((item) => !item?.id || !item?.title || !item?.date)) throw new Error();
+        writeGalleryItems(parsed);
+        renderGallery();
+        document.querySelector("#gallery-admin-status").textContent = `${parsed.length} dokumentasi berhasil dipulihkan.`;
+      } catch {
+        document.querySelector("#gallery-admin-status").textContent = "Berkas cadangan galeri tidak sesuai.";
+      }
+      event.target.value = "";
+    });
+  }
+
   function renderSchoolProfile() {
     if (!schoolData.school) return;
     const { school, teachers, staff } = schoolData;
@@ -2392,19 +2893,7 @@ if (workspace && appData) {
       staffGrid.innerHTML = staff.map((person) => staffCardHtml(person, person.role)).join("");
       activateStaffImageFallback(staffGrid);
     }
-    const newsGallery = document.querySelector("#news-gallery");
-    if (newsGallery && Array.isArray(schoolData.news) && schoolData.news.length) {
-      newsGallery.className = "news-grid";
-      newsGallery.innerHTML = schoolData.news.map((item) => `
-        <article class="news-card">
-          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy">
-          <div>
-            <time datetime="${escapeHtml(item.date)}">${new Date(`${item.date}T12:00:00`).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</time>
-            <h4>${escapeHtml(item.title)}</h4>
-            <p>${escapeHtml(item.summary)}</p>
-          </div>
-        </article>`).join("");
-    }
+    renderGallery();
     const teacherGrid = document.querySelector("#teacher-grid");
     if (teacherGrid) {
       teacherGrid.innerHTML = teachers.map((person) => staffCardHtml(person, person.subject)).join("");
@@ -2433,6 +2922,8 @@ if (workspace && appData) {
   renderHijriCalendar();
   renderDailyInsight();
   renderSchoolProfile();
+  attachGalleryAdmin();
+  loadOnlineGallery();
   postRealtimeEvent("access", { action: "site_open" });
   registerServiceWorker();
 }

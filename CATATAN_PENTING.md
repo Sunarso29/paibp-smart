@@ -12,22 +12,20 @@ GitHub Pages tidak menyediakan server basis data. Karena itu, tombol **Kirim kep
 
 Jangan mengunggah berkas tugas, rekap JSON, atau CSV nilai ke repository publik.
 
-## Perangkat kelas VIII dan IX
+## Perangkat kelas VII, VIII, dan IX
 
-Modul 1–2 dipakai sebagai acuan komposisi. Modul 3–10 pada Ruang Guru telah dilengkapi dengan:
+Ruang Guru menampilkan 48 dokumen yang diadopsi dari berkas perangkat terlampir:
 
-- kesiapan murid;
-- karakteristik materi;
-- dimensi profil lulusan;
-- CP dan tujuan;
-- pembelajaran mendalam;
-- diferensiasi;
-- langkah per pertemuan;
-- asesmen dan rubrik;
-- remedial, pengayaan, dan refleksi;
-- lampiran serta sumber.
+- CP, ATP, KKTP, Prota, Promes, dan Analisis Alokasi Waktu untuk setiap kelas;
+- 10 modul/bab kelas VII;
+- 10 modul/bab kelas VIII;
+- 10 modul/bab kelas IX.
 
-Semua modul dapat dipilih, dicetak, disimpan sebagai PDF, atau diunduh sebagai dokumen Word dari website.
+Susunan paragraf dan tabel sumber dipertahankan dalam tampilan web. Setiap dokumen dapat dibaca, dicetak, disimpan sebagai PDF, diekspor dari tampilan web, atau diunduh kembali sebagai berkas sumber `.docx`.
+
+## Spensus Terkini
+
+Editor galeri dibuka dari Beranda menggunakan kata sandi admin. Tanpa integrasi Google Apps Script, foto dan teks hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, data galeri disimpan pada Google Sheet dan foto pada Google Drive agar dapat dilihat dari perangkat lain.
 
 ## Fitur Islami
 
