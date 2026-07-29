@@ -129,11 +129,16 @@
     const bold = Boolean(normalized.bold || /^Heading[123]$/.test(style));
     const size = Number(normalized.size || options.size || (style === "Title" ? 34 : style === "Heading1" ? 30 : style === "Heading2" ? 26 : style === "Heading3" ? 23 : 21));
     const spacingAfter = Number(options.spacingAfter ?? (/^Heading|Title/.test(style) ? 150 : 90));
-    const lines = String(normalized.text ?? "").split("\n");
+    const rawText = String(normalized.text ?? "");
+    const rtl = normalized.rtl !== undefined
+      ? Boolean(normalized.rtl)
+      : /[\u0600-\u06ff\u0750-\u077f\u08a0-\u08ff]/.test(rawText);
+    const font = rtl ? "Traditional Arabic" : "Cambria";
+    const lines = rawText.split("\n");
     const runs = lines.map((line, index) => (
       `${index ? "<w:br/>" : ""}<w:t xml:space="preserve">${escapeXml(line)}</w:t>`
     )).join("");
-    return `<w:p><w:pPr>${style ? `<w:pStyle w:val="${escapeXml(style)}"/>` : ""}<w:spacing w:after="${spacingAfter}"/>${options.keepNext ? "<w:keepNext/>" : ""}</w:pPr><w:r><w:rPr>${bold ? "<w:b/>" : ""}<w:rFonts w:ascii="Cambria" w:hAnsi="Cambria" w:eastAsia="Cambria"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr>${runs}</w:r></w:p>`;
+    return `<w:p><w:pPr>${style ? `<w:pStyle w:val="${escapeXml(style)}"/>` : ""}<w:spacing w:after="${spacingAfter}"/>${options.keepNext ? "<w:keepNext/>" : ""}${rtl ? "<w:bidi/><w:jc w:val=\"right\"/>" : ""}</w:pPr><w:r><w:rPr>${bold ? "<w:b/>" : ""}${rtl ? "<w:rtl/><w:lang w:bidi=\"ar-SA\"/>" : ""}<w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:eastAsia="${font}" w:cs="${font}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr>${runs}</w:r></w:p>`;
   }
 
   function normalizedTableCell(cell) {

@@ -33,7 +33,9 @@ Ruang Editor dibuka dari Beranda menggunakan kata sandi admin standar `261078`. 
 - Teks dan audio murattal pada menu Al Qur'an juga dapat dimuat dari Al Quran Cloud. Audio murattal luring harus disimpan terlebih dahulu ketika internet tersedia.
 - Tombol bacaan luring pada pembaca dalil memakai suara bahasa Arab perangkat. Pastikan paket suara Arab telah terpasang pada pengaturan bahasa/teks-ke-suara telepon atau komputer.
 - Audio doa/dzikir memakai suara bahasa Arab pada perangkat. Situs menunggu daftar suara sampai siap dan memilih suara Arab secara otomatis; ketersediaannya tetap bergantung pada paket suara yang terpasang di sistem.
-- Akademi Bahasa Arab memuat 100 tab pada setiap tingkat Dasar, Menengah, Mahir, dan Percakapan. Setiap tab berisi 100 soal berurutan dengan umpan balik langsung, perpindahan otomatis, serta penyimpanan sesi dan progres secara luring. Pelafalan dapat diputar luring bila paket suara Arab sudah terpasang pada perangkat.
+- Akademi Bahasa Arab memuat 100 tab pada setiap tingkat Dasar, Menengah, Mahir, dan Percakapan. Setiap tab berisi 100 soal berurutan dengan umpan balik langsung, jeda baca lima detik, perpindahan otomatis, serta penyimpanan sesi dan progres secara luring. Pemutar hanya mengirim karakter Arab ke mesin suara sehingga garis kosong tidak ikut dibaca.
+- Menu Khutbah Jum'at menampilkan 12 judul yang berubah setiap hari dari 24 tema. Sistem menghasilkan lebih dari 1,5 triliun kemungkinan susunan dari komponen editorial terkurasi; angka ini bukan klaim adanya triliunan naskah literal yang disimpan. Setiap naskah perlu diperiksa kembali oleh khatib atau DKM sebelum digunakan.
+- Tajwid Praktis memuat 6 jalur dan 28 materi interaktif. Audio qari perlu diputar atau disimpan sekali ketika daring agar dapat digunakan kembali saat luring. Suara Arab perangkat hanya menjadi cadangan dan tidak menggantikan talaqqi kepada guru Al Qur'an.
 - Kalender Hijriah browser dapat berbeda satu hari dari keputusan resmi pemerintah atau hasil rukyat.
 - Halaman kitab sengaja tidak dicantumkan bila edisi belum terverifikasi karena nomor halaman berbeda antarcetakan.
 

@@ -46,6 +46,7 @@ if (workspace && appData) {
   const teacherSources = window.PAIBP_TEACHER_SOURCES || {};
   const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
   const arabicData = window.PAIBP_ARABIC || { levels: [] };
+  const islamicLearningData = window.PAIBP_ISLAMIC_LEARNING || { khutbah: { themes: [] }, tajwid: { modules: [] } };
   const gameData = window.PAIBP_GAME_BANK || null;
   const videoData = window.PAIBP_VIDEOS || {};
   const appConfig = window.PAIBP_CONFIG || { realtimeEndpoint: "", realtimeReadKey: "" };
@@ -68,10 +69,12 @@ if (workspace && appData) {
   const ACCESS_CONTEXT_KEY = "paibp-smart-access-context-v1";
   const ARABIC_PROGRESS_KEY = "paibp-smart-arabic-progress-v1";
   const ARABIC_SESSION_KEY = "paibp-smart-arabic-session-v2";
+  const TAJWID_PROGRESS_KEY = "paibp-smart-tajwid-progress-v1";
   const GAME_SESSION_KEY = "paibp-smart-game-session-v2";
   const GAME_PROGRESS_KEY = "paibp-smart-game-progress-v2";
   const QURAN_CACHE_NAME = "paibp-smart-quran-v1";
   const QURAN_AUDIO_CACHE_NAME = "paibp-smart-quran-audio-v1";
+  const ARABIC_AUTO_ADVANCE_DELAY = 5000;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const motivations = [
@@ -157,7 +160,7 @@ if (workspace && appData) {
     welcome: ["Pilih ruang yang dibutuhkan", "Lima ruang utama di atas sudah aktif dan memiliki isi sesuai fungsinya."],
     student: ["Ruang Murid", "Buka materi, ringkasan, LKPD, tulis jawaban, simpan, cetak, dan kirim tugas dari 30 bab kelas VII–IX."],
     teacher: ["Ruang Guru", "Kelola perangkat, modul ajar lengkap, impor tugas murid, rekap, nilai, unduh, dan cetak."],
-    islamic: ["Fitur Islami", "Baca Al Qur'an, Hisnul Muslim, dzikir, kalender, dan belajar Bahasa Arab bertahap dengan dukungan luring."],
+    islamic: ["Fitur Islami", "Baca Al Qur'an, Hisnul Muslim, dzikir, khutbah Jum'at, tajwid, kalender, dan belajar Bahasa Arab bertahap dengan dukungan luring."],
     games: ["Fitur Games", "Pilih 100 game edukatif PAIBP, tuntaskan 20 soal acak per game, raih XP, dan pantau prestasi lokal."],
     editor: ["Ruang Editor", "Kelola konten beranda, statistik pengunjung, dokumentasi Spensus, komentar, rating, dan balasan."],
   };
@@ -206,6 +209,11 @@ if (workspace && appData) {
   let arabicLevelId = "dasar";
   let activeArabicSession = null;
   let arabicAutoAdvanceTimer = 0;
+  let khutbahCatalogOffset = 0;
+  let activeKhutbahRecord = null;
+  let tajwidModuleId = islamicLearningData.tajwid.modules?.[0]?.id || "";
+  let tajwidLessonId = islamicLearningData.tajwid.modules?.[0]?.lessons?.[0]?.id || "";
+  let activeTajwidAudio = null;
   let dailyInsightIndex = null;
   let recentTeacherVisits = [];
   let expandedInsightBankPromise = null;
@@ -236,6 +244,16 @@ if (workspace && appData) {
     link.click();
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function filenameSlug(value) {
+    return String(value || "dokumen")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("id")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 90) || "dokumen";
   }
 
   function loadState() {
@@ -3245,11 +3263,11 @@ if (workspace && appData) {
         blocks: window.PAIBP_DOCX.blocksFromElement(documentElement),
       });
       const sourceFilename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
-      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v15.docx");
+      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v16.docx");
       downloadBlob(blob, filename);
       if (status) status.textContent = "Dokumen Word lengkap berhasil disiapkan langsung dari isi portal. Tidak ada tautan halaman 404.";
     } catch (error) {
-      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v15 lalu coba kembali.";
+      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v16 lalu coba kembali.";
     }
   }
 
@@ -3482,6 +3500,8 @@ if (workspace && appData) {
     setPressed(buttons, "islamicView", name);
     if (name === "calendar") renderHijriCalendar();
     if (name === "arabic") renderArabicAcademy();
+    if (name === "khutbah") renderKhutbahCatalog();
+    if (name === "tajwid") renderTajwidAcademy();
     if (name === "insights") renderDailyInsight();
     switchTrackedResource("fitur-islami", name, `Fitur Islami — ${name}`);
   }
@@ -3495,9 +3515,16 @@ if (workspace && appData) {
   function resolveArabicVoice() {
     if (!("speechSynthesis" in window)) return Promise.resolve(null);
     const chooseVoice = () => {
-      const voices = window.speechSynthesis.getVoices();
-      return voices.find((voice) => /^ar[-_]/i.test(voice.lang))
-        || voices.find((voice) => /arab/i.test(`${voice.name} ${voice.lang}`))
+      const voices = window.speechSynthesis.getVoices().filter((voice) => (
+        /^ar(?:[-_]|$)/i.test(voice.lang) || /arab/i.test(`${voice.name} ${voice.lang}`)
+      ));
+      const score = (voice) => (
+        (/^ar-SA$/i.test(voice.lang) ? 40 : 0)
+        + (/^ar-(?:EG|AE|QA|KW)$/i.test(voice.lang) ? 25 : 0)
+        + (voice.localService ? 20 : 0)
+        + (/natural|premium|enhanced|neural/i.test(voice.name) ? 15 : 0)
+      );
+      return voices.sort((a, b) => score(b) - score(a))[0]
         || null;
     };
     const immediate = chooseVoice();
@@ -3520,30 +3547,44 @@ if (workspace && appData) {
     return arabicVoicePromise;
   }
 
+  function cleanArabicForSpeech(value) {
+    return String(value || "")
+      .replace(/[_ـ.…·•—–-]+/g, " ")
+      .replace(/[^\u0600-\u06ff\u0750-\u077f\u08a0-\u08ff\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
   async function speakArabic(text, statusElement) {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
-      statusElement.textContent = "Audio perangkat tidak tersedia pada browser ini.";
+      if (statusElement) statusElement.textContent = "Audio perangkat tidak tersedia pada browser ini.";
       return;
     }
-    statusElement.textContent = "Menyiapkan suara Arab perangkat…";
+    const cleanText = cleanArabicForSpeech(text);
+    if (!cleanText) {
+      if (statusElement) statusElement.textContent = "Tidak ada teks Arab yang perlu dibacakan.";
+      return;
+    }
+    if (statusElement) statusElement.textContent = "Menyiapkan suara Arab perangkat…";
     const voice = await resolveArabicVoice();
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = "ar-SA";
     if (voice) utterance.voice = voice;
-    utterance.rate = 0.72;
-    utterance.pitch = 1;
+    utterance.rate = 0.68;
+    utterance.pitch = 0.92;
     utterance.volume = 1;
     utterance.onstart = () => {
+      if (!statusElement) return;
       statusElement.textContent = voice
         ? `Pelafalan diputar dengan suara ${voice.name}.`
         : "Pelafalan diputar dengan suara bawaan perangkat.";
     };
     utterance.onend = () => {
-      statusElement.textContent = "Pemutaran selesai.";
+      if (statusElement) statusElement.textContent = "Pemutaran selesai.";
     };
     utterance.onerror = () => {
-      statusElement.textContent = "Suara bahasa Arab tidak tersedia. Pasang suara Arab pada perangkat untuk memakai audio luring.";
+      if (statusElement) statusElement.textContent = "Suara bahasa Arab tidak tersedia. Pasang suara Arab pada perangkat untuk memakai audio luring.";
     };
     window.speechSynthesis.speak(utterance);
     window.setTimeout(() => {
@@ -3680,8 +3721,10 @@ if (workspace && appData) {
     }
     const nextButton = player.querySelector("[data-arabic-next-now]");
     if (nextButton) nextButton.hidden = false;
+    const waitNotice = player.querySelector("[data-arabic-answer-wait]");
+    if (waitNotice) waitNotice.hidden = false;
     saveArabicSession();
-    arabicAutoAdvanceTimer = window.setTimeout(advanceArabicQuestion, 1300);
+    arabicAutoAdvanceTimer = window.setTimeout(advanceArabicQuestion, ARABIC_AUTO_ADVANCE_DELAY);
   }
 
   function renderArabicQuestion() {
@@ -3716,6 +3759,10 @@ if (workspace && appData) {
           ${question.options.map((option, index) => `<button type="button" data-arabic-answer="${index}"><span>${String.fromCharCode(65 + index)}</span>${escapeHtml(option)}</button>`).join("")}
         </div>
         <p class="quiz-feedback" data-arabic-feedback aria-live="polite"></p>
+        <div class="arabic-answer-wait" data-arabic-answer-wait hidden>
+          <span>Jawaban ditampilkan selama 5 detik agar sempat dibaca.</span>
+          <small>Soal berikutnya berpindah otomatis.</small>
+        </div>
         <button class="btn btn-compact arabic-next-now" type="button" data-arabic-next-now hidden>Lanjut sekarang →</button>
       </div>`;
     const status = player.querySelector("[data-arabic-audio-status]");
@@ -3828,6 +3875,413 @@ if (workspace && appData) {
       const topic = level.topics.find((item) => item.id === button.dataset.arabicTopic);
       startArabicTopic(level, topic);
     }));
+  }
+
+  function stableNumber(value) {
+    let hash = 2166136261;
+    for (const character of String(value)) {
+      hash ^= character.charCodeAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  function selectedPoolItem(pool, seed, salt = 0) {
+    if (!Array.isArray(pool) || !pool.length) return "";
+    return pool[stableNumber(`${seed}|${salt}`) % pool.length];
+  }
+
+  function formatLargeCount(value) {
+    const number = Number(value || 0);
+    if (number >= 1e12) return `${(number / 1e12).toLocaleString("id-ID", { maximumFractionDigits: 1 })} triliun+`;
+    if (number >= 1e9) return `${(number / 1e9).toLocaleString("id-ID", { maximumFractionDigits: 1 })} miliar+`;
+    return number.toLocaleString("id-ID");
+  }
+
+  function dailyKhutbahSeed() {
+    return Math.floor(Date.now() / 86400000) + (khutbahCatalogOffset * 997);
+  }
+
+  function buildKhutbahCatalogRecord(theme, seed, index) {
+    const data = islamicLearningData.khutbah;
+    const titlePattern = selectedPoolItem(data.titlePatterns, seed, index + 1);
+    const cleanTitle = theme.title
+      .replace(/^Meneguhkan\s+/i, "")
+      .replace(/^Memuliakan\s+/i, "Memuliakan ")
+      .replace(/^Menjaga\s+/i, "Menjaga ");
+    return {
+      id: `${theme.id}-${seed}-${index}`,
+      theme,
+      title: String(titlePattern || "{title}").replace("{title}", cleanTitle),
+      category: theme.category,
+      opening: selectedPoolItem(data.openingReflections, seed, index + 31),
+      bridge: selectedPoolItem(data.contextBridges, seed, index + 61),
+      actionIntro: selectedPoolItem(data.actionIntros, seed, index + 91),
+      closing: selectedPoolItem(data.closingReflections, seed, index + 121),
+      audience: selectedPoolItem(data.audienceContexts, seed, index + 151),
+      prayer: selectedPoolItem(data.secondKhutbahPrayers, seed, index + 181),
+      emphasis: selectedPoolItem(data.weeklyEmphases, seed, index + 211),
+      reflectionQuestion: selectedPoolItem(data.reflectionQuestions, seed, index + 241),
+    };
+  }
+
+  function currentKhutbahCatalog() {
+    const themes = islamicLearningData.khutbah.themes || [];
+    if (!themes.length) return [];
+    const seed = dailyKhutbahSeed();
+    const offset = stableNumber(seed) % themes.length;
+    return Array.from({ length: Math.min(12, themes.length) }, (_, index) => {
+      const theme = themes[(offset + (index * 5)) % themes.length];
+      return buildKhutbahCatalogRecord(theme, seed, index);
+    });
+  }
+
+  async function openKhutbahRecord(record) {
+    const reader = document.querySelector("#khutbah-reader");
+    if (!reader || !record) return;
+    reader.innerHTML = `<div class="khutbah-empty-state"><span>⏳</span><h5>Menyiapkan naskah</h5><p>Mengambil teks ayat dari paket Al Qur'an luring…</p></div>`;
+    try {
+      const surahs = await loadOfflineQuran();
+      const surah = surahs.find((item) => Number(item.id) === Number(record.theme.surah));
+      const verse = surah?.verses?.[Number(record.theme.ayah) - 1];
+      if (!surah || !verse) throw new Error("Ayat tidak ditemukan");
+      const sourceUrl = `https://quran.kemenag.go.id/quran/per-ayat/surah/${record.theme.surah}?from=${record.theme.ayah}&to=${record.theme.ayah}`;
+      activeKhutbahRecord = { ...record, surah, verse, sourceUrl };
+      reader.innerHTML = `
+        <header class="khutbah-document-head">
+          <span class="badge">${escapeHtml(record.category)}</span>
+          <h5>${escapeHtml(record.title)}</h5>
+          <p>Naskah khutbah pertama dan kedua • estimasi 12–15 menit</p>
+        </header>
+        <div class="khutbah-document-body">
+          <h6>Khutbah Pertama</h6>
+          <p class="khutbah-arabic" lang="ar" dir="rtl">إِنَّ الْحَمْدَ لِلَّهِ نَحْمَدُهُ وَنَسْتَعِينُهُ وَنَسْتَغْفِرُهُ، وَنَعُوذُ بِاللَّهِ مِنْ شُرُورِ أَنْفُسِنَا وَمِنْ سَيِّئَاتِ أَعْمَالِنَا. أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. اَللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ.</p>
+          <p>Jamaah Jum'at rahimakumullah, marilah kita meningkatkan ketakwaan kepada Allah Subhanahu Wata'ala dengan melaksanakan perintah-Nya dan menjauhi larangan-Nya.</p>
+          <p>${escapeHtml(record.opening)} Tema khutbah ini ialah <em>${escapeHtml(record.theme.title)}</em>, sebuah pesan yang penting bagi ${escapeHtml(record.audience)}.</p>
+          <div class="khutbah-verse">
+            <strong>Landasan: Al Qur'an Surat ${escapeHtml(surah.transliteration)} ayat ${record.theme.ayah}</strong>
+            <p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(verse.text)}</p>
+            <p>Artinya: “${escapeHtml(verse.translation)}”</p>
+          </div>
+          <p>${escapeHtml(record.theme.focus)} ${escapeHtml(record.bridge)}</p>
+          <h6>Tiga Pesan Utama</h6>
+          <ol>${record.theme.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>
+          ${record.emphasis ? `<p>${escapeHtml(record.emphasis)}</p>` : ""}
+          <h6>Langkah Pengamalan</h6>
+          <p>${escapeHtml(record.actionIntro)}</p>
+          <ol>${record.theme.actions.map((action) => `<li>${escapeHtml(action)};</li>`).join("")}</ol>
+          ${record.reflectionQuestion ? `<p><em>${escapeHtml(record.reflectionQuestion)}</em></p>` : ""}
+          <p>${escapeHtml(record.closing)}</p>
+          <p class="khutbah-arabic" lang="ar" dir="rtl">أَقُولُ قَوْلِي هٰذَا وَأَسْتَغْفِرُ اللَّهَ لِي وَلَكُمْ، فَاسْتَغْفِرُوهُ، إِنَّهُ هُوَ الْغَفُورُ الرَّحِيمُ.</p>
+          <h6>Khutbah Kedua</h6>
+          <p class="khutbah-arabic" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَأَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. اَللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ.</p>
+          <p>Jamaah Jum'at rahimakumullah, marilah kita kembali menguatkan takwa. Bawalah pesan hari ini menuju amal yang terukur, jaga hak sesama, dan evaluasi pelaksanaannya sebelum Jum'at berikutnya.</p>
+          <p>${escapeHtml(record.prayer)}</p>
+          <p class="khutbah-arabic" lang="ar" dir="rtl">اللَّهُمَّ اغْفِرْ لِلْمُسْلِمِينَ وَالْمُسْلِمَاتِ، وَالْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ، الْأَحْيَاءِ مِنْهُمْ وَالْأَمْوَاتِ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.</p>
+          <div class="khutbah-source-box">
+            <strong>Sumber dan pemeriksaan</strong>
+            <span>Ayat dan terjemahan berasal dari paket Al Qur'an luring PAIBP SMART.</span>
+            <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">Periksa ayat pada Qur'an Kementerian Agama ↗</a>
+            <a href="https://kemenag.go.id/islam" target="_blank" rel="noopener">Buka referensi khutbah Kementerian Agama ↗</a>
+          </div>
+        </div>
+        <div class="khutbah-actions no-print">
+          <button class="cta btn-compact" type="button" data-download-khutbah-docx>Unduh DOCX</button>
+          <button class="btn btn-compact" type="button" data-print-khutbah-pdf>Simpan PDF</button>
+          <button class="btn btn-compact" type="button" data-speak-khutbah-verse>🔊 Putar ayat</button>
+          <p class="save-status" data-khutbah-status aria-live="polite"></p>
+        </div>`;
+      document.querySelectorAll("[data-khutbah-title]").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.khutbahTitle === record.id));
+      });
+      const status = reader.querySelector("[data-khutbah-status]");
+      reader.querySelector("[data-download-khutbah-docx]")?.addEventListener("click", () => {
+        const blob = window.PAIBP_DOCX.createDocument({
+          title: record.title,
+          blocks: window.PAIBP_DOCX.blocksFromElement(reader),
+        });
+        downloadBlob(blob, `${filenameSlug(record.title)}-khutbah-jumat.docx`);
+        if (status) status.textContent = "Naskah DOCX berhasil dibuat.";
+      });
+      reader.querySelector("[data-print-khutbah-pdf]")?.addEventListener("click", () => {
+        printDocument(record.title, printableHtmlFrom(reader));
+        if (status) status.textContent = "Pilih “Simpan sebagai PDF” pada dialog cetak.";
+      });
+      reader.querySelector("[data-speak-khutbah-verse]")?.addEventListener("click", () => speakArabic(verse.text, status));
+    } catch {
+      activeKhutbahRecord = null;
+      reader.innerHTML = `<div class="khutbah-empty-state"><span>⚠️</span><h5>Naskah belum dapat dibuka</h5><p>Paket ayat luring tidak berhasil dibaca. Muat ulang halaman lalu coba kembali.</p></div>`;
+    }
+  }
+
+  function renderKhutbahCatalog() {
+    const list = document.querySelector("#khutbah-title-list");
+    if (!list) return;
+    const data = islamicLearningData.khutbah;
+    const catalog = currentKhutbahCatalog();
+    const themeCount = document.querySelector("#khutbah-theme-count");
+    const variationCount = document.querySelector("#khutbah-variation-count");
+    if (themeCount) themeCount.textContent = String(data.themes?.length || 0);
+    if (variationCount) variationCount.textContent = formatLargeCount(data.variationCount);
+    list.innerHTML = catalog.map((record, index) => `
+      <button class="khutbah-title-item" type="button" role="listitem" data-khutbah-title="${escapeHtml(record.id)}" data-khutbah-search="${escapeHtml(`${record.title} ${record.category}`.toLocaleLowerCase("id"))}" aria-pressed="${record.id === activeKhutbahRecord?.id}">
+        <span>${String(index + 1).padStart(2, "0")}</span>
+        <strong>${escapeHtml(record.title)}</strong>
+        <small>${escapeHtml(record.category)} • Al Qur'an Surat ${record.theme.surah}:${record.theme.ayah}</small>
+      </button>`).join("");
+    list.querySelectorAll("[data-khutbah-title]").forEach((button) => button.addEventListener("click", () => {
+      const record = catalog.find((item) => item.id === button.dataset.khutbahTitle);
+      openKhutbahRecord(record);
+    }));
+    const search = document.querySelector("#khutbah-search");
+    if (search) {
+      search.value = "";
+      search.oninput = () => {
+        const keyword = search.value.trim().toLocaleLowerCase("id");
+        list.querySelectorAll("[data-khutbah-title]").forEach((button) => {
+          button.hidden = Boolean(keyword) && !button.dataset.khutbahSearch.includes(keyword);
+        });
+      };
+    }
+  }
+
+  document.querySelector("#refresh-khutbah-catalog")?.addEventListener("click", () => {
+    khutbahCatalogOffset += 1;
+    activeKhutbahRecord = null;
+    const reader = document.querySelector("#khutbah-reader");
+    if (reader) reader.innerHTML = `<div class="khutbah-empty-state"><span>🎙️</span><h5>Pilihan judul diperbarui</h5><p>Silakan pilih salah satu judul baru pada daftar.</p></div>`;
+    renderKhutbahCatalog();
+  });
+
+  function readTajwidProgress() {
+    const stored = safeJsonParse(localStorage.getItem(TAJWID_PROGRESS_KEY), {}) || {};
+    return { completed: Array.isArray(stored.completed) ? stored.completed : [] };
+  }
+
+  function writeTajwidProgress(progress) {
+    localStorage.setItem(TAJWID_PROGRESS_KEY, JSON.stringify(progress));
+  }
+
+  function quranAudioUrlByVerseId(verseId) {
+    return `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${verseId}.mp3`;
+  }
+
+  async function tajwidVerseFromReference(reference) {
+    const [surahNumber, ayahNumber] = String(reference || "").split(":").map(Number);
+    const surahs = await loadOfflineQuran();
+    const surah = surahs.find((item) => Number(item.id) === surahNumber);
+    const verse = surah?.verses?.[ayahNumber - 1];
+    if (!surah || !verse) throw new Error("Ayat contoh tidak tersedia.");
+    return { surah, verse, audioUrl: quranAudioUrlByVerseId(verse.id) };
+  }
+
+  async function cacheTajwidAudio(reference, statusElement, announce = true) {
+    const payload = await tajwidVerseFromReference(reference);
+    if (!("caches" in window)) throw new Error("Penyimpanan audio tidak didukung browser.");
+    const cache = await caches.open(QURAN_AUDIO_CACHE_NAME);
+    const existing = await cache.match(payload.audioUrl);
+    if (existing) {
+      if (announce && statusElement) statusElement.textContent = "Audio qari sudah tersimpan dan siap diputar luring.";
+      return payload;
+    }
+    if (!navigator.onLine) throw new Error("Audio belum tersimpan. Sambungkan internet untuk mengunduh pertama kali.");
+    const response = await fetch(payload.audioUrl, { mode: "no-cors", cache: "no-store" });
+    await cache.put(payload.audioUrl, response);
+    if (announce && statusElement) statusElement.textContent = "Audio qari berhasil disimpan untuk pemutaran luring.";
+    return payload;
+  }
+
+  async function playTajwidAudio(lesson, statusElement) {
+    if (activeTajwidAudio) {
+      activeTajwidAudio.pause?.();
+      activeTajwidAudio = null;
+    }
+    if (statusElement) statusElement.textContent = "Menyiapkan audio qari…";
+    try {
+      const payload = await tajwidVerseFromReference(lesson.reference);
+      let canPlay = navigator.onLine;
+      if ("caches" in window) {
+        const cache = await caches.open(QURAN_AUDIO_CACHE_NAME);
+        canPlay = canPlay || Boolean(await cache.match(payload.audioUrl));
+      }
+      if (!canPlay) throw new Error("Rekaman belum tersimpan.");
+      const audio = new Audio(payload.audioUrl);
+      activeTajwidAudio = audio;
+      audio.onplaying = () => {
+        if (statusElement) statusElement.textContent = "Memutar tilawah Mishary Rashid Alafasy. Dengarkan ayat lengkap dan fokuskan pada contoh yang ditandai.";
+      };
+      audio.onended = () => {
+        activeTajwidAudio = null;
+        if (statusElement) statusElement.textContent = "Pemutaran selesai. Audio dapat disimpan agar tersedia saat luring.";
+      };
+      audio.onerror = () => {
+        activeTajwidAudio = null;
+        speakArabic(lesson.example, statusElement);
+      };
+      await audio.play();
+    } catch {
+      if (statusElement) statusElement.textContent = "Rekaman qari belum tersimpan; memakai suara Arab perangkat sebagai cadangan.";
+      speakArabic(lesson.example, statusElement);
+    }
+  }
+
+  function renderTajwidLesson(module, lesson) {
+    const player = document.querySelector("#tajwid-player");
+    if (!player || !module || !lesson) return;
+    const progress = readTajwidProgress();
+    const completed = progress.completed.includes(`${module.id}:${lesson.id}`);
+    player.innerHTML = `
+      <header class="tajwid-player-head">
+        <span>${escapeHtml(lesson.badge)} • Modul ${module.number}</span>
+        <h5>${escapeHtml(lesson.title)}</h5>
+        <p>${escapeHtml(module.title)} — pelajari kaidah, dengarkan contoh, lalu jawab latihan.</p>
+      </header>
+      <div class="tajwid-rule-grid">
+        <section class="tajwid-rule-card">
+          <h6>Kaidah Praktis</h6>
+          <p>${escapeHtml(lesson.rule)}</p>
+        </section>
+        <section class="tajwid-letter-card">
+          <h6>Huruf atau Tanda</h6>
+          <strong lang="ar" dir="rtl">${escapeHtml(lesson.letters)}</strong>
+        </section>
+      </div>
+      <section class="tajwid-example-card">
+        <p class="tajwid-example-arabic" lang="ar" dir="rtl">${escapeHtml(lesson.example)}</p>
+        <p>${escapeHtml(lesson.meaning)}</p>
+        <small>Contoh dalam Al Qur'an Surat ${escapeHtml(lesson.reference)}</small>
+        <div class="tajwid-audio-actions no-print">
+          <button class="btn btn-compact" type="button" data-play-tajwid>▶ Putar audio qari</button>
+          <button class="btn btn-compact" type="button" data-cache-tajwid>⇩ Simpan audio luring</button>
+          <p class="save-status" data-tajwid-audio-status aria-live="polite"></p>
+        </div>
+      </section>
+      <section class="tajwid-quiz-card">
+        <h6>Latihan Cek Langsung</h6>
+        <p>${escapeHtml(lesson.question)}</p>
+        <div class="tajwid-options">
+          ${lesson.options.map((option, index) => `<button type="button" data-tajwid-answer="${index}">${String.fromCharCode(65 + index)}. ${escapeHtml(option)}</button>`).join("")}
+        </div>
+        <p class="tajwid-feedback ${completed ? "success" : ""}" data-tajwid-feedback>${completed ? "Materi ini telah dikuasai. Anda tetap dapat mengulang latihannya." : ""}</p>
+        <button class="btn btn-compact" type="button" data-tajwid-retry hidden>Ulangi soal</button>
+      </section>`;
+    const audioStatus = player.querySelector("[data-tajwid-audio-status]");
+    player.querySelector("[data-play-tajwid]")?.addEventListener("click", () => playTajwidAudio(lesson, audioStatus));
+    player.querySelector("[data-cache-tajwid]")?.addEventListener("click", async () => {
+      if (audioStatus) audioStatus.textContent = "Mengunduh audio qari…";
+      try {
+        await cacheTajwidAudio(lesson.reference, audioStatus);
+      } catch (error) {
+        if (audioStatus) audioStatus.textContent = error.message || "Audio belum dapat disimpan.";
+      }
+    });
+    const answerButtons = [...player.querySelectorAll("[data-tajwid-answer]")];
+    const feedback = player.querySelector("[data-tajwid-feedback]");
+    const retry = player.querySelector("[data-tajwid-retry]");
+    const resetQuiz = () => {
+      answerButtons.forEach((button) => {
+        button.disabled = false;
+        button.classList.remove("correct", "wrong");
+      });
+      if (feedback) {
+        feedback.textContent = "";
+        feedback.className = "tajwid-feedback";
+      }
+      if (retry) retry.hidden = true;
+    };
+    answerButtons.forEach((button) => button.addEventListener("click", () => {
+      const selected = Number(button.dataset.tajwidAnswer);
+      const correct = selected === lesson.answer;
+      answerButtons.forEach((item, index) => {
+        item.disabled = true;
+        item.classList.toggle("correct", index === lesson.answer);
+        item.classList.toggle("wrong", index === selected && !correct);
+      });
+      if (feedback) {
+        feedback.textContent = `${correct ? "Benar." : "Belum tepat."} ${lesson.explanation}`;
+        feedback.className = `tajwid-feedback ${correct ? "success" : "error"}`;
+      }
+      if (correct) {
+        const latest = readTajwidProgress();
+        const key = `${module.id}:${lesson.id}`;
+        if (!latest.completed.includes(key)) latest.completed.push(key);
+        writeTajwidProgress(latest);
+        window.setTimeout(() => renderTajwidAcademy(false), 850);
+      } else if (retry) {
+        retry.hidden = false;
+      }
+    }));
+    retry?.addEventListener("click", resetQuiz);
+  }
+
+  async function cacheTajwidModule(module, statusElement) {
+    if (!module?.lessons?.length) return;
+    let saved = 0;
+    const uniqueReferences = [...new Set(module.lessons.map((lesson) => lesson.reference))];
+    for (const reference of uniqueReferences) {
+      try {
+        await cacheTajwidAudio(reference, null, false);
+        saved += 1;
+        if (statusElement) statusElement.textContent = `Menyimpan ${saved} dari ${uniqueReferences.length} audio modul…`;
+      } catch (error) {
+        if (statusElement) statusElement.textContent = `${saved} audio tersimpan. ${error.message || "Sebagian audio gagal disimpan."}`;
+        return;
+      }
+    }
+    if (statusElement) statusElement.textContent = `${saved} audio contoh berhasil disimpan untuk modul ${module.title}.`;
+  }
+
+  function renderTajwidAcademy(preservePlayer = true) {
+    const tabs = document.querySelector("#tajwid-module-tabs");
+    const path = document.querySelector("#tajwid-lesson-path");
+    const progressLabel = document.querySelector("#tajwid-progress-count");
+    const modules = islamicLearningData.tajwid.modules || [];
+    if (!tabs || !path || !modules.length) return;
+    const progress = readTajwidProgress();
+    const totalLessons = Number(islamicLearningData.tajwid.totalLessons || modules.reduce((sum, item) => sum + item.lessons.length, 0));
+    if (progressLabel) progressLabel.textContent = `${progress.completed.length}/${totalLessons}`;
+    const module = modules.find((item) => item.id === tajwidModuleId) || modules[0];
+    tajwidModuleId = module.id;
+    if (!module.lessons.some((item) => item.id === tajwidLessonId)) tajwidLessonId = module.lessons[0]?.id || "";
+    tabs.innerHTML = modules.map((item) => `
+      <button type="button" data-tajwid-module="${escapeHtml(item.id)}" aria-pressed="${item.id === module.id}" style="--tajwid-color:${escapeHtml(item.color)}">
+        <span>${escapeHtml(item.icon)}</span>
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${item.lessons.length} materi</small>
+      </button>`).join("");
+    path.innerHTML = `
+      <div class="tajwid-path-head">
+        <strong>${escapeHtml(module.title)}</strong>
+        <small>${escapeHtml(module.subtitle)}</small>
+      </div>
+      ${module.lessons.map((lesson, index) => {
+        const complete = progress.completed.includes(`${module.id}:${lesson.id}`);
+        return `
+        <button class="tajwid-lesson-node ${complete ? "is-complete" : ""}" type="button" data-tajwid-lesson="${escapeHtml(lesson.id)}" aria-pressed="${lesson.id === tajwidLessonId}">
+          <span>${complete ? "✓" : index + 1}</span>
+          <strong>${escapeHtml(lesson.title)}</strong>
+          <small>${escapeHtml(lesson.badge)}</small>
+        </button>`;
+      }).join("")}
+      <button class="tajwid-lesson-node" type="button" data-cache-tajwid-module>
+        <span>⇩</span><strong>Simpan audio modul</strong><small>untuk akses luring</small>
+      </button>
+      <p class="save-status" data-tajwid-module-status aria-live="polite"></p>`;
+    tabs.querySelectorAll("[data-tajwid-module]").forEach((button) => button.addEventListener("click", () => {
+      tajwidModuleId = button.dataset.tajwidModule;
+      const selected = modules.find((item) => item.id === tajwidModuleId);
+      tajwidLessonId = selected?.lessons?.[0]?.id || "";
+      renderTajwidAcademy(false);
+    }));
+    path.querySelectorAll("[data-tajwid-lesson]").forEach((button) => button.addEventListener("click", () => {
+      tajwidLessonId = button.dataset.tajwidLesson;
+      renderTajwidAcademy(false);
+    }));
+    const moduleStatus = path.querySelector("[data-tajwid-module-status]");
+    path.querySelector("[data-cache-tajwid-module]")?.addEventListener("click", () => cacheTajwidModule(module, moduleStatus));
+    const lesson = module.lessons.find((item) => item.id === tajwidLessonId) || module.lessons[0];
+    if (!preservePlayer || document.querySelector("#tajwid-player .khutbah-empty-state")) renderTajwidLesson(module, lesson);
+    else renderTajwidLesson(module, lesson);
   }
 
   function renderDuaList(containerId, category) {
@@ -5553,7 +6007,7 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=15");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=16");
       await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;
@@ -5570,6 +6024,8 @@ if (workspace && appData) {
   renderDuaList("#morning-list", "pagi");
   renderDuaList("#evening-list", "petang");
   renderHijriCalendar();
+  renderKhutbahCatalog();
+  renderTajwidAcademy();
   renderDailyInsight();
   renderSchoolProfile();
   const galleryAdmin = document.querySelector("#gallery-admin");

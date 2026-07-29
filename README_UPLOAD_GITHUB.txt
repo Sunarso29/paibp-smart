@@ -8,7 +8,7 @@ LANGKAH UPLOAD:
    Jangan unggah file ZIP-nya.
 5. Pastikan index.html, privacy.html, terms.html, support.html, contact.html,
    app-config.js, content-data.js, teacher-source-data.js, calendar-data.js, staff-images.js,
-   school-data.js, islamic-data.js, hadith-data.js,
+   school-data.js, islamic-data.js, islamic-learning-data.js, hadith-data.js,
    styles.css, script.js, service-worker.js, robots.txt, sitemap.xml,
    dan semua folder terlihat.
 6. Isi commit message: Perbarui website PAIBP SMART SMP

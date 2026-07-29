@@ -1,5 +1,5 @@
 PAIBP SMART SMP
-Versi paket: 15.0
+Versi paket: 16.0
 Tanggal paket: 30 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
@@ -17,7 +17,10 @@ Paket ini memuat:
 - ATP, Prota, Promes, dan KKTP kelas VII–IX dilengkapi tujuan, materi, durasi, keterangan, alokasi 120 JP, serta kolom KKTP kelas IX yang utuh
 - susunan judul, subjudul, tabel, dan daftar akademik pada perangkat guru dipertahankan dengan penomoran hierarkis; artefak Top of Form dan Bottom of Form dihapus
 - Al Qur'an, Hadits Riwayat, suara Arab perangkat, Hisnul Muslim, dzikir, kalender bertanda per tanggal, 6.316 teks dasar nasihat bersumber dengan lebih dari satu triliun susunan refleksi, serta jadwal sholat dengan waktu aktif dan hitung mundur
-- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dengan 100 tab pada setiap tingkat; setiap tab memuat 100 soal berurutan, pemeriksaan benar/salah, penjelasan, perpindahan otomatis, skor, XP, penyimpanan sesi, serta suara Arab perangkat
+- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dengan 100 tab pada setiap tingkat; setiap tab memuat 100 soal berurutan, pemeriksaan benar/salah, penjelasan, jeda baca lima detik sebelum perpindahan otomatis, skor, XP, penyimpanan sesi, serta suara Arab perangkat
+- sanitasi pemutar Bahasa Arab membuang garis kosong, titik, dan karakter non-Arab sehingga tanda `____` tidak lagi dibaca sebagai “underscore”
+- Khutbah Jum'at menampilkan 12 pilihan judul yang berganti setiap hari, 24 tema terkurasi, lebih dari 1,5 triliun ruang susunan editorial, naskah dua khutbah, pemeriksaan ayat, serta unduhan DOCX/PDF
+- Tajwid Praktis memuat 6 jalur dan 28 materi: hijaiyah-makhraj, nun mati/tanwin, mim mati, mad, waqaf, serta qalqalah/penguatan bacaan; setiap materi dilengkapi contoh, latihan benar-salah, audio qari, dan penyimpanan audio luring
 - total 400 tab dan 40.000 soal Bahasa Arab; tiga tingkat utama dimulai dari isim/kata benda, kata sifat, dan fi‘il/kata kerja sebelum berlanjut secara bertahap ke nahwu, sharaf, membaca, menulis, dan penerapan
 - 60 video penguatan (dua per bab) dengan ringkasan minimal 500 karakter yang ikut dalam paket tugas
 - 100 game edukatif dalam 10 kelompok dengan 15 mekanik, termasuk Sambung Ayat dari ayat pilihan yang mudah
@@ -31,4 +34,4 @@ Paket ini memuat:
 - deteksi tempat akses dimulai otomatis ketika Ruang Murid dibuka; izin keamanan tetap dikendalikan ponsel dan rekap menyimpan waktu, durasi, wilayah perkiraan, serta bagian yang diakses
 - unduhan ATP, Prota, Promes, KKTP, dan perangkat bertabel memakai tabel Word asli dengan garis, kepala tabel, gabungan sel, dan orientasi halaman yang menyesuaikan jumlah kolom
 - statistik pengunjung ditempatkan pada bagian paling akhir beranda setelah komentar dan rating
-- dukungan PWA dan mode luring dengan pemutus cache v15 agar unggahan baru tidak tertahan aset lama
+- dukungan PWA dan mode luring dengan pemutus cache v16 agar unggahan baru tidak tertahan aset lama

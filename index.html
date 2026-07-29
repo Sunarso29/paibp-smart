@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
-    <link rel="stylesheet" href="styles.css?v=15">
+    <link rel="stylesheet" href="styles.css?v=16">
   </head>
   <body>
     <a class="skip" href="#main">Lewati ke konten</a>
@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v15</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v16</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -76,7 +76,7 @@
         </button>
         <button class="portal-tab" type="button" data-open-panel="islamic" aria-controls="panel-islamic">
           <span class="portal-tab-icon" aria-hidden="true">🕌</span>
-          <span><strong>Fitur Islami</strong><small>Al Qur'an, doa, dzikir, kalender</small></span>
+          <span><strong>Fitur Islami</strong><small>Al Qur'an, khutbah, tajwid, dzikir</small></span>
         </button>
         <button class="portal-tab" type="button" data-open-panel="games" aria-controls="panel-games">
           <span class="portal-tab-icon" aria-hidden="true">🎮</span>
@@ -259,7 +259,7 @@
                 <div>
                   <span class="panel-kicker">🕌 Fitur Islami</span>
                   <h3>Pusat Fitur Islami</h3>
-                  <p>Menu terinspirasi kebutuhan Hijrah App: Al Qur'an, Hisnul Muslim, dzikir, kalender ibadah, jadwal sholat, dan nasihat bersumber.</p>
+                  <p>Al Qur'an, Hisnul Muslim, dzikir, kalender ibadah, jadwal sholat, Bahasa Arab, khutbah Jum'at, tajwid praktis, dan nasihat bersumber dalam satu ruang.</p>
                 </div>
                 <span class="live-badge">Hari ini</span>
               </div>
@@ -272,6 +272,8 @@
                   <button type="button" data-islamic-view="evening" aria-pressed="false">🌙 Dzikir Petang</button>
                   <button type="button" data-islamic-view="calendar" aria-pressed="false">🗓️ Kalender Hijriah</button>
                   <button type="button" data-islamic-view="arabic" aria-pressed="false">🔤 Bahasa Arab</button>
+                  <button type="button" data-islamic-view="khutbah" aria-pressed="false">🎙️ Khutbah Jum'at</button>
+                  <button type="button" data-islamic-view="tajwid" aria-pressed="false">🎧 Tajwid Praktis</button>
                   <button type="button" data-islamic-view="insights" aria-pressed="false">💡 Nasihat Harian</button>
                 </nav>
                 <div class="islamic-content">
@@ -372,6 +374,61 @@
                       <p>Pilih salah satu tab untuk memulai 100 soal latihan.</p>
                     </article>
                     <p class="document-note">Empat tingkat memuat 400 tab dan 40.000 soal yang dibangkitkan saat tab dipilih agar tetap ringan di hape. Materi, sesi, dan progres tersedia luring. Pemutar memilih suara Arab perangkat secara otomatis.</p>
+                  </section>
+
+                  <section data-islamic-page="khutbah" hidden>
+                    <div class="subheading-row khutbah-heading">
+                      <div>
+                        <span class="feature-eyebrow">Mimbar Pekanan</span>
+                        <h4>Khutbah Jum'at Dinamis dan Bersumber</h4>
+                        <p>Judul berganti setiap hari dari tema terkurasi. Pilih judul untuk membuka naskah dua khutbah, lalu unduh dalam DOCX atau simpan sebagai PDF.</p>
+                      </div>
+                      <button class="cta btn-compact" id="refresh-khutbah-catalog" type="button">↻ Ganti Pilihan Judul</button>
+                    </div>
+                    <div class="khutbah-stats">
+                      <article><span>Judul tampil</span><strong id="khutbah-visible-count">12</strong><small>berganti setiap hari</small></article>
+                      <article><span>Tema pokok</span><strong id="khutbah-theme-count">—</strong><small>ayat dapat ditelusuri</small></article>
+                      <article><span>Ruang variasi</span><strong id="khutbah-variation-count">—</strong><small>susunan dinamis</small></article>
+                    </div>
+                    <div class="khutbah-layout">
+                      <div class="khutbah-catalog-panel">
+                        <label class="khutbah-search">Cari judul atau tema
+                          <input id="khutbah-search" type="search" placeholder="Contoh: keluarga, ilmu, lingkungan">
+                        </label>
+                        <div class="khutbah-title-list" id="khutbah-title-list" role="list"></div>
+                      </div>
+                      <article class="khutbah-reader printable-document" id="khutbah-reader">
+                        <div class="khutbah-empty-state">
+                          <span>🎙️</span>
+                          <h5>Pilih salah satu judul khutbah</h5>
+                          <p>Naskah lengkap, sumber ayat, langkah pengamalan, dan tombol unduh akan tampil di sini.</p>
+                        </div>
+                      </article>
+                    </div>
+                    <p class="document-note">Naskah merupakan susunan editorial berbasis tema dan ayat, bukan pengganti pemeriksaan khatib atau DKM. Sesuaikan dengan ketentuan khutbah dan keadaan jamaah setempat sebelum digunakan.</p>
+                  </section>
+
+                  <section data-islamic-page="tajwid" hidden>
+                    <div class="subheading-row tajwid-heading">
+                      <div>
+                        <span class="feature-eyebrow">Studio Tilawah</span>
+                        <h4>Tajwid Praktis Interaktif</h4>
+                        <p>Belajar bertahap dari huruf hijaiyah dan makhraj, nun mati, mim mati, mad, waqaf, hingga penguatan bacaan.</p>
+                      </div>
+                      <div class="tajwid-score-pill"><span>Progres</span><strong id="tajwid-progress-count">0/0</strong></div>
+                    </div>
+                    <div class="tajwid-module-tabs" id="tajwid-module-tabs"></div>
+                    <div class="tajwid-learning-layout">
+                      <aside class="tajwid-lesson-path" id="tajwid-lesson-path"></aside>
+                      <article class="tajwid-player" id="tajwid-player">
+                        <div class="khutbah-empty-state">
+                          <span>🎧</span>
+                          <h5>Pilih materi tajwid</h5>
+                          <p>Contoh bacaan, visual kaidah, audio qari, dan latihan benar-salah akan tampil di sini.</p>
+                        </div>
+                      </article>
+                    </div>
+                    <p class="document-note">Audio qari dimuat dari Al Quran Cloud dan dapat disimpan pada perangkat setelah pertama kali diputar saat daring. Bila rekaman belum tersedia, suara Arab perangkat digunakan sebagai cadangan; ia membantu latihan awal, bukan pengganti talaqqi kepada guru Al Qur'an.</p>
                   </section>
 
                   <section data-islamic-page="insights" hidden>
@@ -701,18 +758,19 @@
       </section>
     </div>
 
-    <script src="app-config.js?v=15"></script>
-    <script src="content-data.js?v=15"></script>
-    <script src="teacher-source-data.js?v=15"></script>
-    <script src="calendar-data.js?v=15"></script>
-    <script src="staff-images.js?v=15"></script>
-    <script src="school-data.js?v=15"></script>
-    <script src="islamic-data.js?v=15"></script>
-    <script src="hadith-data.js?v=15"></script>
-    <script src="arabic-data.js?v=15"></script>
-    <script src="game-data.js?v=15"></script>
-    <script src="video-data.js?v=15"></script>
-    <script src="docx-export.js?v=15"></script>
-    <script src="script.js?v=15"></script>
+    <script src="app-config.js?v=16"></script>
+    <script src="content-data.js?v=16"></script>
+    <script src="teacher-source-data.js?v=16"></script>
+    <script src="calendar-data.js?v=16"></script>
+    <script src="staff-images.js?v=16"></script>
+    <script src="school-data.js?v=16"></script>
+    <script src="islamic-data.js?v=16"></script>
+    <script src="islamic-learning-data.js?v=16"></script>
+    <script src="hadith-data.js?v=16"></script>
+    <script src="arabic-data.js?v=16"></script>
+    <script src="game-data.js?v=16"></script>
+    <script src="video-data.js?v=16"></script>
+    <script src="docx-export.js?v=16"></script>
+    <script src="script.js?v=16"></script>
   </body>
 </html>
