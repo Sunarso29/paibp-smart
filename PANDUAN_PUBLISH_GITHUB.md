@@ -6,7 +6,7 @@
 2. Buka repository tersebut.
 3. Sebagai cadangan, klik **Code** lalu **Download ZIP**.
 4. Ekstrak paket website versi final di komputer.
-5. Jika situs lama sudah memakai rekap lintas perangkat, buka `app-config.js` lama dan salin nilai `realtimeEndpoint` serta `realtimeReadKey`. Tempelkan kedua nilai tersebut ke `app-config.js` paket v18 sebelum mengunggah.
+5. Jika situs lama sudah memakai rekap lintas perangkat, buka `app-config.js` lama dan salin nilai `realtimeEndpoint` serta `realtimeReadKey`. Tempelkan kedua nilai tersebut ke `app-config.js` paket v19 sebelum mengunggah.
 
 ## B. Mengunggah Versi Final
 
@@ -64,8 +64,8 @@ Uji alur tugas menggunakan data percobaan:
 4. Jika masih terlihat versi lama, buka website pada jendela samaran/incognito lalu muat ulang.
 5. Pastikan nama file menggunakan huruf kecil, terutama `index.html`.
 6. Pastikan `index.html`, `app-config.js`, `content-data.js`, `teacher-source-data.js`, `calendar-data.js`, `staff-images.js`, `school-data.js`, `islamic-data.js`, `islamic-learning-data.js`, `hadith-data.js`, `game-data.js`, `docx-export.js`, `script.js`, `styles.css`, `manifest.webmanifest`, dan `service-worker.js` berada pada root repository.
-7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 18.0`.
-8. Pada beranda, periksa baris merek dan pastikan tertulis **Paket v18**.
+7. Buka `https://sunarso29.github.io/paibp-smart/BUILD-INFO.txt` dan pastikan tertulis `Versi paket: 19.0`.
+8. Pada beranda, periksa baris merek dan pastikan tertulis **Paket v19**.
 9. Jika `BUILD-INFO.txt` sudah 16.0 tetapi tampilan masih lama, buka pengaturan browser → data situs → hapus data untuk `sunarso29.github.io`, lalu buka kembali situs.
 10. Periksa kembali pengaturan **Settings → Pages**.
 

@@ -3266,11 +3266,11 @@ if (workspace && appData) {
         blocks: window.PAIBP_DOCX.blocksFromElement(documentElement),
       });
       const sourceFilename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
-      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v18.docx");
+      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v19.docx");
       downloadBlob(blob, filename);
       if (status) status.textContent = "Dokumen Word lengkap berhasil disiapkan langsung dari isi portal. Tidak ada tautan halaman 404.";
     } catch (error) {
-      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v18 lalu coba kembali.";
+      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v19 lalu coba kembali.";
     }
   }
 
@@ -4039,7 +4039,7 @@ if (workspace && appData) {
   async function openKhutbahRecord(record) {
     const reader = document.querySelector("#khutbah-reader");
     if (!reader || !record) return;
-    reader.innerHTML = `<div class="khutbah-empty-state"><span>⏳</span><h5>Menyiapkan naskah</h5><p>Membuka ayat, terjemahan, dan naskah khutbah siap cetak…</p></div>`;
+    reader.innerHTML = `<div class="khutbah-empty-state"><span>⏳</span><h5>Menyiapkan naskah lengkap</h5><p>Membuka ayat, terjemahan, referensi, dan naskah khutbah berdurasi 20–30 menit…</p></div>`;
     try {
       let surah = null;
       let verse = null;
@@ -4048,47 +4048,58 @@ if (workspace && appData) {
         surah = surahs.find((item) => Number(item.id) === Number(record.theme.surah));
         verse = surah?.verses?.[Number(record.theme.ayah) - 1] || null;
       } catch (error) {
-        // Cadangan ayat tertanam menjamin naskah tetap dapat dibuka walau fetch/cache gagal.
+        // Paket ayat cadangan tertanam menjamin naskah tetap dapat dibuka.
       }
       const fallback = khutbahVerseData[`${record.theme.surah}:${record.theme.ayah}`];
       if (!verse && fallback) verse = { text: fallback.text, translation: fallback.translation };
       if (!surah && fallback) surah = { transliteration: fallback.surah };
       if (!surah || !verse) throw new Error("Ayat tidak ditemukan pada paket utama maupun paket cadangan.");
+
       const sourceUrl = `https://quran.kemenag.go.id/quran/per-ayat/surah/${record.theme.surah}?from=${record.theme.ayah}&to=${record.theme.ayah}`;
-      activeKhutbahRecord = { ...record, surah, verse, sourceUrl };
+      const renderer = window.PAIBP_KHUTBAH_V19?.render;
+      if (typeof renderer !== "function") throw new Error("Mesin naskah khutbah lengkap belum dimuat.");
+      const rendered = renderer(record, surah, verse, khutbahSourceData);
+      activeKhutbahRecord = { ...record, surah, verse, sourceUrl, rendered };
+
       reader.innerHTML = `
         <header class="khutbah-document-head">
           <span class="badge">${escapeHtml(record.category)}</span>
           <h5>${escapeHtml(record.title)}</h5>
-          <p>Naskah khutbah pertama dan kedua • estimasi 12–15 menit • siap print</p>
+          <p>Naskah dua khutbah profesional • estimasi ${rendered.minutes} menit • ±${Number(rendered.wordCount).toLocaleString("id-ID")} kata • siap print</p>
         </header>
-        <div class="khutbah-document-body">
-          <h6>Khutbah Pertama</h6>
-          <p class="khutbah-arabic" lang="ar" dir="rtl">إِنَّ الْحَمْدَ لِلَّهِ نَحْمَدُهُ وَنَسْتَعِينُهُ وَنَسْتَغْفِرُهُ، وَنَعُوذُ بِاللَّهِ مِنْ شُرُورِ أَنْفُسِنَا وَمِنْ سَيِّئَاتِ أَعْمَالِنَا. أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. اَللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ.</p>
-          <p>Jamaah Jum'at rahimakumullah, marilah kita meningkatkan ketakwaan kepada Allah Subhanahu Wata'ala dengan melaksanakan perintah-Nya dan menjauhi larangan-Nya.</p>
-          <p>${escapeHtml(record.opening)} Tema khutbah ini ialah <em>${escapeHtml(record.theme.title)}</em>, sebuah pesan penting bagi ${escapeHtml(record.audience)}.</p>
-          <div class="khutbah-verse"><strong>Landasan: Al Qur'an Surat ${escapeHtml(surah.transliteration)} ayat ${record.theme.ayah}</strong><p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(verse.text)}</p><p>Artinya: “${escapeHtml(verse.translation)}”</p></div>
-          <p>${escapeHtml(record.theme.focus)} ${escapeHtml(record.bridge)}</p>
-          <h6>Tiga Pesan Utama</h6><ol>${record.theme.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>
-          ${record.emphasis ? `<p>${escapeHtml(record.emphasis)}</p>` : ""}
-          <h6>Langkah Pengamalan</h6><p>${escapeHtml(record.actionIntro)}</p><ol>${record.theme.actions.map((action) => `<li>${escapeHtml(action)};</li>`).join("")}</ol>
-          ${record.reflectionQuestion ? `<p><em>${escapeHtml(record.reflectionQuestion)}</em></p>` : ""}<p>${escapeHtml(record.closing)}</p>
-          <p class="khutbah-arabic" lang="ar" dir="rtl">أَقُولُ قَوْلِي هٰذَا وَأَسْتَغْفِرُ اللَّهَ لِي وَلَكُمْ، فَاسْتَغْفِرُوهُ، إِنَّهُ هُوَ الْغَفُورُ الرَّحِيمُ.</p>
-          <h6>Khutbah Kedua</h6>
-          <p class="khutbah-arabic" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَأَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. اَللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ.</p>
-          <p>Jamaah Jum'at rahimakumullah, marilah kita kembali menguatkan takwa. Bawalah pesan hari ini menuju amal yang terukur, jaga hak sesama, dan evaluasi pelaksanaannya sebelum Jum'at berikutnya.</p>
-          <p>${escapeHtml(record.prayer)}</p><p class="khutbah-arabic" lang="ar" dir="rtl">اللَّهُمَّ اغْفِرْ لِلْمُسْلِمِينَ وَالْمُسْلِمَاتِ، وَالْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ، الْأَحْيَاءِ مِنْهُمْ وَالْأَمْوَاتِ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.</p>
-          <div class="khutbah-source-box"><strong>Referensi pemeriksaan naskah</strong><span>Ayat tersedia dari paket Al Qur'an luring dan paket cadangan tertanam.</span><a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Qur'an Kementerian Agama ↗</a>${(khutbahSourceData.portals || []).map((source) => `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.label)} ↗</a>`).join("")}</div>
+        <div class="khutbah-document-body">${rendered.bodyHtml}
+          <div class="khutbah-source-box">
+            <strong>Referensi dan pemeriksaan naskah</strong>
+            <span>Naskah merupakan susunan editorial orisinal. Ayat diperiksa melalui paket Al Qur'an luring dan Qur'an Kementerian Agama. Khatib tetap wajib memeriksa dalil, rukun khutbah, kondisi jamaah, dan kebijakan DKM setempat.</span>
+            <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Periksa ayat pada Qur'an Kementerian Agama ↗</a>
+            ${rendered.sourceLinks}
+          </div>
         </div>
-        <div class="khutbah-actions no-print"><button class="cta btn-compact" type="button" data-download-khutbah-docx>Unduh DOCX</button><button class="btn btn-compact" type="button" data-print-khutbah-pdf>Simpan PDF</button><button class="btn btn-compact" type="button" data-speak-khutbah-verse>🔊 Putar ayat</button><p class="save-status" data-khutbah-status aria-live="polite"></p></div>`;
+        <div class="khutbah-actions no-print">
+          <button class="cta btn-compact" type="button" data-download-khutbah-docx>Unduh DOCX siap print</button>
+          <button class="btn btn-compact" type="button" data-print-khutbah-pdf>Simpan PDF / Cetak</button>
+          <button class="btn btn-compact" type="button" data-speak-khutbah-verse>🔊 Putar ayat</button>
+          <p class="save-status" data-khutbah-status aria-live="polite"></p>
+        </div>`;
+
       document.querySelectorAll("[data-khutbah-title]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.khutbahTitle === record.id)));
       const status = reader.querySelector("[data-khutbah-status]");
-      reader.querySelector("[data-download-khutbah-docx]")?.addEventListener("click", () => {const blob = window.PAIBP_DOCX.createDocument({title: record.title,blocks: window.PAIBP_DOCX.blocksFromElement(reader)});downloadBlob(blob, `${filenameSlug(record.title)}-khutbah-jumat.docx`);if (status) status.textContent = "Naskah DOCX berhasil dibuat.";});
-      reader.querySelector("[data-print-khutbah-pdf]")?.addEventListener("click", () => {printDocument(record.title, printableHtmlFrom(reader));if (status) status.textContent = "Pilih ‘Simpan sebagai PDF’ pada dialog cetak.";});
+      reader.querySelector("[data-download-khutbah-docx]")?.addEventListener("click", () => {
+        const blob = window.PAIBP_DOCX.createDocument({
+          title: record.title,
+          blocks: window.PAIBP_DOCX.blocksFromElement(reader.querySelector(".khutbah-document-body")),
+        });
+        downloadBlob(blob, `${filenameSlug(record.title)}-khutbah-jumat-lengkap.docx`);
+        if (status) status.textContent = "Naskah DOCX lengkap berhasil dibuat.";
+      });
+      reader.querySelector("[data-print-khutbah-pdf]")?.addEventListener("click", () => {
+        printDocument(record.title, printableHtmlFrom(reader));
+        if (status) status.textContent = "Dialog cetak dibuka. Pilih printer atau Simpan sebagai PDF.";
+      });
       reader.querySelector("[data-speak-khutbah-verse]")?.addEventListener("click", () => speakArabic(verse.text, status));
     } catch (error) {
       activeKhutbahRecord = null;
-      reader.innerHTML = `<div class="khutbah-empty-state"><span>⚠️</span><h5>Naskah belum dapat dibuka</h5><p>${escapeHtml(error?.message || "Data naskah belum lengkap.")}</p><button class="btn btn-compact" type="button" onclick="location.reload()">Muat Ulang</button></div>`;
+      reader.innerHTML = `<div class="khutbah-empty-state"><span>⚠️</span><h5>Naskah belum dapat dibuka</h5><p>${escapeHtml(error?.message || "Paket naskah gagal dibaca.")} Muat ulang halaman lalu coba kembali.</p></div>`;
     }
   }
 
@@ -4142,21 +4153,21 @@ if (workspace && appData) {
     localStorage.setItem(TAJWID_PROGRESS_KEY, JSON.stringify(progress));
   }
 
-  function quranAudioUrlByVerseId(verseId) {
-    return `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${verseId}.mp3`;
+  function quranAudioUrlByVerseId(verseId, edition = "ar.alafasy") {
+    return `https://cdn.islamic.network/quran/audio/128/${edition}/${verseId}.mp3`;
   }
 
-  async function tajwidVerseFromReference(reference) {
+  async function tajwidVerseFromReference(reference, edition = "ar.alafasy") {
     const [surahNumber, ayahNumber] = String(reference || "").split(":").map(Number);
     const surahs = await loadOfflineQuran();
     const surah = surahs.find((item) => Number(item.id) === surahNumber);
     const verse = surah?.verses?.[ayahNumber - 1];
     if (!surah || !verse) throw new Error("Ayat contoh tidak tersedia.");
-    return { surah, verse, audioUrl: quranAudioUrlByVerseId(verse.id) };
+    return { surah, verse, audioUrl: quranAudioUrlByVerseId(verse.id, edition) };
   }
 
-  async function cacheTajwidAudio(reference, statusElement, announce = true) {
-    const payload = await tajwidVerseFromReference(reference);
+  async function cacheTajwidAudio(reference, statusElement, announce = true, edition = "ar.alafasy") {
+    const payload = await tajwidVerseFromReference(reference, edition);
     if (!("caches" in window)) throw new Error("Penyimpanan audio tidak didukung browser.");
     const cache = await caches.open(QURAN_AUDIO_CACHE_NAME);
     const existing = await cache.match(payload.audioUrl);
@@ -4171,14 +4182,14 @@ if (workspace && appData) {
     return payload;
   }
 
-  async function playTajwidAudio(lesson, statusElement) {
+  async function playTajwidAudio(lesson, statusElement, edition = "ar.alafasy") {
     if (activeTajwidAudio) {
       activeTajwidAudio.pause?.();
       activeTajwidAudio = null;
     }
     if (statusElement) statusElement.textContent = "Menyiapkan audio qari…";
     try {
-      const payload = await tajwidVerseFromReference(lesson.reference);
+      const payload = await tajwidVerseFromReference(lesson.reference, edition);
       let canPlay = navigator.onLine;
       if ("caches" in window) {
         const cache = await caches.open(QURAN_AUDIO_CACHE_NAME);
@@ -4188,7 +4199,8 @@ if (workspace && appData) {
       const audio = new Audio(payload.audioUrl);
       activeTajwidAudio = audio;
       audio.onplaying = () => {
-        if (statusElement) statusElement.textContent = "Memutar tilawah Mishary Rashid Alafasy. Dengarkan ayat lengkap dan fokuskan pada contoh yang ditandai.";
+        const reciter = (islamicLearningData.tajwid.audioReciters || []).find((item) => item.id === edition);
+        if (statusElement) statusElement.textContent = `Memutar tilawah ${reciter?.name || "qari internasional"}. Dengarkan ayat lengkap dan fokuskan pada contoh yang ditandai.`;
       };
       audio.onended = () => {
         activeTajwidAudio = null;
@@ -4230,6 +4242,13 @@ if (workspace && appData) {
         <p class="tajwid-example-arabic" lang="ar" dir="rtl">${escapeHtml(lesson.example)}</p>
         <p>${escapeHtml(lesson.meaning)}</p>
         <small>Contoh dalam Al Qur'an Surat ${escapeHtml(lesson.reference)}</small>
+        <div class="tajwid-reciter-control no-print">
+          <label>Qari internasional
+            <select data-tajwid-reciter>
+              ${(islamicLearningData.tajwid.audioReciters || [{ id: "ar.alafasy", name: "Mishary Rashid Alafasy" }]).map((reciter) => `<option value="${escapeHtml(reciter.id)}">${escapeHtml(reciter.name)}</option>`).join("")}
+            </select>
+          </label>
+        </div>
         <div class="tajwid-audio-actions no-print">
           <button class="btn btn-compact" type="button" data-play-tajwid>▶ Putar audio qari</button>
           <button class="btn btn-compact" type="button" data-cache-tajwid>⇩ Simpan audio luring</button>
@@ -4246,11 +4265,15 @@ if (workspace && appData) {
         <button class="btn btn-compact" type="button" data-tajwid-retry hidden>Ulangi soal</button>
       </section>`;
     const audioStatus = player.querySelector("[data-tajwid-audio-status]");
-    player.querySelector("[data-play-tajwid]")?.addEventListener("click", () => playTajwidAudio(lesson, audioStatus));
+    player.querySelector("[data-play-tajwid]")?.addEventListener("click", () => {
+      const edition = player.querySelector("[data-tajwid-reciter]")?.value || "ar.alafasy";
+      playTajwidAudio(lesson, audioStatus, edition);
+    });
     player.querySelector("[data-cache-tajwid]")?.addEventListener("click", async () => {
       if (audioStatus) audioStatus.textContent = "Mengunduh audio qari…";
       try {
-        await cacheTajwidAudio(lesson.reference, audioStatus);
+        const edition = player.querySelector("[data-tajwid-reciter]")?.value || "ar.alafasy";
+        await cacheTajwidAudio(lesson.reference, audioStatus, true, edition);
       } catch (error) {
         if (audioStatus) audioStatus.textContent = error.message || "Audio belum dapat disimpan.";
       }
@@ -4367,23 +4390,67 @@ if (workspace && appData) {
   function renderDuaList(containerId, category) {
     const container = document.querySelector(containerId);
     if (!container) return;
-    const items = islamicData.dua.filter((item) => item.categories.includes(category));
-    container.innerHTML = items.map((item, index) => `
-      <article class="dua-card">
-        <div class="dua-card-head"><span>${index + 1}</span><div><h5>${escapeHtml(item.title)}</h5><small>${escapeHtml(item.repetition)}</small></div></div>
-        <p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(item.arabic)}</p>
-        <p>${escapeHtml(item.meaning)}</p>
-        <p class="dua-source">${escapeHtml(item.source)}</p>
-        <div class="dua-actions no-print">
-          <button class="btn btn-compact" type="button" data-speak-dua="${escapeHtml(item.id)}">🔊 Putar audio perangkat</button>
-          <span class="audio-note" data-dua-status="${escapeHtml(item.id)}">Suara lokal dapat dipakai luring bila bahasa Arab terpasang.</span>
-        </div>
-      </article>`).join("");
-    container.querySelectorAll("[data-speak-dua]").forEach((button) => button.addEventListener("click", () => {
-      const item = items.find((entry) => entry.id === button.dataset.speakDua);
-      const status = container.querySelector(`[data-dua-status="${button.dataset.speakDua}"]`);
-      if (item && status) speakArabic(item.arabic, status);
-    }));
+    const allItems = islamicData.dua.filter((item) => item.categories.includes(category));
+    const isHisnul = category === "hisnul";
+    const searchInput = isHisnul ? document.querySelector("#hisnul-search") : null;
+    const groupSelect = isHisnul ? document.querySelector("#hisnul-group-filter") : null;
+    const countLabel = isHisnul ? document.querySelector("#hisnul-count") : null;
+    const variationLabel = isHisnul ? document.querySelector("#hisnul-variation-count") : null;
+    const sourceContainer = isHisnul ? document.querySelector("#hisnul-source-portals") : null;
+
+    if (isHisnul && groupSelect && !groupSelect.dataset.ready) {
+      const groups = [...new Set(allItems.map((item) => item.group || "Doa harian"))].sort((a, b) => a.localeCompare(b, "id"));
+      groupSelect.innerHTML = `<option value="all">Semua kategori</option>${groups.map((group) => `<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join("")}`;
+      groupSelect.dataset.ready = "true";
+    }
+    if (isHisnul && sourceContainer) {
+      sourceContainer.innerHTML = (window.PAIBP_DUA_SOURCES || []).map((source) => `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer"><strong>${escapeHtml(source.name)}</strong><span>${escapeHtml(source.label)} ↗</span></a>`).join("");
+    }
+    if (isHisnul && variationLabel) variationLabel.textContent = formatLargeCount(window.PAIBP_DUA_VARIATION_COUNT || 1e12);
+
+    const draw = () => {
+      const keyword = String(searchInput?.value || "").trim().toLocaleLowerCase("id");
+      const selectedGroup = String(groupSelect?.value || "all");
+      const items = allItems.filter((item) => {
+        const matchesGroup = selectedGroup === "all" || (item.group || "Doa harian") === selectedGroup;
+        const haystack = `${item.title} ${item.meaning} ${item.source} ${item.group || ""}`.toLocaleLowerCase("id");
+        return matchesGroup && (!keyword || haystack.includes(keyword));
+      });
+      if (countLabel) countLabel.textContent = `${items.length}/${allItems.length}`;
+      container.innerHTML = items.length ? items.map((item, index) => `
+        <article class="dua-card">
+          <div class="dua-card-head"><span>${index + 1}</span><div><h5>${escapeHtml(item.title)}</h5><small>${escapeHtml(item.group || item.repetition)}</small></div></div>
+          <p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(item.arabic)}</p>
+          <p>${escapeHtml(item.meaning)}</p>
+          <p class="dua-source">${escapeHtml(item.source)}</p>
+          <div class="dua-actions no-print">
+            <button class="btn btn-compact" type="button" data-speak-dua="${escapeHtml(item.id)}">🔊 Putar audio Arab</button>
+            ${item.url ? `<a class="btn btn-compact" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">Periksa sumber ↗</a>` : ""}
+            <span class="audio-note" data-dua-status="${escapeHtml(item.id)}">Suara Arab perangkat dapat dipakai luring bila paket bahasanya terpasang.</span>
+          </div>
+        </article>`).join("") : `<div class="khutbah-empty-state"><span>🔎</span><h5>Doa tidak ditemukan</h5><p>Ubah kata pencarian atau pilih kategori lain.</p></div>`;
+      container.querySelectorAll("[data-speak-dua]").forEach((button) => button.addEventListener("click", () => {
+        const item = allItems.find((entry) => entry.id === button.dataset.speakDua);
+        const status = container.querySelector(`[data-dua-status="${button.dataset.speakDua}"]`);
+        if (item && status) speakArabic(item.arabic, status);
+      }));
+    };
+
+    if (isHisnul && !container.dataset.filtersBound) {
+      searchInput?.addEventListener("input", draw);
+      groupSelect?.addEventListener("change", draw);
+      document.querySelector("#download-hisnul-docx")?.addEventListener("click", () => {
+        const selected = [...container.querySelectorAll(".dua-card")];
+        const blob = window.PAIBP_DOCX.createDocument({
+          title: "Hisnul Muslim dan Doa Harian Bersumber",
+          blocks: selected.flatMap((card) => window.PAIBP_DOCX.blocksFromElement(card)),
+        });
+        downloadBlob(blob, "hisnul-muslim-doa-harian-bersumber.docx");
+      });
+      document.querySelector("#print-hisnul-pdf")?.addEventListener("click", () => printDocument("Hisnul Muslim dan Doa Harian Bersumber", printableHtmlFrom(container)));
+      container.dataset.filtersBound = "true";
+    }
+    draw();
   }
 
   function normalizeSurahName(value) {
@@ -6087,7 +6154,7 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=18");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=19");
       await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;

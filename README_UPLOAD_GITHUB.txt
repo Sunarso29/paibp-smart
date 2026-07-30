@@ -46,7 +46,7 @@ PENTING:
 - Uji empat tab utama setelah website aktif: Ruang Murid, Ruang Guru,
   Fitur Islami, dan Fitur Games.
 
-FILE WAJIB V18:
+FILE WAJIB V19:
 - khutbah-source-data.js
 - khutbah-verse-data.js
 - assessment-data.js

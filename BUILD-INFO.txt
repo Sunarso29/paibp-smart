@@ -1,28 +1,25 @@
 PAIBP SMART SMP
-Versi paket: 18.0
+Versi paket: 19.0
 Tanggal paket: 30 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
 Paket utama:
 - 30 paket pembelajaran PAIBP kelas VII–IX dengan materi, dalil, ringkasan, latihan, LKPD, video, dan rekap tugas.
 - Ruang Murid, Ruang Guru, Fitur Islami, Games, Ruang Editor, dan Ruang Asesmen Guru dalam satu portal.
-- Al Qur'an luring lengkap 114 surat dan 6.236 ayat, Hadits Riwayat terpilih, dzikir, kalender Hijriah, jadwal sholat, tajwid, serta nasihat harian.
+- Al Qur'an luring lengkap 114 surat dan 6.236 ayat, Hadits Riwayat terpilih, dzikir, kalender Hijriah, jadwal sholat, Bahasa Arab, khutbah, tajwid, serta nasihat harian.
 - Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan: 400 tab, 40.000 soal, audio Arab, progres, DOCX, dan PDF siap cetak.
-- 100 game edukatif, 60 video penguatan, perangkat guru, profil sekolah, galeri, komentar, statistik, dan rekap lintas perangkat opsional.
+- PTS, SAS, dan UKLN HOTS literasi-numerasi kelas VII–IX, generator paket, kunci, rekap, DOCX, dan PDF.
 
-Pembaruan v18:
-- Kerusakan preview Khutbah Jum'at diperbaiki dengan paket ayat Al Qur'an utama dan data cadangan tertanam untuk seluruh 24 tema.
-- Naskah khutbah pertama dan kedua otomatis tampil ketika tab dibuka, dapat dicari, dipreview, dicetak, serta diunduh sebagai DOCX atau PDF.
-- Pusat referensi resmi memuat portal NU Online, Muhammadiyah, Kementerian Agama, Yufid, dan Radio Rodja beserta contoh referensi terpilih.
-- Lebih dari 1,5 triliun ruang variasi susunan khutbah dibentuk secara kombinatorial dari komponen editorial terkurasi; bukan klaim menyimpan triliunan file literal.
-- Studio suara Arab dan qari internasional menyediakan pilihan Misyari Alafasy, Mahmud Khalil Al-Husary, Muhammad Siddiq Al-Minshawi, dan Abdul Basit; audio dapat disimpan untuk penggunaan luring setelah dimuat saat daring.
-- Bahasa Arab mempunyai tab tersendiri untuk tingkat Dasar, Menengah, Mahir, dan Percakapan, dilengkapi latihan, umpan balik, suara Arab, progres, DOCX, serta PDF.
-- Ruang Asesmen Guru terkunci dengan PIN editor dan tidak ditampilkan sebagai paket terbuka bagi murid.
-- PTS kelas VII, VIII, dan IX tersedia tiap tiga bab: 40 pilihan ganda A–D dan 5 uraian HOTS literasi-numerasi.
-- SAS Semester Gasal dan Genap menyediakan 40 pilihan ganda dan 10 uraian; SAS Genap merujuk bab 1–10.
-- Kelas IX Semester Genap menggunakan UKLN dengan proporsi materi kelas VII 20%, kelas VIII 20%, dan kelas IX 60%.
-- Setiap paket asesmen memiliki kop sekolah, hari/tanggal, waktu, alokasi waktu, mata pelajaran, ruang, Tahun Ajaran, paket acak, kode akses, kunci jawaban, preview, DOCX, PDF, tautan pengerjaan, dan tautan rekap hasil murid.
-- Bank soal memperbanyak stimulus potongan ayat, kaidah tajwid, konteks literasi, dan numerasi; huruf Arab dipertahankan dengan arah RTL dan font cadangan yang stabil saat cetak.
-- Cache PWA diperbarui ke v18 agar file baru tidak tertahan cache versi lama.
+Pembaruan v19:
+- Seluruh naskah Khutbah Jum'at diubah dari versi singkat menjadi naskah dua khutbah lengkap sekitar 1.800–1.900 kata dengan estimasi penyampaian 20–30 menit.
+- Struktur khutbah memuat pembukaan Arab, wasiat takwa, ayat utama, ayat penguat, hadits, tadabbur, empat renungan, muhasabah, konteks keluarga dan digital, langkah pengamalan, khutbah kedua, sholawat, serta doa lengkap.
+- Preview naskah otomatis dibuka ketika tab Khutbah dipilih dan tetap memiliki tombol DOCX, PDF/cetak, audio ayat, serta tautan pemeriksaan ke Qur'an Kementerian Agama, NU Online, Muhammadiyah, Yufid, dan Radio Rodja.
+- Hisnul Muslim diperluas menjadi 57 doa pokok yang dapat ditelusuri, meliputi rumah, keluarga, makan, ibadah, perjalanan, cuaca, kesehatan, ketenangan jiwa, majelis, kematian, serta doa Al Qur'an.
+- Setiap doa mempunyai teks Arab, makna, waktu membaca, sumber, tautan pemeriksaan, audio Arab, pencarian, filter kategori, dan unduhan DOCX/PDF.
+- Klaim jumlah besar diterapkan sebagai ruang kombinasi pembelajaran, kategori, jadwal, pencarian, dan refleksi; bukan mengarang lafaz doa tanpa dasar.
+- Tajwid Praktis diperluas menjadi 14 modul dan 69 materi: makhraj, sifat huruf, nun mati dan tanwin, mim mati, alif lam, lafzhul jalalah, hukum ra, mad dasar dan lanjutan, qalqalah, pertemuan huruf, hamzah washal/qatha', waqaf-ibtida, serta bacaan gharib riwayat Hafs.
+- Setiap materi tajwid menyediakan pilihan audio qari Mishary Rashid Alafasy, Mahmud Khalil Al-Husary, Muhammad Siddiq Al-Minshawi, dan Abdul Basit Abdus Samad, dengan opsi penyimpanan audio luring.
+- Tata letak khutbah, Hisnul Muslim, huruf Arab, dan kaidah tajwid diperkuat untuk tampilan layar, A4, DOCX, serta PDF.
+- Cache PWA diperbarui ke v19 dan memuat berkas islamic-upgrade-v19.js agar perubahan tidak tertahan cache lama.
 
 Akses editor standar: 261078

@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
-    <link rel="stylesheet" href="styles.css?v=18">
+    <link rel="stylesheet" href="styles.css?v=19">
   </head>
   <body>
     <a class="skip" href="#main">Lewati ke konten</a>
@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v18</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v19</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -326,8 +326,26 @@
                   </section>
 
                   <section data-islamic-page="hisnul" hidden>
-                    <div class="subheading-row"><div><h4>Hisnul Muslim Pilihan</h4><p>Doa harian dengan teks Arab, makna ringkas, jumlah bacaan, dan sumber.</p></div></div>
+                    <div class="subheading-row">
+                      <div>
+                        <span class="feature-eyebrow">Ensiklopedia Doa Harian</span>
+                        <h4>Hisnul Muslim Lengkap dan Bersumber</h4>
+                        <p>Doa rumah, ibadah, keluarga, perjalanan, kesehatan, ketenangan jiwa, pertemuan, serta doa-doa Al Qur'an. Setiap bacaan dilengkapi Arab, makna, waktu membaca, sumber, audio, dan tautan pemeriksaan.</p>
+                      </div>
+                    </div>
+                    <div class="hisnul-stats">
+                      <article><span>Doa tampil</span><strong id="hisnul-count">—</strong><small>dapat dicari dan difilter</small></article>
+                      <article><span>Susunan pembelajaran</span><strong id="hisnul-variation-count">—</strong><small>kombinasi konteks, jadwal, dan refleksi</small></article>
+                    </div>
+                    <div class="hisnul-toolbar no-print">
+                      <label>Cari doa<input id="hisnul-search" type="search" placeholder="Contoh: perjalanan, orang tua, sakit"></label>
+                      <label>Kategori<select id="hisnul-group-filter"><option value="all">Semua kategori</option></select></label>
+                      <button class="cta btn-compact" id="download-hisnul-docx" type="button">Unduh DOCX</button>
+                      <button class="btn btn-compact" id="print-hisnul-pdf" type="button">Simpan PDF / Cetak</button>
+                    </div>
+                    <div class="hisnul-source-portals" id="hisnul-source-portals"></div>
                     <div class="dua-list" id="hisnul-list"></div>
+                    <p class="document-note">Yang diperbanyak adalah susunan pembelajaran, pencarian, kategori, jadwal, dan refleksinya—bukan mengarang triliunan lafaz doa. Teks doa pokok tetap dibatasi pada bacaan yang mempunyai dasar Al Qur'an atau Hadits Riwayat yang dapat diperiksa.</p>
                   </section>
 
                   <section data-islamic-page="morning" hidden>
@@ -382,7 +400,7 @@
                       <div>
                         <span class="feature-eyebrow">Mimbar Pekanan</span>
                         <h4>Khutbah Jum'at Dinamis dan Bersumber</h4>
-                        <p>Judul berganti setiap hari dari tema terkurasi. Pilih judul untuk membuka naskah dua khutbah, lalu unduh dalam DOCX atau simpan sebagai PDF.</p>
+                        <p>Judul berganti setiap hari dari tema terkurasi. Setiap pilihan membuka naskah dua khutbah lengkap berdurasi sekitar 20–30 menit, dengan ayat, hadits, muhasabah, langkah pengamalan, doa, referensi, DOCX, dan PDF siap print.</p>
                       </div>
                       <button class="cta btn-compact" id="refresh-khutbah-catalog" type="button">↻ Ganti Pilihan Judul</button>
                     </div>
@@ -428,7 +446,7 @@
                       <div>
                         <span class="feature-eyebrow">Studio Tilawah</span>
                         <h4>Tajwid Praktis Interaktif</h4>
-                        <p>Belajar bertahap dari huruf hijaiyah dan makhraj, nun mati, mim mati, mad, waqaf, hingga penguatan bacaan.</p>
+                        <p>Belajar menyeluruh dari makhraj dan sifat huruf, nun serta mim mati, alif lam, hukum ra dan lam, seluruh mad, pertemuan dua huruf, hamzah, waqaf-ibtida, hingga bacaan gharib riwayat Hafs.</p>
                       </div>
                       <div class="tajwid-score-pill"><span>Progres</span><strong id="tajwid-progress-count">0/0</strong></div>
                     </div>
@@ -443,7 +461,7 @@
                         </div>
                       </article>
                     </div>
-                    <p class="document-note">Audio qari dimuat dari Al Quran Cloud dan dapat disimpan pada perangkat setelah pertama kali diputar saat daring. Bila rekaman belum tersedia, suara Arab perangkat digunakan sebagai cadangan; ia membantu latihan awal, bukan pengganti talaqqi kepada guru Al Qur'an.</p>
+                    <p class="document-note">Setiap materi menyediakan pilihan audio qari internasional: Mishary Rashid Alafasy, Mahmud Khalil Al-Husary, Muhammad Siddiq Al-Minshawi, dan Abdul Basit Abdus Samad. Audio dapat disimpan pada perangkat setelah pertama kali diputar saat daring. Bila rekaman belum tersedia, suara Arab perangkat digunakan sebagai cadangan; ia membantu latihan awal, bukan pengganti talaqqi kepada guru Al Qur'an.</p>
                   </section>
 
                   <section data-islamic-page="insights" hidden>
@@ -773,23 +791,24 @@
       </section>
     </div>
 
-    <script src="app-config.js?v=18"></script>
-    <script src="content-data.js?v=18"></script>
-    <script src="teacher-source-data.js?v=18"></script>
-    <script src="calendar-data.js?v=18"></script>
-    <script src="staff-images.js?v=18"></script>
-    <script src="school-data.js?v=18"></script>
-    <script src="islamic-data.js?v=18"></script>
-    <script src="islamic-learning-data.js?v=18"></script>
-    <script src="khutbah-source-data.js?v=18"></script>
-    <script src="khutbah-verse-data.js?v=18"></script>
-    <script src="hadith-data.js?v=18"></script>
-    <script src="arabic-data.js?v=18"></script>
-    <script src="assessment-data.js?v=18"></script>
-    <script src="game-data.js?v=18"></script>
-    <script src="video-data.js?v=18"></script>
-    <script src="docx-export.js?v=18"></script>
-    <script src="script.js?v=18"></script>
-    <script src="assessment-ui.js?v=18"></script>
+    <script src="app-config.js?v=19"></script>
+    <script src="content-data.js?v=19"></script>
+    <script src="teacher-source-data.js?v=19"></script>
+    <script src="calendar-data.js?v=19"></script>
+    <script src="staff-images.js?v=19"></script>
+    <script src="school-data.js?v=19"></script>
+    <script src="islamic-data.js?v=19"></script>
+    <script src="islamic-learning-data.js?v=19"></script>
+    <script src="islamic-upgrade-v19.js?v=19"></script>
+    <script src="khutbah-source-data.js?v=19"></script>
+    <script src="khutbah-verse-data.js?v=19"></script>
+    <script src="hadith-data.js?v=19"></script>
+    <script src="arabic-data.js?v=19"></script>
+    <script src="assessment-data.js?v=19"></script>
+    <script src="game-data.js?v=19"></script>
+    <script src="video-data.js?v=19"></script>
+    <script src="docx-export.js?v=19"></script>
+    <script src="script.js?v=19"></script>
+    <script src="assessment-ui.js?v=19"></script>
   </body>
 </html>

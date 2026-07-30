@@ -1,0 +1,20 @@
+PAIBP SMART SMP — CATATAN PEMBARUAN v19
+
+1. Khutbah Jum'at
+- Naskah singkat diganti menjadi naskah dua khutbah lengkap 20–30 menit.
+- Tersedia preview otomatis, DOCX, PDF/cetak, audio ayat, dan rujukan pemeriksaan.
+- Isi mencakup ayat, hadits, tadabbur, muhasabah, keluarga, generasi muda, etika digital, amal pekanan, khutbah kedua, dan doa.
+
+2. Hisnul Muslim
+- 57 doa pokok bersumber dengan pencarian, kategori, audio, tautan sumber, DOCX, dan PDF.
+- Tidak mengarang triliunan teks doa. Angka besar hanya menunjukkan kombinasi pembelajaran dan pengelolaan konten.
+
+3. Tajwid Praktis
+- 14 modul dan 69 materi dari dasar sampai lanjutan.
+- Menambahkan sifat huruf, alif lam, lafzhul jalalah, hukum ra, mad lanjutan, idgham huruf, hamzah, waqaf-ibtida, serta gharib Hafs.
+- Pilihan empat qari internasional tersedia pada setiap materi.
+
+4. Publikasi
+- Unggah seluruh isi paket ke root repository GitHub.
+- Pastikan index.html, script.js, styles.css, service-worker.js, islamic-upgrade-v19.js, dan seluruh data ikut terunggah.
+- Setelah GitHub Pages selesai membangun, tekan Ctrl+F5 atau hapus data situs agar cache v18 tidak digunakan.

@@ -56,7 +56,7 @@
   }
 
   function hashAccessCode(code, examId, seed) {
-    return stableHash(`paibp-smart-v18|${String(code).trim()}|${examId}|${seed}`);
+    return stableHash(`paibp-smart-v19|${String(code).trim()}|${examId}|${seed}`);
   }
 
   function encodeBase64Url(value) {
@@ -175,7 +175,7 @@
   function printHtml(title, html) {
     const popup = window.open("", "_blank", "noopener,noreferrer");
     if (!popup) return false;
-    popup.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="styles.css?v=18"><style>
+    popup.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="styles.css?v=19"><style>
       @page{size:A4;margin:15mm 15mm 17mm}html,body{background:#fff!important}body{padding:0!important;margin:0!important;font-family:Cambria,serif;color:#111}.exam-paper{max-width:none;margin:0}.no-print{display:none!important}.exam-arabic{font-family:"Traditional Arabic","Noto Naskh Arabic","Amiri",serif;font-size:19pt;line-height:1.9;display:block;text-align:right;direction:rtl}.exam-question{break-inside:avoid;page-break-inside:avoid}.exam-letterhead{break-after:avoid}.exam-identity-table{break-after:avoid}.answer-key{break-before:page}
     </style></head><body>${html}<script>onload=()=>setTimeout(()=>print(),350)<\/script></body></html>`);
     popup.document.close();

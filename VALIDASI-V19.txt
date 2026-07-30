@@ -1,0 +1,10 @@
+VALIDASI PAIBP SMART SMP v19
+
+- JavaScript utama, data Islam, data khutbah, asesmen, dan service worker lulus pemeriksaan sintaks Node.js.
+- Paket Al Qur'an luring berisi 114 surat dan digunakan sebagai sumber utama ayat.
+- Mesin khutbah menghasilkan sekitar 1.800–1.900 kata pada seluruh tema teruji, setara estimasi 20–30 menit dengan jeda dan bacaan Arab.
+- Hisnul Muslim memuat 57 doa pokok.
+- Tajwid memuat 14 modul dan 69 materi.
+- Empat qari internasional tersedia dalam pilihan audio tajwid.
+- Service Worker v19 memuat islamic-upgrade-v19.js.
+- Tautan DOCX/PDF dan sumber tetap berada di bawah preview naskah.

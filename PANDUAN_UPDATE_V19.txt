@@ -1,0 +1,17 @@
+UPDATE REPOSITORY GITHUB KE PAIBP SMART SMP v19
+
+1. Cadangkan repository lama.
+2. Unggah seluruh isi paket v19 ke root repository paibp-smart dan pilih replace/overwrite untuk file yang sama.
+3. Pastikan islamic-upgrade-v19.js berada sejajar dengan index.html.
+4. Hapus CATATAN-PEMBARUAN-V18.txt dan VALIDASI-V18.txt bila masih ada.
+5. Commit dengan pesan: Perbarui khutbah, Hisnul Muslim, dan Tajwid ke v19.
+6. Setelah GitHub Pages selesai membangun, buka situs lalu tekan Ctrl+F5 atau hapus data situs agar cache v19 aktif.
+
+Berkas inti pembaruan:
+- index.html
+- script.js
+- styles.css
+- service-worker.js
+- islamic-upgrade-v19.js
+- assessment-ui.js
+- BUILD-INFO.txt
