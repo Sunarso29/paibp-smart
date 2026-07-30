@@ -1,0 +1,21 @@
+PAIBP SMART SMP v23 — HASIL VALIDASI
+Tanggal: 30 Juli 2026
+
+LULUS:
+- Seluruh JavaScript root dan vendor lolos pemeriksaan sintaks Node.js.
+- Google Apps Script lolos pemeriksaan sintaks setelah diuji sebagai JavaScript.
+- index.html tidak memiliki ID ganda dan seluruh aset lokal yang direferensikan tersedia.
+- Direktori sekolah berisi tepat 101 SMP negeri/swasta Kabupaten Banjarnegara.
+- Nama guru pada direktori lokal mengisi unit kerja otomatis melalui pencocokan nama ternormalisasi.
+- Kata sandi editor Alifi@78 tersimpan dalam bentuk SHA-256, bukan teks terbuka pada script utama.
+- Input kata sandi mendukung huruf, angka, dan karakter khusus.
+- Judul dan ringkasan galeri tidak memakai batas maxlength HTML.
+- Pemilih foto mendukung multiple dan dibatasi maksimal 10 foto melalui logika aplikasi.
+- Data galeri satu foto versi lama tetap dibaca dan dinormalisasi menjadi array foto.
+- Google Apps Script menyimpan URL dan file ID banyak foto dalam JSON serta menghapus file lama dengan aman.
+- Service worker v23 memuat banjarnegara-school-directory.js.
+- Paket mempertahankan struktur GitHub Pages pada root.
+
+CATATAN:
+- Direktori sekolah bersumber dari daftar SPMB Dindikpora Kabupaten Banjarnegara.
+- Direktori nama guru dalam paket menggunakan data personel yang memang tersedia pada school-data.js; sekolah lain tetap dapat dipilih dari 101 satuan pendidikan atau ditulis manual untuk penggunaan nasional.

@@ -1,0 +1,26 @@
+PAIBP SMART SMP v23 — Direktori Guru/Sekolah dan Galeri Multi-Foto
+Tanggal: 30 Juli 2026
+
+1. Direktori login guru
+- 101 SMP negeri dan swasta se-Kabupaten Banjarnegara dimasukkan dari daftar resmi SPMB Dindikpora Kabupaten Banjarnegara.
+- Nama sekolah dapat dicari melalui autocomplete.
+- Nama guru yang tersedia pada data personel paket dikenali dan unit kerja terisi otomatis.
+- Sekolah di luar Banjarnegara tetap dapat diisi manual agar portal dapat digunakan secara nasional.
+- Status pada formulir membedakan guru yang dikenali lokal, sekolah resmi yang dikenali, dan identitas manual.
+
+2. Keamanan editor
+- Kata sandi editor diubah menjadi Alifi@78.
+- Input kata sandi mendukung huruf, angka, dan karakter khusus.
+
+3. Editor galeri
+- Judul dan ringkasan tidak lagi memakai batas karakter HTML.
+- Satu kegiatan mendukung maksimal 10 foto.
+- Foto dapat dipilih sekaligus, dipratinjau, dihapus satu per satu, disusun sebagai kolase, dan dibuka dalam lightbox.
+- Tipografi publikasi menggunakan Cambria regular.
+- Google Apps Script menyimpan banyak foto di Google Drive dan data URL dalam Google Sheet secara kompatibel dengan versi lama.
+
+4. Berkas baru
+- banjarnegara-school-directory.js
+
+5. Cache
+- Service worker: paibp-smart-core-v23.

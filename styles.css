@@ -1027,3 +1027,63 @@ body.has-modal{overflow:hidden}
   .exam-paper{padding:12px}.exam-letterhead{grid-template-columns:62px 1fr;gap:8px}.exam-logo-space{width:58px;height:58px}.exam-logo-space img{max-width:56px;max-height:56px}.exam-letterhead-copy strong{font-size:1rem}.exam-letterhead-copy h2{font-size:1rem}.exam-identity-table{display:block;overflow-x:auto}.exam-identity-table th,.exam-identity-table td{min-width:100px;padding:6px;font-size:.78rem}.exam-student-identity{grid-template-columns:1fr}.exam-options{grid-template-columns:1fr}.exam-question{grid-template-columns:26px 1fr}.exam-arabic{font-size:1.28rem}.student-assessment-entry{align-items:stretch;flex-direction:column}.student-assessment-entry .cta{width:100%}
 }
 @media print{.exam-runtime-bar,.exam-palette,.exam-confirm-modal{display:none!important}.exam-option-print.is-answer-key{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#dff6e9!important;border-color:#087f68!important}}
+
+
+/* ===== PAIBP SMART v23: direktori guru/sekolah dan galeri multi-foto ===== */
+.teacher-directory-status{display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:start;border:1px solid #d5e6e0;border-radius:12px;background:#f7fbfa;padding:10px;color:#36515a}
+.teacher-directory-status>span{display:grid;width:32px;height:32px;place-items:center;border-radius:10px;background:#e8f5f0;color:#087f68;font-weight:900}
+.teacher-directory-status strong,.teacher-directory-status small{display:block}.teacher-directory-status strong{font-size:12px}.teacher-directory-status small{margin-top:2px;color:#647a72;font-size:10px;line-height:1.45}
+.teacher-directory-status.is-school-recognized{border-color:#8fc7b6;background:#f1faf7}.teacher-directory-status.is-verified{border-color:#4da98e;background:#eaf8f3}.teacher-directory-status.is-verified>span{background:#087f68;color:#fff}
+
+.gallery-admin,.gallery-admin input,.gallery-admin textarea,.gallery-admin button,.news-card,.news-card h4,.news-card p,.news-card time{font-family:Cambria,Georgia,"Times New Roman",serif}
+.gallery-form-grid label{font-family:Cambria,Georgia,"Times New Roman",serif;font-weight:400;font-size:15px;color:#243f39}
+.gallery-form-grid input,.gallery-form-grid textarea{font-family:Cambria,Georgia,"Times New Roman",serif;font-weight:400;font-size:16px;line-height:1.55}
+.gallery-form-grid label small{font-weight:400;font-size:12px;line-height:1.45}
+.gallery-photo-preview-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;min-height:170px;padding:10px;align-content:start}
+.gallery-photo-preview-grid>span,.gallery-photo-preview-grid>small{grid-column:1/-1;align-self:center;text-align:center}
+.gallery-photo-preview-grid figure{position:relative;margin:0;overflow:hidden;border-radius:12px;background:#edf5f2;aspect-ratio:4/3}
+.gallery-photo-preview-grid figure img{width:100%;height:100%;min-height:0;max-height:none;object-fit:cover}
+.gallery-photo-preview-grid figcaption{position:absolute;left:7px;bottom:7px;display:grid;width:25px;height:25px;place-items:center;border-radius:50%;background:rgba(3,44,38,.82);color:#fff;font-size:12px}
+.gallery-photo-preview-grid figure button{position:absolute;right:6px;top:6px;width:28px;height:28px;border:0;border-radius:50%;background:rgba(135,22,22,.9);color:#fff;font-size:18px;cursor:pointer}
+
+.news-grid{grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px}
+.news-card{display:grid;grid-template-rows:auto 1fr;border-radius:22px;box-shadow:0 12px 34px rgba(1,53,44,.08);transition:transform .2s ease,box-shadow .2s ease}
+.news-card:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(1,53,44,.13)}
+.news-card-copy{display:flex;flex-direction:column;padding:18px!important}
+.news-card h4{margin:7px 0 9px;font-size:24px;line-height:1.25;font-weight:400;color:#123d35}
+.news-card p{margin:0;white-space:pre-wrap;font-size:16px;line-height:1.7;font-weight:400;color:#304f48}
+.news-card time{font-size:13px;font-weight:400;letter-spacing:.02em}
+.news-photo-count{display:block;margin-top:auto;padding-top:13px;color:#6a7d77;font-family:Cambria,Georgia,"Times New Roman",serif;font-size:12px}
+.news-photo-grid{display:grid;gap:4px;height:260px;background:#dfece7}
+.news-photo-grid.count-1{grid-template-columns:1fr}.news-photo-grid.count-2{grid-template-columns:1fr 1fr}.news-photo-grid.count-3,.news-photo-grid.count-4,.news-photo-grid.count-5{grid-template-columns:1.4fr 1fr;grid-template-rows:1fr 1fr}
+.news-photo-grid.count-3 .tile-1,.news-photo-grid.count-4 .tile-1,.news-photo-grid.count-5 .tile-1{grid-row:1/3}
+.news-photo-grid.count-4 .tile-4{display:none}.news-photo-grid.count-5 .tile-4,.news-photo-grid.count-5 .tile-5{display:none}
+.news-photo-tile{position:relative;overflow:hidden;border:0;padding:0;background:#d8e6e1;cursor:zoom-in}
+.news-photo-tile img{width:100%;height:100%;aspect-ratio:auto;object-fit:cover;transition:transform .25s ease}
+.news-photo-tile:hover img,.news-photo-tile:focus-visible img{transform:scale(1.035)}
+.news-photo-tile:focus-visible{outline:3px solid #f4be3b;outline-offset:-3px}
+.news-photo-tile>span{position:absolute;inset:0;display:grid;place-items:center;background:rgba(2,42,36,.58);color:#fff;font-size:30px;font-weight:700}
+
+.gallery-lightbox{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:18px}.gallery-lightbox[hidden]{display:none}
+.gallery-lightbox-backdrop{position:absolute;inset:0;background:rgba(2,19,24,.88);backdrop-filter:blur(8px)}
+.gallery-lightbox-dialog{position:relative;display:grid;grid-template-rows:minmax(0,1fr) auto;width:min(96vw,1100px);height:min(90dvh,780px);border-radius:22px;background:#071b20;padding:14px;box-shadow:0 30px 100px rgba(0,0,0,.55)}
+.gallery-lightbox-dialog>img{width:100%;height:100%;min-height:0;object-fit:contain;border-radius:14px;background:#020b0e}
+.gallery-lightbox-dialog>div{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 48px 2px;color:#fff;font-family:Cambria,Georgia,"Times New Roman",serif;font-weight:400}
+.gallery-lightbox-dialog>div strong{font-weight:400;font-size:18px}.gallery-lightbox-dialog>div span{font-size:13px;color:#c5d9d2}
+.gallery-lightbox-nav{position:absolute;top:50%;width:46px;height:58px;border:0;border-radius:13px;background:rgba(255,255,255,.15);color:#fff;font-size:38px;line-height:1;cursor:pointer;transform:translateY(-50%)}
+.gallery-lightbox-nav:hover{background:rgba(255,255,255,.26)}.gallery-lightbox-nav.previous{left:22px}.gallery-lightbox-nav.next{right:22px}
+
+@media(max-width:760px){
+  .teacher-directory-status{grid-template-columns:29px 1fr;padding:8px}.teacher-directory-status>span{width:28px;height:28px}.teacher-directory-status small{font-size:9.5px}
+  .gallery-photo-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .news-grid{grid-template-columns:1fr;gap:16px}.news-photo-grid{height:230px}.news-card h4{font-size:21px}.news-card p{font-size:15px}
+  .gallery-lightbox{padding:6px}.gallery-lightbox-dialog{width:100%;height:calc(100dvh - 12px);border-radius:15px;padding:7px}.gallery-lightbox-dialog>div{padding:9px 38px 1px}.gallery-lightbox-nav{width:40px;height:52px}.gallery-lightbox-nav.previous{left:10px}.gallery-lightbox-nav.next{right:10px}
+}
+
+/* Penyempurnaan komposisi kolase 3–10 foto */
+.news-photo-grid.count-3{grid-template-columns:1.4fr 1fr;grid-template-rows:1fr 1fr}
+.news-photo-grid.count-3 .tile-1{grid-row:1/3}
+.news-photo-grid.count-4{grid-template-columns:1.5fr 1fr;grid-template-rows:repeat(3,1fr)}
+.news-photo-grid.count-4 .tile-1{grid-row:1/4}.news-photo-grid.count-4 .tile-4{display:block}
+.news-photo-grid.count-5{grid-template-columns:1.35fr 1fr 1fr;grid-template-rows:1fr 1fr}
+.news-photo-grid.count-5 .tile-1{grid-row:1/3}.news-photo-grid.count-5 .tile-4,.news-photo-grid.count-5 .tile-5{display:block}

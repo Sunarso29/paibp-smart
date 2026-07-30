@@ -51,7 +51,7 @@ Unggah kembali `app-config.js` ke root repository GitHub, tunggu GitHub Pages se
 4. Di perangkat guru, buka Ruang Guru, lalu isi nama, unit kerja, dan NIP bila ada. Kembali ke beranda dan pastikan nama serta unit kerja tampil pada **Tamu Guru Terkini**.
 5. Pilih **Rekap Akses Murid → Muat Ulang Rekap** dan pastikan waktu, aktivitas, durasi, tempat, serta pengiriman muncul.
 6. Pilih **Rekap Pekerjaan Murid → Muat Tugas Daring** dan pastikan isi pekerjaan masuk ke kelompok kelas yang sesuai.
-7. Kembali ke Beranda, buka **Ruang Editor** dengan kata sandi standar `261078`, tambahkan satu foto uji, kirim satu komentar/rating, dan ubah teks beranda untuk memastikan sinkronisasi lintas perangkat.
+7. Kembali ke Beranda, buka **Ruang Editor** dengan kata sandi standar `Alifi@78`, tambahkan satu foto uji, kirim satu komentar/rating, dan ubah teks beranda untuk memastikan sinkronisasi lintas perangkat.
 
 ## Memperbarui deployment
 

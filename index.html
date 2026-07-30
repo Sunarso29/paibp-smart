@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
-    <link rel="stylesheet" href="styles.css?v=22">
+    <link rel="stylesheet" href="styles.css?v=23">
   </head>
   <body>
     <a class="skip" href="#main">Lewati ke konten</a>
@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v22</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v23</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -646,21 +646,21 @@
                 <input id="gallery-item-id" type="hidden">
                 <div class="gallery-form-grid">
                   <label>Judul kegiatan
-                    <input id="gallery-title" type="text" maxlength="120" required placeholder="Contoh: Pesantren Kilat Ramadhan">
+                    <input id="gallery-title" type="text" required placeholder="Contoh: Pesantren Kilat Ramadhan">
                   </label>
                   <label>Tanggal kegiatan
                     <input id="gallery-date" type="date" required>
                   </label>
                   <label class="gallery-summary-field">Ringkasan
-                    <textarea id="gallery-summary" rows="4" maxlength="600" required placeholder="Tuliskan kegiatan, tujuan, dan hasil utamanya."></textarea>
+                    <textarea id="gallery-summary" rows="7" required placeholder="Tuliskan narasi kegiatan secara utuh: latar belakang, proses, tokoh yang terlibat, hasil, dan tindak lanjut."></textarea>
                   </label>
                   <label>Foto kegiatan
-                    <input id="gallery-photo" type="file" accept="image/jpeg,image/png,image/webp">
-                    <small>JPG, PNG, atau WebP. Foto otomatis diperkecil agar ringan dibuka dari hape.</small>
+                    <input id="gallery-photo" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+                    <small>Pilih maksimal 10 foto JPG, PNG, atau WebP untuk satu kegiatan. Foto akan ditata otomatis secara proporsional.</small>
                   </label>
-                  <div class="gallery-photo-preview" id="gallery-photo-preview" aria-live="polite">
+                  <div class="gallery-photo-preview gallery-photo-preview-grid" id="gallery-photo-preview" aria-live="polite">
                     <span aria-hidden="true">🖼️</span>
-                    <small>Pratinjau foto</small>
+                    <small>Belum ada foto dipilih</small>
                   </div>
                 </div>
                 <p class="save-status" id="gallery-admin-status" aria-live="polite"></p>
@@ -744,6 +744,21 @@
       </div>
     </footer>
 
+
+    <div class="gallery-lightbox" id="gallery-lightbox" hidden>
+      <div class="gallery-lightbox-backdrop" data-close-gallery-lightbox></div>
+      <section class="gallery-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="gallery-lightbox-title">
+        <button class="teacher-auth-close" type="button" data-close-gallery-lightbox aria-label="Tutup foto">×</button>
+        <img id="gallery-lightbox-image" alt="">
+        <div>
+          <strong id="gallery-lightbox-title">Dokumentasi kegiatan</strong>
+          <span id="gallery-lightbox-counter"></span>
+        </div>
+        <button class="gallery-lightbox-nav previous" type="button" data-gallery-lightbox-prev aria-label="Foto sebelumnya">‹</button>
+        <button class="gallery-lightbox-nav next" type="button" data-gallery-lightbox-next aria-label="Foto berikutnya">›</button>
+      </section>
+    </div>
+
     <div class="teacher-auth" id="teacher-auth" hidden>
       <div class="teacher-auth-backdrop" data-cancel-teacher-auth></div>
       <section class="teacher-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="teacher-auth-title" aria-describedby="teacher-auth-description">
@@ -754,10 +769,15 @@
         <p class="teacher-visit-privacy">Nama dan unit kerja akan ditampilkan pada daftar tamu guru di beranda. NIP hanya tersedia bagi editor dan tidak ditampilkan kepada publik.</p>
         <form id="teacher-access-form">
           <label for="teacher-name">Nama guru</label>
-          <input id="teacher-name" name="teacher-name" type="text" maxlength="80" autocomplete="name" required>
+          <input id="teacher-name" name="teacher-name" type="text" maxlength="100" list="teacher-name-directory" autocomplete="name" placeholder="Ketik nama lengkap guru" required>
+          <datalist id="teacher-name-directory"></datalist>
           <label for="teacher-work-unit">Unit kerja</label>
-          <input id="teacher-work-unit" name="teacher-work-unit" type="text" maxlength="120" list="teacher-school-directory" placeholder="Ketik atau pilih nama sekolah" autocomplete="organization" required>
+          <input id="teacher-work-unit" name="teacher-work-unit" type="text" maxlength="160" list="teacher-school-directory" placeholder="Ketik atau pilih nama SMP" autocomplete="organization" required>
           <datalist id="teacher-school-directory"></datalist>
+          <div class="teacher-directory-status" id="teacher-directory-status" aria-live="polite">
+            <span aria-hidden="true">🏫</span>
+            <div><strong>Direktori satuan pendidikan</strong><small>Memuat 101 SMP negeri dan swasta se-Kabupaten Banjarnegara. Nama guru yang tersedia pada direktori lokal akan mengisi sekolah secara otomatis.</small></div>
+          </div>
           <label for="teacher-nip">NIP <small>(opsional)</small></label>
           <input id="teacher-nip" name="teacher-nip" type="text" inputmode="numeric" maxlength="30">
           <p class="auth-error" id="teacher-auth-error" aria-live="polite"></p>
@@ -768,7 +788,7 @@
         </form>
         <form id="editor-auth-form" hidden>
           <label for="editor-password">Kata sandi editor</label>
-          <input id="editor-password" name="editor-password" type="password" inputmode="numeric" autocomplete="current-password" required>
+          <input id="editor-password" name="editor-password" type="password" inputmode="text" autocomplete="current-password" required>
           <p class="auth-error" id="editor-auth-error" aria-live="polite"></p>
           <div class="auth-actions">
             <button class="btn" type="button" data-cancel-teacher-auth>Batal</button>
@@ -797,30 +817,31 @@
       </section>
     </div>
 
-    <script src="app-config.js?v=22"></script>
-    <script src="content-data.js?v=22"></script>
-    <script src="teacher-source-data.js?v=22"></script>
-    <script src="calendar-data.js?v=22"></script>
-    <script src="staff-images.js?v=22"></script>
-    <script src="school-data.js?v=22"></script>
-    <script src="islamic-data.js?v=22"></script>
-    <script src="islamic-learning-data.js?v=22"></script>
-    <script src="islamic-upgrade-v19.js?v=22"></script>
-    <script src="islamic-upgrade-v20.js?v=22"></script>
-    <script src="islamic-upgrade-v21.js?v=22"></script>
-    <script src="islamic-upgrade-v22.js?v=22"></script>
+    <script src="app-config.js?v=23"></script>
+    <script src="content-data.js?v=23"></script>
+    <script src="teacher-source-data.js?v=23"></script>
+    <script src="calendar-data.js?v=23"></script>
+    <script src="staff-images.js?v=23"></script>
+    <script src="school-data.js?v=23"></script>
+    <script src="banjarnegara-school-directory.js?v=23"></script>
+    <script src="islamic-data.js?v=23"></script>
+    <script src="islamic-learning-data.js?v=23"></script>
+    <script src="islamic-upgrade-v19.js?v=23"></script>
+    <script src="islamic-upgrade-v20.js?v=23"></script>
+    <script src="islamic-upgrade-v21.js?v=23"></script>
+    <script src="islamic-upgrade-v22.js?v=23"></script>
     <script src="khutbah-source-data.js?v=20"></script>
     <script src="khutbah-verse-data.js?v=20"></script>
-    <script src="hadith-data.js?v=22"></script>
-    <script src="arabic-data.js?v=22"></script>
-    <script src="assessment-data.js?v=22"></script>
-    <script src="game-data.js?v=22"></script>
-    <script src="video-data.js?v=22"></script>
-    <script src="docx-export.js?v=22"></script>
-    <script src="script.js?v=22"></script>
-    <script src="vendor/jszip.min.js?v=22"></script>
-    <script src="vendor/pptxgen.min.js?v=22"></script>
-    <script src="office-export.js?v=22"></script>
-    <script src="assessment-ui.js?v=22"></script>
+    <script src="hadith-data.js?v=23"></script>
+    <script src="arabic-data.js?v=23"></script>
+    <script src="assessment-data.js?v=23"></script>
+    <script src="game-data.js?v=23"></script>
+    <script src="video-data.js?v=23"></script>
+    <script src="docx-export.js?v=23"></script>
+    <script src="script.js?v=23"></script>
+    <script src="vendor/jszip.min.js?v=23"></script>
+    <script src="vendor/pptxgen.min.js?v=23"></script>
+    <script src="office-export.js?v=23"></script>
+    <script src="assessment-ui.js?v=23"></script>
   </body>
 </html>

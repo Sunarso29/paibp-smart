@@ -33,7 +33,7 @@ PENTING:
   guru dan tenaga kependidikan selalu tampil.
 - Folder assets/perangkat wajib ikut diunggah karena berisi 48 dokumen
   sumber Ruang Guru.
-- Ruang Guru dibuka dengan nama guru, unit kerja, dan NIP bila ada. Kata sandi 261078 hanya untuk Ruang Editor.
+- Ruang Guru dibuka dengan nama guru, unit kerja, dan NIP bila ada. Kata sandi Alifi@78 hanya untuk Ruang Editor.
 - Rekap akses lintas perangkat belum aktif sampai URL Web App dan kunci baca
   diisi pada app-config.js. Ikuti PANDUAN_REKAP_REALTIME.md.
 - Sinkronisasi Spensus Terkini ke semua perangkat memakai integrasi yang sama.

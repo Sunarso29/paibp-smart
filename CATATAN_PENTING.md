@@ -25,7 +25,7 @@ Susunan paragraf dan tabel sumber dipertahankan dalam tampilan web. Blok tanda t
 
 ## Spensus Terkini
 
-Ruang Editor dibuka dari Beranda menggunakan kata sandi admin standar `261078`. Editor dapat mengubah teks beranda, galeri, balasan, dan status tanggapan. Tanpa integrasi Google Apps Script, perubahan hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, konten, tanggapan, dan data galeri disimpan pada Google Sheet; foto disimpan pada Google Drive.
+Ruang Editor dibuka dari Beranda menggunakan kata sandi admin standar `Alifi@78`. Editor dapat mengubah teks beranda, galeri, balasan, dan status tanggapan. Tanpa integrasi Google Apps Script, perubahan hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, konten, tanggapan, dan data galeri disimpan pada Google Sheet; foto disimpan pada Google Drive.
 
 ## Fitur Islami
 

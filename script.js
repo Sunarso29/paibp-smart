@@ -43,6 +43,7 @@ if (workspace && appData) {
   const islamicData = window.PAIBP_ISLAMIC || { dua: [], fastingRules: [], historicDates: [], dailyInsights: [] };
   const hadithData = window.PAIBP_HADITH || { records: [] };
   const schoolData = window.PAIBP_SCHOOL || { school: null, teachers: [], staff: [], news: [] };
+  const schoolDirectoryData = window.PAIBP_SCHOOL_DIRECTORY || { schools: [], sourceLabel: "", sourceUrl: "" };
   const teacherSources = window.PAIBP_TEACHER_SOURCES || {};
   const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
   const arabicData = window.PAIBP_ARABIC || { levels: [] };
@@ -62,7 +63,7 @@ if (workspace && appData) {
   const GALLERY_STORAGE_KEY = "paibp-smart-gallery-v1";
   const TEACHER_IDENTITY_KEY = "paibp-smart-teacher-identity-v1";
   const EDITOR_SESSION_KEY = "paibp-smart-editor-unlocked";
-  const ADMIN_PASSWORD_HASH = "5a26e9c9bf1880cd3532883aad715e962d0b8c6cf06c4bfb61b44bcf0def3284";
+  const ADMIN_PASSWORD_HASH = "336faf678f73a057a6a99651b5031da75483c403b073d820656269bd6a0155bb";
   const VISITOR_ROLE_KEY = "paibp-smart-visitor-role-v1";
   const VISITOR_LEDGER_KEY = "paibp-smart-visitor-ledger-v1";
   const FEEDBACK_STORAGE_KEY = "paibp-smart-feedback-v1";
@@ -208,7 +209,9 @@ if (workspace && appData) {
     currentVisitorRole = "umum";
   }
   let galleryAdminOpen = false;
-  let galleryPreviewData = "";
+  let galleryPreviewData = [];
+  let galleryLightboxItems = [];
+  let galleryLightboxIndex = 0;
   let activeResource = { type: "page", id: "home", title: "Beranda", startedAt: Date.now() };
   let sessionStartedAt = Date.now();
   let currentGameMode = gameData?.arenas?.[0]?.id || "quiz";
@@ -359,7 +362,10 @@ if (workspace && appData) {
         if (name) name.value = identity.name;
         if (workUnit) workUnit.value = identity.workUnit;
         if (nip) nip.value = identity.nip;
-        window.setTimeout(() => name?.focus(), 0);
+        window.setTimeout(() => {
+          updateTeacherDirectoryStatus();
+          name?.focus();
+        }, 0);
       }
     }
   }
@@ -803,27 +809,89 @@ if (workspace && appData) {
     scrollToWorkspace();
   }
 
+  function normalizeDirectoryValue(value) {
+    return String(value || "")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[.,'’`-]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLocaleLowerCase("id");
+  }
+
+  const officialSchools = Array.isArray(schoolDirectoryData.schools) ? schoolDirectoryData.schools : [];
+  const localTeacherDirectory = (Array.isArray(schoolData.teachers) ? schoolData.teachers : [])
+    .map((teacher) => ({
+      name: String(teacher?.name || "").trim(),
+      workUnit: String(schoolData.school?.name || "SMP Negeri 1 Susukan").trim(),
+      subject: String(teacher?.subject || "").trim(),
+      source: "Direktori personel sekolah pada paket PAIBP SMART",
+    }))
+    .filter((teacher) => teacher.name && teacher.workUnit);
+  const schoolDirectoryByName = new Map(officialSchools.map((school) => [normalizeDirectoryValue(school.name), school]));
+  const teacherDirectoryByName = new Map(localTeacherDirectory.map((teacher) => [normalizeDirectoryValue(teacher.name), teacher]));
+
   const teacherSchoolDirectory = document.querySelector("#teacher-school-directory");
   if (teacherSchoolDirectory) {
-    const schoolNames = new Set([
-      "SMP Negeri 1 Susukan",
-      String(schoolData.school?.name || "").trim(),
-    ].filter(Boolean));
-    schoolNames.forEach((name) => {
+    officialSchools.forEach((school) => {
       const option = document.createElement("option");
-      option.value = name;
+      option.value = school.name;
+      option.label = `${school.district} • ${school.status}`;
       teacherSchoolDirectory.append(option);
     });
   }
+
+  const teacherNameDirectory = document.querySelector("#teacher-name-directory");
+  if (teacherNameDirectory) {
+    localTeacherDirectory.forEach((teacher) => {
+      const option = document.createElement("option");
+      option.value = teacher.name;
+      option.label = `${teacher.subject || "Guru"} • ${teacher.workUnit}`;
+      teacherNameDirectory.append(option);
+    });
+  }
+
+  function updateTeacherDirectoryStatus() {
+    const status = document.querySelector("#teacher-directory-status");
+    const nameInput = document.querySelector("#teacher-name");
+    const schoolInput = document.querySelector("#teacher-work-unit");
+    if (!status || !nameInput || !schoolInput) return { teacher: null, school: null };
+    const teacher = teacherDirectoryByName.get(normalizeDirectoryValue(nameInput.value)) || null;
+    if (teacher && normalizeDirectoryValue(schoolInput.value) !== normalizeDirectoryValue(teacher.workUnit)) {
+      schoolInput.value = teacher.workUnit;
+    }
+    const school = schoolDirectoryByName.get(normalizeDirectoryValue(schoolInput.value)) || null;
+    status.classList.toggle("is-verified", Boolean(teacher && school));
+    status.classList.toggle("is-school-recognized", Boolean(!teacher && school));
+    if (teacher && school) {
+      status.innerHTML = `<span aria-hidden="true">✓</span><div><strong>Guru dikenali pada direktori lokal</strong><small>${escapeHtml(teacher.subject || "Guru")} • ${escapeHtml(teacher.workUnit)}. Sekolah tercantum dalam direktori resmi 101 SMP Kabupaten Banjarnegara.</small></div>`;
+    } else if (school) {
+      status.innerHTML = `<span aria-hidden="true">🏫</span><div><strong>Sekolah resmi dikenali</strong><small>${escapeHtml(school.name)} • Kecamatan ${escapeHtml(school.district)} • ${escapeHtml(school.status)}. Nama guru belum tersedia pada direktori lokal, tetapi akses dapat dicatat menggunakan identitas yang diisikan.</small></div>`;
+    } else {
+      status.innerHTML = `<span aria-hidden="true">⌨️</span><div><strong>Ketik nama dan pilih sekolah</strong><small>Direktori memuat ${officialSchools.length.toLocaleString("id-ID")} SMP negeri dan swasta se-Kabupaten Banjarnegara. Sekolah di luar daerah tetap dapat ditulis manual untuk mendukung penggunaan nasional.</small></div>`;
+    }
+    return { teacher, school };
+  }
+
+  document.querySelector("#teacher-name")?.addEventListener("input", updateTeacherDirectoryStatus);
+  document.querySelector("#teacher-name")?.addEventListener("change", updateTeacherDirectoryStatus);
+  document.querySelector("#teacher-work-unit")?.addEventListener("input", updateTeacherDirectoryStatus);
+  document.querySelector("#teacher-work-unit")?.addEventListener("change", updateTeacherDirectoryStatus);
 
   openButtons.forEach((button) => button.addEventListener("click", () => openPanel(button.dataset.openPanel)));
   document.querySelector("#teacher-access-form")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const error = document.querySelector("#teacher-auth-error");
+    const directoryMatch = updateTeacherDirectoryStatus();
     const identity = {
       name: document.querySelector("#teacher-name")?.value.trim() || "",
       workUnit: document.querySelector("#teacher-work-unit")?.value.trim() || "",
       nip: document.querySelector("#teacher-nip")?.value.trim() || "",
+      teacherRecognized: Boolean(directoryMatch.teacher),
+      schoolRecognized: Boolean(directoryMatch.school),
+      schoolDirectoryId: directoryMatch.school?.id || "",
+      district: directoryMatch.school?.district || "",
+      verifiedAt: new Date().toISOString(),
     };
     if (!identity.name || !identity.workUnit) {
       if (error) error.textContent = "Nama guru dan unit kerja wajib diisi.";
@@ -5658,14 +5726,28 @@ if (workspace && appData) {
     });
   }
 
+  function normalizeGalleryItem(item) {
+    const images = Array.isArray(item?.images)
+      ? item.images
+      : item?.image
+        ? [item.image]
+        : [];
+    return {
+      ...item,
+      images: [...new Set(images.filter((image) => typeof image === "string" && image.trim()))].slice(0, 10),
+      image: images.find((image) => typeof image === "string" && image.trim()) || "",
+    };
+  }
+
   function readGalleryItems() {
     const saved = safeJsonParse(localStorage.getItem(GALLERY_STORAGE_KEY), null);
-    if (Array.isArray(saved)) return saved;
-    return Array.isArray(schoolData.news) ? schoolData.news : [];
+    const source = Array.isArray(saved) ? saved : Array.isArray(schoolData.news) ? schoolData.news : [];
+    return source.map(normalizeGalleryItem);
   }
 
   function writeGalleryItems(items) {
-    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(items.slice(0, 30)));
+    const normalized = items.slice(0, 30).map(normalizeGalleryItem);
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(normalized));
   }
 
   function formatGalleryDate(value) {
@@ -5673,6 +5755,92 @@ if (workspace && appData) {
     return Number.isNaN(date.getTime())
       ? value
       : date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function galleryPhotoGridHtml(item) {
+    const images = item.images || [];
+    if (!images.length) return `<div class="news-image-fallback" aria-hidden="true">📸</div>`;
+    const visible = images.slice(0, 5);
+    return `<div class="news-photo-grid count-${Math.min(images.length, 5)}">
+      ${visible.map((image, index) => {
+        const remaining = index === visible.length - 1 && images.length > visible.length ? images.length - visible.length : 0;
+        return `<button type="button" class="news-photo-tile tile-${index + 1}" data-open-gallery-photo="${escapeHtml(item.id)}" data-gallery-photo-index="${index}" aria-label="Buka foto ${index + 1} dari ${images.length}: ${escapeHtml(item.title)}">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(item.title)} — foto ${index + 1}" loading="lazy" decoding="async">
+          ${remaining ? `<span>+${remaining}</span>` : ""}
+        </button>`;
+      }).join("")}
+    </div>`;
+  }
+
+  function closeGalleryLightbox() {
+    const modal = document.querySelector("#gallery-lightbox");
+    if (modal) modal.hidden = true;
+    galleryLightboxItems = [];
+    galleryLightboxIndex = 0;
+    document.body.classList.remove("has-modal");
+  }
+
+  function updateGalleryLightbox() {
+    const image = document.querySelector("#gallery-lightbox-image");
+    const counter = document.querySelector("#gallery-lightbox-counter");
+    const previous = document.querySelector("[data-gallery-lightbox-prev]");
+    const next = document.querySelector("[data-gallery-lightbox-next]");
+    if (!image || !galleryLightboxItems.length) return;
+    galleryLightboxIndex = (galleryLightboxIndex + galleryLightboxItems.length) % galleryLightboxItems.length;
+    image.src = galleryLightboxItems[galleryLightboxIndex];
+    image.alt = `Dokumentasi kegiatan, foto ${galleryLightboxIndex + 1} dari ${galleryLightboxItems.length}`;
+    if (counter) counter.textContent = `${galleryLightboxIndex + 1} / ${galleryLightboxItems.length}`;
+    if (previous) previous.hidden = galleryLightboxItems.length < 2;
+    if (next) next.hidden = galleryLightboxItems.length < 2;
+  }
+
+  function openGalleryLightbox(item, index = 0) {
+    const modal = document.querySelector("#gallery-lightbox");
+    const title = document.querySelector("#gallery-lightbox-title");
+    if (!modal || !item?.images?.length) return;
+    galleryLightboxItems = item.images.slice();
+    galleryLightboxIndex = Math.max(0, Math.min(Number(index) || 0, galleryLightboxItems.length - 1));
+    if (title) title.textContent = item.title;
+    modal.hidden = false;
+    document.body.classList.add("has-modal");
+    updateGalleryLightbox();
+  }
+
+  function attachGalleryLightboxControls() {
+    document.querySelectorAll("[data-close-gallery-lightbox]").forEach((button) => {
+      if (button.dataset.boundGalleryLightbox) return;
+      button.dataset.boundGalleryLightbox = "yes";
+      button.addEventListener("click", closeGalleryLightbox);
+    });
+    const previous = document.querySelector("[data-gallery-lightbox-prev]");
+    if (previous && !previous.dataset.boundGalleryLightbox) {
+      previous.dataset.boundGalleryLightbox = "yes";
+      previous.addEventListener("click", () => {
+        galleryLightboxIndex -= 1;
+        updateGalleryLightbox();
+      });
+    }
+    const next = document.querySelector("[data-gallery-lightbox-next]");
+    if (next && !next.dataset.boundGalleryLightbox) {
+      next.dataset.boundGalleryLightbox = "yes";
+      next.addEventListener("click", () => {
+        galleryLightboxIndex += 1;
+        updateGalleryLightbox();
+      });
+    }
+    document.addEventListener("keydown", (event) => {
+      const modal = document.querySelector("#gallery-lightbox");
+      if (!modal || modal.hidden) return;
+      if (event.key === "Escape") closeGalleryLightbox();
+      if (event.key === "ArrowLeft") {
+        galleryLightboxIndex -= 1;
+        updateGalleryLightbox();
+      }
+      if (event.key === "ArrowRight") {
+        galleryLightboxIndex += 1;
+        updateGalleryLightbox();
+      }
+    });
   }
 
   function renderGallery() {
@@ -5685,24 +5853,53 @@ if (workspace && appData) {
       newsGallery.className = "news-placeholder";
       newsGallery.innerHTML = `
         <span aria-hidden="true">📸</span>
-        <div><strong>Belum ada dokumentasi yang diterbitkan</strong><p>Pengelola dapat menambahkan foto, judul, tanggal, dan ringkasan kegiatan melalui akses admin.</p></div>`;
+        <div><strong>Belum ada dokumentasi yang diterbitkan</strong><p>Pengelola dapat menambahkan sampai 10 foto, judul, tanggal, dan narasi kegiatan melalui akses editor.</p></div>`;
       return;
     }
     newsGallery.className = "news-grid";
     newsGallery.innerHTML = items.map((item) => `
       <article class="news-card">
-        ${item.image ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async">` : `<div class="news-image-fallback" aria-hidden="true">📸</div>`}
-        <div>
+        ${galleryPhotoGridHtml(item)}
+        <div class="news-card-copy">
           <time datetime="${escapeHtml(item.date)}">${escapeHtml(formatGalleryDate(item.date))}</time>
           <h4>${escapeHtml(item.title)}</h4>
           <p>${escapeHtml(item.summary)}</p>
+          <small class="news-photo-count">${item.images.length} foto dokumentasi</small>
           ${galleryAdminOpen ? `<div class="news-admin-actions no-print">
             <button class="btn btn-compact" type="button" data-edit-gallery="${escapeHtml(item.id)}">Edit</button>
             <button class="text-button danger-button" type="button" data-delete-gallery="${escapeHtml(item.id)}">Hapus</button>
           </div>` : ""}
         </div>
       </article>`).join("");
+    document.querySelectorAll("[data-open-gallery-photo]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const item = items.find((entry) => entry.id === button.dataset.openGalleryPhoto);
+        openGalleryLightbox(item, Number(button.dataset.galleryPhotoIndex || 0));
+      });
+    });
     attachGalleryItemActions();
+    attachGalleryLightboxControls();
+  }
+
+  function renderGalleryPhotoPreview() {
+    const preview = document.querySelector("#gallery-photo-preview");
+    if (!preview) return;
+    if (!galleryPreviewData.length) {
+      preview.innerHTML = `<span aria-hidden="true">🖼️</span><small>Belum ada foto dipilih</small>`;
+      return;
+    }
+    preview.innerHTML = galleryPreviewData.map((image, index) => `
+      <figure>
+        <img src="${escapeHtml(image)}" alt="Pratinjau foto kegiatan ${index + 1}">
+        <figcaption>${index + 1}</figcaption>
+        <button type="button" data-remove-gallery-preview="${index}" aria-label="Hapus foto ${index + 1}">×</button>
+      </figure>`).join("");
+    preview.querySelectorAll("[data-remove-gallery-preview]").forEach((button) => {
+      button.addEventListener("click", () => {
+        galleryPreviewData.splice(Number(button.dataset.removeGalleryPreview), 1);
+        renderGalleryPhotoPreview();
+      });
+    });
   }
 
   function resetGalleryForm() {
@@ -5710,9 +5907,8 @@ if (workspace && appData) {
     form?.reset();
     const id = document.querySelector("#gallery-item-id");
     if (id) id.value = "";
-    galleryPreviewData = "";
-    const preview = document.querySelector("#gallery-photo-preview");
-    if (preview) preview.innerHTML = `<span aria-hidden="true">🖼️</span><small>Pratinjau foto</small>`;
+    galleryPreviewData = [];
+    renderGalleryPhotoPreview();
     const status = document.querySelector("#gallery-admin-status");
     if (status) status.textContent = "";
   }
@@ -5741,8 +5937,8 @@ if (workspace && appData) {
         reject(new Error("Pilih foto JPG, PNG, atau WebP."));
         return;
       }
-      if (file.size > 12 * 1024 * 1024) {
-        reject(new Error("Ukuran foto maksimal 12 MB."));
+      if (file.size > 15 * 1024 * 1024) {
+        reject(new Error(`Foto ${file.name || ""} melebihi 15 MB.`));
         return;
       }
       const reader = new FileReader();
@@ -5751,8 +5947,8 @@ if (workspace && appData) {
         const image = new Image();
         image.onerror = () => reject(new Error("Format foto tidak dapat diproses."));
         image.onload = () => {
-          const maxWidth = 1440;
-          const maxHeight = 1080;
+          const maxWidth = 1600;
+          const maxHeight = 1200;
           const scale = Math.min(1, maxWidth / image.width, maxHeight / image.height);
           const width = Math.max(1, Math.round(image.width * scale));
           const height = Math.max(1, Math.round(image.height * scale));
@@ -5760,7 +5956,7 @@ if (workspace && appData) {
           canvas.width = width;
           canvas.height = height;
           canvas.getContext("2d").drawImage(image, 0, 0, width, height);
-          resolve(canvas.toDataURL("image/webp", 0.8));
+          resolve(canvas.toDataURL("image/webp", 0.78));
         };
         image.src = reader.result;
       };
@@ -5815,17 +6011,14 @@ if (workspace && appData) {
         document.querySelector("#gallery-title").value = item.title;
         document.querySelector("#gallery-date").value = item.date;
         document.querySelector("#gallery-summary").value = item.summary;
-        galleryPreviewData = item.image || "";
-        const preview = document.querySelector("#gallery-photo-preview");
-        preview.innerHTML = item.image
-          ? `<img src="${escapeHtml(item.image)}" alt="Pratinjau ${escapeHtml(item.title)}">`
-          : `<span aria-hidden="true">🖼️</span><small>Tambahkan foto</small>`;
+        galleryPreviewData = item.images.slice(0, 10);
+        renderGalleryPhotoPreview();
         document.querySelector("#gallery-form")?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
       });
     });
     document.querySelectorAll("[data-delete-gallery]").forEach((button) => {
       button.addEventListener("click", async () => {
-        if (!window.confirm("Hapus dokumentasi kegiatan ini?")) return;
+        if (!window.confirm("Hapus dokumentasi kegiatan beserta seluruh fotonya?")) return;
         const id = button.dataset.deleteGallery;
         writeGalleryItems(readGalleryItems().filter((item) => item.id !== id));
         renderGallery();
@@ -5848,52 +6041,66 @@ if (workspace && appData) {
     document.querySelector("#cancel-gallery-edit")?.addEventListener("click", resetGalleryForm);
     document.querySelector("#gallery-photo")?.addEventListener("change", async (event) => {
       const status = document.querySelector("#gallery-admin-status");
+      const files = [...(event.target.files || [])];
+      if (files.length > 10) {
+        if (status) status.textContent = "Maksimal 10 foto untuk satu kegiatan. Hanya 10 foto pertama yang diproses.";
+      }
+      const selected = files.slice(0, 10);
+      if (!selected.length) return;
       try {
-        galleryPreviewData = await optimizeGalleryImage(event.target.files?.[0]);
-        document.querySelector("#gallery-photo-preview").innerHTML = `<img src="${escapeHtml(galleryPreviewData)}" alt="Pratinjau foto kegiatan">`;
-        if (status) status.textContent = "Foto siap digunakan.";
+        const optimized = [];
+        for (let index = 0; index < selected.length; index += 1) {
+          if (status) status.textContent = `Memproses foto ${index + 1} dari ${selected.length}…`;
+          optimized.push(await optimizeGalleryImage(selected[index]));
+        }
+        galleryPreviewData = optimized;
+        renderGalleryPhotoPreview();
+        if (status) status.textContent = `${optimized.length} foto siap digunakan.`;
       } catch (error) {
-        galleryPreviewData = "";
         if (status) status.textContent = error.message;
       }
+      event.target.value = "";
     });
     document.querySelector("#gallery-form")?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const idInput = document.querySelector("#gallery-item-id");
       const currentItems = readGalleryItems();
       const existing = currentItems.find((item) => item.id === idInput.value);
-      if (!galleryPreviewData && !existing?.image) {
-        document.querySelector("#gallery-admin-status").textContent = "Tambahkan satu foto kegiatan sebelum menerbitkan.";
+      if (!galleryPreviewData.length && !existing?.images?.length) {
+        document.querySelector("#gallery-admin-status").textContent = "Tambahkan minimal satu foto kegiatan sebelum menerbitkan.";
         return;
       }
-      const item = {
+      const images = (galleryPreviewData.length ? galleryPreviewData : existing.images).slice(0, 10);
+      const item = normalizeGalleryItem({
         id: existing?.id || (typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `gallery-${Date.now()}`),
         title: document.querySelector("#gallery-title").value.trim(),
         date: document.querySelector("#gallery-date").value,
         summary: document.querySelector("#gallery-summary").value.trim(),
-        image: galleryPreviewData || existing?.image || "",
+        images,
+        image: images[0] || "",
         updatedAt: new Date().toISOString(),
-      };
+      });
       const nextItems = existing
         ? currentItems.map((entry) => entry.id === item.id ? item : entry)
         : [item, ...currentItems];
       try {
         writeGalleryItems(nextItems);
       } catch {
-        document.querySelector("#gallery-admin-status").textContent = "Penyimpanan perangkat penuh. Cadangkan galeri lalu hapus foto lama atau gunakan foto berukuran lebih kecil.";
+        document.querySelector("#gallery-admin-status").textContent = "Penyimpanan perangkat penuh. Aktifkan sinkronisasi daring atau gunakan foto berukuran lebih kecil.";
         return;
       }
       renderGallery();
       resetGalleryForm();
       const synced = await syncGalleryMutation("save", item);
       document.querySelector("#gallery-admin-status").textContent = synced
-        ? "Dokumentasi disimpan dan permintaan sinkronisasi daring dikirim."
-        : "Dokumentasi disimpan pada perangkat ini. Aktifkan rekap daring agar tampil pada semua perangkat.";
+        ? `Dokumentasi dengan ${item.images.length} foto disimpan dan permintaan sinkronisasi daring dikirim.`
+        : `Dokumentasi dengan ${item.images.length} foto disimpan pada perangkat ini. Aktifkan rekap daring agar tampil pada semua perangkat.`;
     });
     document.querySelector("#export-gallery")?.addEventListener("click", () => {
       const blocks = readGalleryItems().flatMap((item, index) => [
         { text: `${index + 1}. ${item.title}`, style: "Heading2" },
         `Tanggal: ${item.date ? new Date(`${item.date}T00:00:00`).toLocaleDateString("id-ID") : "—"}`,
+        `Jumlah foto: ${item.images.length}`,
         item.summary,
       ]);
       downloadBlob(
@@ -5913,6 +6120,7 @@ if (workspace && appData) {
       }
       event.target.value = "";
     });
+    attachGalleryLightboxControls();
   }
 
   function readFeedbackItems() {

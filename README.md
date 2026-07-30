@@ -6,7 +6,7 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 
 - Ruang Murid: 30 paket belajar dengan pendahuluan, pengertian, dalil, infografis, ikhtisar, latihan, LKPD yang langsung dapat diketik, dua video per bab, unduhan materi, serta validasi tujuh syarat sebelum bab dapat ditandai selesai.
 - Ruang Guru: akses melalui nama, unit kerja, dan NIP opsional; CP, KKTP, ATP, Prota, Promes dengan tabel operasional 120 JP, analisis alokasi waktu, 30 modul lengkap, Kalender Pendidikan, kendali aktivitas, dan rekap tugas terpisah per kelas.
-- Ruang Editor: akses admin standar `261078` untuk menyunting teks beranda, galeri kegiatan, statistik, komentar, rating, balasan, dan moderasi.
+- Ruang Editor: akses admin standar `Alifi@78` untuk menyunting teks beranda, galeri kegiatan, statistik, komentar, rating, balasan, dan moderasi.
 - Fitur Islami: Al Qur'an daring/luring, audio surat yang dapat disimpan luring, Hisnul Muslim, dzikir pagi-petang, jadwal sholat dengan penanda waktu aktif dan hitung mundur, kalender bertanda per tanggal, nasihat bersumber, Akademi Bahasa Arab, Khutbah Jum'at dinamis dengan DOCX/PDF, serta Tajwid Praktis dengan audio qari yang dapat disimpan luring.
 - Fitur Games: 100 game dalam 10 kelompok dan 15 mekanik, termasuk Sambung Ayat, 20 soal acak per sesi, penguncian sesi sampai tuntas, skor, XP, level, dan lencana.
 - Dalil materi: rujukan Al Qur'an Surat dan ayat dapat diklik untuk membuka teks Arab, terjemahan Bahasa Indonesia, surat lengkap, serta pelafalan luring dari suara Arab perangkat.
@@ -28,6 +28,7 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 - `assets/data/QURAN-DATA-LICENSE.txt` — atribusi dan lisensi CC BY-SA 4.0 data Al Qur'an
 - `video-data.js` — kurasi dua video penguatan untuk setiap bab kelas VII–IX
 - `school-data.js` — identitas sekolah serta data kepala sekolah, guru, dan tenaga kependidikan
+- `banjarnegara-school-directory.js` — direktori resmi 101 SMP negeri dan swasta Kabupaten Banjarnegara untuk login guru
 - `script.js` — fungsi tab, materi, LKPD, perangkat guru, kalkulator, jadwal, dan games
 - `styles.css` — desain responsif dan format cetak
 - `service-worker.js` — dukungan konten inti saat koneksi terbatas
@@ -52,6 +53,14 @@ Alamat publik: https://sunarso29.github.io/paibp-smart/
 
 Pengembang: Sunarso, S.Pd.I., Gr., SMP Negeri 1 Susukan, Banjarnegara, Jawa Tengah.
 
+## Pembaruan v23
+
+- Login guru dilengkapi direktori resmi 101 SMP Kabupaten Banjarnegara dan pengisian otomatis unit kerja untuk nama guru yang tersedia pada direktori lokal.
+- Kata sandi Ruang Editor: `Alifi@78`.
+- Editor galeri menerima narasi panjang dan maksimal 10 foto per kegiatan.
+- Foto dipublikasikan sebagai kolase responsif dengan lightbox; tipografi galeri memakai Cambria regular.
+- Sinkronisasi Google Apps Script mendukung banyak foto dan kompatibel dengan galeri versi lama.
+
 ## Pembaruan v22
 
 - Ruang Guru meminta identitas guru pada setiap sesi baru: nama, sekolah dari daftar satuan pendidikan, dan NIP opsional.
@@ -61,4 +70,4 @@ Pengembang: Sunarso, S.Pd.I., Gr., SMP Negeri 1 Susukan, Banjarnegara, Jawa Teng
 - Kunci jawaban guru ditandai lingkaran dan warna tanpa teks “KUNCI”; penanda tidak ditampilkan dalam mode murid.
 - Ekspor DOCX, XLSX, PPTX, dan cetak/PDF mempertahankan kop dan logo sekolah. XLSX/PPTX menggunakan format Office asli.
 - Audio Ustadz Abu Yazid Nurdin dan Ustadz Muflih Safitra tersedia dalam MP3 CBR dan OGG; service worker mendukung byte-range untuk Windows/Desktop serta pemutaran luring.
-- Cache PWA diperbarui ke v22.
+- Cache PWA diperbarui ke v23.
