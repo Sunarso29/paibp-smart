@@ -1,5 +1,5 @@
 PAIBP SMART SMP
-Versi paket: 20.0
+Versi paket: 21.0
 Tanggal paket: 30 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
@@ -10,7 +10,7 @@ Paket utama:
 - Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan: 400 tab, 40.000 soal, audio Arab, progres, DOCX, dan PDF siap cetak.
 - PTS, SAS, dan UKLN HOTS literasi-numerasi kelas VII–IX, generator paket, kunci, rekap, DOCX, dan PDF.
 
-Pembaruan v20:
+Pembaruan v21:
 - Seluruh naskah Khutbah Jum'at diubah dari versi singkat menjadi naskah dua khutbah lengkap sekitar 1.800–1.900 kata dengan estimasi penyampaian 20–30 menit.
 - Struktur khutbah memuat pembukaan Arab, wasiat takwa, ayat utama, ayat penguat, hadits, tadabbur, empat renungan, muhasabah, konteks keluarga dan digital, langkah pengamalan, khutbah kedua, sholawat, serta doa lengkap.
 - Preview naskah otomatis dibuka ketika tab Khutbah dipilih dan tetap memiliki tombol DOCX, PDF/cetak, audio ayat, serta tautan pemeriksaan ke Qur'an Kementerian Agama, NU Online, Muhammadiyah, Yufid, dan Radio Rodja.
@@ -20,6 +20,8 @@ Pembaruan v20:
 - Tajwid Praktis diperluas menjadi 14 modul dan 69 materi: makhraj, sifat huruf, nun mati dan tanwin, mim mati, alif lam, lafzhul jalalah, hukum ra, mad dasar dan lanjutan, qalqalah, pertemuan huruf, hamzah washal/qatha', waqaf-ibtida, serta bacaan gharib riwayat Hafs.
 - Setiap materi tajwid menyediakan pilihan audio qari Mishary Rashid Alafasy, Mahmud Khalil Al-Husary, Muhammad Siddiq Al-Minshawi, dan Abdul Basit Abdus Samad, dengan opsi penyimpanan audio luring.
 - Tata letak khutbah, Hisnul Muslim, huruf Arab, dan kaidah tajwid diperkuat untuk tampilan layar, A4, DOCX, serta PDF.
-- Cache PWA diperbarui ke v20 dan memuat berkas islamic-upgrade-v20.js agar perubahan tidak tertahan cache lama.
+- Cache PWA diperbarui ke v21 dan memuat berkas islamic-upgrade-v21.js agar perubahan tidak tertahan cache lama.
 
 Akses editor standar: 261078
+
+Pembaruan v21: Ringkasan Arab 39 materi; audio lokal Muflih Safitra dan Abu Yazid Nurdin; asesmen tanpa PIN kedua; logo editable; ekspor DOCX/PDF/XLS/PPT.

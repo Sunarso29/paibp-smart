@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v20";
+const CACHE_NAME = "paibp-smart-core-v21";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -21,6 +21,12 @@ const CORE_ASSETS = [
   "./islamic-learning-data.js",
   "./islamic-upgrade-v19.js",
   "./islamic-upgrade-v20.js",
+  "./assets/audio/abu-yazid-nurdin-al-hijr-85-99.mp3",
+  "./assets/audio/muflih-safitra-al-anam-95-107.mp3",
+  "./vendor/jszip.min.js",
+  "./vendor/pptxgen.min.js",
+  "./office-export.js",
+  "./islamic-upgrade-v21.js",
   "./khutbah-source-data.js",
   "./khutbah-verse-data.js",
   "./hadith-data.js",

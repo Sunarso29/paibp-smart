@@ -1,0 +1,9 @@
+PAIBP SMART SMP v21
+
+- Ringkasan Bahasa Arab dibangun ulang menjadi 39 materi: 12 Pemula, 13 Menengah, dan 14 Mahir.
+- Setiap materi memiliki target, pola inti, contoh Arab, makna, kosakata, langkah memahami, latihan aplikatif, dan strategi cepat.
+- Visual diubah menjadi accordion terang yang mudah dibaca pada desktop maupun ponsel.
+- Rekaman Ustadz Muflih Safitra (Al-An'am 95–107) dan Ustadz Abu Yazid Nurdin (Al-Hijr 85–99) ditanam sebagai audio lokal luring.
+- Bank PTS, ASAS, dan UKLN di Ruang Guru dapat dibuka langsung tanpa PIN kedua. Kode murid tetap tersedia saat guru menerbitkan ujian.
+- Logo sekolah dapat diganti dari pengaturan asesmen. Logo masuk ke preview/PDF dan, apabila diunggah, ke DOCX/PPT.
+- Format kerja disederhanakan menjadi DOCX, PDF, XLS, dan PPT/PPTX. Ekspor CSV dan JSON dihapus dari antarmuka.

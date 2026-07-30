@@ -50,15 +50,15 @@
 
   const specs = [
     { id: "VII-PTS-GASAL", grade: "VII", kind: "PTS", semester: "Gasal", title: "Penilaian Tengah Semester Gasal", chapters: ["VII-1","VII-2","VII-3"], mcq: 40, essays: 5 },
-    { id: "VII-SAS-GASAL", grade: "VII", kind: "SAS", semester: "Gasal", title: "Sumatif Akhir Semester Gasal", chapters: ["VII-1","VII-2","VII-3","VII-4","VII-5"], mcq: 40, essays: 10 },
+    { id: "VII-SAS-GASAL", grade: "VII", kind: "ASAS", semester: "Gasal", title: "Asesmen Sumatif Akhir Semester Gasal", chapters: ["VII-1","VII-2","VII-3","VII-4","VII-5"], mcq: 40, essays: 10 },
     { id: "VII-PTS-GENAP", grade: "VII", kind: "PTS", semester: "Genap", title: "Penilaian Tengah Semester Genap", chapters: ["VII-6","VII-7","VII-8"], mcq: 40, essays: 5 },
-    { id: "VII-SAS-GENAP", grade: "VII", kind: "SAS", semester: "Genap", title: "Sumatif Akhir Semester Genap", chapters: ["VII-1","VII-2","VII-3","VII-4","VII-5","VII-6","VII-7","VII-8","VII-9","VII-10"], mcq: 40, essays: 10 },
+    { id: "VII-SAS-GENAP", grade: "VII", kind: "ASAS", semester: "Genap", title: "Asesmen Sumatif Akhir Semester Genap", chapters: ["VII-1","VII-2","VII-3","VII-4","VII-5","VII-6","VII-7","VII-8","VII-9","VII-10"], mcq: 40, essays: 10 },
     { id: "VIII-PTS-GASAL", grade: "VIII", kind: "PTS", semester: "Gasal", title: "Penilaian Tengah Semester Gasal", chapters: ["VIII-1","VIII-2","VIII-3"], mcq: 40, essays: 5 },
-    { id: "VIII-SAS-GASAL", grade: "VIII", kind: "SAS", semester: "Gasal", title: "Sumatif Akhir Semester Gasal", chapters: ["VIII-1","VIII-2","VIII-3","VIII-4","VIII-5"], mcq: 40, essays: 10 },
+    { id: "VIII-SAS-GASAL", grade: "VIII", kind: "ASAS", semester: "Gasal", title: "Asesmen Sumatif Akhir Semester Gasal", chapters: ["VIII-1","VIII-2","VIII-3","VIII-4","VIII-5"], mcq: 40, essays: 10 },
     { id: "VIII-PTS-GENAP", grade: "VIII", kind: "PTS", semester: "Genap", title: "Penilaian Tengah Semester Genap", chapters: ["VIII-6","VIII-7","VIII-8"], mcq: 40, essays: 5 },
-    { id: "VIII-SAS-GENAP", grade: "VIII", kind: "SAS", semester: "Genap", title: "Sumatif Akhir Semester Genap", chapters: ["VIII-1","VIII-2","VIII-3","VIII-4","VIII-5","VIII-6","VIII-7","VIII-8","VIII-9","VIII-10"], mcq: 40, essays: 10 },
+    { id: "VIII-SAS-GENAP", grade: "VIII", kind: "ASAS", semester: "Genap", title: "Asesmen Sumatif Akhir Semester Genap", chapters: ["VIII-1","VIII-2","VIII-3","VIII-4","VIII-5","VIII-6","VIII-7","VIII-8","VIII-9","VIII-10"], mcq: 40, essays: 10 },
     { id: "IX-PTS-GASAL", grade: "IX", kind: "PTS", semester: "Gasal", title: "Penilaian Tengah Semester Gasal", chapters: ["IX-1","IX-2","IX-3"], mcq: 40, essays: 5 },
-    { id: "IX-SAS-GASAL", grade: "IX", kind: "SAS", semester: "Gasal", title: "Sumatif Akhir Semester Gasal", chapters: ["IX-1","IX-2","IX-3","IX-4","IX-5"], mcq: 40, essays: 10 },
+    { id: "IX-SAS-GASAL", grade: "IX", kind: "ASAS", semester: "Gasal", title: "Asesmen Sumatif Akhir Semester Gasal", chapters: ["IX-1","IX-2","IX-3","IX-4","IX-5"], mcq: 40, essays: 10 },
     { id: "IX-PTS-GENAP", grade: "IX", kind: "PTS", semester: "Genap", title: "Penilaian Tengah Semester Genap", chapters: ["IX-6","IX-7","IX-8"], mcq: 40, essays: 5 },
     { id: "IX-UKLN", grade: "IX", kind: "UKLN", semester: "Genap", title: "Uji Kompetensi Literasi dan Numerasi", distribution: { VII: 8, VIII: 8, IX: 24 }, mcq: 40, essays: 10 },
   ];

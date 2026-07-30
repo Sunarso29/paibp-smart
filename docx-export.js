@@ -123,6 +123,18 @@
     return decoder.decode(Uint8Array.from(binary, (character) => character.charCodeAt(0)));
   }
 
+
+  function dataUrlBytes(dataUrl) {
+    const match = String(dataUrl || "").match(/^data:(image\/(?:png|jpeg|jpg));base64,(.+)$/i);
+    if (!match) return null;
+    const binary = atob(match[2]);
+    return { mime: match[1].toLowerCase().replace("jpg","jpeg"), bytes: Uint8Array.from(binary, (c) => c.charCodeAt(0)) };
+  }
+
+  function imageParagraphXml(relId, widthEmu = 900000, heightEmu = 900000, name = "Logo") {
+    return `<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><wp:extent cx="${widthEmu}" cy="${heightEmu}"/><wp:docPr id="1" name="${escapeXml(name)}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name="${escapeXml(name)}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="${relId}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${widthEmu}" cy="${heightEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
+  }
+
   function paragraphXml(block, options = {}) {
     const normalized = typeof block === "string" ? { text: block } : (block || {});
     const style = normalized.style || "";
@@ -203,7 +215,21 @@
 
   function createDocument({ title = "Dokumen PAIBP SMART", blocks = [], customData = null } = {}) {
     const allBlocks = [{ text: title, style: "Title" }, ...blocks];
-    const body = allBlocks.map(blockXml).join("");
+    const media = {};
+    const relationships = [];
+    let imageIndex = 0;
+    const body = allBlocks.map((block) => {
+      if (block?.type !== "image") return blockXml(block);
+      const parsed = dataUrlBytes(block.dataUrl);
+      if (!parsed) return "";
+      imageIndex += 1;
+      const ext = parsed.mime === "image/png" ? "png" : "jpeg";
+      const filename = `image${imageIndex}.${ext}`;
+      const relId = `rIdImage${imageIndex}`;
+      media[`word/media/${filename}`] = parsed.bytes;
+      relationships.push(`<Relationship Id="${relId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${filename}"/>`);
+      return imageParagraphXml(relId, Number(block.widthEmu || 900000), Number(block.heightEmu || 900000), block.name || "Logo");
+    }).join("");
     const widestTable = Math.max(0, ...blocks.filter((block) => block?.type === "table").map(tableColumnCount));
     const landscape = widestTable >= 7;
     const pageSize = landscape
@@ -213,20 +239,21 @@
       ? `<w:pgMar w:top="567" w:right="567" w:bottom="567" w:left="567"/>`
       : `<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/>`;
     const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr>${pageSize}${pageMargin}</w:sectPr></w:body></w:document>`;
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${body}<w:sectPr>${pageSize}${pageMargin}</w:sectPr></w:body></w:document>`;
     const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria" w:eastAsia="Cambria"/><w:lang w:val="id-ID"/></w:rPr></w:rPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/></w:style></w:styles>`;
     const customXml = customData === null
       ? null
       : `<?xml version="1.0" encoding="UTF-8"?><paibp-smart><payload encoding="base64">${utf8ToBase64(JSON.stringify(customData))}</payload></paibp-smart>`;
     const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`;
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpeg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`;
     const files = {
       "[Content_Types].xml": contentTypes,
       "_rels/.rels": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`,
       "word/document.xml": documentXml,
       "word/styles.xml": stylesXml,
-      "word/_rels/document.xml.rels": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`,
+      "word/_rels/document.xml.rels": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${relationships.join("")}</Relationships>`,
+      ...media,
     };
     if (customXml) files["customXml/item1.xml"] = customXml;
     return new Blob([zipStore(files)], {

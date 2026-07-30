@@ -6,9 +6,7 @@
 
   const ACTIVE_KEY = "paibp-active-assessment-v3";
   const RESULT_KEY = "paibp-assessment-results-v3";
-  const SESSION_KEY = "paibp-assessment-teacher-unlocked-v3";
   const CONFIG_KEY = "paibp-assessment-config-v3";
-  const TEACHER_PIN = "261078";
 
   const defaultConfig = {
     school: "SMP Negeri 1 Susukan",
@@ -22,6 +20,7 @@
     code: "PAIBP2026",
     examId: "VIII-PTS-GASAL",
     seed: "paket-a",
+    logoData: "",
   };
 
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -113,7 +112,7 @@
   function examPaper(exam, config, { withKey = false, interactive = false } = {}) {
     return `<section class="exam-paper ${interactive ? "interactive-exam" : ""}">
       <header class="exam-letterhead">
-        <div class="exam-logo-space">LOGO<br>SEKOLAH</div>
+        <div class="exam-logo-space">${config.logoData ? `<img src="${escapeHtml(config.logoData)}" alt="Logo sekolah">` : `<img src="logo-spensus.png" alt="Logo sekolah">`}</div>
         <div class="exam-letterhead-copy">
           <strong>${escapeHtml(config.school)}</strong>
           <p>${escapeHtml(config.schoolAddress)}</p>
@@ -175,7 +174,7 @@
   function printHtml(title, html) {
     const popup = window.open("", "_blank", "noopener,noreferrer");
     if (!popup) return false;
-    popup.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="styles.css?v=19"><style>
+    popup.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="styles.css?v=21"><style>
       @page{size:A4;margin:15mm 15mm 17mm}html,body{background:#fff!important}body{padding:0!important;margin:0!important;font-family:Cambria,serif;color:#111}.exam-paper{max-width:none;margin:0}.no-print{display:none!important}.exam-arabic{font-family:"Traditional Arabic","Noto Naskh Arabic","Amiri",serif;font-size:19pt;line-height:1.9;display:block;text-align:right;direction:rtl}.exam-question{break-inside:avoid;page-break-inside:avoid}.exam-letterhead{break-after:avoid}.exam-identity-table{break-after:avoid}.answer-key{break-before:page}
     </style></head><body>${html}<script>onload=()=>setTimeout(()=>print(),350)<\/script></body></html>`);
     popup.document.close();
@@ -289,7 +288,7 @@
     const config = loadConfig();
     return `<section class="assessment-manager">
       <div class="assessment-hero">
-        <div><span class="badge">🔐 Khusus Guru</span><h2>PTS • SAS • UKLN HOTS Literasi Numerasi</h2><p>Bank soal kelas VII–IX, kisi cakupan bab, publikasi ujian terkunci, rekap hasil, serta unduhan DOCX/PDF siap cetak.</p></div>
+        <div><span class="badge">🔐 Khusus Guru</span><h2>PTS • ASAS • UKLN HOTS Literasi Numerasi</h2><p>Bank soal kelas VII–IX, kisi cakupan bab, publikasi ujian, rekap hasil, logo sekolah yang dapat diganti, serta ekspor DOCX, PDF, XLS, dan PPT.</p></div>
         <div class="assessment-metric"><strong>${bank.specs.length}</strong><span>paket profesional</span></div>
       </div>
       <div class="assessment-tabs no-print">
@@ -303,7 +302,7 @@
           <label>Jenis ujian<select data-assessment-config="examId">${bank.specs.map((spec) => `<option value="${spec.id}"${spec.id === config.examId ? " selected" : ""}>Kelas ${spec.grade} • ${spec.title}</option>`).join("")}</select></label>
           <label>Kode akses murid<input data-assessment-config="code" value="${escapeHtml(config.code)}" maxlength="24" autocomplete="new-password"></label>
           <label>Paket/seed soal<input data-assessment-config="seed" value="${escapeHtml(config.seed)}" maxlength="40"></label>
-          <label>Nama sekolah<input data-assessment-config="school" value="${escapeHtml(config.school)}" maxlength="120"></label>
+          <label>Nama sekolah<input data-assessment-config="school" value="${escapeHtml(config.school)}" maxlength="120"></label><label class="assessment-logo-editor">Logo sekolah<input type="file" accept="image/png,image/jpeg" data-assessment-logo><span class="assessment-logo-preview">${config.logoData ? `<img src="${escapeHtml(config.logoData)}" alt="Preview logo">` : `<img src="logo-spensus.png" alt="Preview logo">`}</span><button class="btn btn-compact" type="button" data-assessment-logo-reset>Gunakan logo awal</button></label>
           <label>Alamat/keterangan kop<input data-assessment-config="schoolAddress" value="${escapeHtml(config.schoolAddress)}" maxlength="180"></label>
           <label>Mata pelajaran<input data-assessment-config="subject" value="${escapeHtml(config.subject)}" maxlength="120"></label>
           <label>Hari/tanggal<input data-assessment-config="dayDate" value="${escapeHtml(config.dayDate)}" maxlength="120"></label>
@@ -332,6 +331,8 @@
           <button class="btn" data-assessment-pdf>Cetak / Simpan PDF</button>
           <button class="btn" data-assessment-key-docx>Unduh DOCX + Kunci</button>
           <button class="btn" data-assessment-key-preview>Tampilkan/Sembunyikan Kunci</button>
+          <button class="btn" data-assessment-xls>Unduh Kisi & Kunci XLS</button>
+          <button class="btn" data-assessment-ppt>Unduh Soal PPT</button>
           <button class="btn" data-assessment-new-seed>Buat Paket Berbeda</button>
         </div>
         <div data-assessment-preview></div>
@@ -339,8 +340,8 @@
       <div data-assessment-page="results" hidden>
         <div class="assessment-actions no-print">
           <button class="btn" data-assessment-refresh>Segarkan Rekap</button>
-          <button class="btn" data-assessment-csv>Unduh Rekap CSV</button>
-          <button class="btn" data-assessment-json>Unduh Rekap JSON</button>
+          <button class="btn" data-assessment-xls-results>Unduh Rekap XLS</button>
+          <button class="btn" data-assessment-ppt-results>Unduh Ringkasan PPT</button>
           <button class="btn" data-assessment-clear>Hapus Rekap Lokal</button>
         </div>
         <div data-assessment-results></div>
@@ -437,6 +438,15 @@
 
     updateSpecSummary(loadConfig());
     container.querySelectorAll("[data-assessment-config]").forEach((input) => input.addEventListener("input", updateLink));
+    container.querySelector("[data-assessment-logo]")?.addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (!/^image\/(png|jpeg)$/.test(file.type) || file.size > 900000) { if (status) status.textContent = "Gunakan PNG/JPG maksimal 900 KB."; return; }
+      const reader = new FileReader();
+      reader.onload = () => { const config=loadConfig(); config.logoData=String(reader.result||""); saveConfig(config); const preview=container.querySelector(".assessment-logo-preview"); if(preview) preview.innerHTML=`<img src="${escapeHtml(config.logoData)}" alt="Preview logo">`; if(status) status.textContent="Logo sekolah tersimpan dan akan masuk ke preview, PDF, DOCX, dan PPT."; };
+      reader.readAsDataURL(file);
+    });
+    container.querySelector("[data-assessment-logo-reset]")?.addEventListener("click", () => { const config=loadConfig(); config.logoData=""; saveConfig(config); const preview=container.querySelector(".assessment-logo-preview"); if(preview) preview.innerHTML='<img src="logo-spensus.png" alt="Preview logo">'; if(status) status.textContent="Logo awal dipakai kembali."; });
     container.querySelectorAll("[data-assessment-tab]").forEach((button) => button.addEventListener("click", () => {
       container.querySelectorAll("[data-assessment-tab]").forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
       container.querySelectorAll("[data-assessment-page]").forEach((page) => { page.hidden = page.dataset.assessmentPage !== button.dataset.assessmentTab; });
@@ -495,6 +505,8 @@
         if (status) status.textContent = "Izinkan pop-up browser, lalu ulangi tombol PDF.";
       }
     });
+    container.querySelector("[data-assessment-xls]")?.addEventListener("click", () => { const config=updateLink(); const exam=bank.buildExam(config.examId,config.seed); window.PAIBP_OFFICE?.exportXls({filename:`${slug(exam.spec.id)}-kisi-kunci.xls`,sheetName:'Kisi Kunci',rows:[["No","Jenis","Stimulus/Soal","A","B","C","D","Kunci","Cakupan"],...exam.questions.map(q=>[q.number,"Pilihan Ganda",htmlToText(q.stimulus)+" "+q.stem,...q.options,bank.letters[q.answer],examCoverage(exam.spec)]),...exam.essays.map(q=>[q.number,"Uraian",q.prompt,"","","","","Rubrik 0–4",examCoverage(exam.spec)])]}); });
+    container.querySelector("[data-assessment-ppt]")?.addEventListener("click", async () => { const config=updateLink(); const exam=bank.buildExam(config.examId,config.seed); try{await window.PAIBP_OFFICE?.exportAssessmentPpt(exam,config,{withKey:false});}catch(e){if(status)status.textContent=e.message||"PPT belum dapat dibuat.";} });
     let keyShown = false;
     container.querySelector("[data-assessment-key-preview]")?.addEventListener("click", () => {
       keyShown = !keyShown;
@@ -511,17 +523,8 @@
       if (status) status.textContent = "Paket soal berbeda berhasil dibuat.";
     });
     container.querySelector("[data-assessment-refresh]")?.addEventListener("click", () => renderResults(container.querySelector("[data-assessment-results]")));
-    container.querySelector("[data-assessment-csv]")?.addEventListener("click", () => {
-      const rows = loadResults();
-      const csv = [
-        "waktu,nama,absen,kelas,ujian,paket,benar,total,nilai,status",
-        ...rows.map((result) => [result.submittedAt, result.student?.name, result.student?.attendance, result.student?.className, result.examTitle, result.seed, result.mcqCorrect, result.mcqTotal, result.mcqScore, result.synced ? "sinkron" : "lokal"].map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")),
-      ].join("\n");
-      downloadBlob(new Blob(["\ufeff", csv], { type: "text/csv;charset=utf-8" }), "rekap-hasil-asesmen-paibp.csv");
-    });
-    container.querySelector("[data-assessment-json]")?.addEventListener("click", () => {
-      downloadBlob(new Blob([JSON.stringify(loadResults(), null, 2)], { type: "application/json" }), "rekap-hasil-asesmen-paibp.json");
-    });
+    container.querySelector("[data-assessment-xls-results]")?.addEventListener("click", () => { const rows=loadResults(); window.PAIBP_OFFICE?.exportXls({filename:'rekap-hasil-asesmen-paibp.xls',sheetName:'Rekap',rows:[["Waktu","Nama","Absen","Kelas","Ujian","Paket","Benar","Total","Nilai","Status"],...rows.map(r=>[r.submittedAt,r.student?.name,r.student?.attendance,r.student?.className,r.examTitle,r.seed,r.mcqCorrect,r.mcqTotal,r.mcqScore,r.synced?'sinkron':'lokal'])]}); });
+    container.querySelector("[data-assessment-ppt-results]")?.addEventListener("click", async () => { const rows=loadResults(); if(!rows.length){if(status)status.textContent='Belum ada hasil untuk dibuat menjadi PPT.';return;} const spec=bank.specs.find(x=>x.id===loadConfig().examId)||bank.specs[0]; const mock={spec,questions:[],essays:[]}; try{await window.PAIBP_OFFICE?.exportAssessmentPpt(mock,{...loadConfig(),school:`${loadConfig().school} — Rekap ${rows.length} murid`},{withKey:false});}catch(e){if(status)status.textContent=e.message||'PPT belum dapat dibuat.';} });
     container.querySelector("[data-assessment-clear]")?.addEventListener("click", () => {
       if (confirm("Hapus seluruh rekap hasil asesmen yang tersimpan lokal?")) {
         saveResults([]);
@@ -531,23 +534,7 @@
   }
 
   function unlockTeacherManager() {
-    if (sessionStorage.getItem(SESSION_KEY) === "1") {
-      attachTeacherManager();
-      return;
-    }
-    const container = document.querySelector("#teacher-document");
-    if (!container) return;
-    container.innerHTML = `<section class="assessment-lock"><span>🔐</span><h2>Bank PTS • SAS • UKLN Terkunci</h2><p>Masukkan PIN guru untuk membuka pengaturan ujian, paket soal, dan kunci jawaban.</p><form data-assessment-unlock><input type="password" inputmode="numeric" maxlength="12" placeholder="PIN guru" required><button class="cta" type="submit">Buka Bank Asesmen</button><p class="auth-error" aria-live="polite"></p></form></section>`;
-    container.querySelector("form")?.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const value = event.currentTarget.querySelector("input").value;
-      if (value === TEACHER_PIN) {
-        sessionStorage.setItem(SESSION_KEY, "1");
-        attachTeacherManager();
-      } else {
-        event.currentTarget.querySelector(".auth-error").textContent = "PIN guru tidak sesuai.";
-      }
-    });
+    attachTeacherManager();
   }
 
   function installTeacherButton() {
@@ -561,7 +548,7 @@
     const button = document.createElement("button");
     button.id = "assessment-manager-button";
     button.type = "button";
-    button.innerHTML = "<span>🧠</span> Bank PTS • SAS • UKLN";
+    button.innerHTML = "<span>🧠</span> Bank PTS • ASAS • UKLN";
     button.addEventListener("click", () => {
       menu.querySelectorAll("button").forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
       unlockTeacherManager();
