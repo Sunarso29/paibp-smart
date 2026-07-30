@@ -778,3 +778,195 @@ body.has-modal{overflow:hidden}
   body{font-family:Cambria,Georgia,serif}
   .data-table thead th{position:static}
 }
+
+
+/* Paket v18 — khutbah resmi, studio qari, dan asesmen guru terintegrasi */
+.arabic-standard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.arabic-standard-grid article{padding:16px;border:1px solid #cfe5dd;border-radius:16px;background:linear-gradient(145deg,#fff,#f3fbf8)}.arabic-standard-grid strong,.arabic-standard-grid span{display:block}.arabic-standard-grid span{margin-top:6px;color:#52646b;font-size:.9rem}.arabic-document-actions{display:flex;gap:8px;flex-wrap:wrap}.arabic-print-document{font-family:Cambria,Georgia,serif}.arabic-print-document header{text-align:center;border-bottom:3px double #111;margin-bottom:18px}.arabic-print-question{break-inside:avoid;border-bottom:1px dashed #bbb;padding:10px 0}.khutbah-source-box{display:grid;gap:6px}.khutbah-source-box a{width:fit-content}
+.assessment-manager{display:grid;gap:18px}.assessment-hero{display:flex;justify-content:space-between;gap:18px;align-items:center;padding:22px;border-radius:22px;background:linear-gradient(135deg,#063f5c,#087f68);color:#fff}.assessment-hero h2{margin:.35rem 0}.assessment-metric{min-width:130px;text-align:center;background:#ffffff1c;border:1px solid #ffffff44;border-radius:18px;padding:16px}.assessment-metric strong,.assessment-metric span{display:block}.assessment-metric strong{font-size:2.2rem}.assessment-tabs{display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid #dbe7e3;padding-bottom:10px}.assessment-tabs button{border:0;border-radius:999px;padding:10px 15px;background:#eef5f2;font-weight:700;cursor:pointer}.assessment-tabs button[aria-pressed="true"]{background:#087f68;color:#fff}.assessment-config-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.assessment-config-grid label,.exam-student-identity label{display:grid;gap:6px;font-weight:700}.assessment-config-grid input,.assessment-config-grid select,.exam-student-identity input,.assessment-share-box input,.student-exam-lock input,.assessment-lock input{width:100%;padding:11px 12px;border:1px solid #bfd3cc;border-radius:12px;background:#fff}.assessment-actions{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}.assessment-share-box{display:grid;gap:7px;padding:14px;border:1px solid #cfe5dd;border-radius:16px;background:#f5fbf8}.assessment-lock,.student-exam-lock,.exam-finish-card{text-align:center;padding:42px 24px;border:1px solid #cfe5dd;border-radius:24px;background:linear-gradient(145deg,#fff,#f4fbf8)}.assessment-lock>span,.student-exam-lock>span,.exam-finish-card>span{font-size:3rem}.assessment-lock form,.student-exam-lock form{max-width:360px;margin:18px auto;display:grid;gap:10px}.exam-paper{font-family:Cambria,Georgia,serif;color:#111;background:#fff;padding:24px;border:1px solid #ccd8d4;border-radius:16px}.exam-letterhead{display:grid;grid-template-columns:90px 1fr;gap:18px;align-items:center;text-align:center;border-bottom:4px double #111;padding-bottom:12px;margin-bottom:12px}.exam-letterhead strong{font-size:1.25rem}.exam-letterhead h2{font-size:1.15rem;margin:5px 0}.exam-logo-space{height:78px;border:1px dashed #777;display:grid;place-items:center;font-size:.72rem}.exam-identity-table{width:100%;border-collapse:collapse;margin:12px 0}.exam-identity-table th,.exam-identity-table td{border:1px solid #222;padding:7px;text-align:left}.exam-instructions{padding:10px 16px;border:1px solid #555;margin:12px 0}.exam-question-list,.exam-essay-list{display:grid;gap:12px}.exam-question{display:grid;grid-template-columns:32px 1fr;gap:5px;break-inside:avoid}.exam-question p{margin:4px 0 8px}.exam-stimulus{padding:10px 12px;background:#f4f7f6;border-left:4px solid #087f68;margin-bottom:7px}.exam-stimulus small{display:block}.exam-arabic{font-family:'Noto Naskh Arabic','Amiri','Scheherazade New',serif;font-size:1.45rem;line-height:2;display:block;text-align:right}.exam-options{display:grid;gap:5px}.exam-options label{display:flex;gap:8px;align-items:flex-start;padding:7px;border:1px solid #d6e2de;border-radius:9px;cursor:pointer}.exam-options input{margin-top:3px}.exam-essay-list textarea{width:100%;border:1px solid #aaa;border-radius:8px;padding:10px}.essay-lines{line-height:2}.answer-key{margin-top:24px;padding:16px;border:2px solid #087f68;background:#effaf6}.answer-key mark{background:#d4f7e7}.assessment-result-summary{display:flex;gap:12px;margin:12px 0}.assessment-result-summary article{padding:14px 20px;border-radius:15px;background:#eef8f4}.assessment-result-summary strong,.assessment-result-summary span{display:block}.assessment-result-summary strong{font-size:1.7rem}.student-assessment-entry{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px;margin:0 0 18px;border:2px solid #087f68;border-radius:20px;background:linear-gradient(135deg,#effbf6,#fff7df)}.exam-student-identity{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin:14px 0;padding:12px;border:1px solid #aaa}.assessment-submit-bar{position:sticky;bottom:10px;display:flex;align-items:center;gap:12px;padding:12px;background:#ffffffee;border:1px solid #bfd3cc;border-radius:15px;box-shadow:0 8px 24px #0002;margin-top:16px}
+@media(max-width:900px){.arabic-standard-grid{grid-template-columns:1fr 1fr}.assessment-config-grid{grid-template-columns:1fr}.exam-student-identity{grid-template-columns:1fr}.assessment-hero{align-items:flex-start}.exam-paper{padding:14px}.student-assessment-entry{align-items:flex-start;flex-direction:column}}
+@media print{.assessment-tabs,.assessment-actions,.assessment-submit-bar,.student-exam-lock,.no-print{display:none!important}.exam-paper{border:0;padding:0}.exam-options label{border:0;padding:2px}.exam-question{page-break-inside:avoid}.exam-arabic{font-size:17pt}.teacher-document{overflow:visible}}
+
+/* ===== PAIBP SMART v18: Khutbah, Bahasa Arab, dan Asesmen Nasional ===== */
+.arabic-qari-studio {
+  margin: 18px 0;
+  padding: 20px;
+  border: 1px solid #cfe3dc;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #f5fffb, #eef7ff);
+  box-shadow: 0 14px 34px rgba(8, 83, 71, 0.08);
+}
+.arabic-qari-copy h5 { margin: 4px 0 6px; font-size: 1.25rem; }
+.arabic-qari-copy p { margin: 0; color: #49645d; }
+.arabic-qari-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.arabic-qari-options button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "icon name" "icon style";
+  gap: 2px 9px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #c8ded7;
+  border-radius: 15px;
+  background: #fff;
+  color: #173d35;
+  text-align: left;
+  cursor: pointer;
+}
+.arabic-qari-options button[aria-pressed="true"] { border-color: #087f68; background: #e7f7f1; box-shadow: 0 0 0 2px rgba(8,127,104,.1); }
+.arabic-qari-options button > span { grid-area: icon; font-size: 1.35rem; }
+.arabic-qari-options button strong { grid-area: name; font-size: .88rem; }
+.arabic-qari-options button small { grid-area: style; color: #61766f; }
+.arabic-qari-player {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(260px, 1.4fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #d8e8e2;
+}
+.arabic-qari-player > div { display: flex; flex-direction: column; }
+.arabic-qari-player > div span { color: #657872; font-size: .82rem; }
+.arabic-qari-player audio { width: 100%; }
+.arabic-qari-player .save-status { grid-column: 1 / -1; margin: 0; }
+
+.khutbah-reference-center { margin-top: 24px; }
+.khutbah-source-portals {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+.khutbah-source-portal {
+  min-height: 175px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px;
+  border: 1px solid #d8e6e1;
+  border-radius: 18px;
+  background: #fff;
+  color: #173d35;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(9, 69, 58, .06);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.khutbah-source-portal:hover { transform: translateY(-3px); border-color: #087f68; box-shadow: 0 14px 30px rgba(9,69,58,.12); }
+.khutbah-source-portal .source-publisher { width: fit-content; padding: 4px 8px; border-radius: 999px; background: #e8f7f2; color: #087f68; font-size: .72rem; font-weight: 800; }
+.khutbah-source-portal strong { line-height: 1.25; }
+.khutbah-source-portal p { margin: 0; flex: 1; color: #5e716b; font-size: .84rem; }
+.khutbah-source-portal small { color: #087f68; font-weight: 700; }
+.khutbah-curated-references { margin-top: 14px; border: 1px solid #d8e6e1; border-radius: 16px; background: #fff; overflow: hidden; }
+.khutbah-curated-references summary { padding: 14px 16px; cursor: pointer; font-weight: 800; background: #f6fbf9; }
+#khutbah-curated-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 10px; gap: 8px; }
+#khutbah-curated-list a { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 12px; border-radius: 12px; text-decoration: none; color: #173d35; background: #f8fbfa; }
+#khutbah-curated-list a:hover { background: #eaf7f2; }
+#khutbah-curated-list a > span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #087f68; color: #fff; font-size: .75rem; font-weight: 900; }
+#khutbah-curated-list a div { display: flex; flex-direction: column; }
+#khutbah-curated-list a small { color: #647871; }
+
+.assessment-manager { display: grid; gap: 18px; }
+.assessment-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 24px;
+  border-radius: 22px;
+  color: #fff;
+  background: linear-gradient(135deg, #075f50, #0b8d74 58%, #0d6f9d);
+  box-shadow: 0 18px 40px rgba(6, 89, 75, .18);
+}
+.assessment-hero h2 { margin: 8px 0 5px; }
+.assessment-hero p { margin: 0; color: rgba(255,255,255,.88); }
+.assessment-metric { min-width: 130px; display: flex; flex-direction: column; align-items: center; padding: 16px; border-radius: 18px; background: rgba(255,255,255,.14); backdrop-filter: blur(8px); }
+.assessment-metric strong { font-size: 2rem; }
+.assessment-tabs { display: flex; gap: 8px; flex-wrap: wrap; padding: 7px; border-radius: 14px; background: #edf6f3; }
+.assessment-tabs button { padding: 10px 14px; border: 0; border-radius: 10px; background: transparent; font-weight: 800; color: #35564d; cursor: pointer; }
+.assessment-tabs button[aria-pressed="true"] { background: #fff; color: #087f68; box-shadow: 0 5px 15px rgba(8,127,104,.1); }
+.assessment-spec-summary { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 14px; }
+.assessment-spec-summary article { display: flex; flex-direction: column; gap: 4px; min-height: 82px; padding: 14px; border-radius: 15px; background: #f4faf8; border: 1px solid #d9e9e3; }
+.assessment-spec-summary article strong { color: #087f68; font-size: 1.15rem; }
+.assessment-spec-summary article span { color: #61766f; font-size: .82rem; }
+.assessment-config-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.assessment-config-grid label { display: flex; flex-direction: column; gap: 6px; color: #284d44; font-weight: 800; }
+.assessment-config-grid input, .assessment-config-grid select, .assessment-share-box input { width: 100%; padding: 11px 12px; border: 1px solid #c9ddd6; border-radius: 10px; background: #fff; color: #183c34; font: inherit; }
+.assessment-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.assessment-share-box { display: grid; gap: 7px; padding: 15px; border-radius: 14px; background: #f5faf8; border: 1px solid #d7e8e2; }
+.assessment-share-box small { color: #62756f; }
+.assessment-lock, .student-exam-lock, .exam-finish-card { display: grid; justify-items: center; gap: 10px; text-align: center; padding: 42px 24px; border: 1px solid #d3e5df; border-radius: 22px; background: linear-gradient(180deg,#fff,#f4faf8); }
+.assessment-lock > span, .student-exam-lock > span, .exam-finish-card > span { font-size: 3rem; }
+.assessment-lock form, .student-exam-lock form { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.assessment-lock input, .student-exam-lock input { min-width: 220px; padding: 11px 12px; border: 1px solid #c8dcd5; border-radius: 10px; }
+.assessment-lock .auth-error, .student-exam-lock .auth-error { flex-basis: 100%; margin: 0; color: #b42318; }
+
+.exam-paper { max-width: 900px; margin: 0 auto; padding: 22px; background: #fff; color: #111; border: 1px solid #d8d8d8; border-radius: 8px; font-family: Cambria, "Times New Roman", serif; }
+.exam-letterhead { display: grid; grid-template-columns: 92px 1fr; gap: 16px; align-items: center; padding-bottom: 12px; border-bottom: 4px double #111; text-align: center; }
+.exam-logo-space { display: grid; place-items: center; width: 82px; height: 82px; border: 1px dashed #555; font-size: .72rem; color: #555; }
+.exam-letterhead-copy strong { font-size: 1.35rem; text-transform: uppercase; }
+.exam-letterhead-copy h2 { margin: 7px 0 3px; font-size: 1.25rem; text-transform: uppercase; }
+.exam-letterhead-copy p { margin: 2px 0; font-size: .84rem; }
+.exam-identity-table { width: 100%; margin: 14px 0; border-collapse: collapse; }
+.exam-identity-table th, .exam-identity-table td { border: 1px solid #111; padding: 7px 8px; vertical-align: top; font-size: .9rem; }
+.exam-identity-table th { width: 16%; text-align: left; background: #f3f3f3; }
+.exam-instructions { margin: 12px 0 18px; padding: 10px 14px; border: 1px solid #555; }
+.exam-instructions h3 { margin: 0 0 4px; }
+.exam-instructions ol { margin: 0; padding-left: 22px; }
+.exam-question-list, .exam-essay-list { display: grid; gap: 14px; }
+.exam-question { display: grid; grid-template-columns: 30px 1fr; gap: 7px; break-inside: avoid; page-break-inside: avoid; }
+.exam-question > strong { padding-top: 2px; }
+.exam-question p { margin: 4px 0 7px; }
+.exam-stimulus { margin-bottom: 7px; padding: 10px; border-left: 4px solid #087f68; background: #f5faf8; }
+.exam-stimulus small { display: block; margin-top: 3px; color: #555; }
+.exam-arabic { display: block; text-align: right; direction: rtl; font-family: "Traditional Arabic", "Noto Naskh Arabic", "Amiri", serif; font-size: 1.5rem; line-height: 1.9; }
+.exam-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px 16px; }
+.exam-options > div, .exam-options label { display: flex; align-items: flex-start; gap: 7px; min-height: 31px; }
+.exam-options label { padding: 8px; border: 1px solid #d5e3de; border-radius: 8px; cursor: pointer; }
+.exam-options label:has(input:checked) { border-color: #087f68; background: #eaf8f3; }
+.exam-options input { margin-top: 3px; }
+.exam-options mark { padding: 1px 5px; border-radius: 4px; background: #d6f5e8; }
+.essay-lines { line-height: 2.1; color: #777; }
+.answer-key { margin-top: 26px; padding: 16px; border: 2px solid #087f68; background: #f2fbf8; }
+.exam-student-identity { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin: 14px 0; }
+.exam-student-identity label { display: flex; flex-direction: column; gap: 5px; font-weight: 700; }
+.exam-student-identity input, .interactive-exam textarea { width: 100%; padding: 10px; border: 1px solid #c7d9d3; border-radius: 8px; font: inherit; }
+.assessment-submit-bar { position: sticky; bottom: 8px; display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.96); border: 1px solid #cfe1db; box-shadow: 0 12px 28px rgba(0,0,0,.12); }
+.assessment-result-summary { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 12px; }
+.assessment-result-summary article { display: flex; flex-direction: column; align-items: center; padding: 15px; border-radius: 14px; background: #f0faf6; border: 1px solid #d5e8e1; }
+.assessment-result-summary strong { color: #087f68; font-size: 1.7rem; }
+.student-assessment-entry { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; padding: 17px; border-radius: 17px; color: #fff; background: linear-gradient(135deg,#77510a,#b87d0b); box-shadow: 0 13px 28px rgba(119,81,10,.18); }
+.student-assessment-entry h3, .student-assessment-entry p { margin: 4px 0; }
+.student-assessment-entry .badge { background: rgba(255,255,255,.18); color: #fff; }
+
+@media (max-width: 1050px) {
+  .khutbah-source-portals { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .arabic-qari-options { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .arabic-qari-player { grid-template-columns: 1fr; }
+  .assessment-spec-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 700px) {
+  .khutbah-source-portals, #khutbah-curated-list, .assessment-config-grid, .assessment-spec-summary, .assessment-result-summary { grid-template-columns: 1fr; }
+  .arabic-qari-options { grid-template-columns: 1fr; }
+  .assessment-hero { grid-template-columns: 1fr; }
+  .exam-paper { padding: 12px; }
+  .exam-letterhead { grid-template-columns: 64px 1fr; }
+  .exam-logo-space { width: 60px; height: 60px; }
+  .exam-options { grid-template-columns: 1fr; }
+  .exam-student-identity { grid-template-columns: 1fr; }
+  .student-assessment-entry { align-items: flex-start; flex-direction: column; }
+}
+
+@media print {
+  @page { size: A4; margin: 15mm 15mm 17mm; }
+  .exam-paper { max-width: none !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+  .exam-question { break-inside: avoid; page-break-inside: avoid; }
+  .exam-letterhead, .exam-identity-table, .exam-instructions { break-after: avoid; page-break-after: avoid; }
+  .answer-key { break-before: page; page-break-before: always; }
+  .exam-options { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .arabic-qari-studio, .khutbah-reference-center { display: none !important; }
+}

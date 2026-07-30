@@ -1,0 +1,24 @@
+CATATAN PEMBARUAN PAIBP SMART SMP V18
+Tanggal: 30 Juli 2026
+
+1. KHUTBAH JUM'AT
+- Preview tidak lagi bergantung pada satu berkas yang gagal dimuat.
+- Sistem memakai quran-id.json dan khutbah-verse-data.js sebagai cadangan.
+- Naskah pertama otomatis terbuka saat katalog tampil.
+- Tersedia pencarian, preview, DOCX, PDF, cetak, suara ayat, dan pusat referensi resmi.
+
+2. BAHASA ARAB
+- Tab Dasar, Menengah, Mahir, dan Percakapan dipertahankan sebagai jalur terpisah.
+- Tersedia Studio Qari, latihan interaktif, suara Arab, progres, unduhan DOCX, dan PDF.
+
+3. ASESMEN GURU
+- PTS: 40 pilihan ganda A–D + 5 uraian untuk materi setiap tiga bab.
+- SAS: 40 pilihan ganda + 10 uraian; Semester Genap mencakup bab 1–10.
+- UKLN kelas IX: materi kelas VII 20%, kelas VIII 20%, kelas IX 60%.
+- Pengaturan kop, jadwal, durasi, ruang, Tahun Ajaran, kode akses, publikasi, preview, DOCX/PDF, kunci, dan rekap hasil.
+- Akses guru terkunci dengan PIN editor standar 261078.
+
+4. CARA UPDATE GITHUB
+- Unggah dan timpa seluruh isi paket lengkap v18; atau unggah isi paket patch dengan struktur folder tetap.
+- Jangan mengunggah file ZIP ke dalam repository sebagai pengganti isi file.
+- Sesudah commit selesai, buka situs dengan Ctrl+F5 atau hapus data situs agar cache lama hilang.

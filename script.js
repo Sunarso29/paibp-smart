@@ -47,6 +47,8 @@ if (workspace && appData) {
   const calendarData = window.PAIBP_CALENDAR || { sources: {}, datedEvents: [], recurringCommemorations: [], academicEvents: [] };
   const arabicData = window.PAIBP_ARABIC || { levels: [] };
   const islamicLearningData = window.PAIBP_ISLAMIC_LEARNING || { khutbah: { themes: [] }, tajwid: { modules: [] } };
+  const khutbahVerseData = window.PAIBP_KHUTBAH_VERSES || {};
+  const khutbahSourceData = window.PAIBP_KHUTBAH_SOURCES || { portals: [], curated: [] };
   const gameData = window.PAIBP_GAME_BANK || null;
   const videoData = window.PAIBP_VIDEOS || {};
   const appConfig = window.PAIBP_CONFIG || { realtimeEndpoint: "", realtimeReadKey: "" };
@@ -208,6 +210,7 @@ if (workspace && appData) {
   let activeGameSession = safeJsonParse(localStorage.getItem(GAME_SESSION_KEY), null);
   let arabicLevelId = "dasar";
   let activeArabicSession = null;
+  let selectedArabicQari = "ar.alafasy";
   let arabicAutoAdvanceTimer = 0;
   let khutbahCatalogOffset = 0;
   let activeKhutbahRecord = null;
@@ -3263,11 +3266,11 @@ if (workspace && appData) {
         blocks: window.PAIBP_DOCX.blocksFromElement(documentElement),
       });
       const sourceFilename = source.downloadPath.split("/").pop() || `${teacherGrade}-${teacherDoc}.docx`;
-      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v16.docx");
+      const filename = sourceFilename.replace(/\.docx$/i, "-lengkap-v18.docx");
       downloadBlob(blob, filename);
       if (status) status.textContent = "Dokumen Word lengkap berhasil disiapkan langsung dari isi portal. Tidak ada tautan halaman 404.";
     } catch (error) {
-      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v16 lalu coba kembali.";
+      if (status) status.textContent = "Dokumen belum dapat dibuat. Muat ulang halaman versi v18 lalu coba kembali.";
     }
   }
 
@@ -3727,6 +3730,20 @@ if (workspace && appData) {
     arabicAutoAdvanceTimer = window.setTimeout(advanceArabicQuestion, ARABIC_AUTO_ADVANCE_DELAY);
   }
 
+  function arabicTopicPrintableHtml(level, topic) {
+    const sample = typeof arabicData.createQuestionSet === "function"
+      ? arabicData.createQuestionSet(level.id, topic.id, `print-${topic.id}`).slice(0, 25)
+      : [];
+    return `<section class="arabic-print-document"><header><p>PAIBP SMART • AKADEMI BAHASA ARAB</p><h2>${escapeHtml(topic.title)}</h2><p>${escapeHtml(level.label)} • ${escapeHtml(topic.section)} • Tahun Ajaran 2026/2027</p></header><h3>Tujuan Praktis</h3><p>Memahami kosakata, struktur, pelafalan, membaca, menulis, dan penggunaan bahasa Arab sesuai tingkat materi.</p><h3>Latihan Pilihan</h3>${sample.map((question,index)=>`<article class="arabic-print-question"><strong>${index+1}.</strong><p class="arabic-phrase" lang="ar" dir="rtl">${escapeHtml(question.arabicPrompt||"")}</p><p>${escapeHtml(question.prompt)}</p><ol type="A">${question.options.map(option=>`<li>${escapeHtml(option)}</li>`).join("")}</ol></article>`).join("")}<h3>Catatan Belajar</h3><p>................................................................................................................................................</p><p>................................................................................................................................................</p></section>`;
+  }
+
+  function downloadArabicTopic(level, topic) {
+    const holder = document.createElement("div");
+    holder.innerHTML = arabicTopicPrintableHtml(level, topic);
+    const blob = window.PAIBP_DOCX.createDocument({title: `${level.label} — ${topic.title}`,blocks: window.PAIBP_DOCX.blocksFromElement(holder)});
+    downloadBlob(blob, `${filenameSlug(level.label)}-${filenameSlug(topic.title)}.docx`);
+  }
+
   function renderArabicQuestion() {
     const player = document.querySelector("#arabic-lesson-player");
     const question = currentArabicQuestion();
@@ -3737,6 +3754,7 @@ if (workspace && appData) {
     player.innerHTML = `
       <div class="arabic-quiz-toolbar">
         <button class="btn btn-compact" type="button" data-arabic-exit>← Simpan dan kembali</button>
+        <div class="arabic-document-actions"><button class="btn btn-compact" type="button" data-arabic-download-topic>Unduh DOCX</button><button class="btn btn-compact" type="button" data-arabic-print-topic>Simpan PDF</button></div>
         <span>${escapeHtml(level?.label || "")} • Tab ${topic?.number || ""}/100</span>
       </div>
       <div class="arabic-lesson-head">
@@ -3767,6 +3785,8 @@ if (workspace && appData) {
       </div>`;
     const status = player.querySelector("[data-arabic-audio-status]");
     player.querySelector("[data-play-arabic]")?.addEventListener("click", () => speakArabic(question.arabicPrompt, status));
+    player.querySelector("[data-arabic-download-topic]")?.addEventListener("click", () => downloadArabicTopic(level, topic));
+    player.querySelector("[data-arabic-print-topic]")?.addEventListener("click", () => printDocument(`${level?.label || "Bahasa Arab"} — ${topic?.title || "Materi"}`, arabicTopicPrintableHtml(level, topic)));
     player.querySelectorAll("[data-arabic-answer]").forEach((button) => button.addEventListener("click", () => {
       answerArabicQuestion(Number(button.dataset.arabicAnswer));
     }));
@@ -3817,7 +3837,65 @@ if (workspace && appData) {
     switchTrackedResource("bahasa-arab", topic.id, `${level.label}: ${topic.title}`);
   }
 
+  const arabicQariCatalog = [
+    { id: "ar.alafasy", name: "Misyari Rasyid Alafasy", style: "Murattal", icon: "🎙️" },
+    { id: "ar.husary", name: "Mahmud Khalil Al-Husary", style: "Tahqiq", icon: "🎧" },
+    { id: "ar.minshawi", name: "Muhammad Siddiq Al-Minshawi", style: "Murattal", icon: "🎼" },
+    { id: "ar.abdulbasitmurattal", name: "Abdul Basit Abdus Samad", style: "Murattal", icon: "🔊" },
+  ];
+
+  function arabicQariSampleUrl(qariId) {
+    return `https://cdn.islamic.network/quran/audio/128/${encodeURIComponent(qariId)}/1.mp3`;
+  }
+
+  async function cacheArabicQariSample(qariId, status) {
+    if (!("caches" in window)) {
+      if (status) status.textContent = "Perangkat ini belum mendukung penyimpanan audio luring.";
+      return;
+    }
+    const url = arabicQariSampleUrl(qariId);
+    if (status) status.textContent = "Menyimpan contoh audio qari…";
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error("Audio tidak dapat diambil.");
+      const cache = await caches.open(QURAN_AUDIO_CACHE_NAME);
+      await cache.put(url, response.clone());
+      if (status) status.textContent = "Contoh audio qari tersimpan dan dapat digunakan kembali saat luring.";
+    } catch (error) {
+      if (status) status.textContent = error?.message || "Audio belum berhasil disimpan. Coba kembali ketika internet stabil.";
+    }
+  }
+
+  function renderArabicQariStudio() {
+    const studio = document.querySelector("#arabic-qari-studio");
+    if (!studio) return;
+    const selected = arabicQariCatalog.find((item) => item.id === selectedArabicQari) || arabicQariCatalog[0];
+    studio.innerHTML = `
+      <div class="arabic-qari-copy">
+        <span class="feature-eyebrow">Suara Arab Asli</span>
+        <h5>Studio Qari Internasional</h5>
+        <p>Dengarkan contoh Al Qur'an Surat Al-Fatihah ayat 1 dari qari pilihan. Kosakata dan kalimat latihan tetap dapat diputar dengan suara Arab perangkat.</p>
+      </div>
+      <div class="arabic-qari-options">
+        ${arabicQariCatalog.map((qari) => `<button type="button" data-arabic-qari="${escapeHtml(qari.id)}" aria-pressed="${qari.id === selected.id}"><span>${qari.icon}</span><strong>${escapeHtml(qari.name)}</strong><small>${escapeHtml(qari.style)}</small></button>`).join("")}
+      </div>
+      <div class="arabic-qari-player">
+        <div><strong>${escapeHtml(selected.name)}</strong><span>Al-Fatihah ayat 1 • contoh pelafalan qari</span></div>
+        <audio controls preload="none" src="${escapeHtml(arabicQariSampleUrl(selected.id))}"></audio>
+        <button class="btn btn-compact" type="button" data-cache-arabic-qari>↓ Simpan contoh luring</button>
+        <p class="save-status" data-arabic-qari-status aria-live="polite"></p>
+      </div>`;
+    studio.querySelectorAll("[data-arabic-qari]").forEach((button) => button.addEventListener("click", () => {
+      selectedArabicQari = button.dataset.arabicQari;
+      renderArabicQariStudio();
+    }));
+    studio.querySelector("[data-cache-arabic-qari]")?.addEventListener("click", () => {
+      cacheArabicQariSample(selected.id, studio.querySelector("[data-arabic-qari-status]"));
+    });
+  }
+
   function renderArabicAcademy() {
+    renderArabicQariStudio();
     const tabs = document.querySelector("#arabic-level-tabs");
     const path = document.querySelector("#arabic-learning-path");
     const xp = document.querySelector("#arabic-xp");
@@ -3925,6 +4003,28 @@ if (workspace && appData) {
     };
   }
 
+  function renderKhutbahSources() {
+    const portals = document.querySelector("#khutbah-source-portals");
+    const curated = document.querySelector("#khutbah-curated-list");
+    if (portals) {
+      portals.innerHTML = (khutbahSourceData.portals || []).map((source) => `
+        <a class="khutbah-source-portal" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">
+          <span class="source-publisher">${escapeHtml(source.name)}</span>
+          <strong>${escapeHtml(source.label)}</strong>
+          <p>${escapeHtml(source.description)}</p>
+          <small>${escapeHtml(source.badge)} • buka sumber resmi ↗</small>
+        </a>`).join("");
+    }
+    if (curated) {
+      curated.innerHTML = (khutbahSourceData.curated || []).map((item, index) => `
+        <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
+          <span>${String(index + 1).padStart(2, "0")}</span>
+          <div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.publisher)} • ${escapeHtml(item.topic)}</small></div>
+          <b aria-hidden="true">↗</b>
+        </a>`).join("");
+    }
+  }
+
   function currentKhutbahCatalog() {
     const themes = islamicLearningData.khutbah.themes || [];
     if (!themes.length) return [];
@@ -3939,78 +4039,56 @@ if (workspace && appData) {
   async function openKhutbahRecord(record) {
     const reader = document.querySelector("#khutbah-reader");
     if (!reader || !record) return;
-    reader.innerHTML = `<div class="khutbah-empty-state"><span>⏳</span><h5>Menyiapkan naskah</h5><p>Mengambil teks ayat dari paket Al Qur'an luring…</p></div>`;
+    reader.innerHTML = `<div class="khutbah-empty-state"><span>⏳</span><h5>Menyiapkan naskah</h5><p>Membuka ayat, terjemahan, dan naskah khutbah siap cetak…</p></div>`;
     try {
-      const surahs = await loadOfflineQuran();
-      const surah = surahs.find((item) => Number(item.id) === Number(record.theme.surah));
-      const verse = surah?.verses?.[Number(record.theme.ayah) - 1];
-      if (!surah || !verse) throw new Error("Ayat tidak ditemukan");
+      let surah = null;
+      let verse = null;
+      try {
+        const surahs = await loadOfflineQuran();
+        surah = surahs.find((item) => Number(item.id) === Number(record.theme.surah));
+        verse = surah?.verses?.[Number(record.theme.ayah) - 1] || null;
+      } catch (error) {
+        // Cadangan ayat tertanam menjamin naskah tetap dapat dibuka walau fetch/cache gagal.
+      }
+      const fallback = khutbahVerseData[`${record.theme.surah}:${record.theme.ayah}`];
+      if (!verse && fallback) verse = { text: fallback.text, translation: fallback.translation };
+      if (!surah && fallback) surah = { transliteration: fallback.surah };
+      if (!surah || !verse) throw new Error("Ayat tidak ditemukan pada paket utama maupun paket cadangan.");
       const sourceUrl = `https://quran.kemenag.go.id/quran/per-ayat/surah/${record.theme.surah}?from=${record.theme.ayah}&to=${record.theme.ayah}`;
       activeKhutbahRecord = { ...record, surah, verse, sourceUrl };
       reader.innerHTML = `
         <header class="khutbah-document-head">
           <span class="badge">${escapeHtml(record.category)}</span>
           <h5>${escapeHtml(record.title)}</h5>
-          <p>Naskah khutbah pertama dan kedua • estimasi 12–15 menit</p>
+          <p>Naskah khutbah pertama dan kedua • estimasi 12–15 menit • siap print</p>
         </header>
         <div class="khutbah-document-body">
           <h6>Khutbah Pertama</h6>
           <p class="khutbah-arabic" lang="ar" dir="rtl">إِنَّ الْحَمْدَ لِلَّهِ نَحْمَدُهُ وَنَسْتَعِينُهُ وَنَسْتَغْفِرُهُ، وَنَعُوذُ بِاللَّهِ مِنْ شُرُورِ أَنْفُسِنَا وَمِنْ سَيِّئَاتِ أَعْمَالِنَا. أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. اَللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ.</p>
           <p>Jamaah Jum'at rahimakumullah, marilah kita meningkatkan ketakwaan kepada Allah Subhanahu Wata'ala dengan melaksanakan perintah-Nya dan menjauhi larangan-Nya.</p>
-          <p>${escapeHtml(record.opening)} Tema khutbah ini ialah <em>${escapeHtml(record.theme.title)}</em>, sebuah pesan yang penting bagi ${escapeHtml(record.audience)}.</p>
-          <div class="khutbah-verse">
-            <strong>Landasan: Al Qur'an Surat ${escapeHtml(surah.transliteration)} ayat ${record.theme.ayah}</strong>
-            <p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(verse.text)}</p>
-            <p>Artinya: “${escapeHtml(verse.translation)}”</p>
-          </div>
+          <p>${escapeHtml(record.opening)} Tema khutbah ini ialah <em>${escapeHtml(record.theme.title)}</em>, sebuah pesan penting bagi ${escapeHtml(record.audience)}.</p>
+          <div class="khutbah-verse"><strong>Landasan: Al Qur'an Surat ${escapeHtml(surah.transliteration)} ayat ${record.theme.ayah}</strong><p class="arabic-text" lang="ar" dir="rtl">${escapeHtml(verse.text)}</p><p>Artinya: “${escapeHtml(verse.translation)}”</p></div>
           <p>${escapeHtml(record.theme.focus)} ${escapeHtml(record.bridge)}</p>
-          <h6>Tiga Pesan Utama</h6>
-          <ol>${record.theme.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>
+          <h6>Tiga Pesan Utama</h6><ol>${record.theme.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol>
           ${record.emphasis ? `<p>${escapeHtml(record.emphasis)}</p>` : ""}
-          <h6>Langkah Pengamalan</h6>
-          <p>${escapeHtml(record.actionIntro)}</p>
-          <ol>${record.theme.actions.map((action) => `<li>${escapeHtml(action)};</li>`).join("")}</ol>
-          ${record.reflectionQuestion ? `<p><em>${escapeHtml(record.reflectionQuestion)}</em></p>` : ""}
-          <p>${escapeHtml(record.closing)}</p>
+          <h6>Langkah Pengamalan</h6><p>${escapeHtml(record.actionIntro)}</p><ol>${record.theme.actions.map((action) => `<li>${escapeHtml(action)};</li>`).join("")}</ol>
+          ${record.reflectionQuestion ? `<p><em>${escapeHtml(record.reflectionQuestion)}</em></p>` : ""}<p>${escapeHtml(record.closing)}</p>
           <p class="khutbah-arabic" lang="ar" dir="rtl">أَقُولُ قَوْلِي هٰذَا وَأَسْتَغْفِرُ اللَّهَ لِي وَلَكُمْ، فَاسْتَغْفِرُوهُ، إِنَّهُ هُوَ الْغَفُورُ الرَّحِيمُ.</p>
           <h6>Khutbah Kedua</h6>
           <p class="khutbah-arabic" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَأَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. اَللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ.</p>
           <p>Jamaah Jum'at rahimakumullah, marilah kita kembali menguatkan takwa. Bawalah pesan hari ini menuju amal yang terukur, jaga hak sesama, dan evaluasi pelaksanaannya sebelum Jum'at berikutnya.</p>
-          <p>${escapeHtml(record.prayer)}</p>
-          <p class="khutbah-arabic" lang="ar" dir="rtl">اللَّهُمَّ اغْفِرْ لِلْمُسْلِمِينَ وَالْمُسْلِمَاتِ، وَالْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ، الْأَحْيَاءِ مِنْهُمْ وَالْأَمْوَاتِ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.</p>
-          <div class="khutbah-source-box">
-            <strong>Sumber dan pemeriksaan</strong>
-            <span>Ayat dan terjemahan berasal dari paket Al Qur'an luring PAIBP SMART.</span>
-            <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">Periksa ayat pada Qur'an Kementerian Agama ↗</a>
-            <a href="https://kemenag.go.id/islam" target="_blank" rel="noopener">Buka referensi khutbah Kementerian Agama ↗</a>
-          </div>
+          <p>${escapeHtml(record.prayer)}</p><p class="khutbah-arabic" lang="ar" dir="rtl">اللَّهُمَّ اغْفِرْ لِلْمُسْلِمِينَ وَالْمُسْلِمَاتِ، وَالْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ، الْأَحْيَاءِ مِنْهُمْ وَالْأَمْوَاتِ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.</p>
+          <div class="khutbah-source-box"><strong>Referensi pemeriksaan naskah</strong><span>Ayat tersedia dari paket Al Qur'an luring dan paket cadangan tertanam.</span><a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Qur'an Kementerian Agama ↗</a>${(khutbahSourceData.portals || []).map((source) => `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.label)} ↗</a>`).join("")}</div>
         </div>
-        <div class="khutbah-actions no-print">
-          <button class="cta btn-compact" type="button" data-download-khutbah-docx>Unduh DOCX</button>
-          <button class="btn btn-compact" type="button" data-print-khutbah-pdf>Simpan PDF</button>
-          <button class="btn btn-compact" type="button" data-speak-khutbah-verse>🔊 Putar ayat</button>
-          <p class="save-status" data-khutbah-status aria-live="polite"></p>
-        </div>`;
-      document.querySelectorAll("[data-khutbah-title]").forEach((button) => {
-        button.setAttribute("aria-pressed", String(button.dataset.khutbahTitle === record.id));
-      });
+        <div class="khutbah-actions no-print"><button class="cta btn-compact" type="button" data-download-khutbah-docx>Unduh DOCX</button><button class="btn btn-compact" type="button" data-print-khutbah-pdf>Simpan PDF</button><button class="btn btn-compact" type="button" data-speak-khutbah-verse>🔊 Putar ayat</button><p class="save-status" data-khutbah-status aria-live="polite"></p></div>`;
+      document.querySelectorAll("[data-khutbah-title]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.khutbahTitle === record.id)));
       const status = reader.querySelector("[data-khutbah-status]");
-      reader.querySelector("[data-download-khutbah-docx]")?.addEventListener("click", () => {
-        const blob = window.PAIBP_DOCX.createDocument({
-          title: record.title,
-          blocks: window.PAIBP_DOCX.blocksFromElement(reader),
-        });
-        downloadBlob(blob, `${filenameSlug(record.title)}-khutbah-jumat.docx`);
-        if (status) status.textContent = "Naskah DOCX berhasil dibuat.";
-      });
-      reader.querySelector("[data-print-khutbah-pdf]")?.addEventListener("click", () => {
-        printDocument(record.title, printableHtmlFrom(reader));
-        if (status) status.textContent = "Pilih “Simpan sebagai PDF” pada dialog cetak.";
-      });
+      reader.querySelector("[data-download-khutbah-docx]")?.addEventListener("click", () => {const blob = window.PAIBP_DOCX.createDocument({title: record.title,blocks: window.PAIBP_DOCX.blocksFromElement(reader)});downloadBlob(blob, `${filenameSlug(record.title)}-khutbah-jumat.docx`);if (status) status.textContent = "Naskah DOCX berhasil dibuat.";});
+      reader.querySelector("[data-print-khutbah-pdf]")?.addEventListener("click", () => {printDocument(record.title, printableHtmlFrom(reader));if (status) status.textContent = "Pilih ‘Simpan sebagai PDF’ pada dialog cetak.";});
       reader.querySelector("[data-speak-khutbah-verse]")?.addEventListener("click", () => speakArabic(verse.text, status));
-    } catch {
+    } catch (error) {
       activeKhutbahRecord = null;
-      reader.innerHTML = `<div class="khutbah-empty-state"><span>⚠️</span><h5>Naskah belum dapat dibuka</h5><p>Paket ayat luring tidak berhasil dibaca. Muat ulang halaman lalu coba kembali.</p></div>`;
+      reader.innerHTML = `<div class="khutbah-empty-state"><span>⚠️</span><h5>Naskah belum dapat dibuka</h5><p>${escapeHtml(error?.message || "Data naskah belum lengkap.")}</p><button class="btn btn-compact" type="button" onclick="location.reload()">Muat Ulang</button></div>`;
     }
   }
 
@@ -4043,6 +4121,8 @@ if (workspace && appData) {
         });
       };
     }
+    renderKhutbahSources();
+    if (!activeKhutbahRecord && catalog[0]) openKhutbahRecord(catalog[0]);
   }
 
   document.querySelector("#refresh-khutbah-catalog")?.addEventListener("click", () => {
@@ -6007,7 +6087,7 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=16");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=18");
       await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;

@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
-    <link rel="stylesheet" href="styles.css?v=16">
+    <link rel="stylesheet" href="styles.css?v=18">
   </head>
   <body>
     <a class="skip" href="#main">Lewati ke konten</a>
@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v16</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v18</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -364,16 +364,17 @@
                     <div class="subheading-row">
                       <div>
                         <h4>Akademi Bahasa Arab</h4>
-                        <p>Setiap tingkat Dasar, Menengah, Mahir, dan Percakapan memuat 100 tab. Setiap tab berisi 100 soal berurutan dengan pemeriksaan benar/salah, perpindahan otomatis, skor, progres, dan suara Arab perangkat.</p>
+                        <p>Pembelajaran praktis berjenjang Dasar, Menengah, Mahir, dan Percakapan dengan jalur kosakata, nahwu, sharaf, membaca, menulis, menyimak, dan komunikasi. Setiap pelajaran memiliki audio Arab, latihan, progres, serta unduhan DOCX/PDF siap cetak.</p>
                       </div>
                       <span class="live-badge" id="arabic-xp">0 XP</span>
                     </div>
                     <div class="arabic-level-tabs" id="arabic-level-tabs"></div>
+                    <section class="arabic-qari-studio" id="arabic-qari-studio" aria-label="Studio suara Arab dan qari internasional"></section>
                     <div class="arabic-learning-path" id="arabic-learning-path"></div>
                     <article class="arabic-lesson-player" id="arabic-lesson-player">
                       <p>Pilih salah satu tab untuk memulai 100 soal latihan.</p>
                     </article>
-                    <p class="document-note">Empat tingkat memuat 400 tab dan 40.000 soal yang dibangkitkan saat tab dipilih agar tetap ringan di hape. Materi, sesi, dan progres tersedia luring. Pemutar memilih suara Arab perangkat secara otomatis.</p>
+                    <div class="arabic-standard-grid"><article><strong>Dasar</strong><span>Huruf, kosakata, isim, sifat, fi'il, dan kalimat sederhana</span></article><article><strong>Menengah</strong><span>Nahwu, sharaf, membaca teks, dan percakapan kontekstual</span></article><article><strong>Mahir</strong><span>Analisis struktur, literasi akademik, terjemah, dan komunikasi kompleks</span></article><article><strong>Audio Arab</strong><span>Pelafalan penutur Arab perangkat serta penguatan ayat dengan audio qari</span></article></div><p class="document-note">Jalur disusun bertahap dengan orientasi kompetensi A1–C1 dan ACTFL sebagai inspirasi pemetaan, bukan klaim sertifikasi. Empat tingkat memuat 400 tab dan 40.000 latihan yang dibangkitkan saat dipilih agar tetap ringan.</p>
                   </section>
 
                   <section data-islamic-page="khutbah" hidden>
@@ -405,7 +406,21 @@
                         </div>
                       </article>
                     </div>
-                    <p class="document-note">Naskah merupakan susunan editorial berbasis tema dan ayat, bukan pengganti pemeriksaan khatib atau DKM. Sesuaikan dengan ketentuan khutbah dan keadaan jamaah setempat sebelum digunakan.</p>
+                    <section class="khutbah-reference-center" aria-labelledby="khutbah-reference-title">
+                      <div class="subheading-row">
+                        <div>
+                          <span class="feature-eyebrow">Rujukan Terverifikasi</span>
+                          <h4 id="khutbah-reference-title">Pusat Referensi Khutbah Resmi</h4>
+                          <p>Telusuri naskah pembanding dari NU Online, Muhammadiyah, Kementerian Agama RI, Yufid TV, dan Radio Rodja.</p>
+                        </div>
+                      </div>
+                      <div class="khutbah-source-portals" id="khutbah-source-portals"></div>
+                      <details class="khutbah-curated-references">
+                        <summary>Contoh naskah rujukan terpilih</summary>
+                        <div id="khutbah-curated-list"></div>
+                      </details>
+                    </section>
+                    <p class="document-note">PAIBP SMART menyediakan lebih dari satu triliun kemungkinan susunan editorial dari komponen terkurasi; bukan menyimpan triliunan berkas literal. Naskah tetap perlu diperiksa khatib atau DKM, disesuaikan dengan ketentuan khutbah, dan dikontekstualkan dengan keadaan jamaah setempat.</p>
                   </section>
 
                   <section data-islamic-page="tajwid" hidden>
@@ -758,19 +773,23 @@
       </section>
     </div>
 
-    <script src="app-config.js?v=16"></script>
-    <script src="content-data.js?v=16"></script>
-    <script src="teacher-source-data.js?v=16"></script>
-    <script src="calendar-data.js?v=16"></script>
-    <script src="staff-images.js?v=16"></script>
-    <script src="school-data.js?v=16"></script>
-    <script src="islamic-data.js?v=16"></script>
-    <script src="islamic-learning-data.js?v=16"></script>
-    <script src="hadith-data.js?v=16"></script>
-    <script src="arabic-data.js?v=16"></script>
-    <script src="game-data.js?v=16"></script>
-    <script src="video-data.js?v=16"></script>
-    <script src="docx-export.js?v=16"></script>
-    <script src="script.js?v=16"></script>
+    <script src="app-config.js?v=18"></script>
+    <script src="content-data.js?v=18"></script>
+    <script src="teacher-source-data.js?v=18"></script>
+    <script src="calendar-data.js?v=18"></script>
+    <script src="staff-images.js?v=18"></script>
+    <script src="school-data.js?v=18"></script>
+    <script src="islamic-data.js?v=18"></script>
+    <script src="islamic-learning-data.js?v=18"></script>
+    <script src="khutbah-source-data.js?v=18"></script>
+    <script src="khutbah-verse-data.js?v=18"></script>
+    <script src="hadith-data.js?v=18"></script>
+    <script src="arabic-data.js?v=18"></script>
+    <script src="assessment-data.js?v=18"></script>
+    <script src="game-data.js?v=18"></script>
+    <script src="video-data.js?v=18"></script>
+    <script src="docx-export.js?v=18"></script>
+    <script src="script.js?v=18"></script>
+    <script src="assessment-ui.js?v=18"></script>
   </body>
 </html>

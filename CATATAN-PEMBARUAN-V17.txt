@@ -1,0 +1,24 @@
+PAIBP SMART SMP — PAKET V17
+Tanggal: 30 Juli 2026
+
+PERBAIKAN UTAMA
+1. Seluruh naskah khutbah Jum'at dapat dibuka melalui dua lapis data ayat:
+   - assets/data/quran-id.json
+   - khutbah-verse-data.js sebagai cadangan tertanam
+2. Setiap naskah khutbah memiliki preview, unduhan DOCX, cetak/simpan PDF, audio ayat, dan tautan pemeriksaan:
+   - Qur'an Kementerian Agama
+   - Khutbah Kementerian Agama
+   - NU Online
+   - Muhammadiyah
+   - Yufid TV
+   - Rodja
+3. Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dilengkapi unduhan DOCX dan PDF pada setiap tab pembelajaran.
+4. Bank Asesmen Guru terkunci PIN 261078, meliputi:
+   - PTS Gasal dan Genap kelas VII, VIII, IX: 40 pilihan ganda dan 5 uraian.
+   - SAS Gasal kelas VII, VIII, IX: 40 pilihan ganda dan 10 uraian.
+   - SAS Genap kelas VII dan VIII: materi Bab 1–10, 40 pilihan ganda dan 10 uraian.
+   - UKLN kelas IX: kelas VII 20%, kelas VIII 20%, kelas IX 60%; 40 pilihan ganda dan 10 uraian.
+5. Soal memuat stimulus HOTS, literasi, numerasi, potongan ayat, tajwid, kasus kontekstual, empat opsi A–D, kunci, dan rubrik uraian.
+6. Guru dapat mengatur kop sekolah, hari/tanggal, waktu, mata pelajaran, kode akses, paket soal, menerbitkan link ujian, menyalin link rekap, mencetak PDF, serta mengunduh DOCX.
+7. Murid hanya dapat membuka ujian melalui link dan kode akses dari guru. Nilai pilihan ganda dihitung otomatis; jawaban uraian masuk rekap guru.
+8. Rekap mendukung penyimpanan lokal dan sinkronisasi lintas perangkat melalui Google Apps Script yang tersedia di folder google-apps-script.

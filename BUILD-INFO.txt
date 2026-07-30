@@ -1,37 +1,28 @@
 PAIBP SMART SMP
-Versi paket: 16.0
+Versi paket: 18.0
 Tanggal paket: 30 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
-Paket ini memuat:
-- 30 paket materi, dalil, ringkasan visual, latihan langsung, dan LKPD kelas VII–IX yang dapat diketik langsung
-- validasi tujuh syarat ketuntasan; tombol penyelesaian bab tetap terkunci sampai seluruh komponen benar-benar lengkap
-- formulir latihan, LKPD, refleksi, dan ringkasan video yang menyatu sebagai satu paket tugas murid
-- rekap tugas guru, nilai, catatan, unduhan Word/PDF, cadangan Word, dan cetak
-- Ruang Guru memakai identitas nama, unit kerja, dan NIP opsional; rekap pekerjaan tetap terpisah per kelas
-- statistik pengunjung non-admin, angka guru/murid, komentar, rating, balasan, moderasi, dan ticker tamu guru yang diperbarui setiap menit
-- Ruang Editor dengan kata sandi admin standar 261078 untuk teks beranda, galeri, statistik, dan tanggapan
-- 48 perangkat sumber kelas VII–IX: CP, ATP, KKTP, Prota, Promes, analisis alokasi waktu, dan 30 modul ajar lengkap
-- 48 berkas sumber .docx telah dibersihkan dari blok tanda tangan; bold dibatasi pada judul, subjudul, dan kepala tabel
-- tombol Baca Isi Dokumen pada Ruang Guru memakai pembaca internal tanpa alamat 404; unduhan Word dibuat langsung dari dokumen operasional di portal
-- ATP, Prota, Promes, dan KKTP kelas VII–IX dilengkapi tujuan, materi, durasi, keterangan, alokasi 120 JP, serta kolom KKTP kelas IX yang utuh
-- susunan judul, subjudul, tabel, dan daftar akademik pada perangkat guru dipertahankan dengan penomoran hierarkis; artefak Top of Form dan Bottom of Form dihapus
-- Al Qur'an, Hadits Riwayat, suara Arab perangkat, Hisnul Muslim, dzikir, kalender bertanda per tanggal, 6.316 teks dasar nasihat bersumber dengan lebih dari satu triliun susunan refleksi, serta jadwal sholat dengan waktu aktif dan hitung mundur
-- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan dengan 100 tab pada setiap tingkat; setiap tab memuat 100 soal berurutan, pemeriksaan benar/salah, penjelasan, jeda baca lima detik sebelum perpindahan otomatis, skor, XP, penyimpanan sesi, serta suara Arab perangkat
-- sanitasi pemutar Bahasa Arab membuang garis kosong, titik, dan karakter non-Arab sehingga tanda `____` tidak lagi dibaca sebagai “underscore”
-- Khutbah Jum'at menampilkan 12 pilihan judul yang berganti setiap hari, 24 tema terkurasi, lebih dari 1,5 triliun ruang susunan editorial, naskah dua khutbah, pemeriksaan ayat, serta unduhan DOCX/PDF
-- Tajwid Praktis memuat 6 jalur dan 28 materi: hijaiyah-makhraj, nun mati/tanwin, mim mati, mad, waqaf, serta qalqalah/penguatan bacaan; setiap materi dilengkapi contoh, latihan benar-salah, audio qari, dan penyimpanan audio luring
-- total 400 tab dan 40.000 soal Bahasa Arab; tiga tingkat utama dimulai dari isim/kata benda, kata sifat, dan fi‘il/kata kerja sebelum berlanjut secara bertahap ke nahwu, sharaf, membaca, menulis, dan penerapan
-- 60 video penguatan (dua per bab) dengan ringkasan minimal 500 karakter yang ikut dalam paket tugas
-- 100 game edukatif dalam 10 kelompok dengan 15 mekanik, termasuk Sambung Ayat dari ayat pilihan yang mudah
-- setiap game memuat 20 soal dengan pengacakan kriptografis urutan soal/pilihan; ruang kombinasi sesi melebihi satu triliun
-- setiap game mengunci perpindahan ruang sampai seluruh soal diselesaikan; sesi tersimpan agar dapat dilanjutkan setelah muat ulang
-- pembaca dalil luring memuat 114 Al Qur'an Surat, 6.236 ayat lengkap, dan 17 Hadits Riwayat terpilih dengan teks Arab, makna, rujukan, serta suara Arab perangkat
-- latihan cek langsung pada bab Al Qur'an dan Hadits memuat 10 soal termasuk pemahaman tajwid yang relevan
-- profil sekolah, 38 tenaga pendidik termasuk kepala sekolah, 13 tenaga kependidikan, dan Spensus Terkini khusus beranda
-- editor admin Spensus Terkini untuk foto, judul, tanggal, ringkasan, laporan Word, dan sinkronisasi opsional
-- galeri personel responsif dua baris pada telepon, tanpa filter mapel, dengan foto wajah tertanam
-- deteksi tempat akses dimulai otomatis ketika Ruang Murid dibuka; izin keamanan tetap dikendalikan ponsel dan rekap menyimpan waktu, durasi, wilayah perkiraan, serta bagian yang diakses
-- unduhan ATP, Prota, Promes, KKTP, dan perangkat bertabel memakai tabel Word asli dengan garis, kepala tabel, gabungan sel, dan orientasi halaman yang menyesuaikan jumlah kolom
-- statistik pengunjung ditempatkan pada bagian paling akhir beranda setelah komentar dan rating
-- dukungan PWA dan mode luring dengan pemutus cache v16 agar unggahan baru tidak tertahan aset lama
+Paket utama:
+- 30 paket pembelajaran PAIBP kelas VII–IX dengan materi, dalil, ringkasan, latihan, LKPD, video, dan rekap tugas.
+- Ruang Murid, Ruang Guru, Fitur Islami, Games, Ruang Editor, dan Ruang Asesmen Guru dalam satu portal.
+- Al Qur'an luring lengkap 114 surat dan 6.236 ayat, Hadits Riwayat terpilih, dzikir, kalender Hijriah, jadwal sholat, tajwid, serta nasihat harian.
+- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan: 400 tab, 40.000 soal, audio Arab, progres, DOCX, dan PDF siap cetak.
+- 100 game edukatif, 60 video penguatan, perangkat guru, profil sekolah, galeri, komentar, statistik, dan rekap lintas perangkat opsional.
+
+Pembaruan v18:
+- Kerusakan preview Khutbah Jum'at diperbaiki dengan paket ayat Al Qur'an utama dan data cadangan tertanam untuk seluruh 24 tema.
+- Naskah khutbah pertama dan kedua otomatis tampil ketika tab dibuka, dapat dicari, dipreview, dicetak, serta diunduh sebagai DOCX atau PDF.
+- Pusat referensi resmi memuat portal NU Online, Muhammadiyah, Kementerian Agama, Yufid, dan Radio Rodja beserta contoh referensi terpilih.
+- Lebih dari 1,5 triliun ruang variasi susunan khutbah dibentuk secara kombinatorial dari komponen editorial terkurasi; bukan klaim menyimpan triliunan file literal.
+- Studio suara Arab dan qari internasional menyediakan pilihan Misyari Alafasy, Mahmud Khalil Al-Husary, Muhammad Siddiq Al-Minshawi, dan Abdul Basit; audio dapat disimpan untuk penggunaan luring setelah dimuat saat daring.
+- Bahasa Arab mempunyai tab tersendiri untuk tingkat Dasar, Menengah, Mahir, dan Percakapan, dilengkapi latihan, umpan balik, suara Arab, progres, DOCX, serta PDF.
+- Ruang Asesmen Guru terkunci dengan PIN editor dan tidak ditampilkan sebagai paket terbuka bagi murid.
+- PTS kelas VII, VIII, dan IX tersedia tiap tiga bab: 40 pilihan ganda A–D dan 5 uraian HOTS literasi-numerasi.
+- SAS Semester Gasal dan Genap menyediakan 40 pilihan ganda dan 10 uraian; SAS Genap merujuk bab 1–10.
+- Kelas IX Semester Genap menggunakan UKLN dengan proporsi materi kelas VII 20%, kelas VIII 20%, dan kelas IX 60%.
+- Setiap paket asesmen memiliki kop sekolah, hari/tanggal, waktu, alokasi waktu, mata pelajaran, ruang, Tahun Ajaran, paket acak, kode akses, kunci jawaban, preview, DOCX, PDF, tautan pengerjaan, dan tautan rekap hasil murid.
+- Bank soal memperbanyak stimulus potongan ayat, kaidah tajwid, konteks literasi, dan numerasi; huruf Arab dipertahankan dengan arah RTL dan font cadangan yang stabil saat cetak.
+- Cache PWA diperbarui ke v18 agar file baru tidak tertahan cache versi lama.
+
+Akses editor standar: 261078

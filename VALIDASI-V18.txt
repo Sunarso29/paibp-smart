@@ -1,0 +1,14 @@
+VALIDASI TEKNIS PAIBP SMART SMP V18
+Tanggal validasi: 30 Juli 2026
+
+- Seluruh berkas JavaScript lulus pemeriksaan sintaks Node.js.
+- index.html tidak memiliki ID ganda dan seluruh referensi skrip, CSS, gambar, serta manifest tersedia.
+- Service Worker v18 memuat 34 aset inti dan seluruh jalurnya tersedia.
+- Paket Al Qur'an luring terverifikasi memuat 114 surat dan 6.236 ayat.
+- Seluruh 24 tema khutbah mempunyai ayat cadangan tertanam.
+- Lima portal referensi resmi dan delapan contoh rujukan khutbah tersedia.
+- Terdapat 12 paket asesmen kelas VII–IX.
+- Setiap PTS menghasilkan 40 pilihan ganda dan 5 uraian.
+- Setiap SAS/UKLN menghasilkan 40 pilihan ganda dan 10 uraian.
+- Seluruh pilihan ganda memiliki empat opsi A, B, C, dan D serta kunci jawaban valid.
+- UKLN kelas IX menerapkan distribusi 20% kelas VII, 20% kelas VIII, dan 60% kelas IX.
