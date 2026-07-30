@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
-    <link rel="stylesheet" href="styles.css?v=19">
+    <link rel="stylesheet" href="styles.css?v=20">
   </head>
   <body>
     <a class="skip" href="#main">Lewati ke konten</a>
@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v19</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v20</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -315,11 +315,15 @@
                     <div class="subheading-row">
                       <div><h4>Al Qur'an Digital</h4><p>Masukkan nomor surat 1–114. Surat yang pernah dibuka disimpan untuk dibaca kembali saat luring.</p></div>
                     </div>
-                    <form class="quran-controls" id="quran-form">
+                    <form class="quran-controls quran-controls-v20" id="quran-form">
                       <label>Nomor surat <input id="quran-surah-number" type="number" min="1" max="114" value="1" required></label>
+                      <label class="quran-reciter-field">Qari pilihan<select id="quran-reciter-select" aria-label="Pilih qari Al Qur'an"></select></label>
                       <button class="cta btn-compact" type="submit">Buka surat</button>
-                      <button class="btn btn-compact" id="cache-quran-audio" type="button">Simpan audio luring</button>
+                      <button class="btn btn-compact" id="cache-quran-audio" type="button">Simpan audio surat luring</button>
                     </form>
+                    <div class="tajwid-legend no-print" id="quran-tajwid-legend" aria-label="Legenda warna tajwid">
+                      <span class="tajwid-ghunnah">Ghunnah</span><span class="tajwid-qalqalah">Qalqalah</span><span class="tajwid-ikhfa">Ikhfa</span><span class="tajwid-idgham">Idgham</span><span class="tajwid-iqlab">Iqlab</span><span class="tajwid-izhar">Izhar</span><span class="tajwid-mad">Mad</span><span class="tajwid-ra">Ra</span><span class="tajwid-lam">Alif lam</span><span class="tajwid-waqf">Tanda waqaf</span>
+                    </div>
                     <p class="save-status" id="quran-status" aria-live="polite">Silakan buka surat.</p>
                     <article class="quran-reader" id="quran-reader"></article>
                     <p class="document-note">Teks dan audio dimuat dari Al Quran Cloud. Audio dapat diputar luring setelah tombol “Simpan audio luring” berhasil diselesaikan saat tersambung internet.</p>
@@ -343,18 +347,19 @@
                       <button class="cta btn-compact" id="download-hisnul-docx" type="button">Unduh DOCX</button>
                       <button class="btn btn-compact" id="print-hisnul-pdf" type="button">Simpan PDF / Cetak</button>
                     </div>
-                    <div class="hisnul-source-portals" id="hisnul-source-portals"></div>
                     <div class="dua-list" id="hisnul-list"></div>
                     <p class="document-note">Yang diperbanyak adalah susunan pembelajaran, pencarian, kategori, jadwal, dan refleksinya—bukan mengarang triliunan lafaz doa. Teks doa pokok tetap dibatasi pada bacaan yang mempunyai dasar Al Qur'an atau Hadits Riwayat yang dapat diperiksa.</p>
                   </section>
 
                   <section data-islamic-page="morning" hidden>
-                    <div class="subheading-row"><div><h4>Dzikir Pagi</h4><p>Bacaan pilihan bersumber. Baca dengan tertib dan pahami maknanya.</p></div></div>
+                    <div class="subheading-row"><div><h4>Dzikir Pagi Lengkap</h4><p>Bacaan bersumber, urutan praktis, pengulangan jelas, dan pelafalan Arab luring melalui suara yang tersedia pada perangkat.</p></div></div>
+                    <div class="adhkar-audio-toolbar no-print" data-adhkar-toolbar="pagi"><label>Suara Arab luring<select data-adhkar-voice><option value="">Otomatis memilih suara Arab terbaik</option></select></label><button class="cta btn-compact" type="button" data-play-adhkar-all>▶ Putar seluruh bacaan</button><button class="btn btn-compact" type="button" data-stop-adhkar>■ Hentikan</button><p data-adhkar-status aria-live="polite"></p></div>
                     <div class="dua-list" id="morning-list"></div>
                   </section>
 
                   <section data-islamic-page="evening" hidden>
-                    <div class="subheading-row"><div><h4>Dzikir Petang</h4><p>Bacaan pilihan bersumber. Baca dengan tertib dan pahami maknanya.</p></div></div>
+                    <div class="subheading-row"><div><h4>Dzikir Petang Lengkap</h4><p>Bacaan bersumber, urutan praktis, pengulangan jelas, dan pelafalan Arab luring melalui suara yang tersedia pada perangkat.</p></div></div>
+                    <div class="adhkar-audio-toolbar no-print" data-adhkar-toolbar="petang"><label>Suara Arab luring<select data-adhkar-voice><option value="">Otomatis memilih suara Arab terbaik</option></select></label><button class="cta btn-compact" type="button" data-play-adhkar-all>▶ Putar seluruh bacaan</button><button class="btn btn-compact" type="button" data-stop-adhkar>■ Hentikan</button><p data-adhkar-status aria-live="polite"></p></div>
                     <div class="dua-list" id="evening-list"></div>
                   </section>
 
@@ -791,24 +796,25 @@
       </section>
     </div>
 
-    <script src="app-config.js?v=19"></script>
-    <script src="content-data.js?v=19"></script>
-    <script src="teacher-source-data.js?v=19"></script>
-    <script src="calendar-data.js?v=19"></script>
-    <script src="staff-images.js?v=19"></script>
-    <script src="school-data.js?v=19"></script>
-    <script src="islamic-data.js?v=19"></script>
-    <script src="islamic-learning-data.js?v=19"></script>
-    <script src="islamic-upgrade-v19.js?v=19"></script>
-    <script src="khutbah-source-data.js?v=19"></script>
-    <script src="khutbah-verse-data.js?v=19"></script>
-    <script src="hadith-data.js?v=19"></script>
-    <script src="arabic-data.js?v=19"></script>
-    <script src="assessment-data.js?v=19"></script>
-    <script src="game-data.js?v=19"></script>
-    <script src="video-data.js?v=19"></script>
-    <script src="docx-export.js?v=19"></script>
-    <script src="script.js?v=19"></script>
-    <script src="assessment-ui.js?v=19"></script>
+    <script src="app-config.js?v=20"></script>
+    <script src="content-data.js?v=20"></script>
+    <script src="teacher-source-data.js?v=20"></script>
+    <script src="calendar-data.js?v=20"></script>
+    <script src="staff-images.js?v=20"></script>
+    <script src="school-data.js?v=20"></script>
+    <script src="islamic-data.js?v=20"></script>
+    <script src="islamic-learning-data.js?v=20"></script>
+    <script src="islamic-upgrade-v19.js?v=20"></script>
+    <script src="islamic-upgrade-v20.js?v=20"></script>
+    <script src="khutbah-source-data.js?v=20"></script>
+    <script src="khutbah-verse-data.js?v=20"></script>
+    <script src="hadith-data.js?v=20"></script>
+    <script src="arabic-data.js?v=20"></script>
+    <script src="assessment-data.js?v=20"></script>
+    <script src="game-data.js?v=20"></script>
+    <script src="video-data.js?v=20"></script>
+    <script src="docx-export.js?v=20"></script>
+    <script src="script.js?v=20"></script>
+    <script src="assessment-ui.js?v=20"></script>
   </body>
 </html>

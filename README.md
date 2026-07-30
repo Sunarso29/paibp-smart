@@ -52,7 +52,7 @@ Alamat publik: https://sunarso29.github.io/paibp-smart/
 
 Pengembang: Sunarso, S.Pd.I., Gr., SMP Negeri 1 Susukan, Banjarnegara, Jawa Tengah.
 
-## Pembaruan v19
+## Pembaruan v20
 
 - Preview seluruh naskah khutbah dibuka otomatis dengan paket ayat utama dan cadangan tertanam.
 - Pusat referensi resmi NU Online, Muhammadiyah, Kementerian Agama, Yufid, dan Radio Rodja tersedia pada tab Khutbah Jum'at.

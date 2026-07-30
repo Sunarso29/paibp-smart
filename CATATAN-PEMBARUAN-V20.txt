@@ -1,0 +1,12 @@
+PAIBP SMART SMP v20
+
+- Dialog akses guru dibuat ringkas, dapat digulir, dan aman pada layar ponsel kecil.
+- Tab Ringkasan Praktis Bahasa Arab ditambahkan sebelum tingkat Dasar.
+- Pilihan qari diperluas; audio surat dapat disimpan per perangkat untuk penggunaan luring.
+- Dzikir pagi dan petang diperluas dengan bacaan bersumber serta pemutar berurutan memakai suara Arab perangkat.
+- Referensi portal berbentuk kartu pada Hisnul Muslim disembunyikan; sumber tetap tercantum pada setiap bacaan.
+- Al Qur'an menampilkan panduan warna tajwid, penanda ayat sajdah, dan catatan bacaan gharib.
+- Tata letak Fitur Islami, Bahasa Arab, Al Qur'an, dzikir, dan asesmen diperkuat untuk ponsel.
+
+Catatan audio:
+Rekaman qari tidak dipalsukan. Nama yang tersedia pada penyedia audio terbuka dapat diputar dan disimpan luring setelah satu kali pengunduhan. Bacaan non-Al Qur'an memakai suara Arab perangkat agar tidak dinisbatkan kepada qari tertentu.
