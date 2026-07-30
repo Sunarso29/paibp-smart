@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" href="logo-spensus.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preload" as="image" href="gerbang.jpg">
-    <link rel="stylesheet" href="styles.css?v=21">
+    <link rel="stylesheet" href="styles.css?v=22">
   </head>
   <body>
     <a class="skip" href="#main">Lewati ke konten</a>
@@ -30,7 +30,7 @@
       <div class="container nav">
         <a class="brand" href="index.html">
           <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v21</small></span>
+          <span>PAIBP SMART SMP<small>Ruang Murid • Ruang Guru • Fitur Islami • Games • Editor • Paket v22</small></span>
         </a>
         <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
         <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
@@ -756,7 +756,8 @@
           <label for="teacher-name">Nama guru</label>
           <input id="teacher-name" name="teacher-name" type="text" maxlength="80" autocomplete="name" required>
           <label for="teacher-work-unit">Unit kerja</label>
-          <input id="teacher-work-unit" name="teacher-work-unit" type="text" maxlength="120" placeholder="Contoh: SMP Negeri 1 Susukan" required>
+          <input id="teacher-work-unit" name="teacher-work-unit" type="text" maxlength="120" list="teacher-school-directory" placeholder="Ketik atau pilih nama sekolah" autocomplete="organization" required>
+          <datalist id="teacher-school-directory"></datalist>
           <label for="teacher-nip">NIP <small>(opsional)</small></label>
           <input id="teacher-nip" name="teacher-nip" type="text" inputmode="numeric" maxlength="30">
           <p class="auth-error" id="teacher-auth-error" aria-live="polite"></p>
@@ -796,29 +797,30 @@
       </section>
     </div>
 
-    <script src="app-config.js?v=21"></script>
-    <script src="content-data.js?v=21"></script>
-    <script src="teacher-source-data.js?v=21"></script>
-    <script src="calendar-data.js?v=21"></script>
-    <script src="staff-images.js?v=21"></script>
-    <script src="school-data.js?v=21"></script>
-    <script src="islamic-data.js?v=21"></script>
-    <script src="islamic-learning-data.js?v=21"></script>
-    <script src="islamic-upgrade-v19.js?v=20"></script>
-    <script src="islamic-upgrade-v20.js?v=21"></script>
-    <script src="islamic-upgrade-v21.js?v=21"></script>
+    <script src="app-config.js?v=22"></script>
+    <script src="content-data.js?v=22"></script>
+    <script src="teacher-source-data.js?v=22"></script>
+    <script src="calendar-data.js?v=22"></script>
+    <script src="staff-images.js?v=22"></script>
+    <script src="school-data.js?v=22"></script>
+    <script src="islamic-data.js?v=22"></script>
+    <script src="islamic-learning-data.js?v=22"></script>
+    <script src="islamic-upgrade-v19.js?v=22"></script>
+    <script src="islamic-upgrade-v20.js?v=22"></script>
+    <script src="islamic-upgrade-v21.js?v=22"></script>
+    <script src="islamic-upgrade-v22.js?v=22"></script>
     <script src="khutbah-source-data.js?v=20"></script>
     <script src="khutbah-verse-data.js?v=20"></script>
-    <script src="hadith-data.js?v=21"></script>
-    <script src="arabic-data.js?v=21"></script>
-    <script src="assessment-data.js?v=21"></script>
-    <script src="game-data.js?v=21"></script>
-    <script src="video-data.js?v=21"></script>
-    <script src="docx-export.js?v=21"></script>
-    <script src="script.js?v=21"></script>
-    <script src="vendor/jszip.min.js?v=21"></script>
-    <script src="vendor/pptxgen.min.js?v=21"></script>
-    <script src="office-export.js?v=21"></script>
-    <script src="assessment-ui.js?v=21"></script>
+    <script src="hadith-data.js?v=22"></script>
+    <script src="arabic-data.js?v=22"></script>
+    <script src="assessment-data.js?v=22"></script>
+    <script src="game-data.js?v=22"></script>
+    <script src="video-data.js?v=22"></script>
+    <script src="docx-export.js?v=22"></script>
+    <script src="script.js?v=22"></script>
+    <script src="vendor/jszip.min.js?v=22"></script>
+    <script src="vendor/pptxgen.min.js?v=22"></script>
+    <script src="office-export.js?v=22"></script>
+    <script src="assessment-ui.js?v=22"></script>
   </body>
 </html>

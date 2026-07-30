@@ -159,9 +159,10 @@
         text: String(cell.text ?? ""),
         header: Boolean(cell.header),
         gridSpan: Math.max(1, Number(cell.gridSpan || 1)),
+        rtl: Boolean(cell.rtl),
       };
     }
-    return { text: String(cell ?? ""), header: false, gridSpan: 1 };
+    return { text: String(cell ?? ""), header: false, gridSpan: 1, rtl: false };
   }
 
   function tableColumnCount(block) {
@@ -176,25 +177,31 @@
     if (!rows.length) return "";
     const columnCount = Math.max(1, tableColumnCount(block));
     const compact = columnCount >= 7;
-    const gridWidth = Math.max(720, Math.floor((compact ? 15000 : 9500) / columnCount));
-    const grid = Array.from({ length: columnCount }, () => `<w:gridCol w:w="${gridWidth}"/>`).join("");
+    const defaultGridWidth = Math.max(720, Math.floor((compact ? 15000 : 9500) / columnCount));
+    const requestedWidths = Array.isArray(block.columnWidths) && block.columnWidths.length === columnCount
+      ? block.columnWidths.map((value) => Math.max(300, Number(value) || defaultGridWidth))
+      : Array.from({ length: columnCount }, () => defaultGridWidth);
+    const grid = requestedWidths.map((width) => `<w:gridCol w:w="${width}"/>`).join("");
     const borders = ["top", "left", "bottom", "right", "insideH", "insideV"]
       .map((side) => `<w:${side} w:val="single" w:sz="6" w:space="0" w:color="7FA99C"/>`)
       .join("");
     const body = rows.map((row, rowIndex) => {
       const rowObject = Array.isArray(row) ? { cells: row } : row;
       const isHeaderRow = Boolean(rowObject.header || rowIndex < Number(block.headerRows || 0));
+      let columnCursor = 0;
       const cells = (rowObject.cells || []).map((rawCell) => {
         const cell = normalizedTableCell(rawCell);
         const isHeader = isHeaderRow || cell.header;
+        const cellWidth = requestedWidths.slice(columnCursor, columnCursor + cell.gridSpan).reduce((total, width) => total + width, 0);
+        columnCursor += cell.gridSpan;
         const cellProperties = [
-          `<w:tcW w:w="0" w:type="auto"/>`,
+          `<w:tcW w:w="${cellWidth}" w:type="dxa"/>`,
           cell.gridSpan > 1 ? `<w:gridSpan w:val="${cell.gridSpan}"/>` : "",
           `<w:vAlign w:val="top"/>`,
           isHeader ? `<w:shd w:val="clear" w:color="auto" w:fill="DFF5ED"/>` : "",
         ].join("");
         return `<w:tc><w:tcPr>${cellProperties}</w:tcPr>${paragraphXml(
-          { text: cell.text, bold: isHeader },
+          { text: cell.text, bold: isHeader, rtl: cell.rtl },
           { size: compact ? 16 : 18, spacingAfter: 20 },
         )}</w:tc>`;
       }).join("");
@@ -214,7 +221,7 @@
   }
 
   function createDocument({ title = "Dokumen PAIBP SMART", blocks = [], customData = null } = {}) {
-    const allBlocks = [{ text: title, style: "Title" }, ...blocks];
+    const allBlocks = title ? [{ text: title, style: "Title" }, ...blocks] : blocks;
     const media = {};
     const relationships = [];
     let imageIndex = 0;

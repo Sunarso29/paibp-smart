@@ -52,9 +52,13 @@ Alamat publik: https://sunarso29.github.io/paibp-smart/
 
 Pengembang: Sunarso, S.Pd.I., Gr., SMP Negeri 1 Susukan, Banjarnegara, Jawa Tengah.
 
-## Pembaruan v21
+## Pembaruan v22
 
-- Preview seluruh naskah khutbah dibuka otomatis dengan paket ayat utama dan cadangan tertanam.
-- Pusat referensi resmi NU Online, Muhammadiyah, Kementerian Agama, Yufid, dan Radio Rodja tersedia pada tab Khutbah Jum'at.
-- Studio suara Arab menyediakan pilihan qari internasional dan penyimpanan audio untuk penggunaan luring.
-- Ruang Asesmen Guru menyediakan PTS, SAS, dan UKLN kelas VII–IX, pengaturan kop, kode akses, rekap hasil murid, DOCX, dan PDF siap cetak.
+- Ruang Guru meminta identitas guru pada setiap sesi baru: nama, sekolah dari daftar satuan pendidikan, dan NIP opsional.
+- Mode ujian murid menyembunyikan dan memblokir Ruang Guru serta Ruang Editor.
+- Bank PTS, ASAS, dan UKLN menyediakan ujian virtual dengan timer, palet nomor, status sudah/belum dijawab, penyimpanan progres, tombol kirim, serta konfirmasi akhir.
+- Soal dalam satu paket dibangkitkan tanpa pengulangan stimulus-soal; UKLN memakai proporsi kelas VII 20%, kelas VIII 20%, dan kelas IX 60%.
+- Kunci jawaban guru ditandai lingkaran dan warna tanpa teks “KUNCI”; penanda tidak ditampilkan dalam mode murid.
+- Ekspor DOCX, XLSX, PPTX, dan cetak/PDF mempertahankan kop dan logo sekolah. XLSX/PPTX menggunakan format Office asli.
+- Audio Ustadz Abu Yazid Nurdin dan Ustadz Muflih Safitra tersedia dalam MP3 CBR dan OGG; service worker mendukung byte-range untuk Windows/Desktop serta pemutaran luring.
+- Cache PWA diperbarui ke v22.

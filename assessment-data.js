@@ -143,10 +143,17 @@
           distractors = ["memilih pendapat yang paling ramai", "menyerang orang yang berbeda", "menghentikan diskusi tanpa klarifikasi"];
         }
         break;
-      case 8:
-        stimulus = `Dalam satu pekan, sebuah kelompok merencanakan 5 tindakan. Bobot keberhasilan tiap tindakan adalah 20 poin. Kelompok menyelesaikan 4 tindakan sesuai kriteria.`;
-        stem = "Skor kelompok tersebut adalah …";
-        correct = "80 poin"; distractors = ["20 poin","60 poin","100 poin"]; numeracy = true; break;
+      case 8: {
+        const planned = 4 + (stableNumber(`${seed}|planned`) % 5);
+        const pointEach = 10 * (2 + (stableNumber(`${seed}|weight`) % 4));
+        const completed = Math.max(1, planned - (1 + (stableNumber(`${seed}|missed`) % Math.min(3, planned - 1))));
+        const score = completed * pointEach;
+        stimulus = `Pada proyek “${clean(chapter.title)}”, sebuah kelompok merencanakan ${planned} tindakan. Setiap tindakan yang memenuhi rubrik bernilai ${pointEach} poin. Kelompok berhasil menyelesaikan ${completed} tindakan sesuai kriteria.`;
+        stem = "Berdasarkan data tersebut, skor kelompok adalah …";
+        correct = `${score} poin`;
+        distractors = [`${planned * pointEach} poin`, `${Math.max(pointEach, (completed - 1) * pointEach)} poin`, `${(completed + 1) * pointEach} poin`];
+        numeracy = true; break;
+      }
       default:
         if (verse) {
           stimulus = `<span class="exam-arabic" lang="ar" dir="rtl">${verse.text}</span><small>${verse.label}</small>`;
@@ -170,31 +177,73 @@
     return chapterIds.map((id) => ({ id, count: base + (remainder-- > 0 ? 1 : 0) }));
   }
 
+  function questionFingerprint(question) {
+    return clean(`${question.stimulus || ""} ${question.stem || ""}`).toLocaleLowerCase("id");
+  }
+
   function buildExam(examId, seed = "nasional-2026") {
     const spec = specs.find((item) => item.id === examId) || specs[0];
     let allocation;
     if (spec.kind === "UKLN") {
       allocation = [];
-      Object.entries(spec.distribution).forEach(([grade,count]) => {
-        const ids = chapters.filter(c=>c.grade===grade).map(c=>c.id);
-        const parts = chapterAllocation(ids,count);
-        allocation.push(...parts);
+      Object.entries(spec.distribution).forEach(([grade, count]) => {
+        const ids = chapters.filter((chapter) => chapter.grade === grade).map((chapter) => chapter.id);
+        allocation.push(...chapterAllocation(ids, count));
       });
-    } else allocation = chapterAllocation(spec.chapters, spec.mcq);
-    const questions=[];
-    allocation.forEach(({id,count}, groupIndex) => {
-      const chapter=byId[id];
-      for(let i=0;i<count;i+=1) questions.push(chapterQuestion(chapter,(i+groupIndex)%10,i,`${examId}|${seed}|${id}|${i}`));
+    } else {
+      allocation = chapterAllocation(spec.chapters, spec.mcq);
+    }
+
+    const questions = [];
+    const fingerprints = new Set();
+    allocation.forEach(({ id, count }, groupIndex) => {
+      const chapter = byId[id];
+      if (!chapter) return;
+      for (let index = 0; index < count; index += 1) {
+        let candidate = null;
+        for (let attempt = 0; attempt < 30; attempt += 1) {
+          const pattern = (index + groupIndex + attempt) % 10;
+          candidate = chapterQuestion(chapter, pattern, index + (attempt * 11), `${examId}|${seed}|${id}|${index}|${attempt}`);
+          const fingerprint = questionFingerprint(candidate);
+          if (!fingerprints.has(fingerprint)) {
+            fingerprints.add(fingerprint);
+            break;
+          }
+          candidate = null;
+        }
+        if (!candidate) {
+          const fallbackIndex = index + questions.length + 1;
+          candidate = chapterQuestion(chapter, fallbackIndex % 10, fallbackIndex, `${examId}|${seed}|${id}|fallback|${fallbackIndex}`);
+          candidate.stimulus = `${candidate.stimulus || ""}<small>Konteks Bab ${chapter.number}: ${clean(chapter.title)}</small>`;
+          fingerprints.add(questionFingerprint(candidate));
+        }
+        questions.push(candidate);
+      }
     });
-    const shuffled = rotate(questions, `${examId}|${seed}|exam`).slice(0,spec.mcq).map((q,i)=>({...q,number:i+1}));
+
+    const shuffled = rotate(questions, `${examId}|${seed}|exam`)
+      .slice(0, spec.mcq)
+      .map((question, index) => ({ ...question, number: index + 1 }));
+
     const essaySource = spec.kind === "UKLN"
-      ? [...chapters.filter(c=>c.grade==="IX"), ...chapters.filter(c=>c.grade!=="IX")]
-      : spec.chapters.map(id=>byId[id]);
-    const essays=[];
-    for(let i=0;i<spec.essays;i+=1){
-      const chapter=essaySource[i%essaySource.length];
-      const prompt=(chapter.questions||[])[i%Math.max(1,(chapter.questions||[]).length)] || `Analisislah penerapan ${chapter.title} dalam kehidupan.`;
-      essays.push({number:i+1,chapterId:chapter.id,chapterTitle:chapter.title,prompt:`${clean(prompt)} Sertakan alasan, bukti dari materi, dan satu contoh tindakan nyata.`});
+      ? [...chapters.filter((chapter) => chapter.grade === "IX"), ...chapters.filter((chapter) => chapter.grade !== "IX")]
+      : spec.chapters.map((id) => byId[id]).filter(Boolean);
+    const essayVerbs = ["analisislah", "jelaskanlah", "bandingkanlah", "evaluasilah", "rumuskanlah", "berikan argumentasi tentang"];
+    const essays = [];
+    const essayFingerprints = new Set();
+    for (let index = 0; index < spec.essays; index += 1) {
+      const chapter = essaySource[index % essaySource.length];
+      const sourceQuestions = chapter.questions || [];
+      const source = sourceQuestions[index % Math.max(1, sourceQuestions.length)] || `penerapan ${chapter.title} dalam kehidupan`;
+      const verb = essayVerbs[index % essayVerbs.length];
+      let prompt = `${verb.charAt(0).toUpperCase()}${verb.slice(1)} ${clean(source).replace(/[.!?]+$/, "")}. Sertakan alasan, bukti dari materi Bab ${chapter.number}, dan satu contoh tindakan nyata.`;
+      let fingerprint = clean(prompt).toLocaleLowerCase("id");
+      if (essayFingerprints.has(fingerprint)) {
+        prompt += ` Fokuskan jawaban pada konteks ${index % 2 ? "kehidupan sekolah" : "keluarga dan masyarakat"}.`;
+        fingerprint = clean(prompt).toLocaleLowerCase("id");
+      }
+      essayFingerprints.add(fingerprint);
+      essays.push({ number: index + 1, chapterId: chapter.id, chapterTitle: chapter.title, prompt });
     }
     return { spec, questions: shuffled, essays, seed };
   }

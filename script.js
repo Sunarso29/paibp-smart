@@ -78,6 +78,11 @@ if (workspace && appData) {
   const QURAN_AUDIO_CACHE_NAME = "paibp-smart-quran-audio-v1";
   const ARABIC_AUTO_ADVANCE_DELAY = 5000;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const studentExamRestrictedMode = (() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("mode") === "murid" || params.has("ujian");
+  })();
+  let teacherSessionUnlocked = false;
 
   const motivations = [
     "Belajar sedikit demi sedikit tetapi konsisten akan membentuk pemahaman yang kuat.",
@@ -306,7 +311,7 @@ if (workspace && appData) {
 
   function isTeacherIdentified() {
     const identity = loadTeacherIdentity();
-    return Boolean(identity.name && identity.workUnit);
+    return teacherSessionUnlocked && Boolean(identity.name && identity.workUnit);
   }
 
   function isEditorUnlocked() {
@@ -738,6 +743,7 @@ if (workspace && appData) {
   }
 
   function openPanel(name, { skipAuth = false } = {}) {
+    if (studentExamRestrictedMode && (name === "teacher" || name === "editor")) return;
     if (name !== "games" && isGameSessionBlocking()) {
       const feedback = document.querySelector("#quiz-feedback");
       if (feedback) {
@@ -797,6 +803,19 @@ if (workspace && appData) {
     scrollToWorkspace();
   }
 
+  const teacherSchoolDirectory = document.querySelector("#teacher-school-directory");
+  if (teacherSchoolDirectory) {
+    const schoolNames = new Set([
+      "SMP Negeri 1 Susukan",
+      String(schoolData.school?.name || "").trim(),
+    ].filter(Boolean));
+    schoolNames.forEach((name) => {
+      const option = document.createElement("option");
+      option.value = name;
+      teacherSchoolDirectory.append(option);
+    });
+  }
+
   openButtons.forEach((button) => button.addEventListener("click", () => openPanel(button.dataset.openPanel)));
   document.querySelector("#teacher-access-form")?.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -811,6 +830,7 @@ if (workspace && appData) {
       return;
     }
     localStorage.setItem(TEACHER_IDENTITY_KEY, JSON.stringify(identity));
+    teacherSessionUnlocked = true;
     registerVisitorRole("guru");
     setTeacherAuthVisible(false);
     openPanel("teacher", { skipAuth: true });
@@ -839,6 +859,7 @@ if (workspace && appData) {
     if (event.key === "Escape" && !document.querySelector("#teacher-auth")?.hidden) setTeacherAuthVisible(false);
   });
   document.querySelector("#lock-teacher-room")?.addEventListener("click", () => {
+    teacherSessionUnlocked = false;
     try {
       localStorage.removeItem(TEACHER_IDENTITY_KEY);
       sessionStorage.setItem(VISITOR_ROLE_KEY, "umum");
@@ -3849,6 +3870,35 @@ if (workspace && appData) {
     return resolveMp3QuranAudio(reciter, 1);
   }
 
+  function absoluteAudioUrl(value) {
+    if (!value) return "";
+    try { return new URL(value, document.baseURI).href; } catch { return String(value); }
+  }
+
+  function setAudioSources(audio, reciter, primaryUrl) {
+    if (!audio) return;
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.replaceChildren();
+    const sources = [];
+    if (primaryUrl) sources.push({ url: absoluteAudioUrl(primaryUrl), type: /\.ogg(?:$|\?)/i.test(primaryUrl) ? "audio/ogg" : "audio/mpeg" });
+    if (reciter?.localAudioOgg && primaryUrl === reciter.localAudio) sources.push({ url: absoluteAudioUrl(reciter.localAudioOgg), type: "audio/ogg" });
+    sources.filter((item, index, array) => item.url && array.findIndex((candidate) => candidate.url === item.url) === index).forEach((item) => {
+      const source = document.createElement("source");
+      source.src = item.url;
+      source.type = item.type;
+      audio.append(source);
+    });
+    audio.load();
+  }
+
+  function audioSourceMarkup(reciter, primaryUrl) {
+    if (!primaryUrl) return "";
+    const sources = [{ url: absoluteAudioUrl(primaryUrl), type: /\.ogg(?:$|\?)/i.test(primaryUrl) ? "audio/ogg" : "audio/mpeg" }];
+    if (reciter?.localAudioOgg && primaryUrl === reciter.localAudio) sources.push({ url: absoluteAudioUrl(reciter.localAudioOgg), type: "audio/ogg" });
+    return sources.filter((item, index, array) => item.url && array.findIndex((candidate) => candidate.url === item.url) === index).map((item) => `<source src="${escapeHtml(item.url)}" type="${item.type}">`).join("");
+  }
+
   async function cacheArabicQariSample(reciter, status) {
     if (!("caches" in window)) {
       if (status) status.textContent = "Perangkat ini belum mendukung penyimpanan audio luring.";
@@ -3873,7 +3923,7 @@ if (workspace && appData) {
   async function updateArabicQariPlayer(studio, reciter) {
     const audio = studio.querySelector("audio");
     const status = studio.querySelector("[data-arabic-qari-status]");
-    if (status) status.textContent = "Menyiapkan contoh Al-Fatihah…";
+    if (status) status.textContent = "Menyiapkan contoh tilawah…";
     const url = await arabicQariSampleUrl(reciter);
     if (!audio) return;
     if (!url) {
@@ -3882,8 +3932,7 @@ if (workspace && appData) {
       if (status) status.textContent = "Rekaman legal untuk suara ini belum disertakan. Materi bahasa Arab tetap dapat dibaca luring dengan suara Arab perangkat.";
       return;
     }
-    audio.src = url;
-    audio.load();
+    setAudioSources(audio, reciter, url);
     if (status) status.textContent = reciter?.bundledOffline ? `Tersedia luring di paket: ${reciter.trackTitle || "contoh tilawah"}.` : (navigator.onLine ? "Siap diputar. Tekan simpan agar tersedia saat luring." : "Mode luring: audio akan berjalan bila sebelumnya sudah disimpan.");
   }
 
@@ -3895,7 +3944,7 @@ if (workspace && appData) {
       <div class="arabic-qari-copy">
         <span class="feature-eyebrow">Studio Pelafalan dan Tilawah</span>
         <h5>Pilih Tilawah Teladan dan Audio Arab</h5>
-        <p>Dua rekaman yang Bapak lampirkan telah ditanam langsung sehingga selalu dapat diputar luring. Rekaman dipakai sebagai tilawah teladan sesuai surat aslinya; contoh kosakata dan percakapan tetap memakai suara Arab perangkat agar teks dan suara tidak dipalsukan.</p>
+        <p>Dua rekaman yang Bapak lampirkan telah ditanam langsung dan tersedia luring. Rekaman Ustadz Abu Yazid Nurdin diberi keterangan Al Qur'an Surat Al-Hijr ayat 85–99; rekaman Ustadz Muflih Safitra ditampilkan sebagai tilawah unggahan pengguna tanpa menetapkan surat yang tidak tercantum pada nama sumber. Contoh kosakata dan percakapan tetap memakai suara Arab perangkat agar teks dan suara tidak dipalsukan.</p>
       </div>
       <div class="arabic-qari-select-row">
         <label>Qari<select data-arabic-qari-select>${arabicQariCatalog.map((qari) => `<option value="${escapeHtml(qari.id)}" ${qari.id === selected.id ? "selected" : ""}>${escapeHtml(qari.name)}</option>`).join("")}</select></label>
@@ -3953,7 +4002,7 @@ if (workspace && appData) {
     path.innerHTML = `<section class="arabic-summary-sheet">
       <div class="arabic-summary-hero">
         <div><span class="feature-eyebrow">Peta belajar lengkap</span><h4>Bahasa Arab Praktis: Pemula sampai Mahir</h4><p>${sections.length} materi inti yang disusun bertahap: baca bunyi, kuasai kosakata, pahami nahwu–sharaf, latih percakapan, analisis teks, terjemah, dan menulis akademik.</p></div>
-        <div class="arabic-summary-actions no-print"><button class="cta btn-compact" type="button" data-download-arabic-summary>DOCX</button><button class="btn btn-compact" type="button" data-print-arabic-summary>PDF</button><button class="btn btn-compact" type="button" data-xls-arabic-summary>XLS</button><button class="btn btn-compact" type="button" data-ppt-arabic-summary>PPT</button></div>
+        <div class="arabic-summary-actions no-print"><button class="cta btn-compact" type="button" data-download-arabic-summary>DOCX</button><button class="btn btn-compact" type="button" data-print-arabic-summary>PDF</button><button class="btn btn-compact" type="button" data-xls-arabic-summary>Excel XLSX</button><button class="btn btn-compact" type="button" data-ppt-arabic-summary>PowerPoint PPTX</button></div>
       </div>
       <div class="arabic-summary-metrics"><article><strong>${sections.filter(x=>x.stage==='Pemula').length}</strong><span>materi pemula</span></article><article><strong>${sections.filter(x=>x.stage==='Menengah').length}</strong><span>materi menengah</span></article><article><strong>${sections.filter(x=>x.stage==='Mahir').length}</strong><span>materi mahir</span></article><article><strong>2</strong><span>tilawah lokal luring</span></article></div>
       <nav class="arabic-summary-stage-tabs no-print" aria-label="Pilih tingkat ringkasan">${stages.map((stage)=>`<button type="button" data-summary-stage="${stage}" aria-pressed="${stage===selectedStage}"><span>${stage==='Pemula'?'أ':stage==='Menengah'?'نحو':'نص'}</span><strong>${stage}</strong><small>${sections.filter(x=>x.stage===stage).length} materi</small></button>`).join('')}</nav>
@@ -3965,7 +4014,20 @@ if (workspace && appData) {
     renderCards();
     path.querySelector("[data-download-arabic-summary]")?.addEventListener("click", () => { const clone=path.querySelector('.arabic-summary-sheet').cloneNode(true); clone.querySelectorAll('details').forEach(d=>d.open=true); const blob=window.PAIBP_DOCX.createDocument({title:"Ringkasan Bahasa Arab Praktis",blocks:window.PAIBP_DOCX.blocksFromElement(clone)});downloadBlob(blob,"ringkasan-bahasa-arab-praktis.docx"); });
     path.querySelector("[data-print-arabic-summary]")?.addEventListener("click", () => { const clone=path.querySelector('.arabic-summary-sheet').cloneNode(true); clone.querySelectorAll('details').forEach(d=>d.open=true); printDocument("Ringkasan Bahasa Arab Praktis",printableHtmlFrom(clone)); });
-    path.querySelector("[data-xls-arabic-summary]")?.addEventListener("click", () => window.PAIBP_OFFICE?.exportXls({filename:'ringkasan-bahasa-arab-praktis.xls',sheetName:'Bahasa Arab',rows:[["Tingkat","Materi","Target","Pola Inti","Contoh Arab","Makna","Kosakata","Latihan"],...sections.map(x=>[x.stage,x.title,x.goal,x.formula,x.arabic,x.meaning,(x.vocab||[]).join(' | '),x.practice])] }));
+    path.querySelector("[data-xls-arabic-summary]")?.addEventListener("click", async () => {
+      try {
+        const config = { school: schoolData.school?.name || "SMP Negeri 1 Susukan", logoData: "" };
+        const logo = await window.PAIBP_OFFICE?.logoData(config);
+        await window.PAIBP_OFFICE?.exportXlsx({
+          filename: "ringkasan-bahasa-arab-praktis.xlsx",
+          sheetName: "Bahasa Arab",
+          title: "Ringkasan Bahasa Arab Praktis",
+          subtitle: "Pemula • Menengah • Mahir",
+          logo,
+          rows: [["Tingkat","Materi","Target","Pola Inti","Contoh Arab","Makna","Kosakata","Latihan"], ...sections.map((item) => [item.stage,item.title,item.goal,item.formula,item.arabic,item.meaning,(item.vocab||[]).join(" | "),item.practice])],
+        });
+      } catch (error) { alert(error.message || "Excel belum dapat dibuat."); }
+    });
     path.querySelector("[data-ppt-arabic-summary]")?.addEventListener("click", async () => { try{await window.PAIBP_OFFICE?.exportArabicPpt(sections);}catch(e){alert(e.message||'PPT belum dapat dibuat.');} });
   }
 
@@ -4858,9 +4920,9 @@ if (workspace && appData) {
     const reciter = selectedQuranReciter(); const audio = reciter.edition ? editions.find((item) => item.edition?.identifier === reciter.edition) : null;
     if (!arabic?.ayahs?.length) throw new Error("Teks surat tidak tersedia");
     const surahAudioUrl = audio?.ayahs?.length ? "" : await resolveMp3QuranAudio(reciter, arabic.number);
-    const localTrackMismatch = Boolean(reciter?.localAudio && ((reciter.id === "muflih" && arabic.number !== 6) || (reciter.id === "abu-yazid" && arabic.number !== 15)));
+    const localTrackMismatch = Boolean(reciter?.localAudio);
     currentQuranPayload = { arabic, translation, audio, surahAudioUrl, reciter };
-    reader.innerHTML = `<header class="quran-surah-head"><span>Surat ${arabic.number} • ${escapeHtml(arabic.revelationType || "")}</span><h5>${escapeHtml(arabic.englishName || "")}</h5><strong lang="ar" dir="rtl">${escapeHtml(arabic.name || "")}</strong><p>${arabic.numberOfAyahs} ayat</p><div class="quran-surah-audio">${surahAudioUrl ? `<audio controls preload="none" src="${escapeHtml(surahAudioUrl)}"></audio><small>${localTrackMismatch ? `Contoh tilawah luring ${escapeHtml(reciter.name)}: ${escapeHtml(reciter.trackTitle || "rekaman lokal")}; bukan audio surat yang sedang dibuka.` : `Tilawah: ${escapeHtml(reciter.name)}${reciter.trackTitle ? ` • ${escapeHtml(reciter.trackTitle)}` : ""}`}</small>` : audio?.ayahs?.length ? `<small>Audio per ayat: ${escapeHtml(reciter.name)}</small>` : `<small>Rekaman ${escapeHtml(reciter.name)} belum tersedia dari penyedia audio terbuka. Teks dan tajwid tetap dapat digunakan luring.</small>`}</div></header><div class="ayah-list">${arabic.ayahs.map((ayah,index)=>{ const translated=translation?.ayahs?.[index]?.text||"Terjemahan belum tersedia."; const audioUrl=audio?.ayahs?.[index]?.audio||""; return `<article class="ayah-card"><div class="ayah-card-top"><div class="ayah-number">${arabic.number}:${ayah.numberInSurah}</div><div class="ayah-special-badges">${quranVerseAnnotations(arabic.number, ayah.numberInSurah)}</div></div><p class="arabic-text quran-tajwid-text" lang="ar" dir="rtl">${tajwidColorize(ayah.text)}</p><p>${escapeHtml(translated)}</p>${audioUrl?`<audio controls preload="none" src="${escapeHtml(audioUrl)}">Browser tidak mendukung audio.</audio>`:""}</article>`;}).join("")}</div>`;
+    reader.innerHTML = `<header class="quran-surah-head"><span>Surat ${arabic.number} • ${escapeHtml(arabic.revelationType || "")}</span><h5>${escapeHtml(arabic.englishName || "")}</h5><strong lang="ar" dir="rtl">${escapeHtml(arabic.name || "")}</strong><p>${arabic.numberOfAyahs} ayat</p><div class="quran-surah-audio">${surahAudioUrl ? `<audio controls preload="metadata">${audioSourceMarkup(reciter, surahAudioUrl)}Browser tidak mendukung audio.</audio><small>${localTrackMismatch ? `Contoh tilawah luring ${escapeHtml(reciter.name)}: ${escapeHtml(reciter.trackTitle || "rekaman lokal")}; contoh ini terpisah dan bukan audio surat yang sedang dibuka.` : `Tilawah: ${escapeHtml(reciter.name)}${reciter.trackTitle ? ` • ${escapeHtml(reciter.trackTitle)}` : ""}`}</small>` : audio?.ayahs?.length ? `<small>Audio per ayat: ${escapeHtml(reciter.name)}</small>` : `<small>Rekaman ${escapeHtml(reciter.name)} belum tersedia dari penyedia audio terbuka. Teks dan tajwid tetap dapat digunakan luring.</small>`}</div></header><div class="ayah-list">${arabic.ayahs.map((ayah,index)=>{ const translated=translation?.ayahs?.[index]?.text||"Terjemahan belum tersedia."; const audioUrl=audio?.ayahs?.[index]?.audio||""; return `<article class="ayah-card"><div class="ayah-card-top"><div class="ayah-number">${arabic.number}:${ayah.numberInSurah}</div><div class="ayah-special-badges">${quranVerseAnnotations(arabic.number, ayah.numberInSurah)}</div></div><p class="arabic-text quran-tajwid-text" lang="ar" dir="rtl">${tajwidColorize(ayah.text)}</p><p>${escapeHtml(translated)}</p>${audioUrl?`<audio controls preload="metadata"><source src="${escapeHtml(absoluteAudioUrl(audioUrl))}" type="audio/mpeg">Browser tidak mendukung audio.</audio>`:""}</article>`;}).join("")}</div>`;
     status.textContent = payload.offlineBundle ? `Surat ${arabic.englishName} dimuat dari paket Al Qur'an luring. Pilihan qari dapat diputar luring setelah audionya disimpan.` : navigator.onLine ? `Surat ${arabic.englishName} berhasil dimuat. Warna tajwid adalah panduan visual; talaqqi kepada guru tetap utama.` : `Mode luring: Surat ${arabic.englishName} dibuka dari penyimpanan perangkat.`;
   }
 
@@ -6217,7 +6279,7 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=19");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=22");
       await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;

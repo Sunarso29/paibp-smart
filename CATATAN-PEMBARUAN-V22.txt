@@ -1,0 +1,29 @@
+PAIBP SMART SMP v22 — Perbaikan Ruang Guru, Ujian Virtual, Audio, dan Ekspor Office
+Tanggal: 30 Juli 2026
+
+1. Login guru dipulihkan pada setiap sesi baru atau pemuatan ulang halaman.
+2. Sekolah dapat dipilih dari daftar satuan pendidikan; NIP tetap opsional.
+3. Mode ujian murid menyembunyikan dan memblokir Ruang Guru serta Ruang Editor.
+4. Ujian virtual memiliki timer mundur, palet nomor, status jawaban, tombol kirim, dan konfirmasi akhir.
+5. Bank soal tidak mengulang stimulus-soal dalam satu paket; jumlah soal mengikuti PTS, ASAS, dan UKLN.
+6. Kunci guru ditandai lingkaran/warna tanpa tulisan “KUNCI” dan tidak tampil pada mode murid.
+7. Preview, DOCX, XLSX, PPTX, dan PDF memakai kop serta logo yang konsisten.
+8. XLSX dan PPTX merupakan format Office asli, bukan berkas teks yang hanya diganti ekstensi.
+9. Cetak/PDF tidak lagi bergantung pada tab popup kosong.
+10. Audio Ustadz Abu Yazid Nurdin dan Ustadz Muflih Safitra tersedia dalam MP3 CBR serta OGG.
+11. Service worker mendukung byte-range audio untuk Windows/Desktop dan pemutaran luring.
+
+Berkas utama yang diperbarui:
+- index.html
+- styles.css
+- script.js
+- assessment-data.js
+- assessment-ui.js
+- docx-export.js
+- office-export.js
+- service-worker.js
+- islamic-upgrade-v22.js
+- assets/audio/abu-yazid-nurdin-al-hijr-85-99.mp3
+- assets/audio/abu-yazid-nurdin-al-hijr-85-99.ogg
+- assets/audio/muflih-safitra-quran-central.mp3
+- assets/audio/muflih-safitra-quran-central.ogg

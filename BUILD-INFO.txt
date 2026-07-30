@@ -1,27 +1,31 @@
 PAIBP SMART SMP
-Versi paket: 21.0
+Versi paket: 22.0
 Tanggal paket: 30 Juli 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
 Paket utama:
 - 30 paket pembelajaran PAIBP kelas VII–IX dengan materi, dalil, ringkasan, latihan, LKPD, video, dan rekap tugas.
-- Ruang Murid, Ruang Guru, Fitur Islami, Games, Ruang Editor, dan Ruang Asesmen Guru dalam satu portal.
-- Al Qur'an luring lengkap 114 surat dan 6.236 ayat, Hadits Riwayat terpilih, dzikir, kalender Hijriah, jadwal sholat, Bahasa Arab, khutbah, tajwid, serta nasihat harian.
-- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan: 400 tab, 40.000 soal, audio Arab, progres, DOCX, dan PDF siap cetak.
-- PTS, SAS, dan UKLN HOTS literasi-numerasi kelas VII–IX, generator paket, kunci, rekap, DOCX, dan PDF.
+- Ruang Murid, Ruang Guru, Fitur Islami, Games, Ruang Editor, serta Bank PTS–ASAS–UKLN dalam satu portal.
+- Al Qur'an luring 114 surat dan 6.236 ayat, Hadits Riwayat terpilih, dzikir, kalender Hijriah, jadwal sholat, Bahasa Arab, khutbah, tajwid, dan nasihat harian.
+- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan: 400 tab, 40.000 soal, ringkasan praktis, audio Arab, progres, DOCX, PDF, XLSX, dan PPTX.
+- PTS, ASAS, dan UKLN HOTS literasi-numerasi kelas VII–IX dengan generator paket, ujian virtual, rekap, serta dokumen siap cetak.
 
-Pembaruan v21:
-- Seluruh naskah Khutbah Jum'at diubah dari versi singkat menjadi naskah dua khutbah lengkap sekitar 1.800–1.900 kata dengan estimasi penyampaian 20–30 menit.
-- Struktur khutbah memuat pembukaan Arab, wasiat takwa, ayat utama, ayat penguat, hadits, tadabbur, empat renungan, muhasabah, konteks keluarga dan digital, langkah pengamalan, khutbah kedua, sholawat, serta doa lengkap.
-- Preview naskah otomatis dibuka ketika tab Khutbah dipilih dan tetap memiliki tombol DOCX, PDF/cetak, audio ayat, serta tautan pemeriksaan ke Qur'an Kementerian Agama, NU Online, Muhammadiyah, Yufid, dan Radio Rodja.
-- Hisnul Muslim diperluas menjadi 57 doa pokok yang dapat ditelusuri, meliputi rumah, keluarga, makan, ibadah, perjalanan, cuaca, kesehatan, ketenangan jiwa, majelis, kematian, serta doa Al Qur'an.
-- Setiap doa mempunyai teks Arab, makna, waktu membaca, sumber, tautan pemeriksaan, audio Arab, pencarian, filter kategori, dan unduhan DOCX/PDF.
-- Klaim jumlah besar diterapkan sebagai ruang kombinasi pembelajaran, kategori, jadwal, pencarian, dan refleksi; bukan mengarang lafaz doa tanpa dasar.
-- Tajwid Praktis diperluas menjadi 14 modul dan 69 materi: makhraj, sifat huruf, nun mati dan tanwin, mim mati, alif lam, lafzhul jalalah, hukum ra, mad dasar dan lanjutan, qalqalah, pertemuan huruf, hamzah washal/qatha', waqaf-ibtida, serta bacaan gharib riwayat Hafs.
-- Setiap materi tajwid menyediakan pilihan audio qari Mishary Rashid Alafasy, Mahmud Khalil Al-Husary, Muhammad Siddiq Al-Minshawi, dan Abdul Basit Abdus Samad, dengan opsi penyimpanan audio luring.
-- Tata letak khutbah, Hisnul Muslim, huruf Arab, dan kaidah tajwid diperkuat untuk tampilan layar, A4, DOCX, serta PDF.
-- Cache PWA diperbarui ke v21 dan memuat berkas islamic-upgrade-v21.js agar perubahan tidak tertahan cache lama.
+Pembaruan v22:
+- Akses Ruang Guru kembali mewajibkan identitas guru pada setiap pembukaan atau pemuatan ulang halaman: nama, sekolah dari daftar satuan pendidikan, serta NIP opsional.
+- Tautan ujian murid memakai mode terbatas yang menyembunyikan dan memblokir antarmuka Ruang Guru serta Ruang Editor.
+- Ujian virtual dilengkapi hitung mundur, indikator progres, palet seluruh nomor, penanda sudah/belum dijawab, pemulihan jawaban lokal, tombol “Kirim dan Akhiri”, serta konfirmasi Ya/Tidak.
+- Bank soal diperiksa ulang agar setiap paket berisi 40 pilihan ganda dan 5 atau 10 uraian sesuai jenis asesmen tanpa pengulangan stimulus-soal dalam paket yang sama.
+- UKLN kelas IX mempertahankan proporsi materi kelas VII 20%, kelas VIII 20%, dan kelas IX 60%.
+- Tata letak soal pada preview dan DOCX memakai kolom nomor khusus sehingga stimulus, pertanyaan, dan pilihan jawaban tetap berada di dalam nomor yang benar.
+- Kunci guru tidak lagi menampilkan tulisan “KUNCI”; jawaban benar ditandai dengan lingkaran dan warna khusus, sedangkan mode murid tidak menerima penanda tersebut.
+- Ekspor Excel dibangun sebagai berkas OOXML `.xlsx` asli dan ekspor PowerPoint sebagai `.pptx` asli sehingga tidak memunculkan peringatan ketidaksesuaian ekstensi.
+- Logo sekolah dipertahankan pada preview, DOCX, XLSX, PPTX, serta cetak/PDF. Guru juga dapat mengganti logo melalui pengaturan Bank Asesmen.
+- Cetak/PDF menggunakan bingkai cetak tersembunyi sehingga tidak lagi membuka tab `about:blank` yang kosong.
+- Audio unggahan Ustadz Abu Yazid Nurdin dan Ustadz Muflih Safitra dikodekan ulang menjadi MP3 CBR dan OGG yang kompatibel dengan Windows/Desktop.
+- Service worker v22 menyimpan kedua format audio dan mendukung permintaan byte-range agar pemutar HTML5 dapat membaca durasi, berpindah posisi, dan memutar audio luring setelah aset tersimpan.
+- Cache PWA dinaikkan ke v22 dan memuat `islamic-upgrade-v22.js`.
+
+Catatan keamanan:
+- GitHub Pages merupakan situs statis. Mode murid memblokir menu guru pada antarmuka, tetapi keamanan tingkat akun dan penyimpanan kunci yang benar-benar rahasia memerlukan backend autentikasi.
 
 Akses editor standar: 261078
-
-Pembaruan v21: Ringkasan Arab 39 materi; audio lokal Muflih Safitra dan Abu Yazid Nurdin; asesmen tanpa PIN kedua; logo editable; ekspor DOCX/PDF/XLS/PPT.
