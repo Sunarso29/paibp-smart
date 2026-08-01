@@ -1,0 +1,9 @@
+PAIBP SMART SMP v25
+
+- Mockup ponsel pada beranda dan halaman fitur dihapus sepenuhnya.
+- Hero beranda memakai gerbang sekolah, teks utama, metrik, dan panel akses cepat yang benar-benar fungsional.
+- Fitur Andalan dibangun ulang dengan kartu ikon vektor sehingga tidak ada lagi gambar kosong atau potongan antarmuka ponsel.
+- Halaman Menu Fitur dibangun ulang tanpa tangkapan layar; setiap layanan memakai ikon, penjelasan, dan tautan langsung.
+- Spensus Terkini, statistik pengunjung, komentar, identitas sekolah, direktori tenaga pendidik/kependidikan, dan seluruh konten lama tetap dipertahankan.
+- Tautan Privasi, Ketentuan, Dukungan, dan Kontak tetap berada di footer.
+- Cache PWA dinaikkan menjadi v25.

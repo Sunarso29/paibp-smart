@@ -1,4 +1,4 @@
 PAIBP SMART SMP
-Versi paket: 24.0
+Versi paket: 25.0
 Tanggal paket: 2 Agustus 2026
-Fokus: redesign portal resmi sekolah, navigasi peran, halaman fitur, direktori pendidik dan tenaga kependidikan.
+Fokus: penyempurnaan visual portal resmi sekolah, penghapusan mockup ponsel, tata letak fitur berbasis ikon, dan konsistensi desktop serta ponsel.

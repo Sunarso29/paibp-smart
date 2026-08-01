@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v24";
+const CACHE_NAME = "paibp-smart-core-v25";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -46,13 +46,8 @@ const CORE_ASSETS = [
   "./assessment-data.js",
   "./assessment-ui.js",
   "./script.js",
-  "./v24-ui.js",
+  "./v25-ui.js",
   "./public-pages.js",
-  "./assets/ui/paibp-home.webp",
-  "./assets/ui/paibp-kelas7.webp",
-  "./assets/ui/paibp-kelas8.webp",
-  "./assets/ui/paibp-kelas9.webp",
-  "./assets/ui/paibp-game.webp",
   "./logo-spensus.png",
   "./sunarso.jpeg",
   "./gerbang.jpg",
