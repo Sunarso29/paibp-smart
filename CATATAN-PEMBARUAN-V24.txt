@@ -1,0 +1,16 @@
+PAIBP SMART SMP v24
+
+- Beranda didesain ulang sebagai portal resmi sekolah berstandar visual modern.
+- Navigasi publik: Beranda, Menu Fitur, Tenaga Pendidik, Tenaga Kependidikan, Kontak.
+- Ticker menampilkan kegiatan terbaru atau arah layanan sekolah ketika belum ada berita.
+- Beranda memakai dua kolom: fitur unggulan dan komentar di kiri; Spensus Terkini, statistik, kunjungan guru, dan identitas sekolah di kanan.
+- Ruang murid memakai navigasi peran yang hanya menampilkan Materi, Fitur Islami, dan Game; Ruang Guru dan Editor tidak tampil bagi murid.
+- Foto pengembang ditempatkan sebagai signature kecil di sudut bawah beranda.
+- Ditambahkan halaman fitur.html, tenaga-pendidik.html, tenaga-kependidikan.html.
+- Lima visual rujukan pengguna digunakan sebagai aset showcase yang dioptimalkan ke WebP.
+- Seluruh konten dan fungsi paket v23 dipertahankan.
+Penyempurnaan akhir:
+- Isolasi peran murid: tautan Ruang Guru dan Ruang Editor tidak ditampilkan selama sesi murid.
+- Halaman Menu Fitur mengikuti peran aktif dan menyembunyikan kartu akses terbatas bagi murid.
+- Sitemap memuat halaman Menu Fitur, Tenaga Pendidik, dan Tenaga Kependidikan.
+- Fokus keyboard, responsivitas layar sangat kecil, dan konsistensi ruang diperhalus.

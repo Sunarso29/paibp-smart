@@ -1,0 +1,9 @@
+PAIBP SMART SMP — PEMBARUAN VISUAL v24
+
+1. Cadangkan repository lama.
+2. Unggah seluruh isi paket lengkap untuk pemasangan penuh; atau unggah isi patch dengan struktur folder tetap sama.
+3. Saat GitHub menanyakan file yang sama, pilih Replace/Commit changes.
+4. Tunggu GitHub Pages selesai membangun, kemudian buka situs dan tekan Ctrl+F5.
+5. Bila tampilan lama masih tersimpan, hapus data situs/service worker untuk sunarso29.github.io lalu buka kembali.
+
+Pembaruan ini mempertahankan data dan fungsi v23 serta mengganti struktur visual beranda, navigasi peran, halaman fitur, dan direktori tenaga sekolah.

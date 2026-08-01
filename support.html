@@ -1,127 +1,100 @@
 <!DOCTYPE html>
+
 <html lang="id">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Pusat dukungan PAIBP SMART SMP.">
-    <meta name="author" content="Sunarso, S.Pd.I., Gr.">
-    <meta name="robots" content="index,follow">
-    <meta name="theme-color" content="#087f68">
-    <link rel="canonical" href="https://sunarso29.github.io/paibp-smart/support.html">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="id_ID">
-    <meta property="og:site_name" content="PAIBP SMART SMP">
-    <meta property="og:title" content="Dukungan — PAIBP SMART SMP">
-    <meta property="og:description" content="Panduan penggunaan dan bantuan teknis PAIBP SMART SMP.">
-    <meta property="og:url" content="https://sunarso29.github.io/paibp-smart/support.html">
-    <meta property="og:image" content="https://sunarso29.github.io/paibp-smart/gerbang.jpg">
-    <meta name="twitter:card" content="summary_large_image">
-    <title>Dukungan — PAIBP SMART SMP</title>
-    <link rel="icon" type="image/png" href="logo-spensus.png">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <a class="skip" href="#main">Lewati ke konten</a>
-    <header class="topbar">
-      <div class="container nav">
-        <a class="brand" href="index.html">
-          <img src="logo-spensus.png" alt="Logo SMP Negeri 1 Susukan" width="224" height="220">
-          <span>PAIBP SMART SMP<small>Belajar • Bermain • Berakhlak</small></span>
-        </a>
-        <button class="menu-btn" type="button" aria-label="Buka menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
-        <nav class="links" id="primary-navigation" aria-label="Navigasi utama">
-          <a href="index.html">Beranda</a>
-          <a href="privacy.html">Privasi</a>
-          <a href="terms.html">Ketentuan</a>
-          <a class="active" aria-current="page" href="support.html">Dukungan</a>
-          <a href="contact.html">Kontak</a>
-        </nav>
-      </div>
-    </header>
-    <section class="page-hero">
-      <div class="container">
-        <span class="badge">Pusat Bantuan</span>
-        <h1>Dukungan Pengguna</h1>
-        <p class="lead">Panduan ringkas untuk penggunaan PAIBP SMART SMP.</p>
-      </div>
-    </section>
-    <main class="page" id="main">
-      <div class="container">
-        <div class="cards">
-          <article class="card">
-            <div class="icon" aria-hidden="true">🛠️</div>
-            <h2>Masalah teknis</h2>
-            <p>Muat ulang halaman, periksa ruang penyimpanan browser, dan gunakan versi terbaru Chrome, Edge, Firefox, atau Safari.</p>
-          </article>
-          <article class="card">
-            <div class="icon" aria-hidden="true">📴</div>
-            <h2>Mode offline</h2>
-            <p>Halaman inti, jawaban, dan rekap lokal tetap tersedia tanpa login. Surat Al Qur'an dan audio perlu dibuka/disimpan sekali saat tersambung internet.</p>
-          </article>
-          <article class="card">
-            <div class="icon" aria-hidden="true">📤</div>
-            <h2>Kirim dan rekap tugas</h2>
-            <p>Murid membagikan berkas Word <code>.docx</code>. Guru mengimpornya melalui Ruang Guru → Rekap Pekerjaan Murid, lalu dapat mengunduh rekap Word atau menyimpan PDF.</p>
-          </article>
-        </div>
-        <section class="section faq" aria-labelledby="faq-title">
-          <h2 id="faq-title">Pertanyaan yang sering diajukan</h2>
-          <details>
-            <summary>Apakah aplikasi memerlukan akun?</summary>
-            <p>Murid tidak memerlukan akun. Ruang Guru memakai kata sandi sesi untuk membatasi akses menu guru pada perangkat yang sedang digunakan.</p>
-          </details>
-          <details>
-            <summary>Apakah aplikasi menampilkan iklan?</summary>
-            <p>Tidak. Versi 1.0 dirancang tanpa iklan dan tanpa ID iklan.</p>
-          </details>
-          <details>
-            <summary>Bagaimana menghapus progres?</summary>
-            <p>Gunakan tombol hapus progres pada Fitur Games. Untuk menghapus seluruh jawaban, rekap, audio, dan data lokal, buka pengaturan data situs pada browser.</p>
-          </details>
-          <details>
-            <summary>Mengapa tugas tidak langsung masuk ke akun guru?</summary>
-            <p>Situs GitHub Pages tidak memakai server akun. Agar identitas murid tidak disimpan pada server publik, tombol kirim membuat berkas tugas privat. Murid mengirim berkas itu melalui kanal kelas, kemudian guru mengimpornya.</p>
-          </details>
-          <details>
-            <summary>Bagaimana guru membuat rekap?</summary>
-            <p>Buka Ruang Guru → Rekap Pekerjaan Murid → pilih seluruh berkas <code>.docx</code>. Isi nilai dan catatan, lalu gunakan Unduh Rekap Word, Cadangkan Jawaban Word, atau Cetak / Simpan PDF.</p>
-          </details>
-          <details>
-            <summary>Mengapa Rekap Akses Murid tertulis belum diaktifkan?</summary>
-            <p>Rekap lintas perangkat memerlukan Google Apps Script. Pengelola perlu mengikuti <code>PANDUAN_REKAP_REALTIME.md</code> dan mengisi URL Web App pada <code>app-config.js</code>. Tanpa langkah itu, website sengaja tetap memakai mode lokal.</p>
-          </details>
-          <details>
-            <summary>Bagaimana audio Al Qur'an diputar saat luring?</summary>
-            <p>Buka surat ketika online, lalu pilih “Simpan audio luring” dan tunggu seluruh ayat selesai. Audio tersimpan hanya pada browser/perangkat tersebut.</p>
-          </details>
-          <details>
-            <summary>Apakah aplikasi menggantikan buku dan guru?</summary>
-            <p>Tidak. Aplikasi adalah media pendukung. Guru dan sumber resmi tetap menjadi rujukan utama.</p>
-          </details>
-          <details>
-            <summary>Bagaimana melaporkan masalah?</summary>
-            <p>Buka halaman Kontak dan kirimkan email melalui alamat dukungan resmi.</p>
-          </details>
-          <div class="actions">
-            <a class="btn" href="contact.html">Hubungi Dukungan</a>
-          </div>
-        </section>
-      </div>
-    </main>
-    <footer class="footer">
-      <div class="container footer-grid">
-        <div>
-          <strong>PAIBP SMART SMP</strong><br>
-          <small>© <span data-year></span> PAIBP Smart Studio</small>
-        </div>
-        <div class="legal-links">
-          <a href="privacy.html">Privasi</a>
-          <a href="terms.html">Ketentuan</a>
-          <a href="support.html">Dukungan</a>
-          <a href="contact.html">Kontak</a>
-        </div>
-      </div>
-    </footer>
-    <script src="script.js" defer></script>
-  </body>
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Pusat dukungan PAIBP SMART SMP." name="description"/>
+<meta content="Sunarso, S.Pd.I., Gr." name="author"/>
+<meta content="index,follow" name="robots"/>
+<meta content="#087f68" name="theme-color"/>
+<link href="https://sunarso29.github.io/paibp-smart/support.html" rel="canonical"/>
+<meta content="website" property="og:type"/>
+<meta content="id_ID" property="og:locale"/>
+<meta content="PAIBP SMART SMP" property="og:site_name"/>
+<meta content="Dukungan — PAIBP SMART SMP" property="og:title"/>
+<meta content="Panduan penggunaan dan bantuan teknis PAIBP SMART SMP." property="og:description"/>
+<meta content="https://sunarso29.github.io/paibp-smart/support.html" property="og:url"/>
+<meta content="https://sunarso29.github.io/paibp-smart/gerbang.jpg" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<title>Dukungan — PAIBP SMART SMP</title>
+<link href="logo-spensus.png" rel="icon" type="image/png"/>
+<link href="styles.css?v=24" rel="stylesheet"/>
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten</a>
+<header class="topbar topbar-v24"><div class="container nav"><a class="brand brand-v24" href="index.html"><span class="brand-mark"><img alt="Logo SMP Negeri 1 Susukan" src="logo-spensus.png"/></span><span><strong>PAIBP <em>SMART</em> SMP</strong><small>SMP Negeri 1 Susukan • Banjarnegara</small></span></a><button aria-controls="primary-navigation" aria-expanded="false" aria-label="Buka menu" class="menu-btn" type="button">☰</button><nav aria-label="Navigasi utama" class="links links-v24" id="primary-navigation"><a href="index.html">Beranda</a><a href="fitur.html">Menu Fitur</a><a href="tenaga-pendidik.html">Tenaga Pendidik</a><a href="tenaga-kependidikan.html">Tenaga Kependidikan</a><a href="contact.html">Kontak</a></nav></div></header>
+<section class="page-hero">
+<div class="container">
+<span class="badge">Pusat Bantuan</span>
+<h1>Dukungan Pengguna</h1>
+<p class="lead">Panduan ringkas untuk penggunaan PAIBP SMART SMP.</p>
+</div>
+</section>
+<main class="page" id="main">
+<div class="container">
+<div class="cards">
+<article class="card">
+<div aria-hidden="true" class="icon">🛠️</div>
+<h2>Masalah teknis</h2>
+<p>Muat ulang halaman, periksa ruang penyimpanan browser, dan gunakan versi terbaru Chrome, Edge, Firefox, atau Safari.</p>
+</article>
+<article class="card">
+<div aria-hidden="true" class="icon">📴</div>
+<h2>Mode offline</h2>
+<p>Halaman inti, jawaban, dan rekap lokal tetap tersedia tanpa login. Surat Al Qur'an dan audio perlu dibuka/disimpan sekali saat tersambung internet.</p>
+</article>
+<article class="card">
+<div aria-hidden="true" class="icon">📤</div>
+<h2>Kirim dan rekap tugas</h2>
+<p>Murid membagikan berkas Word <code>.docx</code>. Guru mengimpornya melalui Ruang Guru → Rekap Pekerjaan Murid, lalu dapat mengunduh rekap Word atau menyimpan PDF.</p>
+</article>
+</div>
+<section aria-labelledby="faq-title" class="section faq">
+<h2 id="faq-title">Pertanyaan yang sering diajukan</h2>
+<details>
+<summary>Apakah aplikasi memerlukan akun?</summary>
+<p>Murid tidak memerlukan akun. Ruang Guru memakai kata sandi sesi untuk membatasi akses menu guru pada perangkat yang sedang digunakan.</p>
+</details>
+<details>
+<summary>Apakah aplikasi menampilkan iklan?</summary>
+<p>Tidak. Versi 1.0 dirancang tanpa iklan dan tanpa ID iklan.</p>
+</details>
+<details>
+<summary>Bagaimana menghapus progres?</summary>
+<p>Gunakan tombol hapus progres pada Fitur Games. Untuk menghapus seluruh jawaban, rekap, audio, dan data lokal, buka pengaturan data situs pada browser.</p>
+</details>
+<details>
+<summary>Mengapa tugas tidak langsung masuk ke akun guru?</summary>
+<p>Situs GitHub Pages tidak memakai server akun. Agar identitas murid tidak disimpan pada server publik, tombol kirim membuat berkas tugas privat. Murid mengirim berkas itu melalui kanal kelas, kemudian guru mengimpornya.</p>
+</details>
+<details>
+<summary>Bagaimana guru membuat rekap?</summary>
+<p>Buka Ruang Guru → Rekap Pekerjaan Murid → pilih seluruh berkas <code>.docx</code>. Isi nilai dan catatan, lalu gunakan Unduh Rekap Word, Cadangkan Jawaban Word, atau Cetak / Simpan PDF.</p>
+</details>
+<details>
+<summary>Mengapa Rekap Akses Murid tertulis belum diaktifkan?</summary>
+<p>Rekap lintas perangkat memerlukan Google Apps Script. Pengelola perlu mengikuti <code>PANDUAN_REKAP_REALTIME.md</code> dan mengisi URL Web App pada <code>app-config.js</code>. Tanpa langkah itu, website sengaja tetap memakai mode lokal.</p>
+</details>
+<details>
+<summary>Bagaimana audio Al Qur'an diputar saat luring?</summary>
+<p>Buka surat ketika online, lalu pilih “Simpan audio luring” dan tunggu seluruh ayat selesai. Audio tersimpan hanya pada browser/perangkat tersebut.</p>
+</details>
+<details>
+<summary>Apakah aplikasi menggantikan buku dan guru?</summary>
+<p>Tidak. Aplikasi adalah media pendukung. Guru dan sumber resmi tetap menjadi rujukan utama.</p>
+</details>
+<details>
+<summary>Bagaimana melaporkan masalah?</summary>
+<p>Buka halaman Kontak dan kirimkan email melalui alamat dukungan resmi.</p>
+</details>
+<div class="actions">
+<a class="btn" href="contact.html">Hubungi Dukungan</a>
+</div>
+</section>
+</div>
+</main>
+<footer class="footer footer-v24"><div class="container footer-grid footer-grid-v24"><div class="footer-brand-block"><a class="brand brand-footer" href="index.html"><img alt="Logo SMP Negeri 1 Susukan" src="logo-spensus.png"/><span><strong>PAIBP SMART SMP</strong><small>Belajar • Paham • Berakhlak</small></span></a><p>Ekosistem pembelajaran digital dan ruang informasi SMP Negeri 1 Susukan.</p><small>PAIBP Smart Studio • © <span data-year=""></span></small></div><div class="footer-menu"><strong>Jelajahi</strong><a href="fitur.html">Menu Fitur</a><a href="tenaga-pendidik.html">Tenaga Pendidik</a><a href="tenaga-kependidikan.html">Tenaga Kependidikan</a></div><div class="footer-menu footer-legal"><strong>Informasi</strong><a href="privacy.html">Kebijakan Privasi</a><a href="terms.html">Ketentuan</a><a href="support.html">Dukungan</a><a href="contact.html">Kontak</a></div></div></footer>
+
+<script src="public-pages.js?v=24"></script></body>
 </html>

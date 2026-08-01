@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v23";
+const CACHE_NAME = "paibp-smart-core-v24";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -6,6 +6,9 @@ const CORE_ASSETS = [
   "./terms.html",
   "./support.html",
   "./contact.html",
+  "./fitur.html",
+  "./tenaga-pendidik.html",
+  "./tenaga-kependidikan.html",
   "./404.html",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
@@ -43,6 +46,13 @@ const CORE_ASSETS = [
   "./assessment-data.js",
   "./assessment-ui.js",
   "./script.js",
+  "./v24-ui.js",
+  "./public-pages.js",
+  "./assets/ui/paibp-home.webp",
+  "./assets/ui/paibp-kelas7.webp",
+  "./assets/ui/paibp-kelas8.webp",
+  "./assets/ui/paibp-kelas9.webp",
+  "./assets/ui/paibp-game.webp",
   "./logo-spensus.png",
   "./sunarso.jpeg",
   "./gerbang.jpg",

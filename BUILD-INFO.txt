@@ -1,42 +1,4 @@
 PAIBP SMART SMP
-Versi paket: 23.0
-Tanggal paket: 30 Juli 2026
-Target publikasi: https://sunarso29.github.io/paibp-smart/
-
-Paket utama:
-- 30 paket pembelajaran PAIBP kelas VII–IX dengan materi, dalil, ringkasan, latihan, LKPD, video, dan rekap tugas.
-- Ruang Murid, Ruang Guru, Fitur Islami, Games, Ruang Editor, serta Bank PTS–ASAS–UKLN dalam satu portal.
-- Al Qur'an luring 114 surat dan 6.236 ayat, Hadits Riwayat terpilih, dzikir, kalender Hijriah, jadwal sholat, Bahasa Arab, khutbah, tajwid, dan nasihat harian.
-- Akademi Bahasa Arab Dasar, Menengah, Mahir, dan Percakapan: 400 tab, 40.000 soal, ringkasan praktis, audio Arab, progres, DOCX, PDF, XLSX, dan PPTX.
-- PTS, ASAS, dan UKLN HOTS literasi-numerasi kelas VII–IX dengan generator paket, ujian virtual, rekap, serta dokumen siap cetak.
-
-Pembaruan v23:
-- Login guru memuat direktori resmi 101 SMP negeri dan swasta se-Kabupaten Banjarnegara.
-- Pengetikan nama guru yang tersedia pada direktori lokal mengisi unit kerja secara otomatis; sekolah resmi dikenali berdasarkan direktori Dindikpora.
-- Struktur direktori dibuat terpisah dalam `banjarnegara-school-directory.js` agar mudah diperluas untuk kabupaten/provinsi lain.
-- Kata sandi Ruang Editor diubah menjadi `Alifi@78`.
-- Editor galeri menerima judul dan ringkasan panjang tanpa batas karakter pada formulir.
-- Satu kegiatan dapat memuat maksimal 10 foto; pratinjau, hapus foto, kolase responsif, dan lightbox telah tersedia.
-- Publikasi galeri menggunakan Cambria regular dan tata letak proporsional pada desktop maupun hape.
-- Sinkronisasi Google Apps Script menyimpan sampai 10 foto per kegiatan dan tetap kompatibel dengan data galeri satu foto versi lama.
-- Cache PWA dinaikkan ke v23 dan memuat direktori sekolah baru.
-
-Pembaruan v22:
-- Akses Ruang Guru kembali mewajibkan identitas guru pada setiap pembukaan atau pemuatan ulang halaman: nama, sekolah dari daftar satuan pendidikan, serta NIP opsional.
-- Tautan ujian murid memakai mode terbatas yang menyembunyikan dan memblokir antarmuka Ruang Guru serta Ruang Editor.
-- Ujian virtual dilengkapi hitung mundur, indikator progres, palet seluruh nomor, penanda sudah/belum dijawab, pemulihan jawaban lokal, tombol “Kirim dan Akhiri”, serta konfirmasi Ya/Tidak.
-- Bank soal diperiksa ulang agar setiap paket berisi 40 pilihan ganda dan 5 atau 10 uraian sesuai jenis asesmen tanpa pengulangan stimulus-soal dalam paket yang sama.
-- UKLN kelas IX mempertahankan proporsi materi kelas VII 20%, kelas VIII 20%, dan kelas IX 60%.
-- Tata letak soal pada preview dan DOCX memakai kolom nomor khusus sehingga stimulus, pertanyaan, dan pilihan jawaban tetap berada di dalam nomor yang benar.
-- Kunci guru tidak lagi menampilkan tulisan “KUNCI”; jawaban benar ditandai dengan lingkaran dan warna khusus, sedangkan mode murid tidak menerima penanda tersebut.
-- Ekspor Excel dibangun sebagai berkas OOXML `.xlsx` asli dan ekspor PowerPoint sebagai `.pptx` asli sehingga tidak memunculkan peringatan ketidaksesuaian ekstensi.
-- Logo sekolah dipertahankan pada preview, DOCX, XLSX, PPTX, serta cetak/PDF. Guru juga dapat mengganti logo melalui pengaturan Bank Asesmen.
-- Cetak/PDF menggunakan bingkai cetak tersembunyi sehingga tidak lagi membuka tab `about:blank` yang kosong.
-- Audio unggahan Ustadz Abu Yazid Nurdin dan Ustadz Muflih Safitra dikodekan ulang menjadi MP3 CBR dan OGG yang kompatibel dengan Windows/Desktop.
-- Service worker v22 menyimpan kedua format audio dan mendukung permintaan byte-range agar pemutar HTML5 dapat membaca durasi, berpindah posisi, dan memutar audio luring setelah aset tersimpan.
-- Cache PWA dinaikkan ke v22 dan memuat `islamic-upgrade-v22.js`.
-
-Catatan keamanan:
-- GitHub Pages merupakan situs statis. Mode murid memblokir menu guru pada antarmuka, tetapi keamanan tingkat akun dan penyimpanan kunci yang benar-benar rahasia memerlukan backend autentikasi.
-
-Akses editor standar: Alifi@78
+Versi paket: 24.0
+Tanggal paket: 2 Agustus 2026
+Fokus: redesign portal resmi sekolah, navigasi peran, halaman fitur, direktori pendidik dan tenaga kependidikan.
