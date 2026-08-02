@@ -28,7 +28,8 @@
   if (roleSelect) roleSelect.innerHTML = '<option value="">Semua bidang</option>' + roles.map((role) => `<option value="${role.replace(/"/g,'&quot;')}">${role}</option>`).join("");
 
   function imageSource(person) {
-    return person.image || "logo-spensus.png";
+    const path = person.image || "";
+    return window.PAIBP_STAFF_IMAGES?.[path] || path || "logo-spensus.png";
   }
   function fallbackImage(img, path) {
     const fallback = window.PAIBP_STAFF_IMAGES?.[path];

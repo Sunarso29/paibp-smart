@@ -5,7 +5,12 @@
   const roleNavItems = [...document.querySelectorAll("[data-role-access]")];
   const PUBLIC_ROLE_KEY = "paibp-smart-public-role-v26";
   const params = new URLSearchParams(location.search);
-  const gateway = params.get("portal");
+  const fileName = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const declaredGateway = String(body.dataset.privateGateway || "").toLowerCase();
+  const inferredGateway = fileName === "akses-guru.html" ? "guru" : fileName === "kendali-editor.html" ? "editor" : "public";
+  const requestedGateway = String(params.get("portal") || "").toLowerCase();
+  const gateway = [declaredGateway, requestedGateway, inferredGateway].find((value) => value === "guru" || value === "editor") || "public";
+  body.dataset.privateGateway = gateway;
   const gatewayAllowed = gateway === "guru" || gateway === "editor";
 
   function setPortalState(mode, role = body.dataset.portalRole || "umum") {

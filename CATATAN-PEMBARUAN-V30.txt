@@ -1,0 +1,10 @@
+PAIBP SMART SMP v30
+
+Perbaikan utama:
+- Portal Guru tidak lagi kosong; dialog identitas tampil otomatis dan ruang guru terbuka sesudah autentikasi.
+- Tombol Kendali Editor tampil di dalam Ruang Guru hanya ketika identitas Sunarso, S.Pd.I., Gr. pada SMP Negeri 1 Susukan dikenali.
+- Kendali Editor memerlukan sesi pemilik dan kata sandi Alifi@78; akses langsung tanpa sesi pemilik dikembalikan ke Portal Guru.
+- Foto tenaga pendidik dan tenaga kependidikan memakai cadangan gambar tertanam sehingga tetap tampil walaupun jalur aset terlambat atau hilang.
+- Spensus AI memakai backdrop layar penuh dengan blur yang konsisten dan pesan berwarna terbaca.
+- Kartu akses cepat ditata dua kolom, teks tidak bertumpuk, dan tombol mengambang tidak lagi menutupi kartu.
+- Cache PWA diperbarui ke v30.

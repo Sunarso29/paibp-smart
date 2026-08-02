@@ -1,0 +1,68 @@
+/* PAIBP SMART SMP v30 — stabilisasi portal privat dan penyempurnaan visual */
+:root{--v30-emerald:#075f4d;--v30-deep:#04372f;--v30-gold:#f4c84a;--v30-cream:#fffdf5;--v30-line:#d7e7e1}
+
+/* Akses cepat: dua kolom yang stabil, tidak saling menimpa */
+.hero-access-panel{max-width:480px;width:100%;padding:22px!important}
+.access-grid-v25{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+.access-tile{min-height:132px!important;padding:62px 15px 15px!important;display:flex!important;flex-direction:column;justify-content:flex-end;align-items:flex-start;overflow:hidden;isolation:isolate}
+.access-tile::after{content:"";position:absolute;inset:auto -32px -48px auto;width:118px;height:118px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.14),transparent 68%);z-index:-1}
+.access-tile:nth-child(1){background:linear-gradient(145deg,rgba(47,177,119,.34),rgba(255,255,255,.06))!important}
+.access-tile:nth-child(2){background:linear-gradient(145deg,rgba(28,177,174,.31),rgba(255,255,255,.06))!important}
+.access-tile:nth-child(3){background:linear-gradient(145deg,rgba(38,115,224,.36),rgba(255,255,255,.06))!important}
+.access-tile:nth-child(4){background:linear-gradient(145deg,rgba(227,139,17,.36),rgba(255,255,255,.06))!important}
+.access-tile:nth-child(5){background:linear-gradient(145deg,rgba(117,91,213,.34),rgba(255,255,255,.06))!important}
+.access-tile:nth-child(6){background:linear-gradient(145deg,rgba(244,200,74,.35),rgba(255,255,255,.06))!important}
+.access-icon{left:15px!important;top:15px!important;width:42px!important;height:42px!important;border-radius:14px!important;background:rgba(255,255,255,.17)!important;box-shadow:inset 0 1px rgba(255,255,255,.25)}
+.access-tile strong{font-size:14px!important;line-height:1.22!important;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.access-tile small{font-size:9px!important;line-height:1.4!important;display:block;margin-top:4px;color:rgba(255,255,255,.72)!important;white-space:normal}
+.access-tile b{font-size:9px!important;right:14px!important;top:14px!important;color:rgba(255,255,255,.58)!important}
+.access-panel-note{margin-top:12px!important}
+
+/* Foto pengembang tidak lagi menutupi kartu atau tombol */
+.developer-signature{position:static!important;width:max-content;max-width:calc(100% - 24px);margin:18px auto!important;z-index:auto!important}
+
+/* Portal guru harus memiliki konten dan status yang jelas */
+body[data-private-gateway="guru"] .hero-v25,body[data-private-gateway="guru"] .smart-ticker{display:none!important}
+body[data-private-gateway="guru"] .workspace-zone{padding-top:34px;min-height:calc(100vh - 86px)}
+body[data-private-gateway="guru"] .workspace-shell{box-shadow:0 24px 70px rgba(5,64,52,.12);border:1px solid var(--v30-line)}
+body[data-private-gateway="guru"][data-portal-mode="home"] .workspace-shell{min-height:520px;background:radial-gradient(circle at 85% 12%,rgba(244,200,74,.16),transparent 23%),linear-gradient(145deg,#f8fcfa,#eef7f3)}
+.teacher-owner-callout-v30{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 16px;padding:17px 18px;border-radius:20px;background:linear-gradient(135deg,#082f29,#08624f);color:#fff;box-shadow:0 14px 34px rgba(5,74,60,.18)}
+.teacher-owner-callout-v30[hidden]{display:none!important}
+.teacher-owner-callout-v30 div{display:grid;gap:3px}.teacher-owner-callout-v30 strong{font-size:15px}.teacher-owner-callout-v30 span{font-size:11px;color:rgba(255,255,255,.72)}
+.owner-editor-entry-v29,.owner-editor-entry-v30{position:static!important;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 15px;border-radius:14px;background:linear-gradient(135deg,#f7d565,#e9ac22);color:#173c32!important;text-decoration:none;font-weight:900;box-shadow:0 10px 24px rgba(232,172,34,.24)}
+.owner-editor-entry-v29[hidden],.owner-editor-entry-v30[hidden]{display:none!important}
+.teacher-gateway-message-v30{margin:0 auto 22px;max-width:760px;padding:13px 16px;border-radius:16px;background:#fff3cd;border:1px solid #eed47e;color:#59460f;font-size:12px;line-height:1.55}
+
+/* Direktori personel: foto proporsional, tidak menampilkan teks alt sebagai layout */
+.directory-card-v30{overflow:hidden!important;padding:0!important;display:grid!important;grid-template-rows:230px 1fr!important;background:#fff!important}
+.directory-photo-v30{position:relative!important;width:100%!important;height:230px!important;overflow:hidden!important;background:linear-gradient(145deg,#e7f4ef,#fff8dc)!important;border-radius:0!important}
+.directory-photo-v30 img{width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;object-position:center 20%!important}
+.directory-photo-v30>span{position:absolute;right:13px;bottom:13px;padding:6px 9px;border-radius:999px;background:rgba(3,45,38,.78);color:#fff;font-size:9px;font-weight:900;backdrop-filter:blur(8px)}
+.directory-card-v30>div:last-child{padding:19px 20px 22px!important}
+.directory-card-v30 h3{margin:7px 0 10px!important;font-size:19px!important;line-height:1.3!important;color:#083e34!important}
+.directory-card-v30 small{color:#078168!important;font-weight:900!important;letter-spacing:.08em!important}
+.directory-card-v30 span{color:#60736d}
+
+/* Spensus AI: backdrop benar-benar menutup dan memburamkan seluruh halaman */
+html.ai-drawer-open-v30,body.ai-drawer-open-v27{overflow:hidden!important}
+.spensus-ai-drawer-v27[hidden]{display:none!important}
+.spensus-ai-drawer-v27{position:fixed!important;inset:0!important;z-index:10000!important;display:flex!important;justify-content:flex-end!important;align-items:stretch!important;background:rgba(0,25,21,.52)!important;backdrop-filter:blur(14px) saturate(.72)!important;-webkit-backdrop-filter:blur(14px) saturate(.72)!important}
+.ai-drawer-backdrop-v27{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;background:rgba(0,20,17,.28)!important;cursor:default}
+.ai-drawer-panel-v27{position:relative!important;z-index:2!important;width:min(470px,100vw)!important;height:100dvh!important;box-shadow:-24px 0 70px rgba(0,0,0,.35)!important}
+.ai-drawer-panel-v27 .ai-message-bubble{color:#0a3028!important;background:#fff!important;border-color:rgba(255,255,255,.7)!important}
+.ai-drawer-panel-v27 .ai-message-v26.user .ai-message-bubble{color:#fff!important;background:#075a47!important}
+.ai-drawer-messages-v27{scrollbar-width:thin}
+
+/* Launcher lebih ringkas agar tidak menutupi kartu */
+.spensus-ai-launcher-v27{width:auto!important;min-width:58px!important;max-width:210px!important;padding:9px 11px!important;border-radius:18px!important}
+.spensus-ai-launcher-v27>span:first-child{width:38px!important;height:38px!important;border-radius:13px!important}
+.spensus-ai-launcher-v27>div strong{font-size:11px!important}.spensus-ai-launcher-v27>div small{font-size:8px!important}
+
+@media(max-width:760px){
+  .hero-access-panel{max-width:none}.access-grid-v25{grid-template-columns:repeat(2,minmax(0,1fr))!important}.access-tile{min-height:116px!important;padding:56px 12px 12px!important}.access-tile strong{font-size:12px!important}.access-tile small{font-size:8px!important}
+  .teacher-owner-callout-v30{align-items:flex-start;flex-direction:column}
+  .directory-card-v30{grid-template-rows:210px 1fr!important}.directory-photo-v30{height:210px!important}
+  .ai-drawer-panel-v27{width:100vw!important}.spensus-ai-drawer-v27{background:rgba(0,25,21,.64)!important;backdrop-filter:blur(12px)!important}.ai-drawer-backdrop-v27{display:block!important}
+  .spensus-ai-launcher-v27>div{display:none!important}.spensus-ai-launcher-v27 .drag-handle-v29{display:none!important}
+}
+@media(max-width:430px){.access-grid-v25{grid-template-columns:1fr 1fr!important;gap:9px!important}.access-tile{min-height:108px!important}.directory-card-v30{grid-template-rows:190px 1fr!important}.directory-photo-v30{height:190px!important}}
