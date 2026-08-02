@@ -1,0 +1,8 @@
+PAIBP SMART SMP v32
+
+- Memperbaiki kontras kartu waktu sholat aktif agar label, nama waktu, dan jam selalu terbaca.
+- Memperkuat tampilan waktu berikutnya dan panel hitung mundur.
+- Menjamin panel Spensus AI tetap independen dan tidak mengaburkan halaman utama.
+- Menambahkan penyempurnaan aksesibilitas fokus keyboard, responsivitas, serta metadata berbagi halaman publik.
+- Memperbarui cache PWA ke v32; audio besar disimpan saat pertama kali diputar agar pemasangan PWA awal lebih cepat dan stabil.
+- Melakukan pemeriksaan aset, tautan, sintaks, metadata, sitemap, serta responsivitas desktop/ponsel.

@@ -1,0 +1,12 @@
+UPDATE PAIBP SMART SMP v32
+
+1. Ekstrak paibp-smart-update-repository-v32-patch.zip.
+2. Unggah seluruh isi hasil ekstrak ke root repository paibp-smart.
+3. Pilih Replace/Overwrite untuk file yang sudah ada.
+4. Pastikan v32-ui.css, service-worker.js, sitemap.xml, robots.txt, dan berkas kunci IndexNow ikut berada di root.
+5. Tunggu GitHub Pages selesai membangun situs.
+6. Buka situs, tekan Ctrl+F5, lalu periksa Fitur Islami → Jadwal Sholat.
+7. Penanda WAKTU AKTIF harus berwarna hijau gelap dengan teks dan jam putih yang terbaca jelas.
+8. Kirim sitemap.xml melalui Google Search Console dan Bing Webmaster Tools sesuai PANDUAN-LAUNCH-SEARCH-ENGINE.md.
+
+Catatan: audio besar tidak dipaksa diunduh saat instalasi PWA. Audio akan disimpan untuk penggunaan luring setelah pertama kali diputar ketika koneksi tersedia.

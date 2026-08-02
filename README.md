@@ -2,6 +2,10 @@
 
 Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VIII, dan IX SMP.
 
+## Versi 32 — Finalisasi Pra-Publikasi
+
+Versi ini memperbaiki keterbacaan penanda waktu sholat aktif, mempercepat pemasangan PWA dengan cache audio sesuai kebutuhan, memperkuat metadata mesin pencari, dan menambahkan audit teknis akhir.
+
 ## Fitur Utama
 
 - Ruang Murid: 30 paket belajar dengan pendahuluan, pengertian, dalil, infografis, ikhtisar, latihan, LKPD yang langsung dapat diketik, dua video per bab, unduhan materi, serta validasi tujuh syarat sebelum bab dapat ditandai selesai.
@@ -14,7 +18,7 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 
 ## Halaman
 
-- `index.html` — beranda serta lima ruang utama
+- `index.html` — beranda publik, Ruang Murid, Fitur Islami, game, Spensus AI, berita, statistik, dan tanggapan
 - `app-config.js` — konfigurasi opsional sinkronisasi rekap
 - `content-data.js` — data lengkap 30 bab Ruang Murid
 - `teacher-source-data.js` — tampilan terstruktur 48 perangkat sumber Ruang Guru
@@ -30,8 +34,8 @@ Portal pembelajaran Pendidikan Agama Islam dan Budi Pekerti untuk kelas VII, VII
 - `school-data.js` — identitas sekolah serta data kepala sekolah, guru, dan tenaga kependidikan
 - `banjarnegara-school-directory.js` — direktori resmi 101 SMP negeri dan swasta Kabupaten Banjarnegara untuk login guru
 - `script.js` — fungsi tab, materi, LKPD, perangkat guru, kalkulator, jadwal, dan games
-- `styles.css` — desain responsif dan format cetak
-- `service-worker.js` — dukungan konten inti saat koneksi terbatas
+- `styles.css`, `v28-ui.css`, `v29-ui.css`, `v30-ui.css`, dan `v32-ui.css` — desain responsif, penyempurnaan visual, aksesibilitas, serta format cetak
+- `service-worker.js` — dukungan konten inti saat koneksi terbatas; audio besar dicache saat pertama diputar
 - `manifest.webmanifest` — pemasangan situs sebagai aplikasi web
 - `assets/staff/` — foto web tenaga pendidik dan kependidikan
 - `assets/perangkat/` — 48 berkas sumber `.docx` kelas VII–IX

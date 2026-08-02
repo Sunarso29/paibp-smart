@@ -1,4 +1,4 @@
 PAIBP SMART SMP
-Versi paket: 31.0
+Versi paket: 32.0
 Tanggal paket: 2 Agustus 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/

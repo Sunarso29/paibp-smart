@@ -1,0 +1,16 @@
+VALIDASI PRA-PUBLIKASI PAIBP SMART SMP v32
+Tanggal: 2 Agustus 2026
+
+LULUS:
+- 13 halaman HTML diperiksa: judul, viewport, ID unik, aset lokal, tautan lokal, dan metadata publik.
+- 35 berkas JavaScript nonvendor lulus pemeriksaan sintaks Node.js.
+- JSON dan sitemap XML valid.
+- Seluruh aset pada daftar cache service worker tersedia.
+- Halaman privat guru/editor tidak masuk sitemap dan tetap menggunakan noindex.
+- robots.txt mengizinkan perayapan halaman publik dan menunjuk sitemap resmi.
+- Kontras kartu jadwal sholat aktif diperkuat dan tidak dapat ditimpa tema kartu bergantian.
+- Cache PWA diperbarui ke v32; aset berversi dapat dipakai luring dengan ignoreSearch.
+- Audio besar dicache saat pertama diputar agar instalasi awal lebih stabil.
+
+CATATAN:
+Pengindeksan dan peringkat pencarian ditentukan oleh mesin pencari. Sitemap, metadata, data terstruktur, dan IndexNow meningkatkan keterlihatan teknis tetapi tidak menjamin peringkat atau waktu pengindeksan tertentu.

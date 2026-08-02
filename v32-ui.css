@@ -1,0 +1,129 @@
+/* PAIBP SMART SMP v32 — final launch polish */
+
+/* Jadwal sholat: status aktif harus terbaca jelas pada seluruh lapisan tema. */
+.prayer-block {
+  overflow: visible;
+}
+.prayer-grid {
+  align-items: stretch;
+}
+.prayer-grid > div {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 92px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  overflow: visible;
+  border: 1px solid rgba(6, 94, 75, .08);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.prayer-grid > div > span,
+.prayer-grid > div > strong {
+  position: relative;
+  z-index: 2;
+}
+.prayer-grid > div.is-current-prayer,
+.prayer-grid > div.is-current-prayer:nth-child(odd),
+.prayer-grid > div.is-current-prayer:nth-child(even) {
+  padding-top: 25px;
+  border-color: #05634f !important;
+  color: #fff !important;
+  background: linear-gradient(145deg, #087f68 0%, #075764 100%) !important;
+  box-shadow: 0 14px 30px rgba(6, 92, 73, .30) !important;
+  transform: translateY(-3px);
+}
+.prayer-grid > div.is-current-prayer::before {
+  top: 8px !important;
+  z-index: 4;
+  border: 1px solid rgba(255,255,255,.38);
+  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+  font-size: 8px !important;
+  letter-spacing: .04em;
+}
+.prayer-grid > div.is-current-prayer span,
+.prayer-grid > div.is-current-prayer strong {
+  color: #fff !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.prayer-grid > div.is-current-prayer strong {
+  font-size: 21px;
+}
+.prayer-grid > div.is-next-prayer:not(.is-current-prayer),
+.prayer-grid > div.is-next-prayer:not(.is-current-prayer):nth-child(odd),
+.prayer-grid > div.is-next-prayer:not(.is-current-prayer):nth-child(even) {
+  border-color: #e8a900 !important;
+  outline: 2px solid #f4bd3e !important;
+  outline-offset: -2px;
+  background: linear-gradient(145deg, #fff6d9, #fffdf7) !important;
+}
+.prayer-countdown {
+  border: 1px solid rgba(8,127,104,.10);
+  min-height: 70px;
+}
+.prayer-countdown > span:first-child {
+  line-height: 1.25;
+  text-align: center;
+}
+
+/* Panel Spensus AI tetap independen, tanpa mengubah tampilan halaman utama. */
+.spensus-ai-drawer-v27[hidden] { display: none !important; }
+.spensus-ai-drawer-v27:not([hidden]) {
+  pointer-events: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.spensus-ai-drawer-v27:not([hidden]) .ai-drawer-backdrop-v27 {
+  display: none !important;
+}
+.spensus-ai-drawer-v27:not([hidden]) .ai-drawer-panel-v27 {
+  pointer-events: auto !important;
+}
+html:has(.spensus-ai-drawer-v27:not([hidden])),
+body:has(.spensus-ai-drawer-v27:not([hidden])) {
+  overflow: auto !important;
+  filter: none !important;
+}
+
+/* Ketahanan tata letak dan keterbacaan umum. */
+img { max-width: 100%; }
+.directory-card img,
+.staff-card img,
+.gallery-card img {
+  object-fit: cover;
+}
+button, a, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #f4bd3e;
+  outline-offset: 3px;
+}
+.links a,
+.footer a,
+.feature-card,
+.portal-tab {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .prayer-grid > div { min-height: 86px; }
+  .prayer-grid > div.is-current-prayer { padding-top: 24px; }
+}
+@media (max-width: 520px) {
+  .prayer-block { padding: 16px 12px; }
+  .prayer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px 9px; }
+  .prayer-grid > div { min-height: 82px; padding-inline: 5px; }
+  .prayer-grid > div.is-current-prayer strong { font-size: 19px; }
+  .prayer-countdown { padding: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prayer-grid > div { transition: none; }
+}

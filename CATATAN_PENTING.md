@@ -25,7 +25,7 @@ Susunan paragraf dan tabel sumber dipertahankan dalam tampilan web. Blok tanda t
 
 ## Spensus Terkini
 
-Ruang Editor dibuka dari Beranda menggunakan kata sandi admin standar `Alifi@78`. Editor dapat mengubah teks beranda, galeri, balasan, dan status tanggapan. Tanpa integrasi Google Apps Script, perubahan hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, konten, tanggapan, dan data galeri disimpan pada Google Sheet; foto disimpan pada Google Drive.
+Ruang Editor tidak ditautkan pada halaman publik. Pemilik masuk melalui Portal Guru dengan identitas Sunarso, S.Pd.I., Gr. dari SMP Negeri 1 Susukan, kemudian membuka Kendali Pemilik dan memasukkan kata sandi `Alifi@78`. Editor dapat mengubah teks beranda, galeri, balasan, dan status tanggapan. Tanpa integrasi Google Apps Script, perubahan hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, konten, tanggapan, dan data galeri disimpan pada Google Sheet; foto disimpan pada Google Drive.
 
 ## Fitur Islami
 
@@ -55,3 +55,8 @@ Setiap bab memuat dua tautan video penguatan dan kolom ringkasan minimal 500 kar
 ## Data sekolah
 
 Identitas sekolah mengikuti Data Referensi Kemendikdasmen. Nama dan foto personel mengikuti arsip Yearbook AI 2026 yang dilampirkan. Jabatan tenaga kependidikan selain kepala sekolah perlu diperbarui bila sekolah memiliki pembagian tugas yang lebih rinci.
+
+
+## Catatan keamanan publikasi
+
+GitHub Pages adalah hosting statis. Penguncian Ruang Guru dan Ruang Editor membatasi alur antarmuka dan mencegah pengindeksan, tetapi tidak boleh dipakai untuk menyimpan kata sandi penting, data rahasia, nilai murid, NIP lengkap, atau dokumen pribadi di repository publik. Data sensitif harus ditempatkan pada layanan backend dengan autentikasi server.

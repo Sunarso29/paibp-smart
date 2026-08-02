@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v31";
+const CACHE_NAME = "paibp-smart-core-v32";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -16,6 +16,7 @@ const CORE_ASSETS = [
   "./v29-public.js",
   "./v30-ui.js",
   "./v30-ui.css",
+  "./v32-ui.css",
   "./404.html",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
@@ -34,10 +35,6 @@ const CORE_ASSETS = [
   "./islamic-upgrade-v20.js",
   "./islamic-upgrade-v21.js",
   "./islamic-upgrade-v22.js",
-  "./assets/audio/abu-yazid-nurdin-al-hijr-85-99.mp3",
-  "./assets/audio/abu-yazid-nurdin-al-hijr-85-99.ogg",
-  "./assets/audio/muflih-safitra-quran-central.mp3",
-  "./assets/audio/muflih-safitra-quran-central.ogg",
   "./vendor/jszip.min.js",
   "./vendor/pptxgen.min.js",
   "./office-export.js",
@@ -156,7 +153,7 @@ self.addEventListener("fetch", (event) => {
           if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
           return response;
         })
-        .catch(() => caches.match(request)),
+        .catch(() => caches.match(request, { ignoreSearch: true })),
     );
     return;
   }
@@ -174,7 +171,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+    caches.match(request, { ignoreSearch: true }).then((cached) => cached || fetch(request).then((response) => {
       if (response.ok && response.status === 200) caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
       return response;
     })),
