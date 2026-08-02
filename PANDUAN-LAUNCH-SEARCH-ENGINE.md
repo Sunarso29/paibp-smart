@@ -1,4 +1,4 @@
-# Peluncuran dan Pengindeksan Mesin Pencari — v34 Light
+# Peluncuran dan Pengindeksan Mesin Pencari — v35 Professional Light
 
 Paket memuat canonical URL, metadata sosial, data terstruktur, `robots.txt`, `sitemap.xml`, favicon, manifest PWA, serta berkas verifikasi IndexNow.
 

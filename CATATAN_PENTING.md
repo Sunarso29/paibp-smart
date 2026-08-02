@@ -16,4 +16,4 @@ GitHub Pages adalah hosting statis. Portal Guru dan Kendali Editor tidak boleh m
 
 ## Materi multimapel
 
-Sebanyak 173 paket multimapel dibundel dalam `multimapel-content.js`. Penghapusan ratusan berkas sumber dari paket publik dilakukan untuk menjaga situs ringan; materi web, ringkasan, LKPD, cetak/PDF, dan DOCX tetap tersedia.
+Sebanyak 171 paket multimapel dibundel dalam `multimapel-content.js`. Penghapusan ratusan berkas sumber dari paket publik dilakukan untuk menjaga situs ringan; materi web, ringkasan, LKPD, cetak/PDF, dan DOCX tetap tersedia.

@@ -145,7 +145,7 @@
       try { frame.contentWindow?.focus(); frame.contentWindow?.print(); }
       finally { window.setTimeout(() => frame.remove(), 3000); }
     }, 500), { once: true });
-    frame.srcdoc = `<!doctype html><html lang="id"><head><meta charset="utf-8"><base href="${base}"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="styles.css?v=22"><style>@page{size:A4;margin:15mm 15mm 17mm}html,body{background:#fff!important}body{padding:0!important;margin:0!important;font-family:Cambria,serif;color:#111}.exam-paper{max-width:none!important;margin:0!important;border:0!important;padding:0!important}.no-print{display:none!important}.exam-question{break-inside:avoid;page-break-inside:avoid}.answer-key{break-before:page}.exam-option-print.is-answer-key{background:#dff6e9!important;border:1px solid #087f68!important}.exam-logo-space{border:0!important}</style></head><body>${html}</body></html>`;
+    frame.srcdoc = `<!doctype html><html lang="id"><head><meta charset="utf-8"><base href="${base}"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="styles.css?v=35"><style>@page{size:A4;margin:15mm 15mm 17mm}html,body{background:#fff!important}body{padding:0!important;margin:0!important;font-family:Cambria,serif;color:#111}.exam-paper{max-width:none!important;margin:0!important;border:0!important;padding:0!important}.no-print{display:none!important}.exam-question{break-inside:avoid;page-break-inside:avoid}.answer-key{break-before:page}.exam-option-print.is-answer-key{background:#dff6e9!important;border:1px solid #087f68!important}.exam-logo-space{border:0!important}</style></head><body>${html}</body></html>`;
     return true;
   }
 

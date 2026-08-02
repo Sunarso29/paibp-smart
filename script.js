@@ -6487,7 +6487,7 @@ if (workspace && appData) {
   async function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return null;
     try {
-      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=22");
+      serviceWorkerRegistration = await navigator.serviceWorker.register("service-worker.js?v=35");
       await serviceWorkerRegistration.update();
       await navigator.serviceWorker.ready;
       return serviceWorkerRegistration;
