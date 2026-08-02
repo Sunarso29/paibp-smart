@@ -1,0 +1,8 @@
+PAIBP SMART SMP v33 — Tahap Integrasi Multimapel
+
+1. Logo About Spensus diperbaiki tanpa filter gelap, memakai panel putih tipis, object-fit contain, dan ukuran responsif.
+2. Seluruh 385 dokumen dalam arsip Perangkat Pembelajaran Semua Mapel dipertahankan sebagai sumber asli.
+3. Dokumen dipetakan menjadi 173 paket belajar per mapel, kelas, semester, dan bab.
+4. Identitas guru dan sekolah dihilangkan dari tampilan materi web; berkas sumber asli tetap tersedia untuk pemeriksaan integritas.
+5. Koding dan Kecerdasan Artifisial ditambahkan untuk kelas VII–IX berdasarkan kompetensi Kurikulum Nasional.
+6. Tahap berikutnya: validasi per bab terhadap buku resmi dan pengembangan bank PTS, ASAS, serta UKLN per mata pelajaran.

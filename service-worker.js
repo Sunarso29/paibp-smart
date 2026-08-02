@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v32";
+const CACHE_NAME = "paibp-smart-core-v33";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -17,6 +17,9 @@ const CORE_ASSETS = [
   "./v30-ui.js",
   "./v30-ui.css",
   "./v32-ui.css",
+  "./v33-multimapel.css",
+  "./multimapel-data.js",
+  "./multimapel-ui.js",
   "./404.html",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
@@ -56,6 +59,7 @@ const CORE_ASSETS = [
   "./spensus-ai.js",
   "./public-pages.js",
   "./logo-spensus.png",
+  "./logo-spensus-hd.png",
   "./sunarso.jpeg",
   "./gerbang.jpg",
   "./akses-guru.html",

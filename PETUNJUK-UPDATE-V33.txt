@@ -1,0 +1,9 @@
+PAIBP SMART SMP v33
+
+1. Ekstrak ZIP patch.
+2. Unggah seluruh isi ke root repository paibp-smart.
+3. Pilih Replace/Overwrite untuk berkas dengan nama sama.
+4. Pastikan folder assets/mapel-data, assets/mapel-sumber, dan mapel terunggah lengkap.
+5. Tunggu GitHub Pages selesai, lalu tekan Ctrl+F5.
+
+Paket ini memulai integrasi semua mapel dan memperbaiki logo About Spensus.

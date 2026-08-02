@@ -1,0 +1,44 @@
+AUDIT MULTIMAPEL PAIBP SMART SMP v33
+
+Dokumen sumber: 385
+Berkas sumber identik SHA-256: 385
+Paket belajar: 173
+Halaman statis SEO: 173
+
+Rincian paket:
+- Bahasa Indonesia kelas IX: 6 paket
+- Bahasa Indonesia kelas VII: 6 paket
+- Bahasa Indonesia kelas VIII: 6 paket
+- Bahasa Inggris kelas IX: 5 paket
+- Bahasa Inggris kelas VII: 5 paket
+- Bahasa Inggris kelas VIII: 5 paket
+- Bimbingan dan Konseling kelas IX: 11 paket
+- Bimbingan dan Konseling kelas VII: 10 paket
+- Bimbingan dan Konseling kelas VIII: 11 paket
+- Ilmu Pengetahuan Alam kelas IX: 7 paket
+- Ilmu Pengetahuan Alam kelas VII: 7 paket
+- Ilmu Pengetahuan Alam kelas VIII: 6 paket
+- Ilmu Pengetahuan Sosial kelas VIII: 4 paket
+- Informatika kelas IX: 5 paket
+- Koding dan Kecerdasan Artifisial kelas IX: 6 paket
+- Koding dan Kecerdasan Artifisial kelas VII: 6 paket
+- Koding dan Kecerdasan Artifisial kelas VIII: 6 paket
+- Matematika kelas VII: 7 paket
+- Matematika kelas VIII: 6 paket
+- PJOK kelas IX: 7 paket
+- PJOK kelas VII: 5 paket
+- PJOK kelas VIII: 8 paket
+- Pendidikan Pancasila kelas IX: 5 paket
+- Pendidikan Pancasila kelas VII: 6 paket
+- Pendidikan Pancasila kelas VIII: 5 paket
+- Prakarya Pengolahan kelas VII: 4 paket
+- Seni Musik kelas VIII: 4 paket
+- Seni Tari kelas IX: 4 paket
+
+Validasi identitas:
+- Tampilan web tidak memuat Nama Penyusun, NIP, atau nama sekolah dari dokumen sumber.
+- Dokumen sumber asli tetap tersedia utuh untuk pemeriksaan.
+
+Catatan:
+- Tahap v33 memulai integrasi lintas mapel dan menyiapkan struktur materi, ringkasan, LKPD, serta sumber.
+- Validasi isi terhadap buku resmi dan penyusunan bank PTS/ASAS/UKLN dilanjutkan per mapel pada tahap berikutnya.
