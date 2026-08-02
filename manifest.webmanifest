@@ -62,6 +62,18 @@
           "type": "image/png"
         }
       ]
+    },
+    {
+      "name": "Baca Artikel",
+      "short_name": "Artikel",
+      "description": "Artikel Islam luring",
+      "url": "artikel-islam.html",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

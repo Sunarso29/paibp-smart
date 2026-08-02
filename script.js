@@ -4261,6 +4261,8 @@ if (workspace && appData) {
           <button class="cta btn-compact" type="button" data-download-khutbah-docx>Unduh DOCX siap print</button>
           <button class="btn btn-compact" type="button" data-print-khutbah-pdf>Simpan PDF / Cetak</button>
           <button class="btn btn-compact" type="button" data-speak-khutbah-verse>🔊 Putar ayat</button>
+          <button class="btn btn-compact" type="button" data-save-khutbah>☆ Simpan</button>
+          <button class="btn btn-compact" type="button" data-share-khutbah>↗ Bagikan</button>
           <p class="save-status" data-khutbah-status aria-live="polite"></p>
         </div>`;
 
@@ -4279,6 +4281,24 @@ if (workspace && appData) {
         if (status) status.textContent = "Dialog cetak dibuka. Pilih printer atau Simpan sebagai PDF.";
       });
       reader.querySelector("[data-speak-khutbah-verse]")?.addEventListener("click", () => speakArabic(verse.text, status));
+      reader.querySelector("[data-save-khutbah]")?.addEventListener("click", (event) => {
+        const key = "paibp-smart-khutbah-saved-v37";
+        let saved = [];
+        try { saved = JSON.parse(localStorage.getItem(key) || "[]"); } catch { saved = []; }
+        if (!Array.isArray(saved)) saved = [];
+        if (!saved.some((item) => item.id === record.id)) saved.unshift({ id: record.id, title: record.title, savedAt: new Date().toISOString() });
+        localStorage.setItem(key, JSON.stringify(saved.slice(0, 100)));
+        event.currentTarget.textContent = "★ Tersimpan";
+        if (status) status.textContent = "Naskah disimpan pada perangkat ini.";
+      });
+      reader.querySelector("[data-share-khutbah]")?.addEventListener("click", async () => {
+        const shareData = { title: record.title, text: `${record.title} — PAIBP SMART SMP`, url: `${location.origin}${location.pathname}#khutbah-jumat` };
+        try {
+          if (navigator.share) await navigator.share(shareData);
+          else { await navigator.clipboard.writeText(`${shareData.text}
+${shareData.url}`); if (status) status.textContent = "Tautan promosi PAIBP SMART SMP disalin."; }
+        } catch (error) { if (error?.name !== "AbortError" && status) status.textContent = "Bagikan dibatalkan."; }
+      });
     } catch (error) {
       activeKhutbahRecord = null;
       reader.innerHTML = `<div class="khutbah-empty-state"><span>⚠️</span><h5>Naskah belum dapat dibuka</h5><p>${escapeHtml(error?.message || "Paket naskah gagal dibaca.")} Muat ulang halaman lalu coba kembali.</p></div>`;

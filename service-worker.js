@@ -1,9 +1,9 @@
-const CACHE_NAME = "paibp-smart-core-v36-professional";
+const CACHE_NAME = "paibp-smart-core-v37-final";
 const CORE_ASSETS = [
-  "./","./index.html","./fitur.html","./mapel-lain.html","./literasi-digital.html","./about-spensus.html","./contact.html","./privacy.html","./support.html","./terms.html","./akses-guru.html","./kendali-editor.html","./404.html",
-  "./styles.css","./v28-ui.css","./v29-ui.css","./v30-ui.css","./v32-ui.css","./v33-multimapel.css","./v34-lite.css","./literasi-digital.css",
+  "./","./index.html","./fitur.html","./mapel-lain.html","./literasi-digital.html","./artikel-islam.html","./about-spensus.html","./contact.html","./privacy.html","./support.html","./terms.html","./akses-guru.html","./kendali-editor.html","./404.html",
+  "./styles.css","./v28-ui.css","./v29-ui.css","./v30-ui.css","./v32-ui.css","./v33-multimapel.css","./v34-lite.css","./literasi-digital.css","./v37-final.css",
   "./manifest.webmanifest","./assets/icons/icon-192.png","./assets/icons/icon-512.png","./logo-spensus.png","./logo-spensus-hd.png","./gerbang.jpg","./sunarso.jpeg",
-  "./app-config.js","./content-data.js","./teacher-source-data.js","./calendar-data.js","./staff-images.js","./school-data.js","./banjarnegara-school-directory.js","./islamic-data.js","./islamic-learning-data.js","./islamic-upgrade-v19.js","./islamic-upgrade-v20.js","./islamic-upgrade-v21.js","./islamic-upgrade-v22.js","./khutbah-source-data.js","./khutbah-verse-data.js","./hadith-data.js","./arabic-data.js","./assessment-data.js","./game-data.js","./video-data.js","./docx-export.js","./vendor/jszip.min.js","./vendor/pptxgen.min.js","./office-export.js","./assessment-ui.js","./script.js","./spensus-ai.js","./multimapel-loader.js","./v26-ui.js","./v28-ui.js","./v29-ui.js","./v30-ui.js","./public-pages.js","./v29-public.js","./v34-lite.js","./literasi-digital.js"
+  "./app-config.js","./content-data.js","./teacher-source-data.js","./calendar-data.js","./staff-images.js","./school-data.js","./banjarnegara-school-directory.js","./islamic-data.js","./islamic-learning-data.js","./islamic-upgrade-v19.js","./islamic-upgrade-v20.js","./islamic-upgrade-v21.js","./islamic-upgrade-v22.js","./khutbah-source-data.js","./khutbah-verse-data.js","./hadith-data.js","./arabic-data.js","./assessment-data.js","./game-data.js","./video-data.js","./docx-export.js","./vendor/jszip.min.js","./vendor/pptxgen.min.js","./office-export.js","./assessment-ui.js","./script.js","./spensus-ai.js","./multimapel-loader.js","./v26-ui.js","./v28-ui.js","./v29-ui.js","./v30-ui.js","./public-pages.js","./v29-public.js","./v34-lite.js","./literasi-digital.js","./artikel-data.js","./artikel-islam.js"
 ];
 
 self.addEventListener("install", (event) => {
