@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v35-professional";
+const CACHE_NAME = "paibp-smart-core-v36-professional";
 const CORE_ASSETS = [
   "./","./index.html","./fitur.html","./mapel-lain.html","./literasi-digital.html","./about-spensus.html","./contact.html","./privacy.html","./support.html","./terms.html","./akses-guru.html","./kendali-editor.html","./404.html",
   "./styles.css","./v28-ui.css","./v29-ui.css","./v30-ui.css","./v32-ui.css","./v33-multimapel.css","./v34-lite.css","./literasi-digital.css",

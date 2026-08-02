@@ -786,7 +786,7 @@
   },
   {
     "id": "bna-smp-088",
-    "name": "SMP TAMANSISWA BANJARNEGARA",
+    "name": "SMP TAMANMURID BANJARNEGARA",
     "district": "Banjarnegara",
     "status": "Swasta",
     "level": "SMP",

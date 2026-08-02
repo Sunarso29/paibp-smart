@@ -1,5 +1,5 @@
 PAIBP SMART SMP
-Versi paket: 35.0 Professional Light
+Versi paket: 36.0 Professional Light
 Tanggal paket: 2 Agustus 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
 
@@ -12,4 +12,4 @@ Pembaruan utama:
 - tersedia 17 kategori, termasuk Islam, agama-agama lain, studi agama, fiksi, sastra, sains, matematika, pendidikan, sejarah, teknologi, koding, dan kecerdasan artifisial
 - angka katalog ditampilkan berdasarkan respons nyata penyedia; tidak ada klaim jumlah judul yang dibuat-buat
 - buku tidak disalin ke GitHub; baca dan unduh diarahkan ke sumber resmi sesuai hak akses
-- cache PWA diperbarui ke v35 dengan ukuran repository tetap ringan
+- cache PWA diperbarui ke v36 dengan ukuran repository tetap ringan

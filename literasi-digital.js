@@ -1,8 +1,8 @@
 (() => {
   "use strict";
 
-  const STATS_KEY = "spensus-literasi-stats-v35";
-  const CACHE_PREFIX = "spensus-literasi-cache-v35:";
+  const STATS_KEY = "spensus-literasi-stats-v36";
+  const CACHE_PREFIX = "spensus-literasi-cache-v36:";
   const CACHE_TTL = 12 * 60 * 60 * 1000;
   const PAGE_SIZE = 18;
   const MAX_RENDER = 72;
@@ -28,6 +28,26 @@
   ];
 
   const categoryById = Object.fromEntries(categories.map((item) => [item.id, item]));
+  const islamStarterCatalog = [
+    ["Al Qur'an Digital Kementerian Agama", "Kementerian Agama Republik Indonesia", "Al Qur'an", "https://quran.kemenag.go.id/", "Baca daring resmi"],
+    ["Terjemah dan Tafsir Al Qur'an", "Kementerian Agama Republik Indonesia", "Tafsir", "https://quran.kemenag.go.id/", "Baca daring resmi"],
+    ["Hadits Pilihan dan Akhlak", "Koleksi terbuka lintas sumber", "Hadits", "https://id.wikisource.org/", "Telusuri teks bebas"],
+    ["Sirah Nabi Muhammad", "Koleksi domain publik", "Sirah", "https://archive.org/search?query=sirah+nabi+indonesia+mediatype%3Atexts", "Baca / unduh sumber"],
+    ["Dasar-Dasar Aqidah Islam", "Koleksi akses terbuka", "Aqidah", "https://archive.org/search?query=aqidah+islam+indonesia+mediatype%3Atexts", "Baca / unduh sumber"],
+    ["Fiqih Ibadah Praktis", "Koleksi akses terbuka", "Fiqih", "https://archive.org/search?query=fiqih+ibadah+indonesia+mediatype%3Atexts", "Baca / unduh sumber"],
+    ["Adab dan Akhlak Muslim", "Koleksi akses terbuka", "Akhlak", "https://archive.org/search?query=adab+akhlak+islam+indonesia+mediatype%3Atexts", "Baca / unduh sumber"],
+    ["Sejarah Peradaban Islam", "Koleksi domain publik", "Sejarah Islam", "https://archive.org/search?query=sejarah+peradaban+islam+indonesia+mediatype%3Atexts", "Baca / unduh sumber"],
+    ["Kumpulan Doa dan Dzikir", "Koleksi teks terbuka", "Doa & Dzikir", "https://id.wikisource.org/", "Baca teks bebas"],
+    ["Bahasa Arab untuk Pemula", "Koleksi akses terbuka", "Bahasa Arab", "https://archive.org/search?query=bahasa+arab+untuk+pemula+mediatype%3Atexts", "Baca / unduh sumber"],
+    ["Kajian Ramadhan", "Koleksi akses terbuka", "Ramadhan", "https://archive.org/search?query=ramadhan+islam+indonesia+mediatype%3Atexts", "Baca / unduh sumber"],
+    ["Ekonomi dan Keuangan Syariah", "Koleksi akses terbuka", "Muamalah", "https://archive.org/search?query=ekonomi+syariah+indonesia+mediatype%3Atexts", "Baca / unduh sumber"]
+  ].map((row, index) => ({
+    kind: "book", id: `islam-local-${index+1}`, title: row[0], author: row[1], year: "—", language: ["ind"],
+    source: "Katalog Islam Spensus", sourceId: "local", subjects: [row[2], "Islam", "Bahasa Indonesia"],
+    description: `${row[4]}. Entri awal tampil seketika; isi lengkap tetap mengikuti hak akses pada sumber resmi.`,
+    category: "islam", icon: "☪", color: ["#07513f", "#c59827"], access: row[4], readUrl: row[3], downloadUrl: row[3], previewUrl: row[3]
+  }));
+
   const languageDomains = { ind: "id", eng: "en", ara: "ar", msa: "ms", jpn: "ja", chi: "zh", fre: "fr", ger: "de", spa: "es", rus: "ru", hin: "hi", por: "pt" };
   const languageNames = { ind: "Indonesia", eng: "English", ara: "Arab", msa: "Melayu", jpn: "Jepang", chi: "Tionghoa", fre: "Prancis", ger: "Jerman", spa: "Spanyol", rus: "Rusia", hin: "Hindi", por: "Portugis" };
 
@@ -73,7 +93,7 @@
   }
   function renderStats(stats = readStats()) { Object.entries(stats).forEach(([key, value]) => document.querySelectorAll(`[data-lit-stat="${key}"]`).forEach((node) => { node.textContent = formatNumber(value); })); }
   function incrementStat(key) { const stats = readStats(); stats[key] = Number(stats[key] || 0) + 1; localStorage.setItem(STATS_KEY, JSON.stringify(stats)); renderStats(stats); }
-  if (!sessionStorage.getItem("spensus-literasi-visit-v35")) { sessionStorage.setItem("spensus-literasi-visit-v35", "1"); incrementStat("visits"); } else renderStats();
+  if (!sessionStorage.getItem("spensus-literasi-visit-v36")) { sessionStorage.setItem("spensus-literasi-visit-v36", "1"); incrementStat("visits"); } else renderStats();
 
   function renderCategoryControls() {
     els.category.innerHTML = categories.map((item) => `<option value="${item.id}">${item.label}</option>`).join("");
@@ -88,6 +108,7 @@
   }
 
   function makeCollectionCards(categoryId = "all") {
+    if (categoryId === "islam") return [...islamStarterCatalog];
     const chosen = categoryId === "all" ? categories.slice(1) : [currentCategory(), ...categories.filter((item) => !["all", categoryId].includes(item.id)).slice(0, 7)];
     return chosen.map((category) => ({
       kind: "collection",
@@ -223,7 +244,7 @@
       const state = providerStates[id] || { status: "idle", total: 0, note: "Siap" };
       const className = state.status === "loading" ? "is-loading" : state.status === "ok" ? "is-ok" : state.status === "fail" ? "is-fail" : "";
       const note = state.status === "ok" ? `${formatNumber(state.total)} rekaman${state.cached ? " • cache cepat" : ""}` : state.note;
-      return `<div class="lit-provider-v35 ${className}"><span>${provider.icon}</span><div><b>${provider.label}</b><small>${escapeHtml(note || "Siap")}</small></div></div>`;
+      return `<div class="lit-provider-v36 ${className}"><span>${provider.icon}</span><div><b>${provider.label}</b><small>${escapeHtml(note || "Siap")}</small></div></div>`;
     }).join("");
     const connected = Object.values(providerStates).filter((state) => state.status === "ok").length;
     els.connectedSources.textContent = `${connected}/3`;
@@ -253,18 +274,18 @@
     const [colorA, colorB] = coverColors(book);
     const language = (book.language || []).slice(0, 2).map((code) => languageNames[code] || String(code).toUpperCase()).join(" • ") || "Lintas bahasa";
     const tags = (book.subjects || []).slice(0, 2).map((tag) => `<span>${escapeHtml(compact(tag, 34))}</span>`).join("");
-    const fallback = `<div class="lit-cover-fallback-v35"><span>${escapeHtml(book.icon || (book.kind === "collection" ? categoryById[book.category]?.icon : "📕"))}</span><b>${escapeHtml(book.kind === "collection" ? "Koleksi tematik" : compact(book.source, 25))}</b></div>`;
+    const fallback = `<div class="lit-cover-fallback-v36"><span>${escapeHtml(book.icon || (book.kind === "collection" ? categoryById[book.category]?.icon : "📕"))}</span><b>${escapeHtml(book.kind === "collection" ? "Koleksi tematik" : compact(book.source, 25))}</b></div>`;
     const cover = book.cover ? `<img src="${escapeHtml(book.cover)}" alt="Sampul ${escapeHtml(book.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">${fallback}` : fallback;
     if (book.kind === "collection") {
-      return `<article class="lit-book-card-v35"><div class="lit-cover-v35" style="--cover-a:${colorA};--cover-b:${colorB}">${cover}<span class="lit-access-badge-v35">AKSES CEPAT</span><span class="lit-source-badge-v35">KATEGORI</span></div><div class="lit-book-body-v35"><h3>${escapeHtml(book.title)}</h3><div class="lit-book-author-v35">${escapeHtml(book.author)}</div><div class="lit-book-meta-v35">${tags}</div><p class="lit-book-description-v35">${escapeHtml(book.description)}</p><div class="lit-book-actions-v35"><button class="is-primary" type="button" data-open-collection="${book.category}">Jelajahi koleksi →</button></div></div></article>`;
+      return `<article class="lit-book-card-v36"><div class="lit-cover-v36" style="--cover-a:${colorA};--cover-b:${colorB}">${cover}<span class="lit-access-badge-v36">AKSES CEPAT</span><span class="lit-source-badge-v36">KATEGORI</span></div><div class="lit-book-body-v36"><h3>${escapeHtml(book.title)}</h3><div class="lit-book-author-v36">${escapeHtml(book.author)}</div><div class="lit-book-meta-v36">${tags}</div><p class="lit-book-description-v36">${escapeHtml(book.description)}</p><div class="lit-book-actions-v36"><button class="is-primary" type="button" data-open-collection="${book.category}">Jelajahi koleksi →</button></div></div></article>`;
     }
     const canDownload = Boolean(book.downloadUrl);
-    return `<article class="lit-book-card-v35"><div class="lit-cover-v35" style="--cover-a:${colorA};--cover-b:${colorB}">${cover}<span class="lit-access-badge-v35">${escapeHtml(book.access || "Akses sumber")}</span><span class="lit-source-badge-v35">${escapeHtml(compact(book.source, 24))}</span></div><div class="lit-book-body-v35"><h3>${escapeHtml(book.title)}</h3><div class="lit-book-author-v35">${escapeHtml(book.author)}</div><div class="lit-book-meta-v35"><span>${escapeHtml(book.year || "—")}</span><span>${escapeHtml(language)}</span>${tags}</div><p class="lit-book-description-v35">${escapeHtml(compact(book.description || "Metadata buku dari katalog resmi.", 220))}</p><div class="lit-book-actions-v35"><button type="button" data-book-preview="${index}">Pratinjau</button><a href="${escapeHtml(book.readUrl || book.previewUrl || "#")}" target="_blank" rel="noopener" data-book-read="${index}">Baca</a><a class="is-primary" href="${escapeHtml(book.downloadUrl || book.previewUrl || book.readUrl || "#")}" target="_blank" rel="noopener" data-book-download="${index}" ${canDownload ? "" : "aria-label=\"Buka sumber resmi; unduhan bergantung pada penyedia\""}>${canDownload ? "Unduh / sumber resmi" : "Buka sumber resmi"}</a></div></div></article>`;
+    return `<article class="lit-book-card-v36"><div class="lit-cover-v36" style="--cover-a:${colorA};--cover-b:${colorB}">${cover}<span class="lit-access-badge-v36">${escapeHtml(book.access || "Akses sumber")}</span><span class="lit-source-badge-v36">${escapeHtml(compact(book.source, 24))}</span></div><div class="lit-book-body-v36"><h3>${escapeHtml(book.title)}</h3><div class="lit-book-author-v36">${escapeHtml(book.author)}</div><div class="lit-book-meta-v36"><span>${escapeHtml(book.year || "—")}</span><span>${escapeHtml(language)}</span>${tags}</div><p class="lit-book-description-v36">${escapeHtml(compact(book.description || "Metadata buku dari katalog resmi.", 220))}</p><div class="lit-book-actions-v36"><button type="button" data-book-preview="${index}">Pratinjau</button><a href="${escapeHtml(book.readUrl || book.previewUrl || "#")}" target="_blank" rel="noopener" data-book-read="${index}">Baca</a><a class="is-primary" href="${escapeHtml(book.downloadUrl || book.previewUrl || book.readUrl || "#")}" target="_blank" rel="noopener" data-book-download="${index}" ${canDownload ? "" : "aria-label=\"Buka sumber resmi; unduhan bergantung pada penyedia\""}>${canDownload ? "Unduh / sumber resmi" : "Buka sumber resmi"}</a></div></div></article>`;
   }
 
   function renderBooks(message = "") {
     if (!currentBooks.length) {
-      els.grid.innerHTML = `<div class="lit-empty-v35"><span>📚</span><h3>Belum ada hasil terbuka</h3><p>Coba kata kunci yang lebih luas, bahasa lain, atau buka salah satu sumber resmi.</p></div>`;
+      els.grid.innerHTML = `<div class="lit-empty-v36"><span>📚</span><h3>Belum ada hasil terbuka</h3><p>Coba kata kunci yang lebih luas, bahasa lain, atau buka salah satu sumber resmi.</p></div>`;
       els.resultCount.textContent = message || "Tidak ada hasil yang dapat ditampilkan.";
       return;
     }
@@ -329,8 +350,8 @@
     if (!book || book.kind === "collection") return;
     incrementStat("previews");
     const language = (book.language || []).map((code) => languageNames[code] || code).join(", ") || "Tidak tercantum";
-    const cover = book.cover ? `<img src="${escapeHtml(book.cover)}" alt="Sampul ${escapeHtml(book.title)}" referrerpolicy="no-referrer" onerror="this.remove()">` : `<div class="lit-cover-fallback-v35"><span>${escapeHtml(book.icon || "📕")}</span><b>${escapeHtml(book.source)}</b></div>`;
-    els.previewBody.innerHTML = `<div class="lit-preview-content-v35"><div class="lit-preview-cover-v35">${cover}</div><div class="lit-preview-copy-v35"><span class="lit-kicker-dark-v35">${escapeHtml(book.source)} • ${escapeHtml(book.access || "Akses sumber")}</span><h2 id="lit-preview-title">${escapeHtml(book.title)}</h2><p><strong>${escapeHtml(book.author)}</strong></p><p>${escapeHtml(compact(book.description || "Metadata buku dari katalog resmi.", 650))}</p><dl class="lit-preview-details-v35"><dt>Tahun</dt><dd>${escapeHtml(book.year || "—")}</dd><dt>Bahasa</dt><dd>${escapeHtml(language)}</dd><dt>Subjek</dt><dd>${escapeHtml((book.subjects || []).slice(0, 8).join(" • ") || "Tidak tercantum")}</dd><dt>Status</dt><dd>${escapeHtml(book.access || "Periksa pada sumber")}</dd></dl><div class="lit-preview-actions-v35"><a href="${escapeHtml(book.readUrl || book.previewUrl)}" target="_blank" rel="noopener" data-preview-read>Baca di sumber resmi</a><a class="is-secondary" href="${escapeHtml(book.downloadUrl || book.previewUrl || book.readUrl)}" target="_blank" rel="noopener" data-preview-download>${book.downloadUrl ? "Akses unduhan resmi" : "Buka halaman sumber"}</a></div></div></div>`;
+    const cover = book.cover ? `<img src="${escapeHtml(book.cover)}" alt="Sampul ${escapeHtml(book.title)}" referrerpolicy="no-referrer" onerror="this.remove()">` : `<div class="lit-cover-fallback-v36"><span>${escapeHtml(book.icon || "📕")}</span><b>${escapeHtml(book.source)}</b></div>`;
+    els.previewBody.innerHTML = `<div class="lit-preview-content-v36"><div class="lit-preview-cover-v36">${cover}</div><div class="lit-preview-copy-v36"><span class="lit-kicker-dark-v36">${escapeHtml(book.source)} • ${escapeHtml(book.access || "Akses sumber")}</span><h2 id="lit-preview-title">${escapeHtml(book.title)}</h2><p><strong>${escapeHtml(book.author)}</strong></p><p>${escapeHtml(compact(book.description || "Metadata buku dari katalog resmi.", 650))}</p><dl class="lit-preview-details-v36"><dt>Tahun</dt><dd>${escapeHtml(book.year || "—")}</dd><dt>Bahasa</dt><dd>${escapeHtml(language)}</dd><dt>Subjek</dt><dd>${escapeHtml((book.subjects || []).slice(0, 8).join(" • ") || "Tidak tercantum")}</dd><dt>Status</dt><dd>${escapeHtml(book.access || "Periksa pada sumber")}</dd></dl><div class="lit-preview-actions-v36"><a href="${escapeHtml(book.readUrl || book.previewUrl)}" target="_blank" rel="noopener" data-preview-read>Baca di sumber resmi</a><a class="is-secondary" href="${escapeHtml(book.downloadUrl || book.previewUrl || book.readUrl)}" target="_blank" rel="noopener" data-preview-download>${book.downloadUrl ? "Akses unduhan resmi" : "Buka halaman sumber"}</a></div></div></div>`;
     els.preview.hidden = false;
     document.body.style.overflow = "hidden";
   }

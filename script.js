@@ -3027,7 +3027,7 @@ if (workspace && appData) {
     const allocationColumn = rows[headerIndex].findIndex((cell) => /alokasi waktu/i.test(String(cell || "")));
     if (allocationColumn < 0) return rows;
 
-    const isObjective = (value) => /^(?:murid|peserta didik)\s+(?:mampu|dapat)\b/i.test(String(value || "").trim());
+    const isObjective = (value) => /^(?:murid|murid)\s+(?:mampu|dapat)\b/i.test(String(value || "").trim());
     const isChapter = (value) => /^bab\s+\d+\b/i.test(String(value || "").trim());
     const firstColumnValue = (row) => String(row?.[0] || "").replace(/\s+/g, " ").trim();
     const allocationValue = (row) => String(row?.[allocationColumn] || "").trim();
