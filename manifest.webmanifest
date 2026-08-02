@@ -1,7 +1,7 @@
 {
   "name": "PAIBP SMART SMP",
   "short_name": "PAIBP SMART",
-  "description": "Portal pendidikan SMP Negeri 1 Susukan: PAIBP, roadmap mapel SMP, LKPD, asesmen, game edukasi, fitur Islami, dan Spensus AI.",
+  "description": "Portal pendidikan SMP Negeri 1 Susukan: PAIBP, multimapel SMP, Literasi Digital, LKPD, asesmen, game edukasi, fitur Islami, dan Spensus AI.",
   "lang": "id",
   "start_url": "./index.html",
   "scope": "./",
@@ -25,5 +25,43 @@
   "categories": [
     "education",
     "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "Ruang Murid",
+      "short_name": "Murid",
+      "url": "./index.html#student",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Literasi Digital",
+      "short_name": "Literasi",
+      "url": "./literasi-digital.html",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Portal Guru",
+      "short_name": "Guru",
+      "url": "./akses-guru.html",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

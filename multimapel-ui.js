@@ -1,12 +1,12 @@
 (() => {
   "use strict";
   const db = window.SPENSUS_MULTIMAPEL;
+  const content = window.SPENSUS_MULTIMAPEL_CONTENT || {};
   if (!db) return;
 
   const escapeHtml = (value) => String(value ?? "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-
   const state = { subject: "all", grade: "all", semester: "all", query: "" };
   const subjectById = Object.fromEntries(db.subjects.map((item) => [item.id, item]));
 
@@ -42,10 +42,7 @@
         <div class="multi-card-top-v33"><span>${escapeHtml(subject.code)}</span><small>Kelas ${escapeHtml(item.grade)} • Semester ${escapeHtml(item.semester)}</small></div>
         <h3>${escapeHtml(item.title)}</h3>
         <p>${escapeHtml(item.subjectName)}</p>
-        <div class="multi-card-actions-v33">
-          <button type="button" data-mm-open="${escapeHtml(item.id)}">Buka paket belajar</button>
-          ${item.page ? `<a href="${escapeHtml(item.page)}">Halaman materi</a>` : ""}${item.source ? `<a href="${escapeHtml(item.source)}" download>Unduh sumber</a>` : ""}
-        </div>
+        <div class="multi-card-actions-v33"><button type="button" data-mm-open="${escapeHtml(item.id)}">Buka paket belajar</button><a href="mapel-${escapeHtml(item.subject)}.html">Ringkasan mapel</a></div>
       </article>`;
     }).join("");
   }
@@ -66,48 +63,6 @@
     syncControls(root);
   }
 
-  async function openModule(root, id) {
-    const meta = db.modules.find((item) => item.id === id);
-    if (!meta) return;
-    const viewer = root.querySelector("[data-mm-viewer]");
-    const library = root.querySelector("[data-mm-library]");
-    if (!viewer || !library) return;
-    viewer.hidden = false;
-    viewer.dataset.mmActive = id;
-    library.hidden = true;
-    viewer.innerHTML = `<div class="multi-loading-v33"><span></span><strong>Menyiapkan paket belajar…</strong></div>`;
-    try {
-      const response = await fetch(meta.data, { cache: "force-cache" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const item = await response.json();
-      const objectives = (item.objectives || []).map((t) => `<li>${escapeHtml(t)}</li>`).join("");
-      const summary = (item.summary || []).map((t) => `<li>${escapeHtml(t)}</li>`).join("");
-      const worksheet = (item.worksheet || []).map((t,i) => `<label class="multi-task-v33"><span>${i+1}</span><div><p>${escapeHtml(t)}</p><textarea rows="3" placeholder="Tuliskan jawabanmu…" data-mm-answer="${i}"></textarea></div></label>`).join("");
-      viewer.innerHTML = `<div class="multi-viewer-head-v33">
-        <button type="button" data-mm-back>← Kembali ke daftar</button>
-        <div><span>${escapeHtml(item.subjectName)} • Kelas ${escapeHtml(item.grade)} • Semester ${escapeHtml(item.semester)}</span><h2>${escapeHtml(item.title)}</h2></div>
-        <div class="multi-viewer-actions-v33">${item.source ? `<a href="${escapeHtml(item.source)}" download>Unduh DOCX sumber</a>` : ""}<button type="button" data-mm-print>Cetak / PDF</button></div>
-      </div>
-      <div class="multi-tabs-v33" role="tablist">
-        <button type="button" aria-pressed="true" data-mm-tab="material">Materi Bab</button>
-        <button type="button" aria-pressed="false" data-mm-tab="summary">Ringkasan</button>
-        <button type="button" aria-pressed="false" data-mm-tab="worksheet">LKPD</button>
-        <button type="button" aria-pressed="false" data-mm-tab="source">Sumber</button>
-      </div>
-      <article class="multi-document-v33" data-mm-panel="material">
-        ${objectives ? `<section class="multi-objectives-v33"><h3>Tujuan Pembelajaran</h3><ul>${objectives}</ul></section>` : ""}
-        ${item.materialHtml || "<p>Materi sedang disusun.</p>"}
-      </article>
-      <article class="multi-document-v33" data-mm-panel="summary" hidden><h3>Ringkasan Inti</h3><ol class="multi-summary-list-v33">${summary}</ol></article>
-      <article class="multi-document-v33" data-mm-panel="worksheet" hidden><h3>LKPD Interaktif</h3><p>Jawab secara mandiri, lalu simpan pekerjaan pada perangkat.</p><div class="multi-worksheet-v33">${worksheet}</div><button class="multi-save-v33" type="button" data-mm-save>Simpan jawaban</button><span class="multi-save-status-v33" data-mm-save-status></span></article>
-      <article class="multi-document-v33" data-mm-panel="source" hidden><h3>Sumber dan Integritas Konten</h3><p>${escapeHtml(item.note || "")}</p><dl><dt>Dokumen sumber</dt><dd>${escapeHtml(item.sourceName || "Rujukan resmi")}</dd><dt>Lokasi arsip</dt><dd>${escapeHtml(item.sourceOriginal || "Kurikulum Nasional")}</dd></dl>${item.source ? `<a class="multi-source-download-v33" href="${escapeHtml(item.source)}" download>Unduh berkas sumber asli</a>` : `<a class="multi-source-download-v33" href="https://kurikulum.kemendikdasmen.go.id/koding-ka" target="_blank" rel="noopener">Buka rujukan resmi</a>`}</article>`;
-      restoreAnswers(viewer, item.id);
-      viewer.scrollIntoView({ behavior: "smooth", block: "start" });
-    } catch (error) {
-      viewer.innerHTML = `<div class="multi-empty-v33"><strong>Paket belum dapat dibuka.</strong><p>${escapeHtml(error.message)}</p><button type="button" data-mm-back>Kembali</button></div>`;
-    }
-  }
-
   function storageKey(id) { return `spensus-multimapel-${id}`; }
   function restoreAnswers(viewer,id) {
     try {
@@ -121,6 +76,68 @@
     localStorage.setItem(storageKey(id), JSON.stringify(data));
     const status = viewer.querySelector("[data-mm-save-status]");
     if (status) status.textContent = "Jawaban tersimpan di perangkat ini.";
+  }
+
+  function filenameSlug(value) {
+    return String(value || "paket-belajar").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  }
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+  function downloadModuleDocx(viewer, item) {
+    const status = viewer.querySelector("[data-mm-save-status]");
+    try {
+      if (!window.PAIBP_DOCX) throw new Error("Mesin DOCX belum siap");
+      const printable = viewer.querySelector("[data-mm-printable]");
+      const blob = window.PAIBP_DOCX.createDocument({
+        title: `${item.subjectName} Kelas ${item.grade} — ${item.title}`,
+        blocks: window.PAIBP_DOCX.blocksFromElement(printable),
+      });
+      downloadBlob(blob, `${filenameSlug(item.subjectName)}-${item.grade.toLowerCase()}-${filenameSlug(item.title)}.docx`);
+      if (status) status.textContent = "Dokumen DOCX berhasil dibuat dari isi portal.";
+    } catch (error) {
+      if (status) status.textContent = `DOCX belum dapat dibuat: ${error.message}`;
+    }
+  }
+
+  function openModule(root, id) {
+    const meta = db.modules.find((item) => item.id === id);
+    const item = content[id];
+    if (!meta || !item) return;
+    const viewer = root.querySelector("[data-mm-viewer]");
+    const library = root.querySelector("[data-mm-library]");
+    if (!viewer || !library) return;
+    viewer.hidden = false;
+    viewer.dataset.mmActive = id;
+    library.hidden = true;
+    const objectives = (item.objectives || []).map((t) => `<li>${escapeHtml(t)}</li>`).join("");
+    const summary = (item.summary || []).map((t) => `<li>${escapeHtml(t)}</li>`).join("");
+    const worksheet = (item.worksheet || []).map((t,i) => `<label class="multi-task-v33"><span>${i+1}</span><div><p>${escapeHtml(t)}</p><textarea rows="3" placeholder="Tuliskan jawabanmu…" data-mm-answer="${i}"></textarea></div></label>`).join("");
+    viewer.innerHTML = `<div class="multi-viewer-head-v33">
+      <button type="button" data-mm-back>← Kembali ke daftar</button>
+      <div><span>${escapeHtml(item.subjectName)} • Kelas ${escapeHtml(item.grade)} • Semester ${escapeHtml(item.semester)}</span><h2>${escapeHtml(item.title)}</h2></div>
+      <div class="multi-viewer-actions-v33"><button type="button" data-mm-docx>Unduh DOCX</button><button type="button" data-mm-print>Cetak / PDF</button></div>
+    </div>
+    <div class="multi-tabs-v33" role="tablist">
+      <button type="button" aria-pressed="true" data-mm-tab="material">Materi Bab</button>
+      <button type="button" aria-pressed="false" data-mm-tab="summary">Ringkasan</button>
+      <button type="button" aria-pressed="false" data-mm-tab="worksheet">LKPD</button>
+      <button type="button" aria-pressed="false" data-mm-tab="source">Rujukan</button>
+    </div>
+    <div data-mm-printable>
+      <article class="multi-document-v33" data-mm-panel="material">
+        ${objectives ? `<section class="multi-objectives-v33"><h3>Tujuan Pembelajaran</h3><ul>${objectives}</ul></section>` : ""}
+        ${item.materialHtml || "<p>Materi sedang disusun.</p>"}
+      </article>
+      <article class="multi-document-v33" data-mm-panel="summary" hidden><h3>Ringkasan Inti</h3><ol class="multi-summary-list-v33">${summary}</ol></article>
+      <article class="multi-document-v33" data-mm-panel="worksheet" hidden><h3>LKPD Interaktif</h3><p>Jawab secara mandiri, lalu simpan pekerjaan pada perangkat.</p><div class="multi-worksheet-v33">${worksheet}</div><button class="multi-save-v33 no-print" type="button" data-mm-save>Simpan jawaban</button><span class="multi-save-status-v33 no-print" data-mm-save-status></span></article>
+      <article class="multi-document-v33" data-mm-panel="source" hidden><h3>Rujukan dan Integritas Konten</h3><p>${escapeHtml(item.note || "")}</p><dl><dt>Dasar materi</dt><dd>${escapeHtml(item.sourceName || "Dokumen perangkat pembelajaran terverifikasi")}</dd><dt>Rujukan kurikulum</dt><dd>Kurikulum Nasional dan buku teks resmi Kementerian Pendidikan Dasar dan Menengah.</dd></dl><p><a class="multi-source-download-v33" href="https://guru.kemendikdasmen.go.id/kurikulum/referensi-penerapan/capaian-pembelajaran/" target="_blank" rel="noopener">Buka Capaian Pembelajaran resmi ↗</a></p></article>
+    </div>`;
+    restoreAnswers(viewer, item.id);
+    viewer.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function bind(root) {
@@ -151,6 +168,10 @@
         viewer.querySelectorAll("[data-mm-panel]").forEach((p)=>p.hidden=p.dataset.mmPanel!==tab.dataset.mmTab); return;
       }
       if (event.target.closest("[data-mm-print]")) { window.print(); return; }
+      if (event.target.closest("[data-mm-docx]")) {
+        const viewer=root.querySelector("[data-mm-viewer]"); const id=viewer?.dataset.mmActive; const item=content[id];
+        if (item) downloadModuleDocx(viewer,item); return;
+      }
       if (event.target.closest("[data-mm-save]")) {
         const viewer=root.querySelector("[data-mm-viewer]"); const id=viewer?.dataset.mmActive;
         if (id) saveAnswers(viewer,id); return;
@@ -161,7 +182,7 @@
   function initRoot(root) {
     const prefix=root.id || `mm-${Math.random().toString(36).slice(2)}`;
     root.innerHTML = `<div data-mm-library>
-      <div class="multi-library-head-v33"><div><span>PORTAL MULTIMAPEL SMP</span><h2>Materi, ringkasan, dan LKPD lintas mata pelajaran</h2><p>Konten dinormalisasi dari ${db.sourceCount} dokumen sumber dan disajikan tanpa nama guru.</p></div><strong>${db.moduleCount}<small>paket terintegrasi</small></strong></div>
+      <div class="multi-library-head-v33"><div><span>PORTAL MULTIMAPEL SMP</span><h2>Materi, ringkasan, latihan, dan LKPD lintas mata pelajaran</h2><p>${db.moduleCount} paket belajar diringkas ke dalam satu basis data ringan tanpa memuat ratusan dokumen terpisah.</p></div><strong>${db.moduleCount}<small>paket terintegrasi</small></strong></div>
       ${filtersHtml(prefix)}
       <div class="multi-count-v33" data-mm-count></div>
       <div class="multi-grid-v33" data-mm-grid></div>
@@ -171,7 +192,6 @@
 
   document.querySelectorAll("[data-multimapel-root]").forEach(initRoot);
 
-  // Ruang Murid: dua perpustakaan dalam satu ruang.
   const paibpLibrary=document.querySelector("#student-library");
   const lessonViewer=document.querySelector("#lesson-viewer");
   const multimapelLibrary=document.querySelector("#student-multimapel-library");

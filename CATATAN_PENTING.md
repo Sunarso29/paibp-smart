@@ -1,62 +1,19 @@
-# Catatan Penting PAIBP SMART SMP
+# Catatan Penting PAIBP SMART SMP v34 Light
 
-## Alur tugas murid
+## Hak cipta dan Literasi Digital
 
-GitHub Pages tidak menyediakan server basis data. Karena itu, tombol **Kirim kepada guru** memakai alur yang menjaga identitas murid:
+Literasi Digital hanya menampilkan metadata, sampul dari sumber daring, pratinjau yang diizinkan, serta tautan baca/unduh pada penyedia resmi. Buku berhak cipta tidak disalin ke repository. Tombol unduh hanya muncul sebagai jalur menuju sumber yang menyatakan buku dapat diakses atau diunduh secara sah.
 
-1. latihan, LKPD, refleksi, dan ringkasan video disimpan sebagai satu pekerjaan per bab pada browser murid;
-2. situs membuat satu berkas Word `.docx` yang dapat dibaca pengguna dan diimpor kembali oleh Ruang Guru;
-3. murid membagikan berkas kepada guru melalui kanal kelas;
-4. guru mengimpor banyak berkas melalui **Ruang Guru → Rekap Pekerjaan Murid**;
-5. rekap, nilai, dan catatan tersimpan pada browser guru dan dapat diunduh sebagai Word atau disimpan sebagai PDF.
+Istilah “katalog global” berarti pencarian federasi ke koleksi besar di berbagai negara dan bahasa, bukan klaim bahwa triliunan file buku disimpan di website.
 
-Jangan mengunggah berkas tugas atau rekap Word yang memuat identitas murid ke repository publik.
+## Statistik
 
-## Perangkat kelas VII, VIII, dan IX
+Statistik Literasi Digital disimpan pada browser pengguna. Angka tersebut merupakan aktivitas pada perangkat itu, bukan angka peminjaman resmi Perpusnas atau penyedia lain. Integrasi statistik lintas perangkat memerlukan backend dan persetujuan kebijakan privasi.
 
-Ruang Guru menampilkan 48 dokumen yang diadopsi dari berkas perangkat terlampir:
+## Keamanan
 
-- CP, ATP, KKTP, Prota, Promes, dan Analisis Alokasi Waktu untuk setiap kelas;
-- 10 modul/bab kelas VII;
-- 10 modul/bab kelas VIII;
-- 10 modul/bab kelas IX.
+GitHub Pages adalah hosting statis. Portal Guru dan Kendali Editor tidak boleh menyimpan data rahasia di kode publik. Rekap nilai, NIP lengkap, identitas murid, kata sandi penting, dan dokumen privat harus ditempatkan pada backend dengan autentikasi server.
 
-Susunan paragraf dan tabel sumber dipertahankan dalam tampilan web. Blok tanda tangan akhir telah dihapus dan bold dibatasi pada judul, subjudul, serta kepala tabel. Setiap dokumen dapat dibaca, dicetak, disimpan sebagai PDF, diekspor dari tampilan web, atau diunduh kembali sebagai berkas sumber `.docx`.
+## Materi multimapel
 
-## Spensus Terkini
-
-Ruang Editor tidak ditautkan pada halaman publik. Pemilik masuk melalui Portal Guru dengan identitas Sunarso, S.Pd.I., Gr. dari SMP Negeri 1 Susukan, kemudian membuka Kendali Pemilik dan memasukkan kata sandi `Alifi@78`. Editor dapat mengubah teks beranda, galeri, balasan, dan status tanggapan. Tanpa integrasi Google Apps Script, perubahan hanya tersimpan pada browser admin. Setelah integrasi diaktifkan, konten, tanggapan, dan data galeri disimpan pada Google Sheet; foto disimpan pada Google Drive.
-
-## Fitur Islami
-
-- Paket situs memuat lengkap 114 Al Qur'an Surat dan 6.236 ayat beserta terjemahan Bahasa Indonesia. Dalil pada setiap materi dapat diklik dan langsung dibaca luring, termasuk pilihan membuka seluruh surat.
-- Teks dan audio murattal pada menu Al Qur'an juga dapat dimuat dari Al Quran Cloud. Audio murattal luring harus disimpan terlebih dahulu ketika internet tersedia.
-- Tombol bacaan luring pada pembaca dalil memakai suara bahasa Arab perangkat. Pastikan paket suara Arab telah terpasang pada pengaturan bahasa/teks-ke-suara telepon atau komputer.
-- Audio doa/dzikir memakai suara bahasa Arab pada perangkat. Situs menunggu daftar suara sampai siap dan memilih suara Arab secara otomatis; ketersediaannya tetap bergantung pada paket suara yang terpasang di sistem.
-- Akademi Bahasa Arab memuat 100 tab pada setiap tingkat Dasar, Menengah, Mahir, dan Percakapan. Setiap tab berisi 100 soal berurutan dengan umpan balik langsung, jeda baca lima detik, perpindahan otomatis, serta penyimpanan sesi dan progres secara luring. Pemutar hanya mengirim karakter Arab ke mesin suara sehingga garis kosong tidak ikut dibaca.
-- Menu Khutbah Jum'at menampilkan 12 judul yang berubah setiap hari dari 24 tema. Sistem menghasilkan lebih dari 1,5 triliun kemungkinan susunan dari komponen editorial terkurasi; angka ini bukan klaim adanya triliunan naskah literal yang disimpan. Setiap naskah perlu diperiksa kembali oleh khatib atau DKM sebelum digunakan.
-- Tajwid Praktis memuat 6 jalur dan 28 materi interaktif. Audio qari perlu diputar atau disimpan sekali ketika daring agar dapat digunakan kembali saat luring. Suara Arab perangkat hanya menjadi cadangan dan tidak menggantikan talaqqi kepada guru Al Qur'an.
-- Kalender Hijriah browser dapat berbeda satu hari dari keputusan resmi pemerintah atau hasil rukyat.
-- Halaman kitab sengaja tidak dicantumkan bila edisi belum terverifikasi karena nomor halaman berbeda antarcetakan.
-
-## Fitur Games
-
-- Tersedia 100 game dalam 10 kelompok dan 15 mekanik; setiap game selalu menjalankan 20 soal.
-- Sambung Ayat memakai ayat pilihan yang mudah dari paket Al Qur'an luring.
-- Urutan soal dan pilihan diacak per sesi. Kombinasi yang mungkin melebihi satu triliun tanpa menyimpan atau mengarang triliunan butir literal.
-- Setelah arena dimulai, pemilihan arena lain, perpindahan ruang, dan tombol keluar dikunci sampai soal ke-20 selesai.
-- Sesi aktif disimpan pada perangkat. Jika halaman tidak sengaja dimuat ulang atau browser ditutup, arena dilanjutkan dari soal terakhir saat situs dibuka kembali.
-- Browser tetap dapat ditutup paksa oleh sistem operasi. Penguncian yang diterapkan adalah penguncian alur situs dan pemulihan sesi, bukan pengambilalihan kendali perangkat.
-
-## Video pembelajaran
-
-Setiap bab memuat dua tautan video penguatan dan kolom ringkasan minimal 500 karakter. Metadata serta ringkasan dapat dibuka luring, tetapi video YouTube tidak boleh disalin atau dimasukkan ke cache situs. Pemutaran luring hanya tersedia melalui fitur resmi YouTube atau setelah pengelola memperoleh berkas video berizin dari pemiliknya.
-
-## Data sekolah
-
-Identitas sekolah mengikuti Data Referensi Kemendikdasmen. Nama dan foto personel mengikuti arsip Yearbook AI 2026 yang dilampirkan. Jabatan tenaga kependidikan selain kepala sekolah perlu diperbarui bila sekolah memiliki pembagian tugas yang lebih rinci.
-
-
-## Catatan keamanan publikasi
-
-GitHub Pages adalah hosting statis. Penguncian Ruang Guru dan Ruang Editor membatasi alur antarmuka dan mencegah pengindeksan, tetapi tidak boleh dipakai untuk menyimpan kata sandi penting, data rahasia, nilai murid, NIP lengkap, atau dokumen pribadi di repository publik. Data sensitif harus ditempatkan pada layanan backend dengan autentikasi server.
+Sebanyak 173 paket multimapel dibundel dalam `multimapel-content.js`. Penghapusan ratusan berkas sumber dari paket publik dilakukan untuk menjaga situs ringan; materi web, ringkasan, LKPD, cetak/PDF, dan DOCX tetap tersedia.

@@ -1,10 +1,13 @@
 PAIBP SMART SMP
-Versi paket: 33.0
+Versi paket: 34.0 Light
 Tanggal paket: 2 Agustus 2026
+Target publikasi: https://sunarso29.github.io/paibp-smart/
 
 Pembaruan utama:
-- logo About Spensus ditampilkan utuh, terang, dan proporsional
-- 385 dokumen perangkat semua mapel diekstrak dan dicatat tanpa kehilangan berkas
-- 173 paket belajar lintas mapel terintegrasi, termasuk Koding dan Kecerdasan Artifisial
-- Ruang Murid memiliki tab PAIBP dan Mapel Selain PAIBP
-- portal multimapel menyediakan materi, ringkasan, LKPD, penyimpanan jawaban, dan unduhan sumber
+- paket diringankan menjadi 97 file dengan ukuran sekitar 29 MB agar dapat diunggah melalui antarmuka web GitHub dalam satu kali unggahan
+- 173 paket multimapel dibundel dalam satu basis data JavaScript ringan; ratusan salinan dokumen dan halaman statis yang berulang tidak lagi disimpan di repository
+- ditambahkan Literasi Digital dengan katalog federasi buku domain publik dan akses terbuka dari sumber resmi dunia
+- katalog menyediakan pencarian, filter bahasa/jenis, pratinjau, baca daring, tautan unduh resmi, dan statistik penggunaan lokal
+- integrasi sumber resmi mencakup iPusnas/Perpusnas, Indonesia OneSearch, Open Library, Project Gutenberg, dan OAPEN
+- seluruh bahan buku tetap berada pada penyedia resmi; repository tidak menyimpan jutaan atau triliunan salinan buku
+- sitemap, robots.txt, metadata, manifest, dan service worker diperbarui

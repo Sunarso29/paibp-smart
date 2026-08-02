@@ -1,4 +1,4 @@
-# Referensi Kurikulum Multimapel v33
+# Referensi Kurikulum Multimapel v34 Light
 
 Paket tahap integrasi ini memakai prinsip berikut:
 

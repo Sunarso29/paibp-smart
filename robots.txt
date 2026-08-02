@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
-
+Disallow: /kendali-editor.html
+Disallow: /akses-guru.html
 Sitemap: https://sunarso29.github.io/paibp-smart/sitemap.xml
