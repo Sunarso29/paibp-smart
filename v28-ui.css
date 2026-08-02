@@ -1,0 +1,277 @@
+/* PAIBP SMART SMP v27 — Gen Alpha visual system */
+:root{
+  --v27-emerald:#044f3d;
+  --v27-emerald-2:#08745b;
+  --v27-lime:#8ddc43;
+  --v27-gold:#ffd45a;
+  --v27-blue:#2e8cff;
+  --v27-purple:#8d54ff;
+  --v27-orange:#ff9f24;
+  --v27-pink:#ef5da8;
+  --v27-ink:#062a24;
+  --v27-panel:#f8fbf6;
+}
+
+/* Logo: thin luminous plate, not a thick badge */
+.brand-v24 .brand-mark,
+.access-panel-head>img,
+.school-identity-card>img{
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(244,255,235,.82));
+  border:1px solid rgba(255,212,90,.72);
+  box-shadow:0 0 0 3px rgba(141,220,67,.10),0 10px 26px rgba(0,0,0,.18);
+}
+.brand-v24 .brand-mark{padding:3px;border-radius:17px;overflow:hidden}
+.brand-v24 .brand-mark img{filter:drop-shadow(0 4px 7px rgba(0,41,32,.22))}
+.access-panel-head>img{padding:4px;border-radius:18px;object-fit:contain}
+
+/* More alive public feature cards */
+.feature-showcase-v25{gap:18px}
+.feature-card-v25{isolation:isolate;border:0;box-shadow:0 18px 46px rgba(5,58,46,.13)}
+.feature-card-v25:before{content:"";position:absolute;inset:auto -50px -70px auto;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.64),rgba(255,255,255,0) 68%);z-index:-1}
+.feature-card-v25-main{background:
+ radial-gradient(circle at 78% 16%,rgba(255,212,90,.30),transparent 22%),
+ radial-gradient(circle at 10% 90%,rgba(141,220,67,.22),transparent 26%),
+ linear-gradient(145deg,#07583f,#002e29 66%,#03221f)}
+.feature-card-v25-islamic{background:
+ radial-gradient(circle at 92% 12%,rgba(255,204,75,.33),transparent 24%),
+ linear-gradient(145deg,#fffaf0,#e6f8eb)}
+.feature-card-v25-game{background:
+ radial-gradient(circle at 88% 14%,rgba(46,140,255,.24),transparent 25%),
+ linear-gradient(145deg,#eef7ff,#f7efff)}
+.feature-icon-v25{border:1px solid rgba(255,255,255,.68);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 12px 28px rgba(9,70,55,.13)}
+
+/* Student workspace becomes an app-like colorful learning environment */
+body[data-portal-mode="active"]{background:#032f29}
+body[data-portal-mode="active"] .workspace-zone{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 9% 7%,rgba(141,220,67,.17),transparent 22%),
+    radial-gradient(circle at 94% 18%,rgba(255,212,90,.18),transparent 20%),
+    linear-gradient(160deg,#032f29 0%,#064b3b 45%,#042b2a 100%);
+}
+body[data-portal-mode="active"] .workspace-zone .workspace-shell{
+  background:rgba(247,251,246,.97);
+  border:1px solid rgba(255,255,255,.24);
+  box-shadow:0 28px 80px rgba(0,20,17,.38);
+}
+.workspace-zone .workspace-header{
+  background:
+    radial-gradient(circle at 80% -20%,rgba(255,212,90,.22),transparent 34%),
+    linear-gradient(135deg,#032f29,#075b47);
+  border:1px solid rgba(255,255,255,.14);
+}
+.workspace-role-nav button{
+  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)!important;
+  transition:.2s ease;
+}
+.workspace-role-nav button:nth-child(1){--nav:#8ddc43}
+.workspace-role-nav button:nth-child(2){--nav:#ffd45a}
+.workspace-role-nav button:nth-child(3){--nav:#4ca4ff}
+.workspace-role-nav button:nth-child(4){--nav:#b98aff}
+.workspace-role-nav button:hover,.workspace-role-nav button.is-active,.workspace-role-nav button[data-ai-open].is-open{
+  color:#fff;background:color-mix(in srgb,var(--nav) 22%,transparent);border-color:color-mix(in srgb,var(--nav) 48%,transparent)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.15)
+}
+.workspace-role-nav button .nav-svg{border-radius:10px;background:color-mix(in srgb,var(--nav) 22%,transparent)}
+.workspace-ai-nav-v27{color:#fff!important}
+.workspace-ai-nav-v27 .nav-svg{background:linear-gradient(145deg,#9c65ff,#6b3ad8)!important;box-shadow:0 0 20px rgba(169,112,255,.38)}
+
+.workspace-zone .workspace-panel{
+  position:relative;
+  background:
+    radial-gradient(circle at 100% 0,rgba(255,212,90,.10),transparent 22%),
+    linear-gradient(180deg,#fbfff9,#f2f8f4);
+}
+.workspace-zone .panel-heading{
+  position:relative;overflow:hidden;color:#fff;
+  background:
+    radial-gradient(circle at 90% 15%,rgba(255,212,90,.35),transparent 24%),
+    linear-gradient(135deg,#075e47,#0a7c5d 58%,#0e9066);
+  border:0;box-shadow:0 18px 40px rgba(4,78,60,.17)
+}
+.workspace-zone .panel-heading:after{content:"";position:absolute;right:-38px;bottom:-70px;width:190px;height:190px;border-radius:52px;border:1px solid rgba(255,255,255,.16);transform:rotate(25deg);box-shadow:0 0 0 24px rgba(255,255,255,.035),0 0 0 50px rgba(255,255,255,.02)}
+.workspace-zone .panel-heading h3,.workspace-zone .panel-heading p,.workspace-zone .panel-kicker{color:#fff}
+.workspace-zone .panel-heading p{opacity:.78}.workspace-zone .panel-heading>*{position:relative;z-index:1}
+.workspace-zone .mini-progress{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(8px)}
+
+/* Visible Spensus AI entry inside Ruang Murid */
+.student-ai-banner-v27{
+  width:100%;display:grid;grid-template-columns:62px 1fr auto;gap:16px;align-items:center;
+  margin:0 0 18px;padding:16px 18px;border:0;border-radius:22px;text-align:left;color:#fff;cursor:pointer;
+  background:
+    radial-gradient(circle at 90% 20%,rgba(255,212,90,.28),transparent 24%),
+    linear-gradient(135deg,#4e2ca8,#7f43db 52%,#9e5cfa);
+  box-shadow:0 18px 40px rgba(83,44,167,.26);overflow:hidden;position:relative
+}
+.student-ai-banner-v27:after{content:"";position:absolute;right:70px;top:-45px;width:150px;height:150px;border-radius:50%;border:1px solid rgba(255,255,255,.16);box-shadow:0 0 0 25px rgba(255,255,255,.035)}
+.student-ai-banner-v27>span,.student-ai-banner-v27>div,.student-ai-banner-v27>b{position:relative;z-index:1}
+.student-ai-banner-v27>span{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(145deg,#fff5b5,#ffd45a);color:#5d38a7;font-size:24px;font-weight:950;box-shadow:0 10px 24px rgba(0,0,0,.2)}
+.student-ai-banner-v27 strong{display:block;font-size:18px}.student-ai-banner-v27 small{display:block;margin-top:4px;color:rgba(255,255,255,.76)}
+.student-ai-banner-v27 b{padding:10px 14px;border-radius:13px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);font-size:11px}
+
+/* Filters and chapter folders */
+.filter-card{background:linear-gradient(145deg,#fff,#eef9f1);border:1px solid #d6e9df;box-shadow:0 13px 32px rgba(5,70,54,.08)}
+.segmented{background:#e8f2ed;padding:4px;border-radius:14px}.segmented button{border-radius:11px}
+.segmented button[aria-pressed="true"]{background:linear-gradient(145deg,#08745b,#044f3d);color:#fff;box-shadow:0 7px 17px rgba(4,79,61,.22)}
+.rich-chapter-list{gap:16px}
+.chapter-package{
+  --accent:#0e8f68;--accent2:#7fd241;--tint:#effaf2;
+  position:relative;isolation:isolate;overflow:hidden;border:0!important;
+  background:linear-gradient(145deg,#fff 12%,var(--tint));
+  box-shadow:0 14px 34px rgba(5,60,48,.11)!important;
+  border-radius:24px!important;padding:20px!important;
+}
+.chapter-package:nth-child(4n+2){--accent:#277ed6;--accent2:#62b7ff;--tint:#eef7ff}
+.chapter-package:nth-child(4n+3){--accent:#8b4ed8;--accent2:#c389ff;--tint:#f6efff}
+.chapter-package:nth-child(4n){--accent:#d77b10;--accent2:#ffc845;--tint:#fff7e7}
+.chapter-package:before{content:"";position:absolute;right:-48px;top:-58px;width:155px;height:155px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent2) 30%,transparent),transparent 70%);z-index:-1}
+.chapter-package:after{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(var(--accent2),var(--accent))}
+.chapter-number{width:48px!important;height:48px!important;border-radius:16px!important;background:linear-gradient(145deg,var(--accent2),var(--accent))!important;color:#fff!important;box-shadow:0 10px 22px color-mix(in srgb,var(--accent) 30%,transparent)}
+.chapter-element{color:var(--accent)!important}.completion-mark{background:color-mix(in srgb,var(--accent2) 15%,white)!important;color:var(--accent)!important;border:1px solid color-mix(in srgb,var(--accent2) 35%,white)}
+.chapter-package-actions button{border:0!important;border-radius:13px!important;background:color-mix(in srgb,var(--accent) 9%,white)!important;color:var(--accent)!important;font-weight:850!important}
+.chapter-package-actions button:first-child{background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 75%,#001f18))!important;color:#fff!important;box-shadow:0 8px 18px color-mix(in srgb,var(--accent) 22%,transparent)}
+
+/* Islamic menus: no more plain white folders */
+.islamic-app-layout{gap:18px}
+.islamic-menu{background:linear-gradient(180deg,#073f34,#042f2b);border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 40px rgba(3,52,43,.18);padding:12px}
+.islamic-menu button{position:relative;color:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.055);padding:13px 12px;transition:.2s ease}
+.islamic-menu button:nth-child(3n+1){--mi:#8ddc43}.islamic-menu button:nth-child(3n+2){--mi:#ffd45a}.islamic-menu button:nth-child(3n){--mi:#64adff}
+.islamic-menu button:hover,.islamic-menu button[aria-pressed="true"]{color:#fff;background:color-mix(in srgb,var(--mi) 22%,rgba(255,255,255,.04));border-color:color-mix(in srgb,var(--mi) 44%,transparent);transform:translateX(3px);box-shadow:0 9px 22px rgba(0,0,0,.15)}
+.islamic-menu button[aria-pressed="true"]:after{content:"";position:absolute;right:9px;width:7px;height:7px;border-radius:50%;background:var(--mi);box-shadow:0 0 13px var(--mi)}
+.islamic-content{background:
+ radial-gradient(circle at 95% 4%,rgba(255,212,90,.16),transparent 22%),
+ radial-gradient(circle at 3% 95%,rgba(141,220,67,.11),transparent 24%),
+ linear-gradient(180deg,#fbfff9,#f2f8f4);border:1px solid #d7e7df;box-shadow:0 18px 42px rgba(5,64,50,.09)}
+.date-card,.prayer-block,.dua-card,.ayah-card,.arabic-summary-card,.tajwid-module-card{box-shadow:0 10px 24px rgba(5,61,48,.075);border-color:#dbe9e3!important}
+.date-card:nth-child(1){background:linear-gradient(145deg,#ecfae7,#fff)}.date-card:nth-child(2){background:linear-gradient(145deg,#eef6ff,#fff)}.date-card:nth-child(3){background:linear-gradient(145deg,#fff7dc,#fff)}
+.prayer-grid>div:nth-child(odd){background:linear-gradient(145deg,#e8f9ee,#fff)}.prayer-grid>div:nth-child(even){background:linear-gradient(145deg,#fff5d9,#fff)}
+
+/* Game folders */
+.game-mode-grid{gap:13px}
+.game-mode-grid button{position:relative;overflow:hidden;border:0;border-radius:20px;padding:16px;background:linear-gradient(145deg,#fff,#eef9f3);box-shadow:0 12px 28px rgba(5,58,46,.10);transition:.2s ease}
+.game-mode-grid button:nth-child(4n+2){background:linear-gradient(145deg,#eef7ff,#fff)}
+.game-mode-grid button:nth-child(4n+3){background:linear-gradient(145deg,#f6efff,#fff)}
+.game-mode-grid button:nth-child(4n){background:linear-gradient(145deg,#fff6df,#fff)}
+.game-mode-grid button:hover{transform:translateY(-4px);box-shadow:0 18px 36px rgba(4,60,49,.16)}
+.game-mode-grid button>span{width:48px;height:48px;border-radius:16px;box-shadow:0 8px 18px rgba(4,55,44,.12)}
+.game-mode-grid button.is-active{background:linear-gradient(145deg,#075c47,#04352f);color:#fff;box-shadow:0 18px 40px rgba(4,69,55,.25)}
+.game-mode-grid button.is-active small,.game-mode-grid button.is-active .game-mode-record{color:rgba(255,255,255,.72)}
+
+/* Main Spensus AI is unmistakable */
+.spensus-ai-v26{border-radius:30px;background:
+ radial-gradient(circle at 82% 8%,rgba(255,212,90,.28),transparent 20%),
+ radial-gradient(circle at 8% 92%,rgba(141,220,67,.22),transparent 24%),
+ linear-gradient(135deg,#2e196f 0%,#6531bc 47%,#075c47 100%);box-shadow:0 26px 68px rgba(46,25,111,.24)}
+.ai-logo-v26{background:linear-gradient(145deg,#fff8c7,#ffd45a);color:#6d3fc1!important;box-shadow:0 12px 32px rgba(0,0,0,.22)}
+.ai-chat-card-v26{border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 45px rgba(0,0,0,.17)}
+
+/* Smaller visitor voice block */
+.feedback-card-compact-v26{padding:14px 16px!important;border-radius:20px!important;box-shadow:0 12px 30px rgba(4,60,49,.08)!important}
+.feedback-card-compact-v26 .feedback-card-heading{align-items:center}
+.feedback-card-compact-v26 .feedback-card-heading h2{font-size:22px!important;margin:2px 0!important}
+.feedback-card-compact-v26 .feedback-card-heading p{font-size:10px!important;margin:0}
+.feedback-card-compact-v26 .feedback-layout-v24{grid-template-columns:minmax(0,1.45fr) minmax(200px,.55fr)!important;gap:10px!important;margin-top:10px!important}
+.feedback-card-compact-v26 .feedback-form-v24,.feedback-card-compact-v26 .public-feedback-v24{padding:11px!important;border-radius:15px!important}
+.feedback-card-compact-v26 .feedback-form-row{grid-template-columns:1.35fr .8fr .8fr!important;gap:7px!important}
+.feedback-card-compact-v26 label{font-size:8px!important;gap:3px}
+.feedback-card-compact-v26 input,.feedback-card-compact-v26 select,.feedback-card-compact-v26 textarea{padding:8px 9px!important;font-size:9px!important;border-radius:10px!important}
+.feedback-card-compact-v26 textarea{min-height:52px!important;max-height:70px!important}
+.feedback-card-compact-v26 .cta{padding:8px 14px!important;width:auto!important;min-width:150px;font-size:10px}
+.feedback-card-compact-v26 .public-feedback-v24{max-height:175px!important;min-height:150px!important;background:linear-gradient(145deg,#073f34,#075e48)}
+.feedback-card-compact-v26 .public-feedback-v24 h3{font-size:14px!important;margin-bottom:7px!important}
+.feedback-card-compact-v26 .feedback-orbit{width:34px!important;height:34px!important;border-radius:11px!important;font-size:14px!important}
+
+/* Floating AI menu for active student area */
+.spensus-ai-launcher-v27{
+  position:fixed;right:22px;bottom:22px;z-index:90;display:none;align-items:center;gap:10px;
+  border:1px solid rgba(255,255,255,.24);border-radius:22px;padding:9px 13px 9px 9px;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,#5b2db4,#8b4ee8 58%,#08745b);box-shadow:0 18px 45px rgba(42,18,92,.38)
+}
+body[data-portal-mode="active"] .spensus-ai-launcher-v27{display:flex}
+.spensus-ai-launcher-v27>span{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,#fff8bf,#ffd45a);color:#693ab5;font-weight:950;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.spensus-ai-launcher-v27 strong,.spensus-ai-launcher-v27 small{display:block;text-align:left}.spensus-ai-launcher-v27 strong{font-size:11px}.spensus-ai-launcher-v27 small{font-size:8px;color:rgba(255,255,255,.72)}
+.spensus-ai-drawer-v27[hidden]{display:none}.spensus-ai-drawer-v27{position:fixed;inset:0;z-index:120;display:grid;grid-template-columns:1fr minmax(320px,460px)}
+.ai-drawer-backdrop-v27{background:rgba(0,22,18,.58);backdrop-filter:blur(5px)}
+.ai-drawer-panel-v27{background:
+ radial-gradient(circle at 84% 7%,rgba(255,212,90,.26),transparent 22%),
+ linear-gradient(165deg,#3f208d,#6c35c2 42%,#075c47 100%);color:#fff;padding:18px;box-shadow:-24px 0 60px rgba(0,0,0,.28);display:grid;grid-template-rows:auto 1fr auto auto;min-height:0}
+.ai-drawer-head-v27{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px}
+.ai-drawer-brand-v27{display:flex;align-items:center;gap:11px}.ai-drawer-brand-v27>span{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(145deg,#fff7bd,#ffd45a);color:#6534b5;font-weight:950}.ai-drawer-brand-v27 strong,.ai-drawer-brand-v27 small{display:block}.ai-drawer-brand-v27 small{color:rgba(255,255,255,.72);font-size:9px}
+.ai-drawer-close-v27{width:38px;height:38px;border-radius:13px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);color:#fff;font-size:20px;cursor:pointer}
+.ai-drawer-messages-v27{min-height:0;overflow:auto;border-radius:20px;padding:13px;background:rgba(2,31,27,.36);border:1px solid rgba(255,255,255,.12)}
+.ai-drawer-quick-v27{display:flex;gap:6px;overflow-x:auto;padding:10px 0}.ai-drawer-quick-v27 button{flex:0 0 auto;border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:7px 10px;background:rgba(255,255,255,.09);color:#fff;font-size:9px;cursor:pointer}
+.ai-drawer-form-v27{display:grid;grid-template-columns:1fr 42px;gap:8px;background:#fff;border-radius:17px;padding:7px}.ai-drawer-form-v27 textarea{border:0;resize:none;outline:0;padding:8px;background:transparent;font:11px/1.5 Cambria,Georgia,serif}.ai-drawer-form-v27 button{border:0;border-radius:13px;background:linear-gradient(145deg,#ffd45a,#ffb92d);font-weight:950;cursor:pointer}
+.ai-drawer-panel-v27 .ai-message-v26{max-width:92%}.ai-drawer-panel-v27 .ai-message-v26.user{margin-left:auto}.ai-drawer-panel-v27 .ai-message-bubble{font-size:11px}
+
+/* Hard separation of private spaces */
+body:not([data-private-gateway="guru"]) #panel-teacher,
+body:not([data-private-gateway="editor"]) #panel-editor{display:none!important}
+body[data-portal-role="murid"] [data-role-access~="guru"],body[data-portal-role="murid"] [data-role-access~="editor"]{display:none!important}
+
+@media(max-width:900px){
+  .feedback-card-compact-v26 .feedback-layout-v24{grid-template-columns:1fr!important}
+  .feedback-card-compact-v26 .public-feedback-v24{min-height:100px!important;max-height:135px!important}
+}
+@media(max-width:620px){
+  .student-ai-banner-v27{grid-template-columns:50px 1fr;padding:14px}.student-ai-banner-v27>span{width:48px;height:48px;border-radius:15px}.student-ai-banner-v27 b{display:none}
+  .feedback-card-compact-v26{padding:12px!important}.feedback-card-compact-v26 .feedback-form-row{grid-template-columns:1fr 1fr!important}.feedback-card-compact-v26 .feedback-form-row label:first-child{grid-column:1/-1}.feedback-card-compact-v26 .feedback-card-heading p{display:none}.feedback-card-compact-v26 .public-feedback-v24{min-height:90px!important}
+  .spensus-ai-drawer-v27{grid-template-columns:1fr}.ai-drawer-backdrop-v27{display:none}.ai-drawer-panel-v27{width:100%;height:100dvh;padding:14px}
+  .spensus-ai-launcher-v27{right:12px;bottom:12px;border-radius:18px}.spensus-ai-launcher-v27 small{display:none}
+  .islamic-menu{background:linear-gradient(90deg,#073f34,#075e48)!important;border-radius:16px!important;padding:7px!important}.islamic-menu button:hover,.islamic-menu button[aria-pressed="true"]{transform:none}
+  .chapter-package{padding:17px!important}.chapter-package-top{grid-template-columns:auto 1fr!important}.completion-mark{grid-column:2;justify-self:start}
+}
+
+
+/* PAIBP SMART SMP v28 — visibility, liveliness, and stricter gateway separation */
+.links-v24 .nav-ai-v28{
+  border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:10px 14px;color:#fff;
+  background:linear-gradient(135deg,#6b35c4,#8e51ea 58%,#08745b);font:800 12px Cambria,Georgia,serif;
+  box-shadow:0 9px 24px rgba(62,30,128,.28);cursor:pointer
+}
+.links-v24 .nav-ai-v28:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(62,30,128,.35)}
+
+/* More dimensional access tiles inspired by Gen Alpha mobile UI */
+.access-grid-v25{gap:12px}
+.access-tile{--tile1:#0d815e;--tile2:#044a3b;position:relative;overflow:hidden;color:#fff!important;border:1px solid rgba(255,255,255,.18)!important;background:
+ radial-gradient(circle at 88% 12%,rgba(255,225,111,.32),transparent 23%),
+ linear-gradient(145deg,var(--tile1),var(--tile2))!important;box-shadow:0 14px 28px rgba(0,42,34,.22)!important}
+.access-tile:nth-child(2){--tile1:#168d81;--tile2:#075057}.access-tile:nth-child(3){--tile1:#287bd3;--tile2:#114b91}.access-tile:nth-child(4){--tile1:#d88613;--tile2:#8b4e00}
+.access-tile:after{content:"";position:absolute;right:-35px;bottom:-55px;width:130px;height:130px;border-radius:42px;border:1px solid rgba(255,255,255,.17);transform:rotate(28deg);box-shadow:0 0 0 20px rgba(255,255,255,.035)}
+.access-tile>*{position:relative;z-index:1}.access-tile small{color:rgba(255,255,255,.72)!important}.access-tile b{color:rgba(255,255,255,.48)!important}
+.access-icon{background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,241,179,.9))!important;color:var(--tile2)!important;box-shadow:0 9px 20px rgba(0,0,0,.2)!important}
+
+/* AI launcher is visible on the public landing page and in Ruang Murid */
+.spensus-ai-launcher-v27{display:flex}
+body[data-private-gateway="guru"] .spensus-ai-launcher-v27,
+body[data-private-gateway="editor"] .spensus-ai-launcher-v27{display:none!important}
+
+/* Visitor feedback is intentionally compact and secondary */
+.feedback-card-compact-v26{max-width:760px;margin:18px auto 0!important;padding:11px 13px!important;border-radius:17px!important}
+.feedback-card-compact-v26 .feedback-card-heading h2{font-size:18px!important}
+.feedback-card-compact-v26 .feedback-card-heading p{font-size:9px!important}
+.feedback-card-compact-v26 .feedback-layout-v24{grid-template-columns:minmax(0,1.6fr) minmax(180px,.55fr)!important;gap:8px!important;margin-top:8px!important}
+.feedback-card-compact-v26 .feedback-form-v24,.feedback-card-compact-v26 .public-feedback-v24{padding:9px!important}
+.feedback-card-compact-v26 input,.feedback-card-compact-v26 select,.feedback-card-compact-v26 textarea{padding:7px 8px!important;font-size:10px!important}
+.feedback-card-compact-v26 textarea{min-height:45px!important;max-height:58px!important}
+.feedback-card-compact-v26 .public-feedback-v24{min-height:115px!important;max-height:138px!important}
+.feedback-card-compact-v26 .cta{padding:7px 12px!important;min-width:132px!important;font-size:9px!important}
+
+/* Thin luminous plate makes the official logo readable without a thick frame */
+.brand-v24 .brand-mark{background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(232,255,231,.88));border-color:rgba(255,214,83,.78);box-shadow:0 0 0 2px rgba(141,220,67,.11),0 8px 20px rgba(0,0,0,.2),inset 0 1px 0 #fff}
+.brand-v24 .brand-mark img{transform:scale(.93);filter:drop-shadow(0 3px 5px rgba(0,44,35,.28))}
+
+/* Focused private gateways */
+.private-gateway-badge-v28{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 12px;background:rgba(255,212,90,.16);border:1px solid rgba(255,212,90,.4);color:#ffe27d;font-weight:900;font-size:10px;letter-spacing:.08em}
+body[data-private-gateway="guru"] [data-home-only],body[data-private-gateway="editor"] [data-home-only],
+body[data-private-gateway="guru"] .hero-v25,body[data-private-gateway="editor"] .hero-v25,
+body[data-private-gateway="guru"] .home-dashboard-v24,body[data-private-gateway="editor"] .home-dashboard-v24,
+body[data-private-gateway="guru"] .smart-ticker,body[data-private-gateway="editor"] .smart-ticker,
+body[data-private-gateway="guru"] .developer-signature,body[data-private-gateway="editor"] .developer-signature{display:none!important}
+body[data-private-gateway="guru"] .workspace-zone,body[data-private-gateway="editor"] .workspace-zone{padding-top:28px;min-height:calc(100vh - 76px)}
+body[data-private-gateway="guru"] .footer-v24,body[data-private-gateway="editor"] .footer-v24{display:none}
+body[data-private-gateway="guru"] .topbar-v24,body[data-private-gateway="editor"] .topbar-v24{position:sticky;top:0}
+
+@media(max-width:860px){
+  .links-v24 .nav-ai-v28{width:100%;text-align:left;margin-top:6px}
+  .feedback-card-compact-v26{max-width:none;margin-top:12px!important}
+}

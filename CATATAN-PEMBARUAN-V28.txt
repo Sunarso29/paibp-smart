@@ -1,0 +1,9 @@
+PAIBP SMART SMP v28
+
+1. Spensus AI dibuat selalu terlihat melalui tab header, banner Ruang Murid, seksi utama, dan tombol mengambang.
+2. Suara Pengunjung diperkecil agar tidak mendominasi halaman.
+3. Logo Spensus memakai latar tipis dan cahaya lembut.
+4. Kartu akses, folder materi, Fitur Islami, dan Game diberi warna, pola, bayangan, serta kedalaman visual yang lebih hidup.
+5. Ruang Guru dan Editor dipisahkan secara fisik dari HTML publik.
+6. Guru membuka akses-guru.html; editor membuka kendali-editor.html. Kedua alamat tidak ditampilkan di navigasi publik.
+7. Untuk pengamanan server-level pada GitHub Pages statis tetap diperlukan layanan autentikasi/backend eksternal.

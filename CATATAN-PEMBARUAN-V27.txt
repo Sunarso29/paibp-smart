@@ -1,0 +1,8 @@
+PAIBP SMART SMP v27
+
+- Spensus AI kini muncul jelas di Ruang Murid melalui tombol navigasi, banner, dan tombol mengambang.
+- Komponen Suara Pengunjung diperkecil agar tidak mendominasi halaman.
+- Logo Spensus diberi latar tipis dan cahaya lembut agar lebih hidup tanpa bingkai tebal.
+- Folder materi, Fitur Islami, dan Game Edukasi menggunakan sistem warna, kedalaman, pola, dan kartu visual Gen Alpha.
+- Ruang Guru dan Editor dibuang dari DOM publik; hanya gateway privat yang memuat ruang masing-masing.
+- Cache PWA dinaikkan ke v27.

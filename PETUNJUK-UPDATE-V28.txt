@@ -1,0 +1,4 @@
+Unggah seluruh isi patch ke root repository paibp-smart dan timpa file lama.
+Setelah GitHub Pages selesai membangun, lakukan Ctrl+F5 atau hapus cache situs.
+Akses guru: /paibp-smart/akses-guru.html
+Akses editor: /paibp-smart/kendali-editor.html

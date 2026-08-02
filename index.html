@@ -23,10 +23,9 @@
 <link href="logo-spensus.png" rel="icon" type="image/png"/>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link as="image" href="gerbang.jpg" rel="preload"/>
-<link href="styles.css?v=26" rel="stylesheet"/>
-
+<link href="styles.css?v=28" rel="stylesheet"/><link href="v28-ui.css?v=28" rel="stylesheet"/>
 <!-- Ruang Guru dan Editor dipisahkan dari navigasi publik. Gunakan gateway privat yang tidak ditautkan pada halaman publik. --></head>
-<body data-portal-mode="home" data-portal-role="umum">
+<body data-portal-mode="home" data-portal-role="umum" data-private-gateway="public">
 <a class="skip" href="#main">Lewati ke konten</a>
 <header class="topbar topbar-v24">
 <div class="container nav">
@@ -37,7 +36,7 @@
 <button aria-controls="primary-navigation" aria-expanded="false" aria-label="Buka menu" class="menu-btn" type="button">☰</button>
 <nav aria-label="Navigasi utama" class="links links-v24" id="primary-navigation">
 <a aria-current="page" class="active" href="index.html">Beranda</a>
-<a href="fitur.html">Menu Fitur</a>
+<a href="fitur.html">Menu Fitur</a><button aria-label="Buka Spensus AI" class="nav-ai-v28" data-ai-open="" type="button">✦ Spensus AI</button>
 <a href="tenaga-pendidik.html">Tenaga Pendidik</a>
 <a href="tenaga-kependidikan.html">Tenaga Kependidikan</a>
 </nav>
@@ -119,9 +118,7 @@
 <span aria-hidden="true" class="nav-svg"><svg viewbox="0 0 24 24"><path d="M7 7h10a5 5 0 0 1 4.8 6.4l-1.1 3.7a2.6 2.6 0 0 1-4.4 1l-1.5-1.6H9.2l-1.5 1.6a2.6 2.6 0 0 1-4.4-1l-1.1-3.7A5 5 0 0 1 7 7Zm0 4v2H5v2h2v2h2v-2h2v-2H9v-2H7Zm9.5 1.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm3-2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z"></path></svg></span>
 <span>Game</span>
 </button>
-
-
-</nav>
+<button aria-label="Buka Spensus AI" class="workspace-ai-nav-v27" data-ai-open="" data-role-access="murid,guru" type="button"><span aria-hidden="true" class="nav-svg"><svg viewbox="0 0 24 24"><path d="M12 2 14.7 8.3 21 11l-6.3 2.7L12 20l-2.7-6.3L3 11l6.3-2.7L12 2Zm7 0 1 2.3L22.3 5 20 6l-1 2.3L18 6l-2.3-1L18 4.3 19 2Z"></path></svg></span><span>Spensus AI</span></button></nav>
 <button aria-label="Kembali ke beranda" class="workspace-close" data-close-workspace="" type="button">×</button>
 </div>
 <section class="workspace-panel welcome-panel" data-panel="welcome" id="panel-welcome">
@@ -129,19 +126,17 @@
 <div>
 <span aria-hidden="true" class="welcome-icon">📚</span>
 <h3>Lima ruang dalam satu ekosistem pembelajaran</h3>
-<p>Akses materi, latihan, LKPD, perangkat guru, layanan Islami, game edukatif, dan kendali editor dalam satu portal yang terintegrasi.</p>
+<p>Akses materi, latihan, LKPD, layanan Islami, game edukatif, dan Spensus AI dalam satu portal murid yang aman.</p>
 </div>
 <div class="welcome-actions">
 <button aria-controls="panel-student" class="cta" data-open-panel="student" type="button">Buka Ruang Murid</button>
-
-
 </div>
 </div>
 <div class="portal-metrics">
 <article><strong>30</strong><span>Paket pembelajaran</span></article>
 <article><strong>30</strong><span>Latihan interaktif</span></article>
 <article><strong>30</strong><span>LKPD siap cetak</span></article>
-<article><strong>7</strong><span>Perangkat guru</span></article>
+<article><strong>AI</strong><span>Asisten belajar</span></article>
 </div>
 </section>
 <section class="workspace-panel" data-panel="student" hidden="" id="panel-student">
@@ -152,7 +147,7 @@
 <p>Setiap bab diolah dari modul terlampir menjadi materi, ringkasan, latihan, LKPD interaktif, dan berkas tugas yang dapat dikirim kepada guru.</p>
 </div>
 <div class="mini-progress"><strong id="material-completed">0/30</strong><span>bab selesai</span></div>
-</div>
+</div><button class="student-ai-banner-v27" data-ai-open="" type="button"><span aria-hidden="true">✦</span><div><strong>Spensus AI — Asisten Belajar Pribadi</strong><small>Cari materi, buat rencana belajar, dan minta latihan dari isi portal.</small></div><b>Buka Asisten →</b></button>
 <div id="student-library">
 <div class="filter-card">
 <div aria-label="Filter kelas" class="filter-row" role="group">
@@ -219,46 +214,7 @@
 <div class="lesson-content printable-document" id="lesson-content"></div>
 </article>
 </section>
-<section class="workspace-panel" data-panel="teacher" hidden="" id="panel-teacher">
-<div class="panel-heading">
-<div>
-<span class="panel-kicker">🧑‍🏫 Ruang Guru</span>
-<h3>Perangkat Pembelajaran PAIBP Fase D</h3>
-<p>Dokumen kerja Tahun Ajaran 2026/2027 yang dapat disaring per kelas, dicetak, disimpan sebagai PDF, dan diunduh.</p>
-</div>
-<span class="live-badge">Tahun Ajaran 2026/2027</span>
-</div>
-<div class="teacher-controls">
-<div class="filter-row">
-<span class="filter-label">Kelas</span>
-<div class="segmented" id="teacher-grade-filter">
-<button aria-pressed="false" data-teacher-grade="VII" type="button">VII</button>
-<button aria-pressed="true" data-teacher-grade="VIII" type="button">VIII</button>
-<button aria-pressed="false" data-teacher-grade="IX" type="button">IX</button>
-</div>
-</div>
-<div class="teacher-toolbar">
-<button class="btn btn-compact" id="print-teacher-document" type="button">Cetak / Simpan PDF</button>
-<button class="btn btn-compact" id="download-teacher-document" type="button">Unduh Dokumen</button>
-<button class="btn btn-compact teacher-lock-button" id="lock-teacher-room" type="button">Ganti identitas guru</button>
-</div>
-</div>
-<div class="teacher-layout">
-<nav aria-label="Jenis perangkat guru" class="teacher-doc-menu">
-<button aria-pressed="true" data-teacher-doc="cp" type="button"><span>📘</span> CP Terbaru</button>
-<button aria-pressed="false" data-teacher-doc="kktp" type="button"><span>✅</span> KKTP</button>
-<button aria-pressed="false" data-teacher-doc="atp" type="button"><span>🧭</span> ATP</button>
-<button aria-pressed="false" data-teacher-doc="prota" type="button"><span>🗓️</span> Prota</button>
-<button aria-pressed="false" data-teacher-doc="promes" type="button"><span>📅</span> Promes</button>
-<button aria-pressed="false" data-teacher-doc="calendar" type="button"><span>🏫</span> Kalender Pendidikan</button>
-<button aria-pressed="false" data-teacher-doc="effective" type="button"><span>🧮</span> Analisis Hari Efektif</button>
-<button aria-pressed="false" data-teacher-doc="module" type="button"><span>📚</span> Modul Ajar Lengkap</button>
-<button aria-pressed="false" data-teacher-doc="access" type="button"><span>📊</span> Rekap Akses Murid</button>
-<button aria-pressed="false" data-teacher-doc="submissions" type="button"><span>📥</span> Rekap Pekerjaan Murid</button>
-</nav>
-<article aria-live="polite" class="teacher-document printable-document" id="teacher-document"></article>
-</div>
-</section>
+
 <section class="workspace-panel" data-panel="islamic" hidden="" id="panel-islamic">
 <div class="panel-heading">
 <div>
@@ -523,52 +479,7 @@
 </div>
 <div class="badge-grid" id="badge-grid"></div>
 </section>
-<section class="workspace-panel" data-panel="editor" hidden="" id="panel-editor">
-<div class="panel-heading">
-<div>
-<span class="panel-kicker">✍️ Ruang Editor</span>
-<h3>Kendali Konten dan Tanggapan</h3>
-<p>Kelola teks beranda, dokumentasi Spensus, statistik, komentar, rating, dan balasan editor.</p>
-</div>
-<button class="btn btn-compact" id="lock-editor-room" type="button">Keluar dari editor</button>
-</div>
-<div class="editor-stat-grid">
-<article><span>Total akses non-admin</span><strong id="editor-total-visits">0</strong></article>
-<article><span>Guru</span><strong id="editor-teacher-visits">0</strong></article>
-<article><span>Murid</span><strong id="editor-student-visits">0</strong></article>
-<article><span>Tanggapan</span><strong id="editor-feedback-count">0</strong></article>
-</div>
-<div class="editor-layout">
-<section class="editor-card">
-<h4>Sunting teks utama beranda</h4>
-<form id="homepage-editor-form">
-<label>Judul utama<input id="editor-hero-title" maxlength="100" required=""/></label>
-<label>Deskripsi utama<textarea id="editor-hero-copy" maxlength="500" required="" rows="4"></textarea></label>
-<div class="actions">
-<button class="cta" type="submit">Terapkan perubahan</button>
-<button class="btn" id="reset-homepage-copy" type="button">Kembalikan bawaan</button>
-</div>
-<p aria-live="polite" class="save-status" id="homepage-editor-status"></p>
-</form>
-</section>
-<section class="editor-card">
-<h4>Spensus Terkini</h4>
-<p>Tambah foto kegiatan, ubah judul, tanggal, ringkasan, atau hapus dokumentasi.</p>
-<button class="btn" id="editor-open-gallery" type="button">Buka Editor Galeri</button>
-</section>
-</div>
-<section class="editor-card">
-<div class="subheading-row">
-<div><h4>Kunjungan guru terbaru</h4><p>Nama, unit kerja, NIP bila diisi, waktu, dan aktivitas akses.</p></div>
-<button class="btn btn-compact" id="editor-refresh-data" type="button">Muat ulang</button>
-</div>
-<div class="table-scroll"><table class="data-table"><thead><tr><th>Waktu</th><th>Nama</th><th>Unit kerja</th><th>NIP</th><th>Aktivitas</th></tr></thead><tbody id="editor-teacher-access"><tr><td colspan="5">Belum ada data guru.</td></tr></tbody></table></div>
-</section>
-<section class="editor-card">
-<div class="subheading-row"><div><h4>Moderasi tanggapan</h4><p>Balas, tampilkan, sembunyikan, atau hapus komentar dan rating.</p></div></div>
-<div id="editor-feedback-list"></div>
-</section>
-</section>
+
 </div>
 </div>
 </section>
@@ -600,8 +511,7 @@
 <span class="feature-arrow">→</span>
 </button>
 </div>
-
-<section aria-labelledby="spensus-ai-title" class="spensus-ai-v26" id="spensus-ai">
+<section aria-labelledby="spensus-ai-title" class="spensus-ai-v26 spensus-ai-instance" id="spensus-ai">
 <div aria-hidden="true" class="ai-ambient ai-ambient-one"></div>
 <div aria-hidden="true" class="ai-ambient ai-ambient-two"></div>
 <header class="ai-header-v26">
@@ -609,7 +519,7 @@
 <span aria-hidden="true" class="ai-logo-v26">
 <svg viewbox="0 0 64 64"><path d="M32 4 38.8 20.2 56 24l-13 11.3L46.8 52 32 43.5 17.2 52 21 35.3 8 24l17.2-3.8L32 4Z"></path><circle cx="32" cy="31" r="8"></circle></svg>
 </span>
-<div><span class="ai-kicker-v26"><i></i> SPENSUS AI • ASISTEN PENDIDIKAN</span><h2 id="spensus-ai-title">Belajar lebih terarah bersama asisten cerdas</h2><p>Tanyakan materi PAIBP, temukan bab, susun rencana belajar, cari fitur, atau minta latihan singkat. Jawaban dasar tersedia secara luring dari isi portal.</p></div>
+<div><span class="ai-kicker-v26"><i></i> SPENSUS AI • ASISTEN PENDIDIKAN</span><h2 id="spensus-ai-title">Spensus AI Premium: asisten belajar yang selalu siap</h2><p>Tanyakan materi PAIBP, temukan bab, susun rencana belajar, cari fitur, atau minta latihan singkat. Jawaban dasar tersedia secara luring dari isi portal.</p></div>
 </div>
 <div class="ai-status-v26"><span class="ai-status-dot"></span><strong>Siap membantu</strong><small id="spensus-ai-mode">Mode luring aktif</small></div>
 </header>
@@ -617,18 +527,18 @@
 <div class="ai-chat-card-v26">
 <div class="ai-chat-toolbar-v26">
 <div><span class="ai-avatar-mini">AI</span><p><strong>Spensus Assistant</strong><small>Asisten belajar pribadi</small></p></div>
-<button aria-label="Mulai percakapan baru" id="spensus-ai-reset" type="button">Percakapan baru</button>
+<button aria-label="Mulai percakapan baru" data-ai-reset="" id="spensus-ai-reset" type="button">Percakapan baru</button>
 </div>
-<div aria-live="polite" class="ai-messages-v26" id="spensus-ai-messages"></div>
+<div aria-live="polite" class="ai-messages-v26" data-ai-messages="" id="spensus-ai-messages"></div>
 <div aria-label="Pertanyaan cepat" class="ai-quick-v26">
 <button data-ai-prompt="Cari materi kelas VII" type="button">Materi kelas VII</button>
 <button data-ai-prompt="Buatkan rencana belajar 7 hari" type="button">Rencana 7 hari</button>
 <button data-ai-prompt="Berikan latihan PAIBP singkat" type="button">Latihan singkat</button>
 <button data-ai-prompt="Apa saja fitur Islami yang tersedia?" type="button">Fitur Islami</button>
 </div>
-<form class="ai-input-v26" id="spensus-ai-form">
+<form class="ai-input-v26" data-ai-form="" id="spensus-ai-form">
 <label class="sr-only" for="spensus-ai-input">Tulis pertanyaan</label>
-<textarea id="spensus-ai-input" maxlength="500" placeholder="Contoh: Jelaskan iman kepada kitab-kitab Allah dengan bahasa sederhana…" required="" rows="1"></textarea>
+<textarea data-ai-input="" id="spensus-ai-input" maxlength="500" placeholder="Contoh: Jelaskan iman kepada kitab-kitab Allah dengan bahasa sederhana…" required="" rows="1"></textarea>
 <button aria-label="Kirim pertanyaan" type="submit"><svg viewbox="0 0 24 24"><path d="m3 20 18-8L3 4v6l12 2-12 2v6Z"></path></svg></button>
 </form>
 <p class="ai-note-v26">Spensus AI membantu navigasi dan belajar dari konten portal. Untuk keputusan penting, tetap konfirmasikan kepada guru.</p>
@@ -690,50 +600,13 @@
 <div aria-live="polite" class="teacher-visit-window"><div class="teacher-visit-track" id="teacher-visit-track"><span>Belum ada kunjungan guru yang tercatat.</span></div></div>
 </section>
 <section class="rail-card school-identity-card">
-<img alt="Logo SMP Negeri 1 Susukan" height="220" src="logo-spensus.png" width="224">
-<div><span class="section-kicker">IDENTITAS SEKOLAH</span><h2>SMP Negeri 1 Susukan</h2><p>NPSN 20304047 • Akreditasi A<br>Panerusan Wetan, Susukan, Banjarnegara</br></p><a href="tenaga-pendidik.html">Kenali keluarga besar Spensus →</a></div>
-</img></section>
+<img alt="Logo SMP Negeri 1 Susukan" height="220" src="logo-spensus.png" width="224"/>
+<div><span class="section-kicker">IDENTITAS SEKOLAH</span><h2>SMP Negeri 1 Susukan</h2><p>NPSN 20304047 • Akreditasi A<br/>Panerusan Wetan, Susukan, Banjarnegara</p><a href="tenaga-pendidik.html">Kenali keluarga besar Spensus →</a></div>
+</section>
 </aside>
 </div>
 </section>
-<section aria-labelledby="gallery-admin-title" class="gallery-admin no-print" hidden="" id="gallery-admin">
-<div class="gallery-admin-head">
-<div>
-<span class="badge">Akses Admin</span>
-<h4 id="gallery-admin-title">Editor Spensus Terkini</h4>
-<p>Tambahkan foto dan informasi kegiatan. Perubahan tersimpan pada perangkat ini dan dapat disinkronkan apabila rekap daring telah diaktifkan.</p>
-</div>
-<button class="text-button" id="close-gallery-admin" type="button">Tutup editor</button>
-</div>
-<form id="gallery-form">
-<input id="gallery-item-id" type="hidden"/>
-<div class="gallery-form-grid">
-<label>Judul kegiatan
-                    <input id="gallery-title" placeholder="Contoh: Pesantren Kilat Ramadhan" required="" type="text"/>
-</label>
-<label>Tanggal kegiatan
-                    <input id="gallery-date" required="" type="date"/>
-</label>
-<label class="gallery-summary-field">Ringkasan
-                    <textarea id="gallery-summary" placeholder="Tuliskan narasi kegiatan secara utuh: latar belakang, proses, tokoh yang terlibat, hasil, dan tindak lanjut." required="" rows="7"></textarea>
-</label>
-<label>Foto kegiatan
-                    <input accept="image/jpeg,image/png,image/webp" id="gallery-photo" multiple="" type="file"/>
-<small>Pilih maksimal 10 foto JPG, PNG, atau WebP untuk satu kegiatan. Foto akan ditata otomatis secara proporsional.</small>
-</label>
-<div aria-live="polite" class="gallery-photo-preview gallery-photo-preview-grid" id="gallery-photo-preview">
-<span aria-hidden="true">🖼️</span>
-<small>Belum ada foto dipilih</small>
-</div>
-</div>
-<p aria-live="polite" class="save-status" id="gallery-admin-status"></p>
-<div class="actions">
-<button class="cta" type="submit">Simpan dan Terbitkan</button>
-<button class="btn" id="cancel-gallery-edit" type="button">Bersihkan Formulir</button>
-<button class="btn" id="export-gallery" type="button">Unduh Laporan Galeri Word</button>
-</div>
-</form>
-</section>
+
 <a aria-label="Profil pengembang Sunarso, S.Pd.I., Gr." class="developer-signature" data-home-only="" href="contact.html">
 <img alt="Sunarso, S.Pd.I., Gr." height="1184" src="sunarso.jpeg" width="864"/>
 <span><strong>Sunarso, S.Pd.I., Gr.</strong><small>Pengembang • Guru PAIBP</small></span>
@@ -746,7 +619,6 @@
 <small>PAIBP Smart Studio • © <span data-year=""></span></small>
 </div>
 <div class="footer-menu"><strong>Jelajahi</strong><a href="fitur.html">Menu Fitur</a><a href="tenaga-pendidik.html">Tenaga Pendidik</a><a href="tenaga-kependidikan.html">Tenaga Kependidikan</a></div>
-
 <div class="footer-menu footer-service-v26"><strong>Layanan Publik</strong><a href="fitur.html">Fitur Pembelajaran</a><a href="#spensus-ai">Spensus AI</a><a href="#tanggapan">Suara Pengunjung</a></div><div class="footer-menu footer-legal"><strong>Informasi</strong><a href="privacy.html">Kebijakan Privasi</a><a href="terms.html">Ketentuan</a><a href="support.html">Dukungan</a><a href="contact.html">Kontak</a></div>
 </div>
 </footer>
@@ -764,48 +636,7 @@
 </section>
 </div>
 
-<div aria-hidden="true" class="protected-gateway-triggers" hidden="">
-<button data-open-panel="teacher" id="teacher-gateway-trigger" tabindex="-1" type="button">Akses Guru</button>
-<button data-open-panel="editor" id="editor-gateway-trigger" tabindex="-1" type="button">Akses Editor</button>
-</div>
-<div class="teacher-auth" hidden="" id="teacher-auth">
-<div class="teacher-auth-backdrop" data-cancel-teacher-auth=""></div>
-<section aria-describedby="teacher-auth-description" aria-labelledby="teacher-auth-title" aria-modal="true" class="teacher-auth-dialog" role="dialog">
-<button aria-label="Tutup" class="teacher-auth-close" data-cancel-teacher-auth="" type="button">×</button>
-<span aria-hidden="true" class="auth-icon">🔐</span>
-<h2 id="teacher-auth-title">Identitas Akses Guru</h2>
-<p id="teacher-auth-description">Isi nama dan unit kerja agar kunjungan guru dapat tercatat. NIP bersifat opsional.</p>
-<p class="teacher-visit-privacy">Nama dan unit kerja akan ditampilkan pada daftar tamu guru di beranda. NIP hanya tersedia bagi editor dan tidak ditampilkan kepada publik.</p>
-<form id="teacher-access-form">
-<label for="teacher-name">Nama guru</label>
-<input autocomplete="name" id="teacher-name" list="teacher-name-directory" maxlength="100" name="teacher-name" placeholder="Ketik nama lengkap guru" required="" type="text"/>
-<datalist id="teacher-name-directory"></datalist>
-<label for="teacher-work-unit">Unit kerja</label>
-<input autocomplete="organization" id="teacher-work-unit" list="teacher-school-directory" maxlength="160" name="teacher-work-unit" placeholder="Ketik atau pilih nama SMP" required="" type="text"/>
-<datalist id="teacher-school-directory"></datalist>
-<div aria-live="polite" class="teacher-directory-status" id="teacher-directory-status">
-<span aria-hidden="true">🏫</span>
-<div><strong>Direktori satuan pendidikan</strong><small>Memuat 101 SMP negeri dan swasta se-Kabupaten Banjarnegara. Nama guru yang tersedia pada direktori lokal akan mengisi sekolah secara otomatis.</small></div>
-</div>
-<label for="teacher-nip">NIP <small>(opsional)</small></label>
-<input id="teacher-nip" inputmode="numeric" maxlength="30" name="teacher-nip" type="text"/>
-<p aria-live="polite" class="auth-error" id="teacher-auth-error"></p>
-<div class="auth-actions">
-<button class="btn" data-cancel-teacher-auth="" type="button">Batal</button>
-<button class="cta" type="submit">Buka Ruang Guru</button>
-</div>
-</form>
-<form hidden="" id="editor-auth-form">
-<label for="editor-password">Kata sandi editor</label>
-<input autocomplete="current-password" id="editor-password" inputmode="text" name="editor-password" required="" type="password"/>
-<p aria-live="polite" class="auth-error" id="editor-auth-error"></p>
-<div class="auth-actions">
-<button class="btn" data-cancel-teacher-auth="" type="button">Batal</button>
-<button class="cta" type="submit">Buka Ruang Editor</button>
-</div>
-</form>
-</section>
-</div>
+
 <div class="dalil-reader-modal" hidden="" id="dalil-reader-modal">
 <div class="dalil-reader-backdrop" data-close-dalil-reader=""></div>
 <section aria-labelledby="dalil-reader-title" aria-modal="true" class="dalil-reader-dialog" role="dialog">
@@ -824,31 +655,39 @@
 </footer>
 </section>
 </div>
-<script src="app-config.js?v=26"></script>
-<script src="content-data.js?v=26"></script>
-<script src="teacher-source-data.js?v=26"></script>
-<script src="calendar-data.js?v=26"></script>
-<script src="staff-images.js?v=26"></script>
-<script src="school-data.js?v=26"></script>
-<script src="banjarnegara-school-directory.js?v=26"></script>
-<script src="islamic-data.js?v=26"></script>
-<script src="islamic-learning-data.js?v=26"></script>
-<script src="islamic-upgrade-v19.js?v=26"></script>
-<script src="islamic-upgrade-v20.js?v=26"></script>
-<script src="islamic-upgrade-v21.js?v=26"></script>
-<script src="islamic-upgrade-v22.js?v=26"></script>
-<script src="khutbah-source-data.js?v=26"></script>
-<script src="khutbah-verse-data.js?v=26"></script>
-<script src="hadith-data.js?v=26"></script>
-<script src="arabic-data.js?v=26"></script>
-<script src="assessment-data.js?v=26"></script>
-<script src="game-data.js?v=26"></script>
-<script src="video-data.js?v=26"></script>
-<script src="docx-export.js?v=26"></script>
-<script src="script.js?v=26"></script>
-<script src="vendor/jszip.min.js?v=26"></script>
-<script src="vendor/pptxgen.min.js?v=26"></script>
-<script src="office-export.js?v=26"></script>
-<script src="assessment-ui.js?v=26"></script>
-<script src="spensus-ai.js?v=26"></script><script src="v26-ui.js?v=26"></script></body>
+<button aria-controls="spensus-ai-drawer-v27" class="spensus-ai-launcher-v27" data-ai-open="" id="spensus-ai-launcher-v27" type="button"><span>AI</span><div><strong>Spensus AI</strong><small>Asisten belajar pribadi</small></div></button><aside aria-label="Spensus AI" class="spensus-ai-drawer-v27" hidden="" id="spensus-ai-drawer-v27">
+<button aria-label="Tutup Spensus AI" class="ai-drawer-backdrop-v27" data-ai-close="" type="button"></button>
+<section class="ai-drawer-panel-v27 spensus-ai-instance">
+<header class="ai-drawer-head-v27"><div class="ai-drawer-brand-v27"><span>AI</span><div><strong>Spensus AI Premium</strong><small>Asisten pendidikan luring</small></div></div><button aria-label="Tutup" class="ai-drawer-close-v27" data-ai-close="" type="button">×</button></header>
+<div aria-live="polite" class="ai-drawer-messages-v27" data-ai-messages=""></div>
+<div aria-label="Pertanyaan cepat" class="ai-drawer-quick-v27"><button data-ai-prompt="Cari materi kelas VII" type="button">Materi VII</button><button data-ai-prompt="Cari materi kelas VIII" type="button">Materi VIII</button><button data-ai-prompt="Buatkan rencana belajar 7 hari" type="button">Rencana 7 hari</button><button data-ai-prompt="Berikan latihan PAIBP singkat" type="button">Latihan</button><button data-ai-prompt="Apa saja fitur Islami yang tersedia?" type="button">Fitur Islami</button></div>
+<form class="ai-drawer-form-v27" data-ai-form=""><textarea data-ai-input="" maxlength="500" placeholder="Tanyakan materi atau minta rencana belajar…" required="" rows="1"></textarea><button aria-label="Kirim" type="submit">➤</button></form>
+</section>
+</aside><script src="app-config.js?v=28"></script>
+<script src="content-data.js?v=28"></script>
+<script src="teacher-source-data.js?v=28"></script>
+<script src="calendar-data.js?v=28"></script>
+<script src="staff-images.js?v=28"></script>
+<script src="school-data.js?v=28"></script>
+<script src="banjarnegara-school-directory.js?v=28"></script>
+<script src="islamic-data.js?v=28"></script>
+<script src="islamic-learning-data.js?v=28"></script>
+<script src="islamic-upgrade-v19.js?v=28"></script>
+<script src="islamic-upgrade-v20.js?v=28"></script>
+<script src="islamic-upgrade-v21.js?v=28"></script>
+<script src="islamic-upgrade-v22.js?v=28"></script>
+<script src="khutbah-source-data.js?v=28"></script>
+<script src="khutbah-verse-data.js?v=28"></script>
+<script src="hadith-data.js?v=28"></script>
+<script src="arabic-data.js?v=28"></script>
+<script src="assessment-data.js?v=28"></script>
+<script src="game-data.js?v=28"></script>
+<script src="video-data.js?v=28"></script>
+<script src="docx-export.js?v=28"></script>
+<script src="script.js?v=28"></script>
+<script src="vendor/jszip.min.js?v=28"></script>
+<script src="vendor/pptxgen.min.js?v=28"></script>
+<script src="office-export.js?v=28"></script>
+<script src="assessment-ui.js?v=28"></script>
+<script src="spensus-ai.js?v=28"></script><script src="v26-ui.js?v=28"></script><script src="v28-ui.js?v=28"></script></body>
 </html>

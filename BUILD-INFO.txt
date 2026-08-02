@@ -1,12 +1,14 @@
 PAIBP SMART SMP
-Versi paket: 26.0
+Versi paket: 28.0
 Tanggal paket: 2 Agustus 2026
-Fokus: Spensus AI berbasis konten portal, ringkasan komentar yang lebih ringkas, serta pemisahan ketat antarmuka Ruang Murid, Ruang Guru, dan Ruang Editor.
+Target publikasi: https://sunarso29.github.io/paibp-smart/
 
-Akses terpisah:
-- Portal publik/murid: index.html
-- Portal Guru (tidak ditautkan pada halaman publik): akses-guru.html
-- Kendali Editor (tidak ditautkan pada halaman publik): kendali-editor.html
-
-Catatan keamanan:
-GitHub Pages merupakan hosting statis. Pemisahan ini mencegah akses dan tampilan melalui antarmuka normal, tetapi keamanan tingkat akun/server memerlukan backend autentikasi tersendiri.
+Pembaruan utama:
+- Spensus AI tampil pada navigasi atas, Ruang Murid, bagian utama, dan tombol mengambang.
+- Suara Pengunjung diperkecil dan ditempatkan sebagai komponen sekunder.
+- Logo diberi latar tipis bercahaya tanpa bingkai tebal.
+- Kartu dan folder memakai visual berwarna, pola, kedalaman, dan ikon konsisten.
+- HTML publik tidak lagi memuat panel, formulir, atau pemicu Ruang Guru dan Editor.
+- Portal Guru tersedia melalui akses-guru.html dan tetap meminta identitas guru.
+- Kendali Editor tersedia melalui kendali-editor.html dan tetap meminta kata sandi editor.
+- Cache PWA diperbarui ke v28.

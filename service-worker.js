@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v26";
+const CACHE_NAME = "paibp-smart-core-v28";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -47,11 +47,15 @@ const CORE_ASSETS = [
   "./assessment-ui.js",
   "./script.js",
   "./v26-ui.js",
+  "./v28-ui.js",
+  "./v28-ui.css",
   "./spensus-ai.js",
   "./public-pages.js",
   "./logo-spensus.png",
   "./sunarso.jpeg",
   "./gerbang.jpg",
+  "./akses-guru.html",
+  "./kendali-editor.html",
 ];
 
 self.addEventListener("install", (event) => {
