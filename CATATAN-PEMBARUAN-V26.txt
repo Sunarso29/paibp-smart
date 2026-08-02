@@ -1,0 +1,10 @@
+PEMBARUAN PAIBP SMART SMP V26
+
+1. Menambahkan Spensus AI di atas Suara Pengunjung.
+2. Spensus AI bekerja luring dari data materi PAIBP pada portal: pencarian bab, rencana belajar, latihan singkat, dan panduan fitur.
+3. Memperkecil panel komentar agar lebih proporsional.
+4. Menghapus seluruh tombol Ruang Guru dan Ruang Editor dari navigasi publik, Ruang Murid, halaman fitur, dan footer.
+5. Menyediakan portal guru terpisah melalui akses-guru.html, tetap wajib mengisi identitas guru.
+6. Menyediakan portal editor terpisah melalui kendali-editor.html, tetap wajib menggunakan kata sandi editor.
+7. Guru dan pengunjung tidak memperoleh tombol atau jalur antarmuka menuju Ruang Editor.
+8. Memperbarui cache PWA menjadi v26.

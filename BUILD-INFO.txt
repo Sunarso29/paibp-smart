@@ -1,4 +1,12 @@
 PAIBP SMART SMP
-Versi paket: 25.0
+Versi paket: 26.0
 Tanggal paket: 2 Agustus 2026
-Fokus: penyempurnaan visual portal resmi sekolah, penghapusan mockup ponsel, tata letak fitur berbasis ikon, dan konsistensi desktop serta ponsel.
+Fokus: Spensus AI berbasis konten portal, ringkasan komentar yang lebih ringkas, serta pemisahan ketat antarmuka Ruang Murid, Ruang Guru, dan Ruang Editor.
+
+Akses terpisah:
+- Portal publik/murid: index.html
+- Portal Guru (tidak ditautkan pada halaman publik): akses-guru.html
+- Kendali Editor (tidak ditautkan pada halaman publik): kendali-editor.html
+
+Catatan keamanan:
+GitHub Pages merupakan hosting statis. Pemisahan ini mencegah akses dan tampilan melalui antarmuka normal, tetapi keamanan tingkat akun/server memerlukan backend autentikasi tersendiri.

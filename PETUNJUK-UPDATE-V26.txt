@@ -1,0 +1,10 @@
+PETUNJUK UPDATE REPOSITORY GITHUB — V26
+
+Unggah seluruh isi patch ke root repository paibp-smart dan pilih Replace files.
+Sesudah GitHub Pages selesai membangun:
+1. Tekan Ctrl+F5.
+2. Bila tampilan lama bertahan, hapus data situs/cache untuk sunarso29.github.io.
+3. Uji Spensus AI pada beranda.
+4. Pastikan Ruang Guru dan Editor tidak terlihat di navigasi publik.
+5. Akses guru hanya melalui alamat /akses-guru.html.
+6. Akses editor hanya melalui alamat /kendali-editor.html dan kata sandi editor.
