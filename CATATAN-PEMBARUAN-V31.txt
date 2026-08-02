@@ -1,0 +1,8 @@
+PAIBP SMART SMP — Pembaruan v31
+
+- Spensus AI kini menjadi panel independen di sisi kanan.
+- Halaman utama di sisi kiri tidak diburamkan, tidak digelapkan, tidak dikunci, dan tetap dapat digunakan saat chatbot terbuka.
+- Backdrop layar penuh dihapus.
+- Scroll halaman utama tetap aktif pada desktop.
+- Pada layar ponsel, panel memakai lebar layar agar percakapan tetap terbaca.
+- Cache PWA dinaikkan ke v31.

@@ -81,24 +81,19 @@
 
   placeOwnerControl();
 
-  // Backdrop AI juga mengunci scroll dan akses latar belakang.
+  // Spensus AI v31 berdiri sebagai panel independen. Halaman di sebelah kiri tetap tajam dan interaktif.
   const drawer = document.querySelector("#spensus-ai-drawer-v27");
   if (drawer) {
-    const observer = new MutationObserver(() => {
+    const syncDrawerState = () => {
       const open = !drawer.hidden;
       document.documentElement.classList.toggle("ai-drawer-open-v30", open);
       drawer.setAttribute("aria-hidden", String(!open));
-      const main = document.querySelector("main");
-      const header = document.querySelector("header");
-      if (open) {
-        main?.setAttribute("inert", "");
-        header?.setAttribute("inert", "");
-      } else {
-        main?.removeAttribute("inert");
-        header?.removeAttribute("inert");
-      }
-    });
+      document.querySelector("main")?.removeAttribute("inert");
+      document.querySelector("header")?.removeAttribute("inert");
+    };
+    const observer = new MutationObserver(syncDrawerState);
     observer.observe(drawer, { attributes: true, attributeFilter: ["hidden"] });
+    syncDrawerState();
   }
 
   // Reset posisi launcher lama yang pernah tersimpan di atas kartu akses.

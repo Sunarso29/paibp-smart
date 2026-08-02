@@ -43,12 +43,12 @@ body[data-private-gateway="guru"][data-portal-mode="home"] .workspace-shell{min-
 .directory-card-v30 small{color:#078168!important;font-weight:900!important;letter-spacing:.08em!important}
 .directory-card-v30 span{color:#60736d}
 
-/* Spensus AI: backdrop benar-benar menutup dan memburamkan seluruh halaman */
-html.ai-drawer-open-v30,body.ai-drawer-open-v27{overflow:hidden!important}
+/* Spensus AI v31: panel independen di kanan; halaman utama tetap tajam, terlihat utuh, dan dapat digunakan. */
+html.ai-drawer-open-v30,body.ai-drawer-open-v27{overflow:auto!important}
 .spensus-ai-drawer-v27[hidden]{display:none!important}
-.spensus-ai-drawer-v27{position:fixed!important;inset:0!important;z-index:10000!important;display:flex!important;justify-content:flex-end!important;align-items:stretch!important;background:rgba(0,25,21,.52)!important;backdrop-filter:blur(14px) saturate(.72)!important;-webkit-backdrop-filter:blur(14px) saturate(.72)!important}
-.ai-drawer-backdrop-v27{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;background:rgba(0,20,17,.28)!important;cursor:default}
-.ai-drawer-panel-v27{position:relative!important;z-index:2!important;width:min(470px,100vw)!important;height:100dvh!important;box-shadow:-24px 0 70px rgba(0,0,0,.35)!important}
+.spensus-ai-drawer-v27{position:fixed!important;top:0!important;right:0!important;bottom:0!important;left:auto!important;width:min(470px,100vw)!important;height:100dvh!important;z-index:10000!important;display:block!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;pointer-events:none!important}
+.ai-drawer-backdrop-v27{display:none!important;visibility:hidden!important;pointer-events:none!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.ai-drawer-panel-v27{position:absolute!important;inset:0!important;z-index:2!important;width:100%!important;height:100dvh!important;pointer-events:auto!important;box-shadow:-18px 0 52px rgba(0,0,0,.22)!important;border-left:1px solid rgba(255,255,255,.18)!important}
 .ai-drawer-panel-v27 .ai-message-bubble{color:#0a3028!important;background:#fff!important;border-color:rgba(255,255,255,.7)!important}
 .ai-drawer-panel-v27 .ai-message-v26.user .ai-message-bubble{color:#fff!important;background:#075a47!important}
 .ai-drawer-messages-v27{scrollbar-width:thin}
@@ -62,7 +62,7 @@ html.ai-drawer-open-v30,body.ai-drawer-open-v27{overflow:hidden!important}
   .hero-access-panel{max-width:none}.access-grid-v25{grid-template-columns:repeat(2,minmax(0,1fr))!important}.access-tile{min-height:116px!important;padding:56px 12px 12px!important}.access-tile strong{font-size:12px!important}.access-tile small{font-size:8px!important}
   .teacher-owner-callout-v30{align-items:flex-start;flex-direction:column}
   .directory-card-v30{grid-template-rows:210px 1fr!important}.directory-photo-v30{height:210px!important}
-  .ai-drawer-panel-v27{width:100vw!important}.spensus-ai-drawer-v27{background:rgba(0,25,21,.64)!important;backdrop-filter:blur(12px)!important}.ai-drawer-backdrop-v27{display:block!important}
+  .ai-drawer-panel-v27{width:100vw!important}.spensus-ai-drawer-v27{width:100vw!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.ai-drawer-backdrop-v27{display:none!important}
   .spensus-ai-launcher-v27>div{display:none!important}.spensus-ai-launcher-v27 .drag-handle-v29{display:none!important}
 }
 @media(max-width:430px){.access-grid-v25{grid-template-columns:1fr 1fr!important;gap:9px!important}.access-tile{min-height:108px!important}.directory-card-v30{grid-template-rows:190px 1fr!important}.directory-photo-v30{height:190px!important}}

@@ -1,0 +1,1 @@
+Unggah seluruh isi ZIP ini ke root repository paibp-smart dan pilih Replace/Overwrite. Setelah GitHub Pages selesai membangun, buka situs dengan Ctrl+F5. Pembaruan ini membuat panel Spensus AI independen: halaman kiri tidak blur, tidak gelap, tidak terkunci, dan tetap dapat digunakan.
