@@ -1,4 +1,4 @@
-const CACHE_NAME = "paibp-smart-core-v28";
+const CACHE_NAME = "paibp-smart-core-v29";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -9,6 +9,11 @@ const CORE_ASSETS = [
   "./fitur.html",
   "./tenaga-pendidik.html",
   "./tenaga-kependidikan.html",
+  "./mapel-lain.html",
+  "./about-spensus.html",
+  "./v29-ui.js",
+  "./v29-ui.css",
+  "./v29-public.js",
   "./404.html",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",

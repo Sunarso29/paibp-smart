@@ -1,0 +1,10 @@
+PAIBP SMART SMP v29
+
+- Portal Guru tampil pada halaman publik, tetapi isi Ruang Guru tetap berada pada halaman gateway terpisah dan memerlukan identitas guru.
+- Guru tamu dapat masuk melalui identitas dan deklarasi profesional; pemilik portal memperoleh pintasan Kendali Editor hanya setelah identitas Sunarso di SMP Negeri 1 Susukan dikenali. Kata sandi editor tetap diperlukan.
+- Spensus AI menjadi tombol mengambang yang dapat digeser dan posisi disimpan pada perangkat.
+- Ticker berubah menjadi Visi & Misi Spensus ketika tidak ada berita, serta bergerak lambat agar terbaca.
+- Menu Tenaga Pendidik dan Tenaga Kependidikan digabung menjadi About Spensus.
+- Ditambahkan halaman Mapel Selain PAIBP berisi 12 ruang mapel pengembangan, termasuk Koding dan Kecerdasan Artifisial.
+- Statistik layanan diperbarui menjadi 30 paket PAIBP, 12 mapel lain, 13 ruang mapel SMP, 100+ game, dan akses 24/7.
+- SEO teknis: sitemap baru, robots, canonical, JSON-LD School/Website, metadata publik, dan noindex pada halaman Guru/Editor.

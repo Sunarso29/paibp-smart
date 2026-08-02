@@ -3,33 +3,41 @@
   <url>
     <loc>https://sunarso29.github.io/paibp-smart/</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://sunarso29.github.io/paibp-smart/fitur.html</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sunarso29.github.io/paibp-smart/tenaga-pendidik.html</loc>
+    <loc>https://sunarso29.github.io/paibp-smart/mapel-lain.html</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sunarso29.github.io/paibp-smart/tenaga-kependidikan.html</loc>
+    <loc>https://sunarso29.github.io/paibp-smart/about-spensus.html</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sunarso29.github.io/paibp-smart/privacy.html</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sunarso29.github.io/paibp-smart/terms.html</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sunarso29.github.io/paibp-smart/support.html</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sunarso29.github.io/paibp-smart/contact.html</loc>
     <lastmod>2026-08-02</lastmod>
+    <priority>0.8</priority>
   </url>
 </urlset>

@@ -1,0 +1,59 @@
+
+/* PAIBP SMART SMP v29 — akses berjenjang, ticker visi-misi, chatbot dapat digeser, halaman multimapel */
+:root{--v29-green:#053f33;--v29-green-2:#087f68;--v29-gold:#f8c94d;--v29-ink:#082f29;--v29-cream:#fffdf5}
+.links-v29{gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.links-v29 a,.links-v29 button{white-space:nowrap}
+.nav-teacher-v29{background:linear-gradient(135deg,#fff2a6,#f8c348)!important;color:#173c31!important;border:1px solid rgba(255,255,255,.25)!important;box-shadow:0 10px 26px rgba(248,195,72,.16)}
+.nav-ai-v29{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.13)!important;color:#fff!important}
+.hero-metrics-v25{grid-template-columns:repeat(4,minmax(0,1fr))}
+.access-grid-v25{grid-template-columns:repeat(3,minmax(0,1fr))}
+.access-tile-mapel-v29{background:linear-gradient(145deg,rgba(81,75,171,.18),rgba(255,255,255,.06))!important}
+.access-tile-teacher-v29{background:linear-gradient(145deg,rgba(248,201,77,.22),rgba(255,255,255,.07))!important}
+body[data-portal-mode="active"][data-portal-role="murid"] .teacher-entry-v29{display:none!important}
+.smart-ticker{overflow:hidden}
+.smart-ticker-inner{gap:16px}
+.ticker-label{min-width:max-content}
+.ticker-window{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.ticker-window p{display:inline-block;width:max-content;min-width:100%;padding-left:100%;white-space:nowrap;animation:v29Ticker 42s linear infinite;will-change:transform}
+.smart-ticker:hover .ticker-window p{animation-play-state:paused}
+@keyframes v29Ticker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+/* Spensus AI launcher: fixed but freely draggable */
+.spensus-ai-launcher-v27{position:fixed!important;right:18px;bottom:88px;left:auto;top:auto;z-index:118!important;touch-action:none;user-select:none;cursor:grab;max-width:min(270px,calc(100vw - 24px));box-shadow:0 18px 48px rgba(0,0,0,.28)!important}
+.spensus-ai-launcher-v27.is-dragging-v29{cursor:grabbing;transform:none!important;transition:none!important}
+.spensus-ai-launcher-v27 .drag-handle-v29{display:grid;place-items:center;width:22px;height:34px;border-left:1px solid rgba(255,255,255,.16);font-size:14px;letter-spacing:-2px;color:rgba(255,255,255,.65)}
+/* Compact visitor voice */
+.feedback-card-compact-v26{padding:18px!important;border-radius:24px!important}
+.feedback-card-compact-v26 .feedback-card-heading h2{font-size:clamp(22px,2.6vw,34px)!important;margin:.2rem 0}
+.feedback-card-compact-v26 .feedback-card-heading p{margin:.15rem 0 0;font-size:13px}
+.feedback-card-compact-v26 .feedback-layout-v24{grid-template-columns:minmax(0,1.35fr) minmax(230px,.65fr)!important;gap:14px!important}
+.feedback-card-compact-v26 .feedback-form-v24,.feedback-card-compact-v26 .public-feedback-v24{padding:14px!important;border-radius:18px!important;min-height:0!important}
+.feedback-card-compact-v26 textarea{min-height:72px!important;max-height:110px}
+.feedback-card-compact-v26 .cta{min-height:42px!important;padding:10px 16px!important}
+.feedback-card-compact-v26 .feedback-form-row{gap:8px!important}
+/* Teacher and owner access */
+.teacher-declaration-v29{display:flex!important;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid #c9ded7;border-radius:14px;background:#f3faf7;font-size:12px;line-height:1.45}
+.teacher-declaration-v29 input{width:18px;height:18px;margin-top:1px;flex:none}
+.owner-editor-entry-v29{position:fixed;right:18px;bottom:18px;z-index:119;padding:12px 16px;border-radius:999px;background:linear-gradient(135deg,#172b26,#0a5c4b);color:#fff;text-decoration:none;font-weight:800;box-shadow:0 14px 40px rgba(0,0,0,.24)}
+.owner-editor-entry-v29[hidden]{display:none!important}
+/* Multimapel */
+.mapel-hero-v29{padding:76px 0 54px;background:radial-gradient(circle at 80% 20%,rgba(248,201,77,.25),transparent 30%),linear-gradient(145deg,#043b31,#08735e);color:#fff;overflow:hidden}
+.mapel-hero-grid-v29{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.55fr);gap:42px;align-items:center}
+.mapel-hero-v29 h1{font-size:clamp(42px,7vw,82px);line-height:.98;margin:16px 0}.mapel-hero-v29 h1 span{color:var(--v29-gold)}
+.mapel-hero-v29 p{max-width:720px;font-size:17px;line-height:1.7;color:rgba(255,255,255,.82)}
+.mapel-hero-v29 aside{display:grid;place-items:center;text-align:center;padding:30px;border:1px solid rgba(255,255,255,.18);border-radius:32px;background:rgba(255,255,255,.08);backdrop-filter:blur(16px)}
+.mapel-hero-v29 aside img{width:150px;filter:drop-shadow(0 18px 28px rgba(0,0,0,.28))}.mapel-hero-v29 aside strong,.mapel-hero-v29 aside span{display:block}.mapel-hero-v29 aside strong{font-size:20px}.mapel-hero-v29 aside span{font-size:12px;color:rgba(255,255,255,.72)}
+.mapel-summary-v29{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:28px}.mapel-summary-v29 article{padding:15px;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:rgba(0,0,0,.14)}.mapel-summary-v29 strong,.mapel-summary-v29 span{display:block}.mapel-summary-v29 strong{font-size:26px;color:var(--v29-gold)}.mapel-summary-v29 span{font-size:11px;color:rgba(255,255,255,.75)}
+.subject-grid-v29{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.subject-card-v29{position:relative;overflow:hidden;padding:24px;border:1px solid #dbe8e3;border-radius:26px;background:linear-gradient(150deg,#fff,#f4faf7);box-shadow:0 18px 45px rgba(6,64,52,.08);min-height:250px}.subject-card-v29:after{content:"";position:absolute;right:-35px;bottom:-45px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(8,127,104,.18),transparent 67%)}.subject-code-v29{display:grid;place-items:center;width:54px;height:54px;border-radius:17px;background:linear-gradient(145deg,#075a4a,#0b9277);color:#fff;font-weight:900;box-shadow:0 12px 26px rgba(8,127,104,.2)}.subject-card-v29 small{display:block;margin:18px 0 5px;color:#5e7770;font-weight:800;letter-spacing:.04em}.subject-card-v29 h3{margin:0 0 10px;color:#083e34;font-size:22px}.subject-card-v29 p{color:#5c6f69;line-height:1.6}.subject-card-v29 div{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}.subject-card-v29 div span{padding:6px 9px;border-radius:999px;background:#e7f4ef;color:#075846;font-size:10px;font-weight:800}.official-note-v29{margin-top:24px;padding:22px 26px;border-radius:24px;background:#fff8dc;border:1px solid #f1db8e}.official-note-v29 strong{font-size:18px;color:#5a4511}.official-note-v29 p{color:#665d44}.official-note-v29 a{font-weight:800;color:#075f4d}
+/* About */
+.about-hero-v29{padding:76px 0;background:linear-gradient(145deg,rgba(2,49,40,.94),rgba(5,99,80,.9)),url('gerbang.jpg') center/cover;color:#fff}.about-hero-grid-v29{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:40px;align-items:center}.about-hero-v29 h1{font-size:clamp(42px,6vw,74px);line-height:1.02;max-width:850px}.about-hero-v29 p{font-size:17px;line-height:1.7;color:rgba(255,255,255,.8);max-width:720px}.about-logo-v29{display:grid;place-items:center;text-align:center;padding:28px;border-radius:30px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.17);backdrop-filter:blur(14px)}.about-logo-v29 img{width:165px;filter:drop-shadow(0 18px 30px rgba(0,0,0,.25))}.about-logo-v29 strong,.about-logo-v29 small{display:block}.about-logo-v29 strong{font-size:22px}.about-logo-v29 small{color:rgba(255,255,255,.7)}.about-facts-v29{display:flex;flex-wrap:wrap;gap:9px}.about-facts-v29 span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:800}.about-tabs-v29{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;padding:8px;border-radius:22px;background:#edf6f2}.about-tabs-v29 button{border:0;border-radius:16px;padding:13px 18px;background:transparent;color:#31564d;font-weight:850}.about-tabs-v29 button[aria-pressed="true"]{background:#075f4d;color:#fff;box-shadow:0 10px 22px rgba(7,95,77,.18)}.about-profile-grid-v29{display:grid;grid-template-columns:1fr 1fr;gap:20px}.about-profile-grid-v29 article{padding:28px;border:1px solid #dce8e3;border-radius:28px;background:#fff;box-shadow:0 18px 45px rgba(6,64,52,.07)}.about-profile-grid-v29 h2{color:#083f34}.about-profile-grid-v29 p,.about-profile-grid-v29 li{color:#5e706a;line-height:1.7}.vision-card-v29{background:linear-gradient(145deg,#073f34,#0a6c57)!important;color:#fff}.vision-card-v29 h2,.vision-card-v29 p,.vision-card-v29 li{color:#fff!important}.vision-card-v29 .section-kicker{color:#ffdc6e}.about-panel-v29[hidden]{display:none!important}
+/* Search engine/access hints */
+.internal-access-note-v29{font-size:11px;color:#647a74;line-height:1.45}
+@media(max-width:1120px){.links-v29{gap:3px}.links-v29 a,.links-v29 button{padding:9px 10px;font-size:11px}.subject-grid-v29{grid-template-columns:repeat(2,minmax(0,1fr))}.access-grid-v25{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.hero-metrics-v25{grid-template-columns:repeat(2,minmax(0,1fr))}.mapel-hero-grid-v29,.about-hero-grid-v29,.about-profile-grid-v29{grid-template-columns:1fr}.subject-grid-v29{grid-template-columns:1fr}.mapel-summary-v29{grid-template-columns:1fr 1fr}.feedback-card-compact-v26 .feedback-layout-v24{grid-template-columns:1fr!important}.feedback-card-compact-v26 .public-feedback-v24{max-height:210px;overflow:auto}.spensus-ai-launcher-v27{right:10px;bottom:74px}.ticker-window p{animation-duration:52s}.smart-ticker-inner>a{display:none}}
+@media(prefers-reduced-motion:reduce){.ticker-window p{animation:none;padding-left:0;white-space:normal}}
+/* Tiered teacher access: guests can read/download teaching resources but cannot open pupil recaps or publish assessments. */
+body[data-teacher-tier="guest"] [data-teacher-doc="access"],
+body[data-teacher-tier="guest"] [data-teacher-doc="submissions"],
+body[data-teacher-tier="guest"] #assessment-manager-button{display:none!important}
+.teacher-tier-banner-v29{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:#fff7d8;border:1px solid #eed47e;color:#5b4a16;font-size:12px;line-height:1.55}
+.teacher-tier-banner-v29 strong{display:block;font-size:14px;color:#3d3312}

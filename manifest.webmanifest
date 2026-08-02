@@ -1,7 +1,7 @@
 {
   "name": "PAIBP SMART SMP",
   "short_name": "PAIBP SMART",
-  "description": "Portal PAIBP untuk murid dan guru SMP: materi, LKPD, rekap tugas, perangkat guru, fitur Islami, dan games.",
+  "description": "Portal pendidikan SMP Negeri 1 Susukan: PAIBP, roadmap mapel SMP, LKPD, asesmen, game edukasi, fitur Islami, dan Spensus AI.",
   "lang": "id",
   "start_url": "./index.html",
   "scope": "./",
@@ -21,5 +21,9 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "categories": [
+    "education",
+    "productivity"
   ]
 }

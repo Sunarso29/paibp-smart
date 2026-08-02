@@ -7,7 +7,7 @@
     status: "Sekolah negeri jenjang SMP",
     accreditation: "A",
     established: "30 Juli 1980",
-    tickerFallback: "Mewujudkan pendidikan berkualitas, berkarakter, berprestasi, dan berakhlak mulia melalui budaya belajar yang aman, ramah, dan kolaboratif.",
+    tickerFallback: "Visi: mewujudkan pendidikan berkualitas, berkarakter, berprestasi, berakhlak mulia, dan adaptif terhadap teknologi. Misi: menguatkan iman dan karakter; meningkatkan literasi, numerasi, kreativitas, serta prestasi; membangun pembelajaran aman, ramah, kolaboratif, peduli lingkungan, dan berwawasan global.",
     overview: [
       "SMP Negeri 1 Susukan merupakan satuan pendidikan negeri di Kecamatan Susukan, Kabupaten Banjarnegara, yang melayani pendidikan jenjang SMP.",
       "PAIBP SMART SMP dikembangkan dari lingkungan Spensus untuk memperluas akses belajar murid, mendukung kerja guru, dan membagikan praktik pembelajaran yang dapat dimanfaatkan secara bertanggung jawab.",

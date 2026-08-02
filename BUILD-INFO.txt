@@ -1,14 +1,4 @@
 PAIBP SMART SMP
-Versi paket: 28.0
+Versi paket: 29.0
 Tanggal paket: 2 Agustus 2026
 Target publikasi: https://sunarso29.github.io/paibp-smart/
-
-Pembaruan utama:
-- Spensus AI tampil pada navigasi atas, Ruang Murid, bagian utama, dan tombol mengambang.
-- Suara Pengunjung diperkecil dan ditempatkan sebagai komponen sekunder.
-- Logo diberi latar tipis bercahaya tanpa bingkai tebal.
-- Kartu dan folder memakai visual berwarna, pola, kedalaman, dan ikon konsisten.
-- HTML publik tidak lagi memuat panel, formulir, atau pemicu Ruang Guru dan Editor.
-- Portal Guru tersedia melalui akses-guru.html dan tetap meminta identitas guru.
-- Kendali Editor tersedia melalui kendali-editor.html dan tetap meminta kata sandi editor.
-- Cache PWA diperbarui ke v28.
