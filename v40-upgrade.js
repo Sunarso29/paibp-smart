@@ -500,13 +500,14 @@
 
   function addCurriculumSelector() {
     const panel = currentTeacherPanel();
-    const toolbar = $(".teacher-toolbar", panel);
-    const grade = $(".grade-selector", toolbar);
-    if (!toolbar || !grade || $(".v40-cp-selector", toolbar)) return;
+    const gradeFilter = $("#teacher-grade-filter", panel);
+    const gradeRow = gradeFilter?.closest(".filter-row");
+    if (!panel || !gradeFilter || !gradeRow || $(".v40-cp-selector", gradeRow)) return;
     const selector = document.createElement("div");
     selector.className = "v40-cp-selector";
-    selector.innerHTML = `<span>Kurikulum rujukan</span><div><button type="button" data-v40-cp="2025">CP Lama 2025<small>BSKAP 046/2025</small></button><button type="button" data-v40-cp="2026">CP Terbaru 2026<small>BKPDM 020/2026</small></button></div>`;
-    grade.insertAdjacentElement("afterend", selector);
+    selector.innerHTML = `<span>Versi Capaian Pembelajaran</span><div><button type="button" data-v40-cp="2025">CP Lama 2025<small>BSKAP 046/H/KR/2025</small></button><button type="button" data-v40-cp="2026">CP Terbaru 2026<small>BKPDM 020 Tahun 2026</small></button></div>`;
+    gradeRow.classList.add("v40-cp-filter-row");
+    gradeRow.append(selector);
     const update = () => $$('[data-v40-cp]', selector).forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.v40Cp === cpMode)));
     update();
     selector.addEventListener("click", (event) => {
@@ -676,6 +677,8 @@
 
   function initializeTeacherCp() {
     const panel=currentTeacherPanel(); if(!panel)return;
+    const cpMenu=$("[data-teacher-doc=\"cp\"]",panel);
+    if(cpMenu&&!cpMenu.dataset.v40Renamed){const icon=$("span",cpMenu)?.outerHTML||"<span>📘</span>";cpMenu.innerHTML=`${icon} Capaian Pembelajaran`;cpMenu.dataset.v40Renamed="true";}
     cpGrade=selectedGradeFromUi(); cpDoc=selectedDocFromUi();
     addCurriculumSelector(); interceptTeacherControls();
     if(cpMode==="2025")setTimeout(renderCp2025,160);

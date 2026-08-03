@@ -96,3 +96,26 @@ body.v40-modal-open{overflow:hidden}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.v40-loading i,.v40-cp-loading>div{animation:none!important}.v40-quran-reader .ayah-card,.v40-ayah-tools button{transition:none!important}}
 @media print{.v40-ayah-tools,.v40-waqf-notes,.v40-cp-actions,.v40-record-select,.v40-source-integrity,.v40-source-download,.v40-sheet-tabs{display:none!important}.v40-source-document,.v40-doc-header,.v40-doc-footer{box-shadow:none;width:100%;padding:0}.v40-table-scroll{overflow:visible;box-shadow:none}.v40-source-table,.v40-excel-table{font-size:8pt}}
+
+
+/* v41 — penempatan tab CP sejajar dengan pilihan kelas */
+#panel-teacher .filter-row.v40-cp-filter-row{
+  display:grid!important;
+  grid-template-columns:auto minmax(170px,auto) minmax(320px,1fr)!important;
+  align-items:end!important;
+  gap:14px!important;
+  width:100%!important;
+}
+#panel-teacher .filter-row.v40-cp-filter-row>.filter-label{align-self:center!important}
+#panel-teacher .filter-row.v40-cp-filter-row>.v40-cp-selector{min-width:0!important;width:min(100%,540px)!important;justify-self:start!important}
+#panel-teacher .filter-row.v40-cp-filter-row>.v40-cp-selector>div{grid-template-columns:repeat(2,minmax(150px,1fr))!important}
+#panel-teacher .filter-row.v40-cp-filter-row>.v40-cp-selector button{text-align:center!important;white-space:normal!important}
+@media(max-width:900px){
+  #panel-teacher .filter-row.v40-cp-filter-row{grid-template-columns:auto 1fr!important}
+  #panel-teacher .filter-row.v40-cp-filter-row>.v40-cp-selector{grid-column:1/-1!important;width:100%!important}
+}
+@media(max-width:560px){
+  #panel-teacher .filter-row.v40-cp-filter-row{display:flex!important;flex-wrap:wrap!important;align-items:center!important}
+  #panel-teacher .filter-row.v40-cp-filter-row>.v40-cp-selector,#panel-teacher .filter-row.v40-cp-filter-row>.v40-cp-selector>div{width:100%!important}
+  #panel-teacher .filter-row.v40-cp-filter-row>.v40-cp-selector>div{grid-template-columns:1fr!important}
+}
