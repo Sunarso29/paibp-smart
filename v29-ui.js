@@ -3,6 +3,23 @@
   const body = document.body;
   const normalize = (value) => String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
+  function loadV38Upgrade() {
+    if (!document.querySelector('link[data-v38-upgrade]')) {
+      const css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "v38-upgrade.css?v=38";
+      css.dataset.v38Upgrade = "true";
+      document.head.append(css);
+    }
+    if (!document.querySelector('script[data-v38-upgrade]')) {
+      const script = document.createElement("script");
+      script.src = "v38-upgrade.js?v=38";
+      script.defer = true;
+      script.dataset.v38Upgrade = "true";
+      document.body.append(script);
+    }
+  }
+
   // Slow ticker: newest school update when present, otherwise the vision/mission direction.
   function refreshV29Ticker() {
     const text = document.querySelector("#smart-ticker-text");
@@ -101,4 +118,6 @@
     const requested=location.hash.replace("#","");
     setTimeout(()=>document.querySelector(`[data-about-tab="${requested}"]`)?.click(),80);
   }
+
+  loadV38Upgrade();
 })();

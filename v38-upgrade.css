@@ -1,0 +1,177 @@
+
+/* PAIBP SMART SMP — Upgrade visual dan kontrol v38 */
+:root{
+  --v38-emerald:#05745d;
+  --v38-lime:#9ee84b;
+  --v38-gold:#ffc84a;
+  --v38-cyan:#36d5d0;
+  --v38-purple:#8b5cf6;
+  --v38-ink:#062f2b;
+  --v38-soft:#effaf6;
+  --v38-line:rgba(7,89,72,.16);
+  --v38-shadow:0 24px 70px rgba(1,48,41,.18);
+}
+.hero-v25{
+  isolation:isolate;
+  position:relative;
+  min-height:min(760px,calc(100vh - 80px));
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+}
+.hero-v25::before{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 76% 22%,rgba(255,200,74,.22),transparent 24%),
+    radial-gradient(circle at 18% 76%,rgba(54,213,208,.18),transparent 28%),
+    linear-gradient(115deg,rgba(0,39,34,.96) 0%,rgba(3,74,61,.89) 52%,rgba(4,43,57,.8) 100%);
+  z-index:-2;
+}
+.hero-v25::after{
+  content:"";
+  position:absolute; inset:-20%;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent 84%);
+  animation:v38GridDrift 24s linear infinite;
+  z-index:-1;
+}
+@keyframes v38GridDrift{to{transform:translate3d(42px,42px,0)}}
+.hero-main-v25{position:relative}
+.hero-main-v25::before,.hero-main-v25::after{
+  content:""; position:absolute; border-radius:999px; pointer-events:none; filter:blur(1px);
+}
+.hero-main-v25::before{
+  width:150px;height:150px;right:-70px;top:-45px;
+  background:radial-gradient(circle at 35% 35%,rgba(255,224,112,.55),rgba(255,200,74,.05) 66%,transparent 68%);
+  animation:v38Float 6s ease-in-out infinite;
+}
+.hero-main-v25::after{
+  width:82px;height:82px;right:9%;bottom:4%;
+  border:1px solid rgba(158,232,75,.48);
+  box-shadow:0 0 42px rgba(158,232,75,.2) inset;
+  animation:v38Float 8s ease-in-out infinite reverse;
+}
+@keyframes v38Float{50%{transform:translateY(-14px) rotate(5deg)}}
+.hero-v25 h1{
+  max-width:930px;
+  font-size:clamp(3rem,6.25vw,6.5rem)!important;
+  line-height:.98!important;
+  letter-spacing:-.065em!important;
+  text-wrap:balance;
+}
+.hero-v25 h1 span{
+  display:inline-block;
+  background:linear-gradient(90deg,#ffe47b,#ffc342 52%,#b9ef62);
+  color:transparent!important;
+  -webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 8px 24px rgba(255,196,66,.18));
+}
+.hero-copy{
+  max-width:880px!important;
+  font-size:clamp(1rem,1.65vw,1.24rem)!important;
+  line-height:1.85!important;
+  color:#e0f1eb!important;
+}
+.v38-hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 2px}
+.v38-hero-badges span{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 13px;border:1px solid rgba(255,255,255,.24);border-radius:999px;
+  background:rgba(255,255,255,.1);color:#fff;font-weight:850;font-size:.78rem;
+  box-shadow:0 8px 24px rgba(0,0,0,.1);backdrop-filter:blur(12px)
+}
+.v38-hero-badges span::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--v38-lime);box-shadow:0 0 0 5px rgba(158,232,75,.15)}
+.hero-actions-v25 .cta,.hero-actions-v25 .btn{
+  min-height:64px;border-radius:19px!important;transition:transform .22s ease,box-shadow .22s ease!important
+}
+.hero-actions-v25 .cta:hover,.hero-actions-v25 .btn:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(0,0,0,.22)}
+.hero-metrics-v25 article{
+  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.18)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,255,255,.055))!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.16)!important;backdrop-filter:blur(15px)
+}
+.hero-metrics-v25 article::after{content:"";position:absolute;inset:auto -35% -70% 30%;height:90px;background:radial-gradient(circle,rgba(255,204,74,.38),transparent 68%)}
+.hero-access-panel{border-color:rgba(255,255,255,.28)!important;background:linear-gradient(155deg,rgba(3,63,53,.82),rgba(5,47,58,.72))!important;box-shadow:var(--v38-shadow)!important;backdrop-filter:blur(20px)}
+.access-tile{transform:translateZ(0);transition:transform .22s ease,filter .22s ease,box-shadow .22s ease!important}
+.access-tile:hover{transform:translateY(-5px) scale(1.015);filter:saturate(1.18);box-shadow:0 18px 36px rgba(0,0,0,.2)!important}
+.feature-card-v25,.rail-card,.feedback-card-v24,.spensus-ai-v26{box-shadow:var(--v38-shadow)!important}
+.feature-card-v25{transition:transform .22s ease,box-shadow .22s ease!important}
+.feature-card-v25:hover{transform:translateY(-5px)}
+/* Simulasi ibadah */
+.v38-worship-button{background:linear-gradient(135deg,#0d8f72,#0b5d76)!important;color:#fff!important}
+.v38-worship-shell{display:grid;gap:20px}
+.v38-worship-hero{
+  position:relative;overflow:hidden;padding:28px;border-radius:26px;
+  color:#fff;background:linear-gradient(135deg,#053f37,#08755e 55%,#12445d);
+  box-shadow:var(--v38-shadow)
+}
+.v38-worship-hero::after{content:"✦";position:absolute;right:30px;top:16px;font-size:7rem;color:rgba(255,218,87,.18);transform:rotate(14deg)}
+.v38-worship-hero h4{font-size:clamp(1.7rem,3vw,2.7rem);margin:8px 0 10px;color:#fff}
+.v38-worship-hero p{max-width:830px;color:#dceee8}
+.v38-worship-tabs{display:flex;gap:9px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:thin}
+.v38-worship-tabs button{
+  flex:0 0 auto;border:1px solid var(--v38-line);border-radius:15px;padding:11px 15px;
+  background:#fff;color:var(--v38-ink);font-weight:850;cursor:pointer
+}
+.v38-worship-tabs button[aria-pressed="true"]{background:linear-gradient(135deg,var(--v38-emerald),#0b8e71);color:#fff;box-shadow:0 10px 25px rgba(5,116,93,.24)}
+.v38-worship-summary{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:stretch}
+.v38-worship-intro,.v38-worship-note{padding:22px;border:1px solid var(--v38-line);border-radius:22px;background:#fff}
+.v38-worship-note{background:linear-gradient(145deg,#fff8df,#f0fbf7)}
+.v38-step-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.v38-step{
+  display:grid;grid-template-columns:48px 1fr;gap:14px;padding:19px;border:1px solid var(--v38-line);
+  border-radius:20px;background:linear-gradient(145deg,#fff,#f4fbf8);box-shadow:0 12px 30px rgba(4,72,61,.08)
+}
+.v38-step-num{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,#08745d,#0d9a7a);color:#fff;font-size:1.05rem;font-weight:900}
+.v38-step h5{margin:0 0 6px;font-size:1.03rem}.v38-step p{margin:0;color:#526c65;font-size:.92rem}
+.v38-source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.v38-source-card{display:block;padding:15px;border:1px solid var(--v38-line);border-radius:17px;background:#fff;text-decoration:none;color:var(--v38-ink);font-weight:850;transition:.2s}
+.v38-source-card:hover{transform:translateY(-3px);border-color:#39a98e}
+.v38-source-card small{display:block;color:#617972;font-weight:600;margin-top:4px}
+.v38-worship-actions{display:flex;flex-wrap:wrap;gap:10px}.v38-worship-actions button,.v38-worship-actions a{border:0;border-radius:14px;padding:11px 15px;font-weight:850;text-decoration:none;cursor:pointer;background:#073f36;color:#fff}
+.v38-worship-actions .secondary{background:#fff;color:#075d4a;border:1px solid var(--v38-line)}
+/* Status backend dan kendali guru */
+.v38-system-status{
+  display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:14px;align-items:center;
+  padding:16px 18px;margin:14px 0 20px;border-radius:19px;border:1px solid #f0cf70;background:#fff8de
+}
+.v38-system-status.online{border-color:#8bd5bd;background:#eaf9f3}.v38-status-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:15px;background:#fff;font-size:1.25rem}
+.v38-system-status strong{display:block}.v38-system-status p{margin:2px 0 0;color:#587069;font-size:.87rem}.v38-system-status a{font-weight:850;color:#075d4a}
+.v38-stat-mode{display:inline-flex;margin-top:9px;padding:5px 9px;border-radius:999px;background:#fff4cc;color:#765500;font-size:.72rem;font-weight:900}
+.v38-stat-mode.online{background:#dbf7ec;color:#075b48}
+.v38-recent-wrap{margin:9px 0 15px}.v38-recent-label{display:block;font-size:.75rem;font-weight:850;color:#607770;margin-bottom:7px}
+.v38-recent-chips{display:flex;gap:7px;flex-wrap:wrap}
+.v38-recent-chips button{border:1px solid var(--v38-line);background:#f3fbf7;color:#075d4a;border-radius:999px;padding:7px 10px;font-weight:800;font-size:.76rem;cursor:pointer}
+.v38-national-school-tools{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:end;margin:9px 0 14px}
+.v38-national-school-tools label{margin:0!important}.v38-national-school-tools a{display:inline-flex;min-height:46px;align-items:center;padding:9px 12px;border-radius:13px;background:#edf8f4;color:#075d4a;text-decoration:none;font-weight:850;border:1px solid var(--v38-line)}
+.v38-teacher-scope{
+  margin:16px 0 22px;padding:22px;border-radius:24px;color:#fff;
+  background:linear-gradient(135deg,#073f36,#0b7860 62%,#133f58);box-shadow:var(--v38-shadow)
+}
+.v38-teacher-scope h3{margin:0 0 6px;color:#fff}.v38-teacher-scope p{color:#d9ebe5;margin:0 0 16px}
+.v38-scope-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
+.v38-scope-grid input{min-height:48px;border-radius:13px;border:1px solid rgba(255,255,255,.25);padding:0 13px}
+.v38-scope-grid button{border:0;border-radius:13px;padding:0 16px;background:var(--v38-gold);font-weight:900;color:#17352d;cursor:pointer}
+.v38-scope-output{display:grid;grid-template-columns:1fr auto;gap:9px;margin-top:12px}.v38-scope-output input{min-width:0;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:13px;padding:11px}.v38-scope-output button{border:0;border-radius:13px;padding:0 15px;background:#fff;color:#075d4a;font-weight:900}
+.v38-class-banner{display:flex;gap:12px;align-items:center;margin:12px auto;padding:12px 16px;width:min(1180px,calc(100% - 32px));background:linear-gradient(90deg,#e8faf3,#fff8df);border:1px solid #b9dfd1;border-radius:17px;color:#073f36;box-shadow:0 10px 28px rgba(5,72,60,.1)}
+.v38-class-banner span{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#08745d;color:#fff}.v38-class-banner strong{display:block}.v38-class-banner small{display:block;color:#607770}
+.v38-local-warning{padding:13px 15px;margin:10px 0;border-radius:15px;background:#fff0d4;border:1px solid #edc36e;color:#6b4a00;font-size:.85rem}
+.teacher-visit-track>*{overflow-wrap:anywhere}
+@media(max-width:900px){
+  .hero-v25{min-height:auto}.hero-v25 h1{font-size:clamp(2.65rem,9vw,5rem)!important}
+  .v38-worship-summary{grid-template-columns:1fr}.v38-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .v38-scope-grid{grid-template-columns:1fr 1fr}.v38-scope-grid button{min-height:48px;grid-column:1/-1}
+}
+@media(max-width:620px){
+  .hero-v25 h1{font-size:clamp(2.35rem,12vw,4.2rem)!important;line-height:1.01!important}
+  .hero-copy{font-size:.96rem!important;line-height:1.72!important}
+  .v38-hero-badges{gap:7px}.v38-hero-badges span{font-size:.68rem;padding:7px 10px}
+  .v38-step-grid,.v38-source-grid{grid-template-columns:1fr}.v38-step{grid-template-columns:42px 1fr;padding:15px}.v38-step-num{width:42px;height:42px}
+  .v38-system-status{grid-template-columns:42px 1fr}.v38-system-status>a{grid-column:2}
+  .v38-national-school-tools,.v38-scope-grid,.v38-scope-output{grid-template-columns:1fr}
+  .v38-scope-output button{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){.hero-v25::after,.hero-main-v25::before,.hero-main-v25::after{animation:none}}
