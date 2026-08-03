@@ -110,4 +110,13 @@
       }
     }
   } catch {}
+
+  // Portal Guru tidak memuat v34-lite.js dari HTML, jadi bootstrap versi terbaru dipasang di sini.
+  if (gateway === "guru" && ![...document.scripts].some((script) => /\/v34-lite\.js(?:\?|$)/.test(script.src))) {
+    const loader = document.createElement("script");
+    loader.src = "v34-lite.js?v=40";
+    loader.async = false;
+    loader.dataset.v40Bootstrap = "true";
+    document.body.append(loader);
+  }
 })();
