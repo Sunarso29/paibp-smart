@@ -38,16 +38,16 @@
     document.body.append(script);
   });
 
-  addStyle("v38-upgrade.css?v=39");
-  addStyle("v39-upgrade.css?v=41");
-  addStyle("v40-upgrade.css?v=41");
+  addStyle("v38-upgrade.css?v=42");
+  addStyle("v39-upgrade.css?v=42");
+  addStyle("v40-upgrade.css?v=42");
 
-  ensureScript("v38-upgrade.js?v=41", () => Boolean(document.querySelector(".v38-worship-button")))
-    .then(() => ensureScript("v39-upgrade.js?v=41", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
-    .then(() => ensureScript("v40-upgrade.js?v=41", () => document.documentElement.dataset.portalBuild === "40-quran-cp"))
+  ensureScript("v38-upgrade.js?v=42", () => Boolean(document.querySelector(".v38-worship-button")))
+    .then(() => ensureScript("v39-upgrade.js?v=42", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
+    .then(() => ensureScript("v40-upgrade.js?v=42", () => document.documentElement.dataset.portalBuild === "42-quran-cp"))
     .catch(() => {
-      document.documentElement.dataset.portalBuild = "40-partial";
+      document.documentElement.dataset.portalBuild = "42-partial";
     });
 
-  document.documentElement.dataset.portalBuild = "41-loader";
+  document.documentElement.dataset.portalBuild = "42-loader";
 })();

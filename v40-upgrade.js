@@ -1,12 +1,15 @@
 (() => {
   "use strict";
 
-  const BUILD = "40";
+  const BUILD = "42";
   const QURAN_CACHE = "paibp-smart-quran-v40";
   const AUDIO_CACHE = "paibp-smart-quran-audio-v40";
   const TAFSIR_PREFIX = "paibp-smart-tafsir-v40-";
   const CP_MODE_KEY = "paibp-smart-curriculum-mode-v40";
   const CP_MANIFEST_URL = "assets/cp-2025/manifest.json";
+  const CP_PREVIEW_PACK_URL = "cp2025-preview-pack.b64";
+  const CP_SOURCE_PACK_URL = "cp2025-source-pack.b64";
+  const CP_CACHE_NAME = "paibp-smart-cp2025-v42";
   const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
   const $$ = (selector, root = document) => [...(root?.querySelectorAll?.(selector) || [])];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -42,6 +45,8 @@
   let equranSurahPromise = null;
   let currentEquranSurah = 0;
   let cpManifestPromise = null;
+  let cpBundlePromise = null;
+  let cpSourceZipPromise = null;
   let cpMode = localStorage.getItem(CP_MODE_KEY) || "2026";
   let cpGrade = "VII";
   let cpDoc = "cp";
@@ -486,13 +491,168 @@
     augmentQuran();
   }
 
+  function waitForJSZip() {
+    if (window.JSZip) return Promise.resolve(window.JSZip);
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector('script[src*="vendor/jszip.min.js"]');
+      const done = () => window.JSZip ? resolve(window.JSZip) : reject(new Error("Mesin pembaca paket belum tersedia."));
+      if (existing) {
+        existing.addEventListener("load", done, { once: true });
+        window.setTimeout(done, 900);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "vendor/jszip.min.js?v=42";
+      script.onload = done;
+      script.onerror = () => reject(new Error("Mesin pembaca paket gagal dimuat."));
+      document.head.append(script);
+    });
+  }
+
+  async function cachedText(url, { forceNetwork = false } = {}) {
+    const absoluteUrl = absolute(url);
+    const request = new Request(absoluteUrl, { cache: forceNetwork ? "reload" : "force-cache" });
+    if (!forceNetwork && "caches" in window) {
+      const cached = await caches.match(request, { ignoreSearch: true });
+      if (cached) return cached.text();
+    }
+    const response = await fetch(request);
+    if (!response.ok) throw new Error(`Paket ${url} tidak ditemukan (${response.status}).`);
+    if ("caches" in window) {
+      try {
+        const cache = await caches.open(CP_CACHE_NAME);
+        await cache.put(request, response.clone());
+      } catch {}
+    }
+    return response.text();
+  }
+
+  async function loadCpBundle() {
+    if (window.PAIBP_CP2025_BUNDLE?.manifest) return window.PAIBP_CP2025_BUNDLE;
+    if (cpBundlePromise) return cpBundlePromise;
+    cpBundlePromise = (async () => {
+      const JSZip = await waitForJSZip();
+      const encoded = (await cachedText(CP_PREVIEW_PACK_URL)).trim();
+      if (!encoded) throw new Error("Paket pratinjau CP Lama 2025 kosong.");
+      const archive = await JSZip.loadAsync(encoded, { base64: true, checkCRC32: true });
+      const entry = archive.file("bundle.json");
+      if (!entry) throw new Error("Isi paket CP Lama 2025 tidak valid.");
+      const bundle = JSON.parse(await entry.async("string"));
+      if (!bundle?.manifest?.records?.length) throw new Error("Daftar dokumen CP Lama 2025 tidak ditemukan.");
+      window.PAIBP_CP2025_BUNDLE = bundle;
+      return bundle;
+    })().catch((error) => {
+      cpBundlePromise = null;
+      throw error;
+    });
+    return cpBundlePromise;
+  }
+
   async function loadCpManifest() {
     if (cpManifestPromise) return cpManifestPromise;
-    cpManifestPromise = fetch(CP_MANIFEST_URL, { cache: "force-cache" }).then((response) => {
-      if (!response.ok) throw new Error("Paket CP Lama 2025 belum terpasang.");
-      return response.json();
+    cpManifestPromise = (async () => {
+      try {
+        const bundle = await loadCpBundle();
+        return bundle.manifest;
+      } catch (bundleError) {
+        const response = await fetch(CP_MANIFEST_URL, { cache: "force-cache" });
+        if (!response.ok) throw bundleError;
+        return response.json();
+      }
+    })().catch((error) => {
+      cpManifestPromise = null;
+      throw error;
     });
     return cpManifestPromise;
+  }
+
+  async function loadCpPreview(record) {
+    try {
+      const response = await fetch(record.preview, { cache: "force-cache" });
+      if (response.ok) return response.json();
+    } catch {}
+    const bundle = await loadCpBundle();
+    const key = `${record.id}.json`;
+    const payload = bundle.previews?.[key] || bundle.previews?.[record.preview?.split("/").pop()];
+    if (!payload) throw new Error(`Pratinjau ${record.title} tidak ditemukan dalam paket.`);
+    return payload;
+  }
+
+  function cpMediaSource(mediaBase, image) {
+    if (!image) return "";
+    if (mediaBase && typeof mediaBase === "object") {
+      return mediaBase.media?.[`${mediaBase.id}/${image}`] || mediaBase.media?.[image] || "";
+    }
+    return `${mediaBase}/${image}`;
+  }
+
+  function downloadBlobFile(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1800);
+  }
+
+  async function sha256Hex(bytes) {
+    if (!window.crypto?.subtle) return "";
+    const digest = await window.crypto.subtle.digest("SHA-256", bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
+    return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join("");
+  }
+
+  function sourceMime(format) {
+    return format === "xlsx"
+      ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  }
+
+  async function loadCpSourceZip(status) {
+    if (cpSourceZipPromise) return cpSourceZipPromise;
+    cpSourceZipPromise = (async () => {
+      if (status) status.textContent = "Menyiapkan paket sumber asli. Proses pertama hanya dilakukan sekali pada perangkat ini…";
+      const JSZip = await waitForJSZip();
+      const encoded = (await cachedText(CP_SOURCE_PACK_URL)).trim();
+      if (!encoded) throw new Error("Paket sumber CP Lama 2025 kosong.");
+      return JSZip.loadAsync(encoded, { base64: true, checkCRC32: true });
+    })().catch((error) => {
+      cpSourceZipPromise = null;
+      throw error;
+    });
+    return cpSourceZipPromise;
+  }
+
+  async function sourceBytes(record, status) {
+    try {
+      const response = await fetch(record.file, { cache: "force-cache" });
+      if (response.ok && !String(response.headers.get("content-type") || "").includes("text/html")) {
+        return new Uint8Array(await response.arrayBuffer());
+      }
+    } catch {}
+    const archive = await loadCpSourceZip(status);
+    const entry = archive.file(`files/${record.id}.${record.format}`);
+    if (!entry) throw new Error(`Berkas asli ${record.originalName} tidak ditemukan dalam paket sumber.`);
+    return entry.async("uint8array");
+  }
+
+  async function downloadCpSource(record, status, button) {
+    const oldText = button?.textContent || "Unduh berkas";
+    if (button) { button.disabled = true; button.textContent = "Menyiapkan unduhan…"; }
+    try {
+      const bytes = await sourceBytes(record, status);
+      const hash = await sha256Hex(bytes);
+      if (record.sha256 && hash && hash !== record.sha256) throw new Error("Checksum berkas tidak sesuai; unduhan dibatalkan untuk menjaga keutuhan sumber.");
+      downloadBlobFile(new Blob([bytes], { type: sourceMime(record.format) }), record.originalName);
+      if (status) status.textContent = `✓ ${record.originalName} berhasil disiapkan dari berkas sumber asli.`;
+      if (button) button.textContent = "✓ Unduhan siap";
+    } catch (error) {
+      if (status) status.textContent = error?.message || "Berkas belum dapat diunduh.";
+      if (button) button.textContent = "Coba unduh lagi";
+    } finally {
+      if (button) window.setTimeout(() => { button.disabled = false; button.textContent = oldText; }, 1800);
+    }
   }
 
   function currentTeacherPanel() { return $("#panel-teacher") || $(".teacher-panel-v29"); }
@@ -562,7 +722,7 @@
 
   function renderRuns(runs, mediaBase) {
     return (runs || []).map((run) => {
-      if (run.image) return `<img class="v40-doc-image" src="${escapeHtml(`${mediaBase}/${run.image}`)}" alt="${escapeHtml(run.alt || "Gambar dokumen")}" loading="lazy">`;
+      if (run.image) { const source = cpMediaSource(mediaBase, run.image); return source ? `<img class="v40-doc-image" src="${escapeHtml(source)}" alt="${escapeHtml(run.alt || "Gambar dokumen")}" loading="lazy">` : `<span class="v42-image-note">Gambar dokumen tersimpan pada berkas sumber asli.</span>`; }
       const styles=[];
       if (run.sizePt) styles.push(`font-size:${Math.min(28,Math.max(8,run.sizePt))}pt`);
       if (run.font) styles.push(`font-family:${JSON.stringify(run.font)},Cambria,serif`);
@@ -606,31 +766,42 @@
     const preview = teacherPreview(); if (!preview) return;
     cpLoading(`Membuka ${record.title}`);
     try {
-      const response = await fetch(record.preview, { cache: "force-cache" });
-      if (!response.ok) throw new Error("Pratinjau tidak ditemukan");
-      const payload = await response.json();
-      const mediaBase = `assets/cp-2025/media/${record.id}`;
-      const content = record.format === "xlsx" ? renderExcelPreview(payload) : `${(payload.headers || []).map((item)=>`<header class="v40-doc-header">${renderDocBlocks(item.blocks,mediaBase)}</header>`).join("")}<article class="v40-source-document">${renderDocBlocks(payload.blocks,mediaBase)}</article>${(payload.footers || []).map((item)=>`<footer class="v40-doc-footer">${renderDocBlocks(item.blocks,mediaBase)}</footer>`).join("")}`;
-      preview.innerHTML = `<section class="v40-cp-library-head"><div><span>CP LAMA 2025 • BERKAS SUMBER UTUH</span><h2>${escapeHtml(record.title)}</h2><p>Keputusan Kepala BSKAP Nomor 046/H/KR/2025 • Kelas ${escapeHtml(cpGrade)} • ${escapeHtml(record.originalName)}</p></div><div class="v40-cp-actions"><a href="${escapeHtml(record.file)}" download>Unduh berkas asli ${record.format.toUpperCase()}</a><button type="button" data-v40-cache-record>Simpan luring</button></div></section>${records.length > 1 ? `<label class="v40-record-select">Pilih dokumen sumber<select data-v40-record-select>${records.map((item)=>`<option value="${item.id}" ${item.id===record.id ? "selected" : ""}>${escapeHtml(item.title)}</option>`).join("")}</select></label>` : ""}<div class="v40-source-integrity"><span>✓ SHA-256 terverifikasi</span><span>✓ Berkas asli tidak diubah</span><span>✓ Tabel dan isi dimuat lengkap</span><small>${escapeHtml(record.sha256)}</small></div>${content}<section class="v40-source-download"><strong>Berkas sumber asli adalah rujukan final</strong><p>Pratinjau dibuat untuk akses cepat. Unduhan memberikan berkas asli yang sama persis dengan lampiran pengguna.</p><a href="${escapeHtml(record.file)}" download>Unduh ${escapeHtml(record.originalName)}</a></section>`;
+      const [payload, bundle] = await Promise.all([loadCpPreview(record), loadCpBundle()]);
+      const mediaBase = { id: record.id, media: bundle.media || {} };
+      const content = record.format === "xlsx"
+        ? renderExcelPreview(payload)
+        : `${(payload.headers || []).map((item) => `<header class="v40-doc-header">${renderDocBlocks(item.blocks, mediaBase)}</header>`).join("")}<article class="v40-source-document">${renderDocBlocks(payload.blocks, mediaBase)}</article>${(payload.footers || []).map((item) => `<footer class="v40-doc-footer">${renderDocBlocks(item.blocks, mediaBase)}</footer>`).join("")}`;
+      preview.innerHTML = `<section class="v40-cp-library-head"><div><span>CP LAMA 2025 • BERKAS SUMBER UTUH</span><h2>${escapeHtml(record.title)}</h2><p>Keputusan Kepala BSKAP Nomor 046/H/KR/2025 • Kelas ${escapeHtml(cpGrade)} • ${escapeHtml(record.originalName)}</p></div><div class="v40-cp-actions"><button type="button" data-v42-download-source>Unduh berkas asli ${record.format.toUpperCase()}</button><button type="button" data-v40-cache-record>Simpan luring</button></div></section>${records.length > 1 ? `<label class="v40-record-select">Pilih dokumen sumber<select data-v40-record-select>${records.map((item) => `<option value="${item.id}" ${item.id === record.id ? "selected" : ""}>${escapeHtml(item.title)}</option>`).join("")}</select></label>` : ""}<div class="v40-source-integrity"><span>✓ SHA-256 tersedia</span><span>✓ Berkas asli tidak diubah</span><span>✓ Tabel dan isi dimuat lengkap</span><small>${escapeHtml(record.sha256)}</small></div>${content}<section class="v40-source-download"><strong>Berkas sumber asli adalah rujukan final</strong><p>Pratinjau lengkap dimuat dari paket ringkas. Berkas DOCX/XLSX asli baru dimuat ketika tombol unduh atau simpan luring dipilih, sehingga portal tetap ringan.</p><button type="button" data-v42-download-source>Unduh ${escapeHtml(record.originalName)}</button><small data-v42-source-status aria-live="polite"></small></section>`;
       preview.classList.remove("v40-preview-transition");
+      const status = $("[data-v42-source-status]", preview);
+      $$('[data-v42-download-source]', preview).forEach((button) => button.addEventListener("click", () => downloadCpSource(record, status, button)));
       $("[data-v40-record-select]", preview)?.addEventListener("change", (event) => {
-        const next = records.find((item) => item.id === event.target.value); if (next) { cpSelectedRecord = next.id; renderCpRecord(next,records); }
+        const next = records.find((item) => item.id === event.target.value);
+        if (next) { cpSelectedRecord = next.id; renderCpRecord(next, records); }
       });
       $("[data-v40-cache-record]", preview)?.addEventListener("click", async (event) => {
-        const button=event.currentTarget; button.disabled=true; button.textContent="Menyimpan…";
+        const button = event.currentTarget; button.disabled = true; button.textContent = "Menyimpan paket…";
         try {
-          const cache=await caches.open("paibp-smart-cp2025-v40");
-          const paths=[record.preview,record.file];
-          await Promise.all(paths.map(async(path)=>{const response=await fetch(path);if(response.ok)await cache.put(path,response);}));
-          button.textContent="✓ Tersimpan luring";
-        } catch { button.textContent="Gagal menyimpan"; button.disabled=false; }
+          await loadCpBundle();
+          await loadCpSourceZip(status);
+          button.textContent = "✓ CP 2025 tersimpan luring";
+          if (status) status.textContent = "Pratinjau dan seluruh berkas sumber CP Lama 2025 telah tersedia luring pada perangkat ini.";
+        } catch (error) {
+          button.textContent = "Gagal menyimpan";
+          button.disabled = false;
+          if (status) status.textContent = error?.message || "Paket belum dapat disimpan.";
+        }
       });
-      $$("[data-v40-sheet]", preview).forEach((button) => button.addEventListener("click", () => {
-        $$("[data-v40-sheet]", preview).forEach((item)=>item.setAttribute("aria-pressed",String(item===button)));
-        $$("[data-v40-sheet-page]", preview).forEach((page)=>{page.hidden=page.dataset.v40SheetPage!==button.dataset.v40Sheet;});
+      $$('[data-v40-sheet]', preview).forEach((button) => button.addEventListener("click", () => {
+        $$('[data-v40-sheet]', preview).forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        $$('[data-v40-sheet-page]', preview).forEach((page) => { page.hidden = page.dataset.v40SheetPage !== button.dataset.v40Sheet; });
       }));
     } catch (error) {
-      preview.innerHTML = `<section class="warning"><strong>Dokumen belum dapat dibuka.</strong><p>${escapeHtml(error?.message || "Paket CP Lama 2025 belum lengkap.")}</p><a href="${escapeHtml(record.file)}" download>Unduh berkas asli</a></section>`;
+      preview.classList.remove("v40-preview-transition");
+      preview.innerHTML = `<section class="warning"><strong>Paket CP Lama 2025 gagal dibaca.</strong><p>${escapeHtml(error?.message || "Paket belum lengkap.")}</p><button type="button" data-v42-retry-cp>Coba muat ulang</button></section>`;
+      $("[data-v42-retry-cp]", preview)?.addEventListener("click", () => {
+        cpBundlePromise = null; cpManifestPromise = null; renderCp2025();
+      });
     }
   }
 
@@ -644,7 +815,7 @@
       if(!records.length){preview.innerHTML=`<section class="v40-empty-source"><span>▤</span><h3>Dokumen CP Lama 2025 belum ditemukan</h3><p>Tidak ada berkas kategori ${escapeHtml(cpDoc)} untuk kelas ${escapeHtml(cpGrade)} pada lampiran.</p></section>`;return;}
       const selected=records.find((item)=>item.id===cpSelectedRecord)||records[0]; cpSelectedRecord=selected.id;
       await renderCpRecord(selected,records);
-    } catch(error){preview.innerHTML=`<section class="warning"><strong>Paket CP Lama 2025 belum terpasang.</strong><p>${escapeHtml(error?.message||"")}</p></section>`;}
+    } catch(error){preview.innerHTML=`<section class="warning"><strong>Paket CP Lama 2025 gagal dimuat.</strong><p>${escapeHtml(error?.message||"")}</p></section>`;}
   }
 
   function restoreCp2026() {
@@ -685,7 +856,7 @@
   }
 
   function initialize() {
-    document.documentElement.dataset.portalBuild="40-quran-cp";
+    document.documentElement.dataset.portalBuild="42-quran-cp";
     document.body?.classList.add("v40-ready");
     observeQuran(); initializeTeacherCp();
     const observer=new MutationObserver(()=>{observeQuran();initializeTeacherCp();});
