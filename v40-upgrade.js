@@ -1,15 +1,17 @@
 (() => {
   "use strict";
 
-  const BUILD = "44";
+  const BUILD = "46";
   const QURAN_CACHE = "paibp-smart-quran-v40";
   const AUDIO_CACHE = "paibp-smart-quran-audio-v40";
   const TAFSIR_PREFIX = "paibp-smart-tafsir-v40-";
   const CP_MODE_KEY = "paibp-smart-curriculum-mode-v40";
+  const CP_FAST_MANIFEST_URL = "cp2025-manifest-v46.json";
+  const CP_FAST_CHUNK_DIR = "cp2025-chunks-v46";
   const CP_MANIFEST_URL = "assets/cp-2025/manifest.json";
   const CP_PREVIEW_PACK_URL = "cp2025-preview-pack.b64";
   const CP_SOURCE_PACK_URL = "cp2025-source-pack.b64";
-  const CP_CACHE_NAME = "paibp-smart-cp2025-v44";
+  const CP_CACHE_NAME = "paibp-smart-cp2025-v46";
   const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
   const $$ = (selector, root = document) => [...(root?.querySelectorAll?.(selector) || [])];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -46,6 +48,7 @@
   let currentEquranSurah = 0;
   let cpManifestPromise = null;
   let cpBundlePromise = null;
+  const cpChunkPromises = new Map();
   let cpSourceZipPromise = null;
   let cpMode = localStorage.getItem(CP_MODE_KEY) || "2026";
   let cpGrade = "VII";
@@ -573,16 +576,47 @@
     return cpBundlePromise;
   }
 
+  async function fetchCpJson(url) {
+    const href = absolute(url);
+    const request = new Request(href, { cache: "no-store" });
+    let cached = null;
+    if ("caches" in window) {
+      try { cached = await caches.match(href, { ignoreSearch: true }); } catch {}
+    }
+    const controller = typeof AbortController === "function" ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 12000) : 0;
+    try {
+      const response = await fetch(request, { cache: "no-store", signal: controller?.signal });
+      if (!response.ok) throw new Error(`Data ${url} tidak ditemukan (${response.status}).`);
+      const clone = response.clone();
+      const data = await response.json();
+      if ("caches" in window) {
+        caches.open(CP_CACHE_NAME).then((cache) => cache.put(href, clone)).catch(() => {});
+      }
+      return data;
+    } catch (error) {
+      if (cached) return cached.json();
+      throw error;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+
   async function loadCpManifest() {
     if (cpManifestPromise) return cpManifestPromise;
     cpManifestPromise = (async () => {
       try {
+        const manifest = await fetchCpJson(`${CP_FAST_MANIFEST_URL}?v=${BUILD}`);
+        if (!manifest?.records?.length) throw new Error("Manifest cepat CP Lama 2025 kosong.");
+        return manifest;
+      } catch (fastError) {
+        try {
+          const response = await fetch(CP_MANIFEST_URL, { cache: "force-cache" });
+          if (response.ok) return response.json();
+        } catch {}
         const bundle = await loadCpBundle();
+        if (!bundle?.manifest?.records?.length) throw fastError;
         return bundle.manifest;
-      } catch (bundleError) {
-        const response = await fetch(CP_MANIFEST_URL, { cache: "force-cache" });
-        if (!response.ok) throw bundleError;
-        return response.json();
       }
     })().catch((error) => {
       cpManifestPromise = null;
@@ -591,17 +625,42 @@
     return cpManifestPromise;
   }
 
+  async function loadCpChunk(name) {
+    if (!name) throw new Error("Kelompok pratinjau CP Lama 2025 tidak dikenali.");
+    if (cpChunkPromises.has(name)) return cpChunkPromises.get(name);
+    const promise = fetchCpJson(`${CP_FAST_CHUNK_DIR}/${name}.json?v=${BUILD}`)
+      .then((chunk) => {
+        if (!chunk?.previews) throw new Error(`Isi kelompok ${name} tidak valid.`);
+        return chunk;
+      })
+      .catch((error) => {
+        cpChunkPromises.delete(name);
+        throw error;
+      });
+    cpChunkPromises.set(name, promise);
+    return promise;
+  }
+
   async function loadCpPreview(record) {
-    const bundle = await loadCpBundle();
     const key = `${record.id}.json`;
-    const payload = bundle.previews?.[key] || bundle.previews?.[record.preview?.split("/").pop()];
-    if (payload) return payload;
+    if (record.previewChunk) {
+      try {
+        const chunk = await loadCpChunk(record.previewChunk);
+        const payload = chunk.previews?.[key] || chunk.previews?.[record.preview?.split("/").pop()];
+        if (!payload) throw new Error(`Pratinjau ${record.title} tidak ditemukan.`);
+        return { payload, media: chunk.media || {} };
+      } catch (fastError) {
+        // Jatuh ke paket lama hanya jika data cepat belum tersedia.
+      }
+    }
     try {
-      const response = await fetch(record.preview, { cache: "reload" });
-      const type = String(response.headers.get("content-type") || "");
-      if (response.ok && !type.includes("text/html")) return response.json();
+      const response = await fetch(record.preview, { cache: "force-cache" });
+      if (response.ok) return { payload: await response.json(), media: {} };
     } catch {}
-    throw new Error(`Pratinjau ${record.title} tidak ditemukan dalam paket 40 dokumen.`);
+    const bundle = await loadCpBundle();
+    const payload = bundle.previews?.[key] || bundle.previews?.[record.preview?.split("/").pop()];
+    if (!payload) throw new Error(`Pratinjau ${record.title} tidak ditemukan dalam paket.`);
+    return { payload, media: bundle.media || {} };
   }
 
   function cpMediaSource(mediaBase, image) {
@@ -792,8 +851,9 @@
     const preview = teacherPreview(); if (!preview) return;
     cpLoading(`Membuka ${record.title}`);
     try {
-      const [payload, bundle] = await Promise.all([loadCpPreview(record), loadCpBundle()]);
-      const mediaBase = { id: record.id, media: bundle.media || {} };
+      const previewData = await loadCpPreview(record);
+      const payload = previewData.payload || previewData;
+      const mediaBase = { id: record.id, media: previewData.media || {} };
       const content = record.format === "xlsx"
         ? renderExcelPreview(payload)
         : `${(payload.headers || []).map((item) => `<header class="v40-doc-header">${renderDocBlocks(item.blocks, mediaBase)}</header>`).join("")}<article class="v40-source-document">${renderDocBlocks(payload.blocks, mediaBase)}</article>${(payload.footers || []).map((item) => `<footer class="v40-doc-footer">${renderDocBlocks(item.blocks, mediaBase)}</footer>`).join("")}`;
@@ -808,7 +868,8 @@
       $("[data-v40-cache-record]", preview)?.addEventListener("click", async (event) => {
         const button = event.currentTarget; button.disabled = true; button.textContent = "Menyimpan paket…";
         try {
-          await loadCpBundle();
+          if (record.previewChunk) await loadCpChunk(record.previewChunk);
+          else await loadCpPreview(record);
           await loadCpSourceZip(status);
           button.textContent = "✓ CP 2025 tersimpan luring";
           if (status) status.textContent = "Pratinjau dan seluruh berkas sumber CP Lama 2025 telah tersedia luring pada perangkat ini.";
@@ -882,10 +943,14 @@
   }
 
   function initialize() {
-    document.documentElement.dataset.portalBuild="44-quran-cp";
+    document.documentElement.dataset.portalBuild="46-quran-cp";
     document.body?.classList.add("v40-ready");
     observeQuran(); initializeTeacherCp();
-    const observer=new MutationObserver(()=>{observeQuran();initializeTeacherCp();});
+    let observerTimer = 0;
+    const observer=new MutationObserver(()=>{
+      clearTimeout(observerTimer);
+      observerTimer=setTimeout(()=>{observeQuran();initializeTeacherCp();},120);
+    });
     observer.observe(document.body,{childList:true,subtree:true});
     window.addEventListener("hashchange",()=>{const cards=$$("#quran-reader .ayah-card");if(cards.length)applyDeepLink(cards);});
     document.addEventListener("keydown",(event)=>{if(event.key==="Escape")$$('.v40-modal:not([hidden])').forEach(closeModal);});

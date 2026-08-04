@@ -1,10 +1,10 @@
-const CACHE_NAME = "paibp-smart-core-v44-ai-focus-cp";
-const CP_CACHE = "paibp-smart-cp2025-v44";
+const CACHE_NAME = "paibp-smart-core-v46-fast-cp";
+const CP_CACHE = "paibp-smart-cp2025-v46";
 const CORE_ASSETS = [
   "./","./index.html","./fitur.html","./mapel-lain.html","./literasi-digital.html","./artikel-islam.html","./about-spensus.html","./contact.html","./privacy.html","./support.html","./terms.html","./akses-guru.html","./kendali-editor.html","./404.html",
-  "./styles.css","./v28-ui.css","./v29-ui.css","./v30-ui.css","./v32-ui.css","./v33-multimapel.css","./v34-lite.css","./literasi-digital.css","./v37-final.css","./v38-upgrade.css","./v39-upgrade.css","./v40-upgrade.css","./realtime-v43.css","./spensus-ai-v44.css","./learning-guard-v44.css",
+  "./styles.css","./v28-ui.css","./v29-ui.css","./v30-ui.css","./v32-ui.css","./v33-multimapel.css","./v34-lite.css","./literasi-digital.css","./v37-final.css","./v38-upgrade.css","./v39-upgrade.css","./v40-upgrade.css","./realtime-v43.css","./spensus-ai-v44.css","./learning-guard-v44.css","./learning-guard-v46-fix.css",
   "./manifest.webmanifest","./assets/icons/icon-192.png","./assets/icons/icon-512.png","./logo-spensus.png","./logo-spensus-hd.png","./gerbang.jpg","./sunarso.jpeg",
-  "./app-config.js","./content-data.js","./teacher-source-data.js","./calendar-data.js","./staff-images.js","./school-data.js","./banjarnegara-school-directory.js","./islamic-data.js","./islamic-learning-data.js","./islamic-upgrade-v19.js","./islamic-upgrade-v20.js","./islamic-upgrade-v21.js","./islamic-upgrade-v22.js","./khutbah-source-data.js","./khutbah-verse-data.js","./hadith-data.js","./arabic-data.js","./assessment-data.js","./game-data.js","./video-data.js","./docx-export.js","./vendor/jszip.min.js","./vendor/pptxgen.min.js","./office-export.js","./assessment-ui.js","./script.js","./spensus-ai.js","./multimapel-loader.js","./v26-ui.js","./v28-ui.js","./v29-ui.js","./v30-ui.js","./public-pages.js","./v29-public.js","./v34-lite.js","./v38-upgrade.js","./v39-upgrade.js","./v40-upgrade.js","./realtime-v43.js","./learning-guard-v44.js","./cp2025-preview-pack.b64","./literasi-digital.js","./artikel-data.js","./artikel-islam.js"
+  "./app-config.js","./content-data.js","./teacher-source-data.js","./calendar-data.js","./staff-images.js","./school-data.js","./banjarnegara-school-directory.js","./islamic-data.js","./islamic-learning-data.js","./islamic-upgrade-v19.js","./islamic-upgrade-v20.js","./islamic-upgrade-v21.js","./islamic-upgrade-v22.js","./khutbah-source-data.js","./khutbah-verse-data.js","./hadith-data.js","./arabic-data.js","./assessment-data.js","./game-data.js","./video-data.js","./docx-export.js","./vendor/jszip.min.js","./vendor/pptxgen.min.js","./office-export.js","./assessment-ui.js","./script.js","./spensus-ai.js","./multimapel-loader.js","./v26-ui.js","./v28-ui.js","./v29-ui.js","./v30-ui.js","./public-pages.js","./v29-public.js","./v34-lite.js","./v38-upgrade.js","./v39-upgrade.js","./v40-upgrade.js","./realtime-v43.js","./learning-guard-v44.js","./learning-guard-v46-fix.js","./cp2025-manifest-v46.json","./literasi-digital.js","./artikel-data.js","./artikel-islam.js"
 ];
 
 self.addEventListener("install", (event) => {
@@ -94,6 +94,14 @@ self.addEventListener("fetch", (event) => {
       if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
       return response;
     }).catch(async () => await caches.match(request) || caches.match(new URL("./index.html", self.registration.scope).href)));
+    return;
+  }
+
+  if (url.origin === self.location.origin && (url.pathname.includes("/cp2025-chunks-v46/") || url.pathname.endsWith("/cp2025-manifest-v46.json"))) {
+    event.respondWith(fetch(request, { cache: "no-store" }).then((response) => {
+      if (response.ok) caches.open(CP_CACHE).then((cache) => cache.put(request, response.clone()));
+      return response;
+    }).catch(() => caches.match(request, { ignoreSearch: true })));
     return;
   }
 

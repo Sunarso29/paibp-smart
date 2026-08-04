@@ -1,0 +1,8 @@
+/* PAIBP SMART V46 — kendali bab ringan */
+.v46-force-locked{background:linear-gradient(135deg,#fff3ef,#ffe2da)!important;border-color:rgba(181,47,32,.38)!important}
+.v46-force-locked strong::after{content:" • DIKUNCI";color:#ad2f21;font-size:.67rem;letter-spacing:.04em}
+.v46-first-chapter{background:#effaf6!important;opacity:.82}
+.v46-first-chapter strong::after{content:" • TERBUKA AWAL";color:#08745d;font-size:.67rem}
+.v46-editor-toast{position:fixed;left:50%;bottom:18px;z-index:1000000;max-width:min(92vw,680px);padding:12px 16px;border-radius:13px;background:#0b6653;color:#fff;font-weight:850;box-shadow:0 16px 45px rgba(0,0,0,.22);transform:translate(-50%,22px);opacity:0;pointer-events:none;transition:.18s ease}
+.v46-editor-toast.show{opacity:1;transform:translate(-50%,0)}
+.v46-editor-toast[data-tone="warning"]{background:#8a5b00}.v46-editor-toast[data-tone="error"]{background:#9f2f24}

@@ -35,17 +35,17 @@
     document.body.append(script);
   });
 
-  addStyle("v38-upgrade.css?v=44");
-  addStyle("v39-upgrade.css?v=44");
-  addStyle("v40-upgrade.css?v=44");
-  addStyle("spensus-ai-v44.css?v=44");
-  addStyle("learning-guard-v44.css?v=44");
+  addStyle("v38-upgrade.css?v=46");
+  addStyle("v39-upgrade.css?v=46");
+  addStyle("v40-upgrade.css?v=46");
+  addStyle("spensus-ai-v44.css?v=46");
+  addStyle("learning-guard-v44.css?v=46");
 
-  ensureScript("v38-upgrade.js?v=44", () => Boolean(document.querySelector(".v38-worship-button")))
-    .then(() => ensureScript("v39-upgrade.js?v=44", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
-    .then(() => ensureScript("v40-upgrade.js?v=44", () => document.documentElement.dataset.portalBuild === "44-quran-cp"))
-    .then(() => ensureScript("learning-guard-v44.js?v=44", () => Boolean(document.querySelector("#v44-focus-gate"))))
-    .catch(() => { document.documentElement.dataset.portalBuild = "44-partial"; });
+  ensureScript("v38-upgrade.js?v=46", () => Boolean(document.querySelector(".v38-worship-button")))
+    .then(() => ensureScript("v39-upgrade.js?v=46", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
+    .then(() => ensureScript("v40-upgrade.js?v=46", () => document.documentElement.dataset.portalBuild === "46-quran-cp"))
+    .then(() => ensureScript("learning-guard-v44.js?v=46", () => Boolean(document.querySelector("#v44-focus-gate"))))
+    .catch(() => { document.documentElement.dataset.portalBuild = "46-partial"; });
 
-  document.documentElement.dataset.portalBuild = "44-loader";
+  document.documentElement.dataset.portalBuild = "46-loader";
 })();
