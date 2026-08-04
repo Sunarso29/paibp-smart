@@ -1,0 +1,64 @@
+/* PAIBP SMART SMP — koreksi arti centang kendali bab V45 */
+.v45-editor-chapter-control footer > span strong{
+  color:#9c2d20;
+  font-weight:950;
+}
+.v45-editor-chapter-control label.v45-force-locked{
+  border-color:rgba(190,54,38,.5)!important;
+  background:linear-gradient(135deg,#fff3ef,#ffe2da)!important;
+  box-shadow:0 0 0 3px rgba(190,54,38,.08);
+}
+.v45-editor-chapter-control label.v45-force-locked strong::after{
+  content:" • DIKUNCI";
+  color:#b52f20;
+  font-size:.68rem;
+  letter-spacing:.05em;
+}
+.v45-editor-chapter-control label.v45-chapter-one{
+  opacity:.82;
+  border-color:rgba(0,126,91,.25)!important;
+  background:#eefaf5!important;
+}
+.v45-editor-chapter-control label.v45-chapter-one strong::after{
+  content:" • TERBUKA AWAL";
+  color:#08745d;
+  font-size:.68rem;
+}
+.v45-chapter-lock-notice{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  margin:14px 0 0;
+  padding:12px 14px;
+  border:1px solid rgba(181,47,32,.22);
+  border-radius:15px;
+  background:linear-gradient(135deg,#fff5f1,#ffe7df);
+  color:#6f2b22;
+}
+.v45-chapter-lock-notice>span{font-size:1.15rem}
+.v45-chapter-lock-notice strong{display:block;margin-bottom:2px}
+.v45-chapter-lock-notice small{display:block;line-height:1.45}
+.v45-button-locked{cursor:not-allowed!important;opacity:.58!important}
+.v45-policy-toast{
+  position:fixed;
+  z-index:1000000;
+  left:50%;
+  bottom:22px;
+  transform:translate(-50%,24px);
+  max-width:min(92vw,680px);
+  padding:13px 17px;
+  border-radius:14px;
+  background:#103e34;
+  color:#fff;
+  font-weight:850;
+  box-shadow:0 18px 50px rgba(0,0,0,.24);
+  opacity:0;
+  pointer-events:none;
+  transition:.2s ease;
+}
+.v45-policy-toast.show{opacity:1;transform:translate(-50%,0)}
+.v45-policy-toast[data-tone="warning"]{background:#8a5b00}
+.v45-policy-toast[data-tone="error"]{background:#9f2f24}
+@media(max-width:680px){
+  .v45-policy-toast{bottom:12px;font-size:.84rem}
+}

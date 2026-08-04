@@ -1,22 +1,16 @@
 window.PAIBP_CONFIG = Object.freeze({
   /*
-   * PAIBP SMART SMP V44 — REKAP, SPENSUS AI, DAN KENDALI BAB
+   * PAIBP SMART SMP V45 — REKAP, SPENSUS AI, DAN KENDALI BAB
    *
-   * Setelah google-apps-script/Code.gs di-deploy sebagai Web App:
-   * 1. Tempel URL /exec pada syncEndpoint.
-   * 2. Tempel readKey hasil setup() pada syncReadKey.
-   * 3. Tempel aiPublicToken hasil setup()/configureOpenAI() pada aiPublicToken.
-   *
-   * API key OpenAI TIDAK BOLEH ditempel di file ini. Simpan hanya melalui
-   * fungsi configureOpenAI("sk-...") di Google Apps Script.
+   * API key OpenAI TIDAK BOLEH ditempel di file ini.
    */
- syncEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
-syncReadKey: "b082937b2165453ba7d9f81ecac063b00310b339ec0643da",
-aiEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
-aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
+  syncEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
+  syncReadKey: "b082937b2165453ba7d9f81ecac063b00310b339ec0643da",
+  aiEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
+  aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v44",
+  realtimeManagedBy: "v45",
 
   // Kompatibilitas lama — biarkan kosong agar tidak mengirim data ganda.
   realtimeEndpoint: "",
@@ -25,15 +19,26 @@ aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
 
 (() => {
   "use strict";
-  const version = "44";
+  const version = "45";
   const assets = {
-    styles: ["realtime-v43.css", "spensus-ai-v44.css", "learning-guard-v44.css"],
-    scripts: ["realtime-v43.js", "learning-guard-v44.js"],
+    styles: [
+      "realtime-v43.css",
+      "spensus-ai-v44.css",
+      "learning-guard-v44.css",
+      "learning-guard-v45-fix.css",
+    ],
+    scripts: [
+      "realtime-v43.js",
+      "learning-guard-v44.js",
+      "learning-guard-v45-fix.js",
+    ],
   };
+
   const assetPath = (value) => {
     try { return new URL(value, document.baseURI).pathname; }
     catch { return String(value || "").split("?")[0]; }
   };
+
   const hasAsset = (selector, path, property) => [...document.querySelectorAll(selector)]
     .some((element) => assetPath(element[property]) === assetPath(path));
 
