@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Haji tahap 5">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dbeeff"/><stop offset="1" stop-color="#fff0d2"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#063f35" flood-opacity=".18"/></filter>
+</defs>
+<rect width="900" height="520" rx="34" fill="url(#bg)"/>
+<circle cx="780" cy="88" r="54" fill="#f8cf4b" opacity=".72"/>
+<path d="M0 420 Q180 380 350 430 T900 410 V520 H0Z" fill="#cfe7df"/>
+<rect x="340" y="140" width="220" height="220" fill="#171717" filter="url(#shadow)"/><rect x="340" y="195" width="220" height="28" fill="#d4ad45"/><rect x="425" y="265" width="55" height="95" fill="#d4ad45"/><path d="M245 250 a205 160 0 1 0 410 0 a205 160 0 1 0 -410 0" fill="none" stroke="#4da6cf" stroke-width="12" stroke-dasharray="26 16"/><path d="M650 230 l25 20 -28 17" fill="#4da6cf"/></svg>

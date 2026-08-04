@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pemulihan PAIBP SMART V54</title>
+  <style>
+    body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#073f34,#3157a2);font-family:Arial,sans-serif;color:#173f36}
+    main{width:min(88vw,520px);padding:30px;border-radius:25px;background:linear-gradient(145deg,#e9f8f2,#edf0ff);text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.28)}
+    .spin{width:52px;height:52px;margin:auto;border:6px solid #bedbd2;border-top-color:#0a7f68;border-radius:50%;animation:s .75s linear infinite}
+    @keyframes s{to{transform:rotate(360deg)}}
+    h1{margin:18px 0 8px}p{line-height:1.55}
+  </style>
+</head>
+<body>
+<main>
+  <div class="spin"></div>
+  <h1>Memasang PAIBP SMART V54</h1>
+  <p>Membersihkan cache lama, memulihkan sinkronisasi real-time, Spensus AI, pratinjau CP 2025, serta visual ibadah.</p>
+</main>
+<script>
+(async()=>{
+  try{
+    ["paibp-smart-v52-cache-reset","paibp-smart-v53-cache-reset","paibp-smart-v54-cache-reset"].forEach(k=>localStorage.removeItem(k));
+    ["paibp-smart-cat-session-v52","paibp-smart-cat-session-v53","paibp-smart-focus-session-v48","paibp-smart-focus-session-v50"].forEach(k=>sessionStorage.removeItem(k));
+    if("caches" in window){for(const key of await caches.keys())await caches.delete(key)}
+    if("serviceWorker" in navigator){for(const reg of await navigator.serviceWorker.getRegistrations())await reg.unregister()}
+  }catch{}
+  setTimeout(()=>location.replace("index.html?v=54&fresh="+Date.now()),900);
+})();
+</script>
+</body>
+</html>

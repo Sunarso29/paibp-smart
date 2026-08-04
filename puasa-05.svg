@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Puasa tahap 5">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dcecff"/><stop offset="1" stop-color="#fff1c9"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#063f35" flood-opacity=".18"/></filter>
+</defs>
+<rect width="900" height="520" rx="34" fill="url(#bg)"/>
+<circle cx="780" cy="88" r="54" fill="#f8cf4b" opacity=".72"/>
+<path d="M0 420 Q180 380 350 430 T900 410 V520 H0Z" fill="#cfe7df"/>
+
+<g transform="translate(700 160) scale(0.9)" opacity=".18">
+  <rect x="-90" y="45" width="180" height="120" rx="10" fill="#3b5f9f"/>
+  <path d="M-110 45 Q0 -65 110 45Z" fill="#3b5f9f"/>
+  <rect x="-130" y="0" width="26" height="165" rx="8" fill="#3b5f9f"/>
+  <path d="M-141 0 Q-117 -38 -93 0Z" fill="#3b5f9f"/>
+  <rect x="104" y="0" width="26" height="165" rx="8" fill="#3b5f9f"/>
+  <path d="M93 0 Q117 -38 141 0Z" fill="#3b5f9f"/>
+</g><rect x="150" y="300" width="610" height="40" rx="15" fill="#9f663f"/><ellipse cx="350" cy="280" rx="80" ry="36" fill="#fff" stroke="#d5a34c" stroke-width="8"/><circle cx="330" cy="280" r="20" fill="#c78243"/><circle cx="370" cy="280" r="20" fill="#c78243"/><rect x="550" y="230" width="70" height="110" rx="16" fill="#dff5ff" stroke="#4ba6cc" stroke-width="7"/><circle cx="740" cy="110" r="70" fill="#f3aa47"/><path d="M670 180 H810" stroke="#f3aa47" stroke-width="10"/></svg>

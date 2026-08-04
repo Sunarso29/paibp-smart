@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Puasa tahap 4">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dcecff"/><stop offset="1" stop-color="#fff1c9"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#063f35" flood-opacity=".18"/></filter>
+</defs>
+<rect width="900" height="520" rx="34" fill="url(#bg)"/>
+<circle cx="780" cy="88" r="54" fill="#f8cf4b" opacity=".72"/>
+<path d="M0 420 Q180 380 350 430 T900 410 V520 H0Z" fill="#cfe7df"/>
+
+<g transform="translate(700 160) scale(0.9)" opacity=".18">
+  <rect x="-90" y="45" width="180" height="120" rx="10" fill="#3b5f9f"/>
+  <path d="M-110 45 Q0 -65 110 45Z" fill="#3b5f9f"/>
+  <rect x="-130" y="0" width="26" height="165" rx="8" fill="#3b5f9f"/>
+  <path d="M-141 0 Q-117 -38 -93 0Z" fill="#3b5f9f"/>
+  <rect x="104" y="0" width="26" height="165" rx="8" fill="#3b5f9f"/>
+  <path d="M93 0 Q117 -38 141 0Z" fill="#3b5f9f"/>
+</g><g transform="translate(430 150) scale(0.7)" filter="url(#shadow)">
+<path d="M-55 40 Q0 -10 55 40 V145 Q0 175 -55 145Z" fill="#4d70c7"/>
+<circle cx="0" cy="0" r="40" fill="#d99870"/><path d="M-42 -15 Q0 -55 42 -15Z" fill="#153a34"/>
+<path d="M-40 140 Q-90 188 -120 225" fill="none" stroke="#244d49" stroke-width="32" stroke-linecap="round"/>
+<path d="M40 140 Q85 185 130 205" fill="none" stroke="#244d49" stroke-width="32" stroke-linecap="round"/>
+<path d="M-42 70 Q-10 105 -35 130" fill="none" stroke="#d99870" stroke-width="20" stroke-linecap="round"/>
+<path d="M42 70 Q16 104 35 130" fill="none" stroke="#d99870" stroke-width="20" stroke-linecap="round"/>
+
+</g><path d="M130 150 Q230 100 330 150 V350 Q230 300 130 350Z" fill="#f7fff9" stroke="#0a7d68" stroke-width="8"/><path d="M330 150 Q430 100 530 150 V350 Q430 300 330 350Z" fill="#f7fff9" stroke="#0a7d68" stroke-width="8"/><path d="M180 205 H290 M180 245 H290 M370 205 H480 M370 245 H480" stroke="#0a7d68" stroke-width="7" stroke-linecap="round"/></svg>

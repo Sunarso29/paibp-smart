@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Haji tahap 3">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dbeeff"/><stop offset="1" stop-color="#fff0d2"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#063f35" flood-opacity=".18"/></filter>
+</defs>
+<rect width="900" height="520" rx="34" fill="url(#bg)"/>
+<circle cx="780" cy="88" r="54" fill="#f8cf4b" opacity=".72"/>
+<path d="M0 420 Q180 380 350 430 T900 410 V520 H0Z" fill="#cfe7df"/>
+<rect x="80" y="280" width="740" height="120" rx="30" fill="#263f5d"/><circle cx="170" cy="120" r="8" fill="#fff"/><circle cx="250" cy="80" r="7" fill="#fff"/><circle cx="340" cy="130" r="10" fill="#fff"/><circle cx="600" cy="90" r="8" fill="#fff"/><circle cx="720" cy="130" r="7" fill="#fff"/><path d="M710 52 a60 60 0 1 0 0 110 a48 48 0 1 1 0-110Z" fill="#f6d568"/><g transform="translate(450 170) scale(0.55)" filter="url(#shadow)">
+<path d="M-55 40 Q0 -10 55 40 V145 Q0 175 -55 145Z" fill="#f4f0e7"/>
+<circle cx="0" cy="0" r="40" fill="#d99870"/><path d="M-42 -15 Q0 -55 42 -15Z" fill="#153a34"/>
+<path d="M-40 140 Q-90 188 -120 225" fill="none" stroke="#f4f0e7" stroke-width="32" stroke-linecap="round"/>
+<path d="M40 140 Q85 185 130 205" fill="none" stroke="#f4f0e7" stroke-width="32" stroke-linecap="round"/>
+<path d="M-42 70 Q-10 105 -35 130" fill="none" stroke="#d99870" stroke-width="20" stroke-linecap="round"/>
+<path d="M42 70 Q16 104 35 130" fill="none" stroke="#d99870" stroke-width="20" stroke-linecap="round"/>
+
+</g></svg>

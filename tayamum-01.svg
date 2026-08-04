@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Tayamum tahap 1">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7e5cf"/><stop offset="1" stop-color="#e0f5eb"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#063f35" flood-opacity=".18"/></filter>
+</defs>
+<rect width="900" height="520" rx="34" fill="url(#bg)"/>
+<circle cx="780" cy="88" r="54" fill="#f8cf4b" opacity=".72"/>
+<path d="M0 420 Q180 380 350 430 T900 410 V520 H0Z" fill="#cfe7df"/>
+
+<g transform="translate(700 160) scale(0.9)" opacity=".18">
+  <rect x="-90" y="45" width="180" height="120" rx="10" fill="#7f5b3b"/>
+  <path d="M-110 45 Q0 -65 110 45Z" fill="#7f5b3b"/>
+  <rect x="-130" y="0" width="26" height="165" rx="8" fill="#7f5b3b"/>
+  <path d="M-141 0 Q-117 -38 -93 0Z" fill="#7f5b3b"/>
+  <rect x="104" y="0" width="26" height="165" rx="8" fill="#7f5b3b"/>
+  <path d="M93 0 Q117 -38 141 0Z" fill="#7f5b3b"/>
+</g><g transform="translate(200 330) scale(1)" filter="url(#shadow)">
+<path d="M-100 40 Q-60 -55 20 -30 Q90 -60 130 30 Q70 95 -70 80Z" fill="#b9895f"/>
+<circle cx="-35" cy="20" r="13" fill="#e7c7a7"/><circle cx="40" cy="8" r="10" fill="#e7c7a7"/><circle cx="85" cy="38" r="8" fill="#e7c7a7"/>
+</g><g transform="translate(570 110) scale(0.78)" filter="url(#shadow)"><path d="M-48 8 Q0 -34 48 8Z" fill="#153a34"/><circle cx="0" cy="40" r="42" fill="#d99870"/><rect x="-48" y="78" width="96" height="126" rx="34" fill="#d0904f"/><path d="M-35 201 L-46 302 Q-47 322 -25 324 L-4 324 L0 210Z" fill="#244d49"/><path d="M35 201 L46 302 Q47 322 25 324 L4 324 L0 210Z" fill="#244d49"/><rect x="-48" y="317" width="50" height="18" rx="9" fill="#173a35"/><rect x="-2" y="317" width="50" height="18" rx="9" fill="#173a35"/><path d="M-42 100 Q-70 160 -52 210" fill="none" stroke="#d99870" stroke-width="22" stroke-linecap="round"/><path d="M42 100 Q70 160 52 210" fill="none" stroke="#d99870" stroke-width="22" stroke-linecap="round"/></g><path d="M290 120 C350 70 430 70 500 120" fill="none" stroke="#b8773e" stroke-width="10" stroke-dasharray="16 12"/><circle cx="395" cy="94" r="24" fill="#fff" stroke="#b8773e" stroke-width="7"/><path d="M383 94 l10 10 20 -24" fill="none" stroke="#0a7d68" stroke-width="7" stroke-linecap="round"/></svg>

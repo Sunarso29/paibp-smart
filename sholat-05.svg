@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Gerakan sholat tahap 5">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dff7ef"/><stop offset="1" stop-color="#fff1ca"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#063f35" flood-opacity=".18"/></filter>
+</defs>
+<rect width="900" height="520" rx="34" fill="url(#bg)"/>
+<circle cx="780" cy="88" r="54" fill="#f8cf4b" opacity=".72"/>
+<path d="M0 420 Q180 380 350 430 T900 410 V520 H0Z" fill="#cfe7df"/>
+
+<g transform="translate(650 160) scale(1)" opacity=".18">
+  <rect x="-90" y="45" width="180" height="120" rx="10" fill="#0a6f5e"/>
+  <path d="M-110 45 Q0 -65 110 45Z" fill="#0a6f5e"/>
+  <rect x="-130" y="0" width="26" height="165" rx="8" fill="#0a6f5e"/>
+  <path d="M-141 0 Q-117 -38 -93 0Z" fill="#0a6f5e"/>
+  <rect x="104" y="0" width="26" height="165" rx="8" fill="#0a6f5e"/>
+  <path d="M93 0 Q117 -38 141 0Z" fill="#0a6f5e"/>
+</g><rect x="245" y="390" width="420" height="80" rx="18" fill="#a33d68" opacity=".78"/><path d="M265 456H645" stroke="#fff" stroke-opacity=".55" stroke-width="5" stroke-dasharray="16 10"/><g transform="translate(450 275) scale(0.95)" filter="url(#shadow)">
+<path d="M-100 -50 Q-15 -105 75 -50 L110 20 Q20 70 -90 35Z" fill="#3caf68"/>
+<circle cx="-135" cy="22" r="36" fill="#d99870"/><path d="M-171 8 Q-136 -27 -99 8Z" fill="#153a34"/>
+<path d="M75 -10 Q145 12 170 70" fill="none" stroke="#244d49" stroke-width="34" stroke-linecap="round"/>
+<path d="M50 15 Q95 58 112 105" fill="none" stroke="#244d49" stroke-width="34" stroke-linecap="round"/>
+<path d="M-90 25 Q-95 82 -145 100" fill="none" stroke="#d99870" stroke-width="22" stroke-linecap="round"/>
+<path d="M-35 35 Q-30 87 20 106" fill="none" stroke="#d99870" stroke-width="22" stroke-linecap="round"/>
+<ellipse cx="-139" cy="105" rx="28" ry="10" fill="#d99870"/><ellipse cx="25" cy="108" rx="28" ry="10" fill="#d99870"/>
+</g></svg>
