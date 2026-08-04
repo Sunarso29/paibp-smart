@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const BUILD = "42";
+  const BUILD = "44";
   const QURAN_CACHE = "paibp-smart-quran-v40";
   const AUDIO_CACHE = "paibp-smart-quran-audio-v40";
   const TAFSIR_PREFIX = "paibp-smart-tafsir-v40-";
@@ -9,7 +9,7 @@
   const CP_MANIFEST_URL = "assets/cp-2025/manifest.json";
   const CP_PREVIEW_PACK_URL = "cp2025-preview-pack.b64";
   const CP_SOURCE_PACK_URL = "cp2025-source-pack.b64";
-  const CP_CACHE_NAME = "paibp-smart-cp2025-v42";
+  const CP_CACHE_NAME = "paibp-smart-cp2025-v44";
   const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
   const $$ = (selector, root = document) => [...(root?.querySelectorAll?.(selector) || [])];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -494,18 +494,29 @@
   function waitForJSZip() {
     if (window.JSZip) return Promise.resolve(window.JSZip);
     return new Promise((resolve, reject) => {
-      const existing = document.querySelector('script[src*="vendor/jszip.min.js"]');
-      const done = () => window.JSZip ? resolve(window.JSZip) : reject(new Error("Mesin pembaca paket belum tersedia."));
-      if (existing) {
-        existing.addEventListener("load", done, { once: true });
-        window.setTimeout(done, 900);
-        return;
+      let settled = false;
+      const finish = (error) => {
+        if (settled) return;
+        if (window.JSZip) { settled = true; resolve(window.JSZip); return; }
+        if (error) { settled = true; reject(error); }
+      };
+      let existing = document.querySelector('script[src*="vendor/jszip.min.js"]');
+      if (!existing) {
+        existing = document.createElement("script");
+        existing.src = "vendor/jszip.min.js?v=44";
+        existing.async = false;
+        document.head.append(existing);
       }
-      const script = document.createElement("script");
-      script.src = "vendor/jszip.min.js?v=42";
-      script.onload = done;
-      script.onerror = () => reject(new Error("Mesin pembaca paket gagal dimuat."));
-      document.head.append(script);
+      existing.addEventListener("load", () => finish(), { once: true });
+      existing.addEventListener("error", () => finish(new Error("Mesin pembaca paket JSZip gagal dimuat.")), { once: true });
+      const started = Date.now();
+      const poll = window.setInterval(() => {
+        if (window.JSZip) { window.clearInterval(poll); finish(); }
+        else if (Date.now() - started > 12000) {
+          window.clearInterval(poll);
+          finish(new Error("Mesin pembaca paket belum siap setelah 12 detik. Muat ulang halaman."));
+        }
+      }, 100);
     });
   }
 
@@ -528,19 +539,33 @@
   }
 
   async function loadCpBundle() {
-    if (window.PAIBP_CP2025_BUNDLE?.manifest) return window.PAIBP_CP2025_BUNDLE;
+    if (window.PAIBP_CP2025_BUNDLE?.manifest?.records?.length) return window.PAIBP_CP2025_BUNDLE;
     if (cpBundlePromise) return cpBundlePromise;
     cpBundlePromise = (async () => {
       const JSZip = await waitForJSZip();
-      const encoded = (await cachedText(CP_PREVIEW_PACK_URL)).trim();
-      if (!encoded) throw new Error("Paket pratinjau CP Lama 2025 kosong.");
-      const archive = await JSZip.loadAsync(encoded, { base64: true, checkCRC32: true });
-      const entry = archive.file("bundle.json");
-      if (!entry) throw new Error("Isi paket CP Lama 2025 tidak valid.");
-      const bundle = JSON.parse(await entry.async("string"));
-      if (!bundle?.manifest?.records?.length) throw new Error("Daftar dokumen CP Lama 2025 tidak ditemukan.");
-      window.PAIBP_CP2025_BUNDLE = bundle;
-      return bundle;
+      let lastError = null;
+      for (const forceNetwork of [false, true]) {
+        try {
+          if (forceNetwork && "caches" in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.filter((key) => /cp2025/i.test(key)).map((key) => caches.delete(key)));
+          }
+          const encoded = (await cachedText(CP_PREVIEW_PACK_URL, { forceNetwork })).replace(/^\uFEFF/, "").trim();
+          if (!encoded || encoded.length < 1000) throw new Error("Paket pratinjau CP Lama 2025 kosong atau belum terunggah lengkap.");
+          if (!/^UEsDB/.test(encoded)) throw new Error("Paket CP Lama 2025 bukan arsip Base64 yang valid. Pastikan file .b64 diunggah tanpa diubah.");
+          const archive = await JSZip.loadAsync(encoded, { base64: true, checkCRC32: true });
+          const entry = archive.file("bundle.json");
+          if (!entry) throw new Error("bundle.json tidak ditemukan di dalam paket CP Lama 2025.");
+          const bundle = JSON.parse(await entry.async("string"));
+          if (!bundle?.manifest?.records?.length) throw new Error("Daftar dokumen CP Lama 2025 tidak ditemukan.");
+          if (bundle.manifest.records.length < 40) throw new Error(`Paket CP Lama 2025 belum lengkap: hanya ${bundle.manifest.records.length} dari 40 dokumen.`);
+          window.PAIBP_CP2025_BUNDLE = bundle;
+          return bundle;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw lastError || new Error("Paket CP Lama 2025 gagal dibaca.");
     })().catch((error) => {
       cpBundlePromise = null;
       throw error;
@@ -567,15 +592,16 @@
   }
 
   async function loadCpPreview(record) {
-    try {
-      const response = await fetch(record.preview, { cache: "force-cache" });
-      if (response.ok) return response.json();
-    } catch {}
     const bundle = await loadCpBundle();
     const key = `${record.id}.json`;
     const payload = bundle.previews?.[key] || bundle.previews?.[record.preview?.split("/").pop()];
-    if (!payload) throw new Error(`Pratinjau ${record.title} tidak ditemukan dalam paket.`);
-    return payload;
+    if (payload) return payload;
+    try {
+      const response = await fetch(record.preview, { cache: "reload" });
+      const type = String(response.headers.get("content-type") || "");
+      if (response.ok && !type.includes("text/html")) return response.json();
+    } catch {}
+    throw new Error(`Pratinjau ${record.title} tidak ditemukan dalam paket 40 dokumen.`);
   }
 
   function cpMediaSource(mediaBase, image) {
@@ -798,7 +824,7 @@
       }));
     } catch (error) {
       preview.classList.remove("v40-preview-transition");
-      preview.innerHTML = `<section class="warning"><strong>Paket CP Lama 2025 gagal dibaca.</strong><p>${escapeHtml(error?.message || "Paket belum lengkap.")}</p><button type="button" data-v42-retry-cp>Coba muat ulang</button></section>`;
+      preview.innerHTML = `<section class="warning v44-cp-diagnostic"><strong>Paket CP Lama 2025 gagal dibaca.</strong><p>${escapeHtml(error?.message || "Paket belum lengkap.")}</p><small>Pastikan <b>cp2025-preview-pack.b64</b>, <b>cp2025-source-pack.b64</b>, <b>v40-upgrade.js</b>, dan <b>vendor/jszip.min.js</b> berada sejajar dengan index.html.</small><button type="button" data-v42-retry-cp>Perbaiki cache dan muat ulang</button></section>`;
       $("[data-v42-retry-cp]", preview)?.addEventListener("click", () => {
         cpBundlePromise = null; cpManifestPromise = null; renderCp2025();
       });
@@ -856,7 +882,7 @@
   }
 
   function initialize() {
-    document.documentElement.dataset.portalBuild="42-quran-cp";
+    document.documentElement.dataset.portalBuild="44-quran-cp";
     document.body?.classList.add("v40-ready");
     observeQuran(); initializeTeacherCp();
     const observer=new MutationObserver(()=>{observeQuran();initializeTeacherCp();});

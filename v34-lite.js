@@ -9,10 +9,8 @@
     try { return new URL(value, document.baseURI).pathname; }
     catch { return String(value || "").split("?")[0]; }
   };
-
   const findAsset = (selector, path, property) => [...document.querySelectorAll(selector)]
     .find((element) => assetPath(element[property]) === assetPath(path));
-
   const addStyle = (path) => {
     if (findAsset('link[rel="stylesheet"]', path, "href")) return;
     const link = document.createElement("link");
@@ -20,14 +18,13 @@
     link.href = new URL(path, document.baseURI).href;
     document.head.append(link);
   };
-
   const ensureScript = (path, readyCheck) => new Promise((resolve, reject) => {
     const existing = findAsset("script[src]", path, "src");
     if (existing) {
       if (readyCheck?.()) { resolve(); return; }
       existing.addEventListener("load", resolve, { once: true });
       existing.addEventListener("error", reject, { once: true });
-      window.setTimeout(resolve, 650);
+      window.setTimeout(resolve, 1200);
       return;
     }
     const script = document.createElement("script");
@@ -38,16 +35,17 @@
     document.body.append(script);
   });
 
-  addStyle("v38-upgrade.css?v=42");
-  addStyle("v39-upgrade.css?v=42");
-  addStyle("v40-upgrade.css?v=42");
+  addStyle("v38-upgrade.css?v=44");
+  addStyle("v39-upgrade.css?v=44");
+  addStyle("v40-upgrade.css?v=44");
+  addStyle("spensus-ai-v44.css?v=44");
+  addStyle("learning-guard-v44.css?v=44");
 
-  ensureScript("v38-upgrade.js?v=42", () => Boolean(document.querySelector(".v38-worship-button")))
-    .then(() => ensureScript("v39-upgrade.js?v=42", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
-    .then(() => ensureScript("v40-upgrade.js?v=42", () => document.documentElement.dataset.portalBuild === "42-quran-cp"))
-    .catch(() => {
-      document.documentElement.dataset.portalBuild = "42-partial";
-    });
+  ensureScript("v38-upgrade.js?v=44", () => Boolean(document.querySelector(".v38-worship-button")))
+    .then(() => ensureScript("v39-upgrade.js?v=44", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
+    .then(() => ensureScript("v40-upgrade.js?v=44", () => document.documentElement.dataset.portalBuild === "44-quran-cp"))
+    .then(() => ensureScript("learning-guard-v44.js?v=44", () => Boolean(document.querySelector("#v44-focus-gate"))))
+    .catch(() => { document.documentElement.dataset.portalBuild = "44-partial"; });
 
-  document.documentElement.dataset.portalBuild = "42-loader";
+  document.documentElement.dataset.portalBuild = "44-loader";
 })();

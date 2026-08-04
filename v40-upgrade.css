@@ -125,3 +125,7 @@ body.v40-modal-open{overflow:hidden}
 .v40-source-download button:disabled,.v40-cp-actions button:disabled{opacity:.65;cursor:wait}
 .v40-source-download small{flex:1 1 100%;min-height:1.25rem;color:#547068;font-weight:750}
 .v42-image-note{display:inline-flex;padding:8px 11px;border-radius:10px;background:#f5f1df;color:#6b5b25;font-size:.78rem;font-style:italic}
+
+/* Diagnostik paket CP Lama 2025 v44 */
+.v44-cp-diagnostic small{display:block;margin:12px 0;padding:11px 13px;border-radius:13px;background:#fff8df;color:#6d5b2d;line-height:1.55}
+.v44-cp-diagnostic button{margin-top:8px;border:0;border-radius:12px;padding:10px 14px;background:#08745d;color:#fff;font-weight:900;cursor:pointer}
