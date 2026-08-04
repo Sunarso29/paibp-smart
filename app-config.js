@@ -10,10 +10,10 @@ window.PAIBP_CONFIG = Object.freeze({
    * API key OpenAI TIDAK BOLEH ditempel di file ini. Simpan hanya melalui
    * fungsi configureOpenAI("sk-...") di Google Apps Script.
    */
-  syncEndpoint: "",
-  syncReadKey: "",
-  aiEndpoint: "",
-  aiPublicToken: "",
+ syncEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
+syncReadKey: "b082937b2165453ba7d9f81ecac063b00310b339ec0643da",
+aiEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
+aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
   realtimeManagedBy: "v44",
