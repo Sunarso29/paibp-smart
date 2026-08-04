@@ -1,0 +1,458 @@
+/* PAIBP SMART V51 — contrast, live statistics, horizontal Islamic navigation, and step-by-step worship visuals */
+:root{
+  --v51-green:#075f50;
+  --v51-green-2:#0a7d68;
+  --v51-green-3:#0f8f76;
+  --v51-gold:#f5bd38;
+  --v51-ink:#143a31;
+  --v51-muted:#5b716a;
+  --v51-line:#c9ddd6;
+  --v51-soft:#f3faf7;
+  --v51-white:#fff;
+  --v51-shadow:0 16px 42px rgba(6,63,52,.12);
+}
+
+/* A. Kontras mutlak: tidak ada lagi teks putih pada kartu putih. */
+.hero-access-panel .access-tile:not(.access-tile-primary),
+.hero-access-panel .access-tile:not(.access-tile-primary) *{
+  color:#173e35!important;
+  -webkit-text-fill-color:#173e35!important;
+  text-shadow:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+.hero-access-panel .access-tile:not(.access-tile-primary){
+  background:linear-gradient(145deg,#fff,#f4faf7)!important;
+  border:1px solid #d2e2dd!important;
+}
+.hero-access-panel .access-tile:not(.access-tile-primary) strong{
+  display:block!important;
+  font-size:.88rem!important;
+  line-height:1.2!important;
+  font-weight:950!important;
+}
+.hero-access-panel .access-tile:not(.access-tile-primary) small{
+  display:block!important;
+  margin-top:4px!important;
+  color:#60746e!important;
+  -webkit-text-fill-color:#60746e!important;
+  font-size:.67rem!important;
+  line-height:1.25!important;
+}
+.hero-access-panel .access-tile:not(.access-tile-primary) b{
+  color:#0a6d5b!important;
+  -webkit-text-fill-color:#0a6d5b!important;
+}
+.hero-access-panel .access-tile-primary,
+.hero-access-panel .access-tile-primary *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+.hero-access-panel .access-icon{
+  background:#fff!important;
+  color:#17483e!important;
+  -webkit-text-fill-color:#17483e!important;
+}
+.hero-access-panel .access-tile-primary .access-icon{
+  background:#f4fffb!important;
+  color:#075f50!important;
+  -webkit-text-fill-color:#075f50!important;
+}
+
+/* B. Navigasi fitur Islami dipindahkan dari kiri menjadi bar horizontal yang terbaca. */
+.v51-islamic-shell{
+  display:block!important;
+  grid-template-columns:1fr!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+.v51-islamic-nav{
+  position:sticky!important;
+  top:72px!important;
+  z-index:30!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:8px!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0 0 18px!important;
+  padding:10px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  border-radius:18px!important;
+  background:linear-gradient(135deg,#073f35,#075f50)!important;
+  box-shadow:0 12px 34px rgba(4,50,42,.18)!important;
+  scrollbar-width:thin!important;
+}
+.v51-islamic-nav a,
+.v51-islamic-nav button,
+.v51-islamic-nav [role="tab"]{
+  flex:0 0 auto!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-height:46px!important;
+  padding:10px 14px!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  border-radius:13px!important;
+  background:rgba(255,255,255,.08)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  font-weight:900!important;
+  line-height:1.2!important;
+  opacity:1!important;
+  visibility:visible!important;
+  white-space:nowrap!important;
+  text-decoration:none!important;
+}
+.v51-islamic-nav a *,
+.v51-islamic-nav button *,
+.v51-islamic-nav [role="tab"] *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  opacity:1!important;
+}
+.v51-islamic-nav a:hover,
+.v51-islamic-nav button:hover,
+.v51-islamic-nav [aria-selected="true"],
+.v51-islamic-nav [aria-pressed="true"],
+.v51-islamic-nav .active{
+  background:#fff!important;
+  color:#075f50!important;
+  -webkit-text-fill-color:#075f50!important;
+  border-color:#fff!important;
+}
+.v51-islamic-nav [aria-selected="true"] *,
+.v51-islamic-nav [aria-pressed="true"] *,
+.v51-islamic-nav .active *{
+  color:#075f50!important;
+  -webkit-text-fill-color:#075f50!important;
+}
+.v51-islamic-nav .badge,
+.v51-islamic-nav b,
+.v51-islamic-nav small{
+  display:inline-grid!important;
+  place-items:center!important;
+  min-width:22px!important;
+  height:22px!important;
+  margin:0!important;
+  padding:0 5px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.22)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  font-size:.63rem!important;
+}
+.v51-islamic-nav [aria-selected="true"] .badge,
+.v51-islamic-nav [aria-pressed="true"] .badge,
+.v51-islamic-nav .active .badge{
+  background:#dff4ed!important;
+  color:#075f50!important;
+  -webkit-text-fill-color:#075f50!important;
+}
+
+/* C. Live statistics: data server, bukan angka statis perangkat. */
+.hero-metrics-v25{display:none!important}
+.v51-live-stats{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:9px!important;
+  max-width:760px!important;
+  margin:20px 0 0!important;
+  padding:0!important;
+}
+.v51-live-stats article{
+  min-width:0!important;
+  padding:13px 14px!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  border-radius:16px!important;
+  background:rgba(3,56,47,.46)!important;
+  backdrop-filter:blur(9px)!important;
+  -webkit-backdrop-filter:blur(9px)!important;
+  box-shadow:0 8px 24px rgba(0,30,25,.12)!important;
+}
+.v51-live-stats strong{
+  display:block!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  font-size:1.35rem!important;
+  line-height:1!important;
+  font-weight:950!important;
+}
+.v51-live-stats span{
+  display:block!important;
+  margin-top:5px!important;
+  color:#dff3ed!important;
+  -webkit-text-fill-color:#dff3ed!important;
+  font-size:.68rem!important;
+  line-height:1.3!important;
+  font-weight:800!important;
+}
+.v51-live-stats[data-state="loading"] article{opacity:.78}
+.v51-live-stats[data-state="online"] article:first-child{border-color:rgba(245,189,56,.68)!important}
+
+/* D. Semua peringatan Mode lokal lama disembunyikan; status aktif diganti ringkas. */
+.v51-retired-local-warning{display:none!important}
+.v51-realtime-badge{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  min-height:36px!important;
+  padding:8px 12px!important;
+  border:1px solid #bfe0d6!important;
+  border-radius:999px!important;
+  background:#e5f7f0!important;
+  color:#07614f!important;
+  -webkit-text-fill-color:#07614f!important;
+  font-size:.72rem!important;
+  font-weight:900!important;
+}
+.v51-realtime-badge::before{
+  content:"";
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#10b981;
+  box-shadow:0 0 0 4px rgba(16,185,129,.14);
+}
+.v51-realtime-badge[data-state="retry"]::before{background:#f5bd38;box-shadow:0 0 0 4px rgba(245,189,56,.17)}
+
+/* E. Simulasi ibadah final: gambar adegan anak SMP, urut, lengkap, ringan dan luring. */
+#v50-simulation-board,
+.v51-retired-simulation{display:none!important}
+.v51-worship-board{
+  width:100%!important;
+  max-width:100%!important;
+  margin:22px 0!important;
+  padding:clamp(16px,2.5vw,28px)!important;
+  overflow:hidden!important;
+  border:1px solid #c5ddd5!important;
+  border-radius:28px!important;
+  background:linear-gradient(145deg,#fbfffd,#edf8f4)!important;
+  color:var(--v51-ink)!important;
+  box-shadow:var(--v51-shadow)!important;
+}
+.v51-worship-board,
+.v51-worship-board *{
+  color:var(--v51-ink)!important;
+  -webkit-text-fill-color:initial!important;
+  text-shadow:none!important;
+}
+.v51-worship-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:18px!important;
+  align-items:center!important;
+  margin-bottom:17px!important;
+  padding:22px!important;
+  border-radius:22px!important;
+  background:linear-gradient(135deg,#075f50,#0a7d68)!important;
+}
+.v51-worship-head *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+.v51-worship-head span{
+  display:inline-flex!important;
+  width:max-content!important;
+  margin-bottom:7px!important;
+  padding:6px 10px!important;
+  border-radius:999px!important;
+  background:#e7fff6!important;
+  color:#075f50!important;
+  -webkit-text-fill-color:#075f50!important;
+  font-size:.66rem!important;
+  font-weight:950!important;
+  letter-spacing:.08em!important;
+}
+.v51-worship-head h2,
+.v51-worship-head h3{margin:0!important;font-size:clamp(1.45rem,3vw,2.25rem)!important;line-height:1.08!important}
+.v51-worship-head p{max-width:760px!important;margin:8px 0 0!important;color:#daf3eb!important;-webkit-text-fill-color:#daf3eb!important;line-height:1.55!important}
+.v51-worship-head-badge{
+  display:grid!important;
+  place-items:center!important;
+  min-width:108px!important;
+  min-height:88px!important;
+  padding:12px!important;
+  border:1px solid rgba(255,255,255,.24)!important;
+  border-radius:20px!important;
+  background:rgba(255,255,255,.1)!important;
+  text-align:center!important;
+}
+.v51-worship-head-badge strong{font-size:1.55rem!important}
+.v51-worship-head-badge small{display:block!important;margin-top:4px!important;color:#ddf4ed!important;-webkit-text-fill-color:#ddf4ed!important}
+.v51-worship-tabs{
+  display:flex!important;
+  gap:8px!important;
+  width:100%!important;
+  padding:3px 1px 12px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scrollbar-width:thin!important;
+}
+.v51-worship-tabs button{
+  flex:0 0 auto!important;
+  min-height:44px!important;
+  padding:10px 14px!important;
+  border:1px solid #c9ddd6!important;
+  border-radius:13px!important;
+  background:#fff!important;
+  color:#17483e!important;
+  -webkit-text-fill-color:#17483e!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+.v51-worship-tabs button[aria-selected="true"]{
+  background:#075f50!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:#075f50!important;
+  box-shadow:0 8px 20px rgba(7,95,80,.18)!important;
+}
+.v51-worship-intro{
+  display:flex!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  align-items:center!important;
+  margin:4px 0 14px!important;
+  padding:16px 18px!important;
+  border:1px solid #d1e2dc!important;
+  border-radius:17px!important;
+  background:#fff!important;
+}
+.v51-worship-intro h3{margin:0!important;color:#103f36!important;font-size:1.12rem!important}
+.v51-worship-intro p{margin:5px 0 0!important;color:#5c716a!important;line-height:1.5!important}
+.v51-worship-intro b{
+  flex:0 0 auto!important;
+  display:grid!important;
+  place-items:center!important;
+  min-width:74px!important;
+  min-height:48px!important;
+  padding:8px 11px!important;
+  border-radius:13px!important;
+  background:#e5f6ef!important;
+  color:#075f50!important;
+  font-size:.72rem!important;
+}
+.v51-worship-steps{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:15px!important;
+  counter-reset:v51step!important;
+}
+.v51-worship-step{
+  position:relative!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  border:1px solid #cddfd9!important;
+  border-radius:21px!important;
+  background:#fff!important;
+  box-shadow:0 8px 24px rgba(12,70,58,.07)!important;
+  counter-increment:v51step!important;
+}
+.v51-worship-step::before{
+  content:counter(v51step)!important;
+  position:absolute!important;
+  top:13px!important;
+  left:13px!important;
+  z-index:4!important;
+  display:grid!important;
+  place-items:center!important;
+  width:34px!important;
+  height:34px!important;
+  border-radius:50%!important;
+  background:#075f50!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  font-size:.82rem!important;
+  font-weight:950!important;
+  box-shadow:0 5px 14px rgba(7,95,80,.26)!important;
+}
+.v51-scene{
+  display:block!important;
+  width:100%!important;
+  aspect-ratio:16/9!important;
+  background:linear-gradient(180deg,#e9f8f3,#fdfbf3)!important;
+  border-bottom:1px solid #d8e7e2!important;
+}
+.v51-scene svg{display:block!important;width:100%!important;height:100%!important}
+.v51-step-copy{padding:16px 17px 18px!important}
+.v51-step-copy h4{margin:0!important;color:#103f36!important;font-size:1.03rem!important;line-height:1.25!important}
+.v51-step-copy>p{margin:7px 0 0!important;color:#5a7069!important;line-height:1.55!important;font-size:.88rem!important}
+.v51-reading{
+  margin-top:12px!important;
+  padding:11px 12px!important;
+  border-left:4px solid #f5bd38!important;
+  border-radius:10px!important;
+  background:#fff8df!important;
+}
+.v51-reading[hidden]{display:none!important}
+.v51-reading .arabic{
+  display:block!important;
+  margin:0 0 7px!important;
+  color:#153c33!important;
+  direction:rtl!important;
+  text-align:right!important;
+  font-family:"Noto Naskh Arabic","Amiri","Traditional Arabic",serif!important;
+  font-size:1.34rem!important;
+  line-height:1.75!important;
+}
+.v51-reading .latin{
+  display:block!important;
+  color:#5d4b16!important;
+  font-size:.79rem!important;
+  line-height:1.5!important;
+  font-style:italic!important;
+}
+.v51-reading .meaning{
+  display:block!important;
+  margin-top:5px!important;
+  color:#5d716a!important;
+  font-size:.76rem!important;
+  line-height:1.45!important;
+}
+
+/* F. Tabel CP dan panel guru: tambah pengaman kontras. */
+#teacher-document,
+#teacher-document *{text-shadow:none!important}
+#teacher-document .v48-source-document,
+#teacher-document .v48-doc-header,
+#teacher-document .v48-doc-footer,
+#teacher-document table,
+#teacher-document td,
+#teacher-document th{
+  background-color:#fff!important;
+  color:#17352f!important;
+  -webkit-text-fill-color:#17352f!important;
+}
+#teacher-document tr:nth-child(even)>td{background:#f7fbf9!important}
+#teacher-document td:empty{min-height:0!important;height:auto!important;padding:5px!important}
+
+@media(max-width:980px){
+  .v51-live-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .v51-worship-head{grid-template-columns:1fr!important}
+  .v51-worship-head-badge{display:none!important}
+}
+@media(max-width:720px){
+  .v51-islamic-nav{top:60px!important;border-radius:14px!important;padding:8px!important}
+  .v51-islamic-nav a,.v51-islamic-nav button,.v51-islamic-nav [role="tab"]{min-height:42px!important;padding:9px 12px!important;font-size:.76rem!important}
+  .v51-live-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin-top:15px!important}
+  .v51-live-stats article{padding:11px 12px!important}
+  .v51-live-stats strong{font-size:1.15rem!important}
+  .v51-worship-board{padding:12px!important;border-radius:20px!important}
+  .v51-worship-head{padding:17px!important;border-radius:17px!important}
+  .v51-worship-steps{grid-template-columns:1fr!important}
+  .v51-worship-intro{display:block!important}
+  .v51-worship-intro b{display:inline-grid!important;margin-top:10px!important}
+  .v51-step-copy{padding:14px!important}
+}
+@media(max-width:430px){
+  .v51-live-stats{grid-template-columns:1fr 1fr!important}
+  .v51-worship-tabs button{font-size:.75rem!important;padding:9px 11px!important}
+  .v51-reading .arabic{font-size:1.18rem!important}
+}
+@media print{
+  .v51-islamic-nav,.v51-live-stats,.v51-worship-tabs,.v51-realtime-badge{display:none!important}
+  .v51-worship-steps{grid-template-columns:1fr 1fr!important}
+  .v51-worship-step{break-inside:avoid!important;box-shadow:none!important}
+}

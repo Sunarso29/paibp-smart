@@ -1,8 +1,14 @@
-const CORE_CACHE = "paibp-smart-v50-core";
-const DATA_CACHE = "paibp-smart-v50-data";
-const AUDIO_CACHE = "paibp-smart-v50-audio";
+const CORE_CACHE = "paibp-smart-v51-core";
+const DATA_CACHE = "paibp-smart-v51-data";
+const AUDIO_CACHE = "paibp-smart-v51-audio";
 const CORE_ASSETS = [
-  "./", "./index.html", "./app-config.js", "./final-ui-v50.css", "./final-ui-v50.js",
+  "./", "./index.html", "./app-config.js",
+  "./final-ui-v50.css", "./final-ui-v50.js",
+  "./final-ui-v51.css", "./final-ui-v51.js",
+  "./cp2025-v48.css", "./cp2025-loader-v48.js",
+  "./spensus-ai-v48.css", "./spensus-ai.js",
+  "./learning-guard-v48.css", "./learning-guard-v48.js",
+  "./realtime-v43.css", "./realtime-v43.js", "./realtime-v48.css", "./realtime-v48-status.js",
   "./gerbang.jpg", "./logo-spensus.png", "./manifest.webmanifest"
 ];
 
@@ -17,11 +23,9 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter((key) => key.startsWith("paibp-smart") && ![CORE_CACHE, DATA_CACHE, AUDIO_CACHE].includes(key))
-        .map((key) => caches.delete(key))
-    );
+    await Promise.all(keys
+      .filter((key) => key.startsWith("paibp-smart") && ![CORE_CACHE, DATA_CACHE, AUDIO_CACHE].includes(key))
+      .map((key) => caches.delete(key)));
     await self.clients.claim();
   })());
 });
@@ -80,6 +84,16 @@ async function networkFirst(request, cacheName, fallback) {
   }
 }
 
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request, { ignoreSearch: true });
+  const network = fetch(request, { cache: "no-store" }).then((response) => {
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+  return cached || (await network) || Response.error();
+}
+
 async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request, { ignoreSearch: true });
@@ -110,10 +124,11 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (/cp2025-(?:manifest|data|source)-.+-v48\.(?:js|docx|xlsx)$/i.test(url.pathname)) {
-    event.respondWith(networkFirst(request, DATA_CACHE));
+    event.respondWith(staleWhileRevalidate(request, DATA_CACHE));
     return;
   }
 
+  // Kode, konfigurasi, dan CSS selalu meminta versi terbaru lebih dahulu.
   if (/\.(?:js|css|json|webmanifest)$/i.test(url.pathname)) {
     event.respondWith(networkFirst(request, CORE_CACHE));
     return;
