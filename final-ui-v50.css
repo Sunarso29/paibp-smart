@@ -1,0 +1,134 @@
+/* PAIBP SMART V50 — final readability, layout, portrait focus, and lightweight simulation visuals */
+:root{--v50-green:#075f50;--v50-green-2:#0a7d68;--v50-gold:#f5bd38;--v50-ink:#18352f;--v50-muted:#5b706a;--v50-line:#cfe0da;--v50-soft:#f4faf7;--v50-white:#fff}
+html,body{max-width:100%;overflow-x:hidden}body{color:var(--v50-ink)}
+*,*::before,*::after{box-sizing:border-box}
+img,svg,video,canvas{max-width:100%}
+button,a,input,textarea,select{font:inherit}
+button,a{touch-action:manipulation}
+
+/* Beranda: gerbang tetap terlihat, teks tetap dominan, kotak statistik lama dihilangkan. */
+body[data-portal-mode="home"] .hero-v25{position:relative;isolation:isolate;overflow:hidden;background:#064c41!important}
+body[data-portal-mode="home"] .hero-v25::before{content:"";position:absolute;inset:0;z-index:-2;background-image:linear-gradient(90deg,rgba(2,53,45,.94) 0%,rgba(4,73,61,.86) 48%,rgba(4,73,61,.42) 76%,rgba(4,73,61,.22) 100%),linear-gradient(180deg,rgba(3,58,49,.08),rgba(3,58,49,.44)),url("gerbang.jpg");background-size:cover;background-position:center 44%;filter:saturate(.92) contrast(1.03)}
+body[data-portal-mode="home"] .hero-v25::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 72% 22%,rgba(255,255,255,.17),transparent 34%),linear-gradient(180deg,transparent 68%,rgba(2,46,39,.48))}
+body[data-portal-mode="home"] .hero-main-v25{position:relative;z-index:1;text-shadow:0 2px 18px rgba(0,0,0,.18)}
+body[data-portal-mode="home"] .hero-main-v25 h1,body[data-portal-mode="home"] .hero-main-v25 h1 span,body[data-portal-mode="home"] .hero-copy,body[data-portal-mode="home"] .eyebrow-v25{color:#fff!important}
+body[data-portal-mode="home"] .hero-copy{max-width:730px!important;color:#e9f6f2!important}
+body[data-portal-mode="home"] .hero-metrics-v25{display:none!important}
+body[data-portal-mode="home"] .hero-shell-v25{min-height:min(680px,78vh);align-items:center}
+body[data-portal-mode="home"] .hero-access-panel{background:rgba(255,255,255,.94)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 24px 70px rgba(0,30,25,.24)}
+body[data-portal-mode="home"] .hero-access-panel,body[data-portal-mode="home"] .hero-access-panel *{color:var(--v50-ink)}
+body[data-portal-mode="home"] .access-tile{background:#fff!important;border-color:#d9e8e3!important}
+body[data-portal-mode="home"] .access-tile-primary{background:linear-gradient(135deg,#087d68,#075f50)!important}
+body[data-portal-mode="home"] .access-tile-primary,body[data-portal-mode="home"] .access-tile-primary *{color:#fff!important}
+
+/* Semua panel: cegah tumpang tindih dan warna putih di atas putih. */
+.workspace-shell,.workspace-panel,.teacher-panel-v29,#panel-teacher,#teacher-document,.panel-heading,.teacher-toolbar,.teacher-filter,.teacher-actions{min-width:0!important;max-width:100%!important}
+.workspace-panel:not([hidden]){overflow:visible}
+.workspace-panel,.workspace-panel p,.workspace-panel li,.workspace-panel td,.workspace-panel th,.workspace-panel label,.workspace-panel small{color:var(--v50-ink)}
+.workspace-panel input,.workspace-panel textarea,.workspace-panel select{background:#fff!important;color:#17352f!important;border-color:#bcd2cb!important}
+.workspace-panel button:not(.cta):not(.access-tile):not([data-open-panel]){color:#123e35}
+
+/* CP Lama 2025: filter tidak boleh bertabrakan. */
+.v48-cp-filter-row{display:grid!important;grid-template-columns:minmax(240px,.72fr) minmax(0,1.28fr)!important;gap:14px!important;align-items:stretch!important;width:100%!important}
+.v48-cp-filter-row>*{min-width:0!important;max-width:100%!important;position:static!important;transform:none!important}
+.v48-cp-filter-row>:nth-child(n+3){grid-column:1/-1!important}
+.v48-cp-selector>span{color:#355c53!important}
+.v48-cp-selector>div{width:100%!important;min-width:0!important}
+.v48-cp-selector button{white-space:normal!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+.v48-cp-filter-row button,.v48-cp-filter-row a{max-width:100%!important}
+.v48-cp-filter-row .teacher-actions,.v48-cp-filter-row .document-actions,.v48-cp-filter-row>div:last-child{display:flex!important;flex-wrap:wrap!important;gap:8px!important;justify-content:flex-start!important}
+.v48-cp-head{align-items:stretch!important;overflow:hidden!important}
+.v48-cp-head>div{min-width:0!important}.v48-cp-head>div:last-child{flex:0 1 320px!important}
+.v48-cp-head h2,.v48-cp-head p{overflow-wrap:anywhere!important}
+.v48-integrity small{display:none!important}
+
+/* Dokumen sumber: teks jelas, ruang kosong dipadatkan, tabel terbaca. */
+.v48-source-document,.v48-doc-header,.v48-doc-footer{color:#172f2a!important;background:#fff!important;box-shadow:none!important}
+.v48-source-document *,.v48-doc-header *,.v48-doc-footer *{color:#172f2a!important;text-shadow:none!important}
+.v48-source-document{font-size:15px!important;line-height:1.65!important}
+.v48-doc-paragraph{min-height:0!important;margin:.38em 0!important;line-height:1.65!important;overflow-wrap:anywhere!important;word-break:normal!important}
+.v48-doc-paragraph:empty,.v48-doc-blank{display:none!important}
+.v48-table-scroll{width:100%!important;max-width:100%!important;overflow:auto!important;background:#fff!important;border:1px solid #b9cec7!important;border-radius:14px!important;box-shadow:0 6px 18px rgba(20,65,54,.05)}
+.v48-source-table,.v48-excel-table{width:100%!important;min-width:680px!important;border-collapse:collapse!important;background:#fff!important;color:#172f2a!important}
+.v48-source-table td,.v48-source-table th,.v48-excel-table td,.v48-excel-table th{min-width:52px!important;min-height:40px!important;padding:10px 11px!important;border:1px solid #aebfba!important;background:#fff!important;color:#172f2a!important;vertical-align:top!important;line-height:1.5!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.v48-source-table tr:nth-child(even)>td,.v48-excel-table tr:nth-child(even)>td{background:#f8fbfa!important}
+.v48-source-table tr:first-child>td,.v48-excel-table tr:first-child>td{font-weight:700}
+.v50-empty-row{display:none!important}
+.v50-signature-block{display:none!important}
+
+/* Menu samping guru tetap rapi tanpa menutupi dokumen. */
+.teacher-workspace,.teacher-layout,.teacher-panel-v29{align-items:start!important}
+.teacher-sidebar,.teacher-nav,.teacher-menu{position:sticky!important;top:88px!important;max-height:calc(100dvh - 110px)!important;overflow:auto!important}
+#teacher-document{overflow:visible!important}
+
+/* Spensus AI: kontras final, satu toolbar, tidak ada putih di atas putih. */
+.ai-drawer-panel-v27,.spensus-ai-v48 .ai-drawer-panel-v27{background:#f4faf7!important;color:var(--v50-ink)!important}
+.ai-drawer-head-v27,.spensus-ai-v48 .ai-drawer-head-v27{background:linear-gradient(135deg,#075f50,#0a7d68)!important;color:#fff!important;border:0!important}
+.ai-drawer-head-v27 *,.spensus-ai-v48 .ai-drawer-head-v27 *{color:#fff!important}
+.v48-ai-brand small{color:#d9f0e9!important}
+.v48-ai-tools{background:#fff!important;color:var(--v50-ink)!important;border-color:#d3e3de!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:thin}
+.v48-ai-tools button{background:#f7fbfa!important;color:#12473d!important;border-color:#c9dcd5!important}
+.v48-ai-tools>span{color:#6a4a00!important;background:#fff1bf!important}
+.spensus-ai-v48 [data-ai-messages],.ai-drawer-messages-v27{background:radial-gradient(circle at 15% 10%,rgba(12,126,104,.08),transparent 36%),#f4faf7!important;color:var(--v50-ink)!important;overflow-x:hidden!important}
+.v48-ai-message>div{background:#fff!important;color:#18352f!important}
+.v48-ai-message>div *{color:#18352f!important}
+.v48-ai-message.user>div,.v48-ai-message.user>div *{background:#075f50!important;color:#fff!important}
+.v48-ai-message section code{background:#eef4f1!important;color:#7a2144!important}
+.ai-drawer-quick-v27,.spensus-ai-v48 .ai-drawer-quick-v27{background:#edf7f3!important;color:#17352f!important}
+.ai-drawer-quick-v27 button,.spensus-ai-v48 .ai-drawer-quick-v27 button{background:#fff!important;color:#17483e!important;border:1px solid #c9ddd6!important}
+.spensus-ai-v48 [data-ai-form]{background:#fff!important}
+.spensus-ai-v48 [data-ai-input]{background:#fff!important;color:#17352f!important;caret-color:#075f50!important}
+.spensus-ai-v48 [data-ai-input]::placeholder{color:#687c76!important;opacity:1!important}
+.spensus-ai-v48 [data-ai-form]>button{color:#17352f!important}
+.v50-ai-empty{margin:auto;max-width:520px;padding:22px;border:1px dashed #b9d2ca;border-radius:18px;background:#fff;color:#234a41;text-align:center}
+
+/* Fokus belajar: portrait-first dan gerbang kembali yang terbaca. */
+html.v50-task-focus body{overscroll-behavior:none}
+#v50-focus-resume{position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;padding:18px;background:rgba(4,36,31,.82);backdrop-filter:blur(8px)}
+#v50-focus-resume[hidden]{display:none!important}
+#v50-focus-resume>section{width:min(520px,100%);padding:26px;border-radius:24px;background:#fff;color:#17352f;box-shadow:0 30px 90px rgba(0,0,0,.32);text-align:center}
+#v50-focus-resume button{min-height:48px;padding:12px 18px;border:0;border-radius:14px;background:#075f50;color:#fff;font-weight:900}
+
+/* Simulasi ibadah: visual ringan, tetap tersedia luring setelah kunjungan pertama. */
+.v50-simulation-board{margin:24px 0;padding:clamp(16px,2.5vw,26px);border:1px solid #c8ddd6;border-radius:26px;background:linear-gradient(145deg,#f9fffc,#eef8f4)}
+.v50-simulation-board>header{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:16px}
+.v50-simulation-board h3{margin:4px 0 0;color:#10483d!important}.v50-simulation-board p{margin:0;color:#557068!important}
+.v50-simulation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.v50-sim-card{display:flex;flex-direction:column;min-width:0;border:1px solid #cddfd9;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 8px 22px rgba(14,72,59,.06)}
+.v50-sim-card button{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;width:100%;padding:14px;border:0;background:#fff;color:#17352f;text-align:left;cursor:pointer}
+.v50-sim-card button:hover,.v50-sim-card button:focus-visible{background:#f0faf6}
+.v50-sim-icon{display:grid;place-items:center;width:72px;height:64px;border-radius:15px;background:linear-gradient(135deg,#e0f4ec,#fff3c7)}
+.v50-sim-icon svg{width:58px;height:52px}.v50-sim-card strong{display:block;color:#123f36!important}.v50-sim-card small{display:block;margin-top:4px;color:#63766f!important}.v50-sim-card b{color:#08735f!important;font-size:1.2rem}
+.v50-sim-detail{grid-column:1/-1;padding:18px;border:1px solid #c5dbd4;border-radius:20px;background:#fff}
+.v50-sim-detail[hidden]{display:none!important}
+.v50-sim-detail-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.v50-sim-detail-head h4{margin:0;color:#103f36!important}.v50-sim-detail-head button{border:0;background:#edf7f3;color:#17483e;border-radius:10px;padding:8px 11px;font-weight:800}
+.v50-sim-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:simstep}
+.v50-sim-step{position:relative;min-width:0;padding:14px;border:1px solid #d4e4df;border-radius:16px;background:#fbfefd;counter-increment:simstep}
+.v50-sim-step::before{content:counter(simstep);position:absolute;top:10px;left:10px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#075f50;color:#fff;font-weight:900;font-size:.78rem}
+.v50-sim-step svg{display:block;width:100%;height:110px;margin:8px 0 10px}.v50-sim-step strong{display:block;color:#123f36!important}.v50-sim-step p{margin:5px 0 0;color:#5d716a!important;font-size:.84rem;line-height:1.5}
+
+@media(max-width:1000px){
+  body[data-portal-mode="home"] .hero-v25::before{background-image:linear-gradient(180deg,rgba(2,53,45,.9),rgba(4,73,61,.72)),url("gerbang.jpg");background-position:center}
+  body[data-portal-mode="home"] .hero-shell-v25{min-height:auto}
+  .v48-cp-filter-row{grid-template-columns:1fr!important}.v48-cp-filter-row>:nth-child(n+3){grid-column:auto!important}
+  .v48-cp-head{display:grid!important;grid-template-columns:1fr!important}.v48-cp-head>div:last-child{flex-basis:auto!important;justify-content:flex-start!important}
+  .v50-simulation-grid,.v50-sim-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:720px){
+  body[data-portal-mode="home"] .hero-access-panel{margin-top:14px}
+  .teacher-sidebar,.teacher-nav,.teacher-menu{position:static!important;max-height:none!important}
+  .v48-source-document,.v48-doc-header,.v48-doc-footer{padding:13px!important}
+  .v48-source-table,.v48-excel-table{min-width:560px!important}
+  .v48-source-table td,.v48-excel-table td{padding:8px!important;font-size:.8rem!important}
+  .spensus-ai-v48 .ai-drawer-panel-v27{width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important}
+  .v48-ai-tools{padding:8px!important}.v48-ai-tools button{padding:8px 10px!important}
+  .v50-simulation-board>header{display:block}.v50-simulation-grid,.v50-sim-steps{grid-template-columns:1fr}
+  .v50-sim-card button{grid-template-columns:62px 1fr auto}.v50-sim-icon{width:62px;height:58px}
+}
+@media(orientation:landscape) and (max-height:520px){
+  html.v50-task-focus::before{content:"Putar perangkat ke posisi tegak untuk melanjutkan tugas.";position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:28px;background:#063f35;color:#fff;font-size:clamp(1rem,3vw,1.5rem);font-weight:900;text-align:center}
+}
+@media print{
+  .v50-signature-block,.hero-metrics-v25,.v50-simulation-board,.v48-source-actions,.v48-integrity{display:none!important}
+  .v48-source-document,.v48-table-scroll{border:0!important;box-shadow:none!important}
+}

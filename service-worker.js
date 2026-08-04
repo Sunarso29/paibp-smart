@@ -1,8 +1,18 @@
-const CORE_CACHE = "paibp-smart-v49-core";
-const DATA_CACHE = "paibp-smart-v49-data";
-const AUDIO_CACHE = "paibp-smart-v49-audio";
+const CORE_CACHE = "paibp-smart-v50-core";
+const DATA_CACHE = "paibp-smart-v50-data";
+const AUDIO_CACHE = "paibp-smart-v50-audio";
+const CORE_ASSETS = [
+  "./", "./index.html", "./app-config.js", "./final-ui-v50.css", "./final-ui-v50.js",
+  "./gerbang.jpg", "./logo-spensus.png", "./manifest.webmanifest"
+];
 
-self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("install", (event) => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CORE_CACHE);
+    await Promise.allSettled(CORE_ASSETS.map((path) => cache.add(new Request(path, { cache: "reload" }))));
+    await self.skipWaiting();
+  })());
+});
 
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
@@ -42,9 +52,7 @@ function parseRange(value, total) {
 async function audioRange(request) {
   let response = await caches.match(request.url);
   if (!response) {
-    response = await fetch(new Request(request.url, {
-      headers: { Accept: request.headers.get("Accept") || "*/*" },
-    }));
+    response = await fetch(new Request(request.url, { headers: { Accept: request.headers.get("Accept") || "*/*" } }));
     if (response.ok) {
       const cache = await caches.open(AUDIO_CACHE);
       await cache.put(request.url, response.clone());
@@ -97,9 +105,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (request.mode === "navigate") {
-    event.respondWith(
-      networkFirst(request, CORE_CACHE, () => caches.match(new URL("./index.html", self.registration.scope).href))
-    );
+    event.respondWith(networkFirst(request, CORE_CACHE, () => caches.match(new URL("./index.html", self.registration.scope).href)));
     return;
   }
 
@@ -108,7 +114,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Kode dan konfigurasi selalu meminta versi terbaru lebih dahulu.
   if (/\.(?:js|css|json|webmanifest)$/i.test(url.pathname)) {
     event.respondWith(networkFirst(request, CORE_CACHE));
     return;
