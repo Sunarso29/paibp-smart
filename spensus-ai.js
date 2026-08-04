@@ -1,329 +1,212 @@
 (() => {
   "use strict";
-
-  const VERSION = "44";
+  const VERSION = "48";
   const CONFIG = window.PAIBP_CONFIG || {};
-  const ENDPOINT = String(CONFIG.aiEndpoint || CONFIG.syncEndpoint || CONFIG.realtimeEndpoint || "").trim();
-  const AI_TOKEN = String(CONFIG.aiPublicToken || "").trim();
-  const REMOTE_READY = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/i.test(ENDPOINT) && Boolean(AI_TOKEN);
-  const HISTORY_KEY = "paibp-smart-ai-history-v44";
-  const SESSION_KEY = "paibp-smart-ai-session-v44";
-  const MAX_HISTORY = 12;
-  const chapters = Array.isArray(window.PAIBP_DATA?.chapters) ? window.PAIBP_DATA.chapters : [];
-
+  const ENDPOINT = String(CONFIG.aiEndpoint || CONFIG.syncEndpoint || "").trim();
+  const READ_KEY = String(CONFIG.syncReadKey || "").trim();
+  const TOKEN = String(CONFIG.aiPublicToken || "").trim();
+  const ENDPOINT_READY = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/i.test(ENDPOINT) && Boolean(TOKEN);
+  const HISTORY_KEY = "paibp-smart-ai-history-v48";
+  const SESSION_KEY = "paibp-smart-ai-session-v48";
+  const MAX_HISTORY = 16;
   const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
   const $$ = (selector, root = document) => [...(root?.querySelectorAll?.(selector) || [])];
-  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;",
-  })[character]);
-  const normalize = (value) => String(value || "").normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("id")
-    .replace(/[^a-z0-9]+/g, " ").trim();
-  const safeParse = (value, fallback) => { try { return JSON.parse(value); } catch { return fallback; } };
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[character]);
+  const parse = (value, fallback) => { try { return JSON.parse(value); } catch { return fallback; } };
   const truncate = (value, limit) => String(value || "").replace(/\s+/g, " ").trim().slice(0, limit);
+  const chapters = Array.isArray(window.PAIBP_DATA?.chapters) ? window.PAIBP_DATA.chapters : [];
+  let backend = { checked: false, aiConfigured: false, model: "", error: "" };
 
-  function getSessionId() {
+  function sessionId() {
     let id = sessionStorage.getItem(SESSION_KEY);
-    if (!id) {
-      id = `ai-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-      sessionStorage.setItem(SESSION_KEY, id);
-    }
+    if (!id) { id = `spai-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`; sessionStorage.setItem(SESSION_KEY, id); }
     return id;
   }
+  function loadHistory() { const value = parse(sessionStorage.getItem(HISTORY_KEY), []); return Array.isArray(value) ? value.slice(-MAX_HISTORY) : []; }
+  function saveHistory(value) { try { sessionStorage.setItem(HISTORY_KEY, JSON.stringify(value.slice(-MAX_HISTORY))); } catch {} }
 
-  function loadHistory() {
-    const value = safeParse(sessionStorage.getItem(HISTORY_KEY), []);
-    return Array.isArray(value) ? value.slice(-MAX_HISTORY) : [];
-  }
-
-  function saveHistory(history) {
-    try { sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-MAX_HISTORY))); } catch {}
-  }
-
-  function markdownToHtml(text) {
-    const safe = escapeHtml(text || "")
-      .replace(/\r\n/g, "\n")
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      .replace(/`([^`]+)`/g, "<code>$1</code>");
-    const lines = safe.split("\n");
-    let html = "";
-    let list = "";
-    const closeList = () => { if (list) { html += `</${list}>`; list = ""; } };
+  function markdown(text) {
+    const safe = escapeHtml(text || "").replace(/\r\n/g, "\n").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
+    const lines = safe.split("\n"); let html = ""; let list = "";
+    const close = () => { if (list) { html += `</${list}>`; list = ""; } };
     for (const line of lines) {
-      const trimmed = line.trim();
-      if (/^###\s+/.test(trimmed)) { closeList(); html += `<h5>${trimmed.replace(/^###\s+/, "")}</h5>`; continue; }
-      if (/^##\s+/.test(trimmed)) { closeList(); html += `<h4>${trimmed.replace(/^##\s+/, "")}</h4>`; continue; }
-      if (/^#\s+/.test(trimmed)) { closeList(); html += `<h3>${trimmed.replace(/^#\s+/, "")}</h3>`; continue; }
-      const bullet = /^[-*]\s+(.+)/.exec(trimmed);
-      if (bullet) { if (list !== "ul") { closeList(); list = "ul"; html += "<ul>"; } html += `<li>${bullet[1]}</li>`; continue; }
-      const ordered = /^\d+[.)]\s+(.+)/.exec(trimmed);
-      if (ordered) { if (list !== "ol") { closeList(); list = "ol"; html += "<ol>"; } html += `<li>${ordered[1]}</li>`; continue; }
-      closeList();
-      if (trimmed) html += `<p>${trimmed}</p>`;
+      const value = line.trim();
+      if (/^###\s+/.test(value)) { close(); html += `<h4>${value.replace(/^###\s+/, "")}</h4>`; continue; }
+      if (/^##?\s+/.test(value)) { close(); html += `<h3>${value.replace(/^##?\s+/, "")}</h3>`; continue; }
+      const bullet = /^[-*]\s+(.+)/.exec(value); if (bullet) { if (list !== "ul") { close(); list = "ul"; html += "<ul>"; } html += `<li>${bullet[1]}</li>`; continue; }
+      const ordered = /^\d+[.)]\s+(.+)/.exec(value); if (ordered) { if (list !== "ol") { close(); list = "ol"; html += "<ol>"; } html += `<li>${ordered[1]}</li>`; continue; }
+      close(); if (value) html += `<p>${value}</p>`;
     }
-    closeList();
-    return html || "<p>Jawaban belum tersedia.</p>";
+    close(); return html || "<p>Jawaban belum tersedia.</p>";
   }
 
-  function chapterScore(chapter, query) {
-    const words = normalize(query).split(/\s+/).filter((word) => word.length > 2);
-    const haystack = normalize([
-      chapter.id, chapter.grade, chapter.number, chapter.title, chapter.overview, chapter.element,
-      ...(chapter.objectives || []), ...(chapter.references || []),
-      ...(chapter.concepts || []).flat(), ...(chapter.applications || []), ...(chapter.questions || []),
-    ].join(" "));
-    let score = words.reduce((total, word) => total + (haystack.includes(word) ? 2 : 0), 0);
-    const gradeMatch = normalize(query).match(/(?:kelas\s*)?(7|8|9|vii|viii|ix)\b/)?.[1];
-    const grade = ({ "7": "VII", "8": "VIII", "9": "IX", vii: "VII", viii: "VIII", ix: "IX" })[gradeMatch];
-    if (grade && chapter.grade === grade) score += 5;
-    if (normalize(query).includes(`bab ${chapter.number}`)) score += 5;
-    return score;
-  }
-
-  function relevantChapters(query, limit = 4) {
-    return chapters.map((chapter) => ({ chapter, score: chapterScore(chapter, query) }))
-      .filter((entry) => entry.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit)
-      .map((entry) => entry.chapter);
-  }
-
-  function portalContext(query) {
-    const matches = relevantChapters(query, 4);
-    const visiblePanel = $(".workspace-panel:not([hidden])");
-    const pageText = truncate(visiblePanel?.innerText || $("main")?.innerText || "", 1600);
-    const chapterText = matches.map((chapter) => {
-      const concepts = (chapter.concepts || []).slice(0, 5).map((item) => Array.isArray(item) ? `${item[0]}: ${item[1]}` : item).join(" | ");
-      return `Kelas ${chapter.grade} Bab ${chapter.number} — ${chapter.title}. ${chapter.overview || ""}. ${concepts}`;
-    }).join("\n");
-    return truncate(`HALAMAN AKTIF: ${pageText}\n\nMATERI RELEVAN:\n${chapterText}`, 3300);
-  }
-
-  function localAnswer(prompt) {
-    const q = normalize(prompt);
-    const matches = relevantChapters(prompt, 3);
-    if (/^(halo|hai|assalamualaikum|selamat)/.test(q)) {
-      return {
-        text: "Wa'alaikumussalam. Saya Spensus AI. Saya dapat membantu menjelaskan konten portal, mencari bab, menyusun rencana belajar, membuat latihan, dan—setelah layanan AI daring diaktifkan—menjawab pertanyaan umum secara lebih luas.",
-        mode: "offline",
-      };
-    }
-    if (matches.length) {
-      const body = matches.map((chapter, index) => `${index + 1}. **Kelas ${chapter.grade} Bab ${chapter.number}: ${chapter.title}**\n${truncate(chapter.overview, 320)}`).join("\n\n");
-      return {
-        text: `Saya menemukan materi portal yang paling berkaitan:\n\n${body}\n\nBuka bab tersebut untuk membaca materi, latihan, LKPD, dan evaluasi secara utuh.`,
-        mode: "offline",
-        actions: matches.slice(0, 2).map((chapter) => ({ label: `Buka ${chapter.grade}-${chapter.number}`, type: "chapter", value: chapter.id })),
-      };
-    }
-    if (/rencana|jadwal belajar/.test(q)) {
-      return {
-        text: "**Rencana belajar terarah**\n1. Baca tujuan dan materi bab.\n2. Tulis ringkasan dengan bahasa sendiri.\n3. Kerjakan seluruh latihan.\n4. Selesaikan LKPD.\n5. Kerjakan evaluasi dan refleksi.\n6. Tandai bab selesai agar bab berikutnya terbuka.",
-        mode: "offline",
-      };
-    }
-    return {
-      text: REMOTE_READY
-        ? "Layanan AI daring sedang tidak dapat dijangkau. Saya tetap dapat mencari konten portal secara luring. Coba ulangi beberapa saat lagi."
-        : "Mode luring aktif. Saya dapat menjawab berdasarkan konten portal. Agar pertanyaan umum dapat dijawab oleh model AI daring, lengkapi `aiPublicToken` dan URL Web App pada `app-config.js`, lalu simpan API key hanya di Google Apps Script.",
-      mode: "offline",
-    };
-  }
-
-  function jsonp(params, timeout = 45000) {
+  function jsonp(params, timeout = 60000) {
     return new Promise((resolve, reject) => {
-      const callback = `paibpAiCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-      const script = document.createElement("script");
-      const timer = window.setTimeout(() => finish(new Error("Waktu respons AI habis.")), timeout);
-      const finish = (error, payload) => {
-        window.clearTimeout(timer);
-        try { delete window[callback]; } catch { window[callback] = undefined; }
-        script.remove();
-        error ? reject(error) : resolve(payload);
-      };
+      if (!ENDPOINT_READY) { reject(new Error("Endpoint Spensus AI belum dikonfigurasi.")); return; }
+      const callback = `spensusV48_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const node = document.createElement("script"); let done = false;
+      const finish = (error, payload) => { if (done) return; done = true; clearTimeout(timer); try { delete window[callback]; } catch {} node.remove(); error ? reject(error) : resolve(payload); };
       window[callback] = (payload) => finish(null, payload);
       const url = new URL(ENDPOINT);
       Object.entries({ ...params, callback }).forEach(([key, value]) => url.searchParams.set(key, String(value ?? "")));
-      script.src = url.href;
-      script.async = true;
-      script.onerror = () => finish(new Error("Layanan AI tidak dapat dihubungi."));
-      document.head.append(script);
+      node.src = url.href; node.async = true; node.onerror = () => finish(new Error("Server Spensus AI tidak dapat dijangkau."));
+      const timer = setTimeout(() => finish(new Error("Respons AI melewati batas waktu.")), timeout);
+      document.head.append(node);
     });
   }
 
-  async function remoteAnswer(prompt, history) {
-    const compactHistory = history.slice(-6).map((item) => ({ role: item.role, text: truncate(item.text, 420) }));
+  async function checkBackend() {
+    if (!ENDPOINT_READY) { backend = { checked: true, aiConfigured: false, model: "", error: "Endpoint belum lengkap." }; return backend; }
+    try {
+      const info = READ_KEY ? await jsonp({ action: "setupInfo", readKey: READ_KEY }, 12000) : await jsonp({ action: "health" }, 12000);
+      backend = {
+        checked: true,
+        aiConfigured: Boolean(info?.aiConfigured),
+        model: String(info?.openAIModel || info?.model || "gpt-5.1"),
+        error: "",
+      };
+    } catch (error) {
+      backend = { checked: true, aiConfigured: false, model: "", error: error?.message || "Sambungan gagal." };
+    }
+    document.dispatchEvent(new CustomEvent("paibp-ai-status", { detail: backend }));
+    return backend;
+  }
+
+  function portalContext(prompt) {
+    const words = String(prompt || "").toLocaleLowerCase("id").split(/\W+/).filter((word) => word.length > 3);
+    const matches = chapters.map((chapter) => {
+      const text = [chapter.title, chapter.overview, chapter.grade, chapter.number, ...(chapter.objectives || []), ...(chapter.applications || [])].join(" ").toLocaleLowerCase("id");
+      return { chapter, score: words.reduce((sum, word) => sum + (text.includes(word) ? 1 : 0), 0) };
+    }).filter((item) => item.score).sort((a, b) => b.score - a.score).slice(0, 4).map((item) => item.chapter);
+    const visible = truncate($(".workspace-panel:not([hidden])")?.innerText || "", 1500);
+    const material = matches.map((chapter) => `Kelas ${chapter.grade} Bab ${chapter.number}: ${chapter.title}. ${chapter.overview || ""}`).join("\n");
+    return truncate(`HALAMAN AKTIF:\n${visible}\n\nMATERI PORTAL RELEVAN:\n${material}`, 3200);
+  }
+
+  async function askRemote(prompt, history) {
+    const compact = history.slice(-8).map((item) => ({ role: item.role, text: truncate(item.text, 650) }));
     const payload = await jsonp({
-      action: "aiChat",
-      prompt: truncate(prompt, 1800),
-      context: portalContext(prompt),
-      history: JSON.stringify(compactHistory),
-      sessionId: getSessionId(),
-      aiToken: AI_TOKEN,
-      role: document.body?.dataset.portalRole || "umum",
-      page: location.pathname,
-      origin: location.origin,
+      action: "aiChat", prompt: truncate(prompt, 2200), context: portalContext(prompt),
+      history: JSON.stringify(compact), sessionId: sessionId(), aiToken: TOKEN,
+      role: document.body?.dataset.portalRole || "umum", page: location.pathname, origin: location.origin,
     });
     if (!payload?.ok) throw new Error(payload?.error || "Layanan AI belum siap.");
-    return {
-      text: String(payload.answer || "Jawaban belum tersedia."),
-      mode: payload.mode || "online",
-      model: payload.model || "AI daring",
-      sources: Array.isArray(payload.sources) ? payload.sources : [],
-    };
+    return { text: String(payload.answer || "Jawaban belum tersedia."), model: payload.model || backend.model || "OpenAI", sources: Array.isArray(payload.sources) ? payload.sources : [] };
   }
 
-  function enhanceRoot(root) {
-    if (!root || root.dataset.aiV44 === "yes") return;
-    root.dataset.aiV44 = "yes";
+  function offlineAnswer(prompt) {
+    const lower = String(prompt || "").toLocaleLowerCase("id");
+    const relevant = chapters.filter((chapter) => lower.includes(String(chapter.title || "").toLocaleLowerCase("id").split(" ")[0])).slice(0, 3);
+    if (relevant.length) return `Mode luring menemukan materi berikut:\n\n${relevant.map((chapter, index) => `${index + 1}. **Kelas ${chapter.grade} Bab ${chapter.number}: ${chapter.title}**\n${chapter.overview || ""}`).join("\n\n")}`;
+    return "Spensus AI penuh belum aktif pada server. Mode luring hanya dapat mencari materi portal. Aktifkan OpenAI API di Google Apps Script agar saya dapat menjawab pertanyaan umum, menyusun proposal, membuat naskah, menganalisis, membantu coding, dan kebutuhan lainnya.";
+  }
 
-    const oldForm = $("[data-ai-form], #spensus-ai-form", root);
-    const oldInput = $("[data-ai-input], #spensus-ai-input", root);
-    const oldMessages = $("[data-ai-messages], #spensus-ai-messages", root);
-    if (!oldForm || !oldInput || !oldMessages) return;
+  function wordDownload(text) {
+    const html = `<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Calibri,Arial,sans-serif;line-height:1.6;margin:2.5cm}h1,h2,h3{color:#0b5b4c}</style></head><body>${markdown(text)}</body></html>`;
+    const blob = new Blob([html], { type: "application/msword;charset=utf-8" });
+    const url = URL.createObjectURL(blob); const link = document.createElement("a");
+    link.href = url; link.download = `Spensus_AI_${new Date().toISOString().slice(0,10)}.doc`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
 
-    // Mengganti node untuk membuang listener chatbot lama tanpa mengubah struktur halaman.
-    const form = oldForm.cloneNode(true);
-    const input = $("[data-ai-input], #spensus-ai-input", form);
-    oldForm.replaceWith(form);
-    const messages = oldMessages.cloneNode(false);
-    oldMessages.replaceWith(messages);
+  function enhance(root) {
+    if (!root || root.dataset.aiV48 === "yes") return;
+    const oldForm = $("[data-ai-form],#spensus-ai-form", root);
+    const oldMessages = $("[data-ai-messages],#spensus-ai-messages", root);
+    if (!oldForm || !oldMessages) return;
+    root.dataset.aiV48 = "yes"; root.classList.add("spensus-ai-v48");
 
-    root.classList.add("spensus-ai-v44");
-    const header = $(".ai-drawer-head-v27, .spensus-ai-head", root);
-    if (header && !$(".v44-ai-status", header)) {
-      const status = document.createElement("div");
-      status.className = "v44-ai-status";
-      status.innerHTML = `<span></span><div><strong>Spensus AI Premium</strong><small>${REMOTE_READY ? "AI daring + konteks portal" : "Mode luring berbasis portal"}</small></div>`;
-      header.querySelector(".ai-drawer-brand-v27")?.replaceWith(status) || header.prepend(status);
+    const form = oldForm.cloneNode(true); oldForm.replaceWith(form);
+    const input = $("[data-ai-input],#spensus-ai-input", form);
+    const messages = oldMessages.cloneNode(false); oldMessages.replaceWith(messages);
+    let history = loadHistory(); let busy = false; let lastAnswer = "";
+
+    const head = $(".ai-drawer-head-v27,.spensus-ai-head", root);
+    let brand = $(".v48-ai-brand", head);
+    if (!brand && head) {
+      brand = document.createElement("div"); brand.className = "v48-ai-brand";
+      brand.innerHTML = `<span>✦</span><div><strong>Spensus AI Premium</strong><small data-v48-ai-state>Memeriksa layanan AI…</small></div>`;
+      $(".ai-drawer-brand-v27", head)?.replaceWith(brand) || head.prepend(brand);
     }
 
-    let tools = $(".v44-ai-tools", root);
-    if (!tools) {
-      tools = document.createElement("div");
-      tools.className = "v44-ai-tools";
-      tools.innerHTML = `<button type="button" data-v44-new-chat>＋ Percakapan baru</button><button type="button" data-v44-voice>🎙 Dikte</button><button type="button" data-v44-read>🔊 Bacakan</button><span>${REMOTE_READY ? "Daring" : "Luring"}</span>`;
-      messages.insertAdjacentElement("beforebegin", tools);
+    const tools = document.createElement("div"); tools.className = "v48-ai-tools";
+    tools.innerHTML = `<button type="button" data-v48-new>＋ Baru</button><button type="button" data-v48-voice>🎙 Dikte</button><button type="button" data-v48-read>🔊 Baca</button><button type="button" data-v48-word>▤ Word</button><span data-v48-mode>Memeriksa…</span>`;
+    messages.insertAdjacentElement("beforebegin", tools);
+
+    function updateStatus() {
+      const state = $("[data-v48-ai-state]", root); const badge = $("[data-v48-mode]", root);
+      if (backend.aiConfigured) {
+        if (state) state.textContent = `${backend.model || "OpenAI"} • pertanyaan umum + konteks portal`;
+        if (badge) { badge.textContent = "AI aktif"; badge.dataset.tone = "online"; }
+      } else {
+        if (state) state.textContent = "API AI belum diaktifkan; pencarian portal tetap tersedia";
+        if (badge) { badge.textContent = "Luring"; badge.dataset.tone = "offline"; }
+      }
     }
 
-    let busy = false;
-    let lastAnswer = "";
-    let history = loadHistory();
-
-    function addMessage(role, text, options = {}) {
-      const article = document.createElement("article");
-      article.className = `ai-message-v26 ${role} v44-ai-message`;
-      const sources = (options.sources || []).slice(0, 5);
-      article.innerHTML = `
-        <span class="ai-message-avatar">${role === "user" ? "Anda" : "AI"}</span>
-        <div class="ai-message-bubble">
-          <div class="v44-ai-content">${role === "user" ? `<p>${escapeHtml(text)}</p>` : markdownToHtml(text)}</div>
-          ${sources.length ? `<div class="v44-ai-sources"><strong>Sumber daring</strong>${sources.map((source) => `<a href="${escapeHtml(source.url || "#")}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title || source.url || "Sumber")}</a>`).join("")}</div>` : ""}
-          ${options.actions?.length ? `<div class="ai-message-actions">${options.actions.map((action) => `<button type="button" data-v44-action="${escapeHtml(action.type)}" data-v44-value="${escapeHtml(action.value || "")}">${escapeHtml(action.label)}</button>`).join("")}</div>` : ""}
-          ${role === "assistant" ? `<div class="v44-ai-meta"><span>${escapeHtml(options.model || (options.mode === "online" ? "AI daring" : "Portal luring"))}</span><button type="button" data-v44-copy>Salin jawaban</button></div>` : ""}
-        </div>`;
-      messages.append(article);
-      messages.scrollTop = messages.scrollHeight;
-      return article;
+    function add(role, text, options = {}) {
+      const node = document.createElement("article"); node.className = `v48-ai-message ${role}`;
+      node.innerHTML = `<span>${role === "user" ? "Anda" : "AI"}</span><div><section>${role === "user" ? `<p>${escapeHtml(text)}</p>` : markdown(text)}</section>${options.sources?.length ? `<aside><strong>Sumber</strong>${options.sources.slice(0,5).map((source) => `<a href="${escapeHtml(source.url || "#")}" target="_blank" rel="noopener">${escapeHtml(source.title || source.url || "Sumber")}</a>`).join("")}</aside>` : ""}${role === "assistant" ? `<footer><small>${escapeHtml(options.model || (backend.aiConfigured ? backend.model : "Portal luring"))}</small><button type="button" data-v48-copy>Salin</button></footer>` : ""}</div>`;
+      messages.append(node); messages.scrollTop = messages.scrollHeight; return node;
     }
 
-    function resetChat() {
-      history = [];
-      saveHistory(history);
-      messages.innerHTML = "";
-      addMessage("assistant", "Assalamu'alaikum. Saya **Spensus AI**, asisten pribadi PAIBP SMART SMP. Tanyakan isi materi, minta penjelasan, rencana belajar, latihan, bantuan menulis, atau pertanyaan umum.", { mode: REMOTE_READY ? "online" : "offline" });
+    function reset() {
+      history = []; saveHistory(history); messages.innerHTML = "";
+      add("assistant", "Assalamu'alaikum. Saya **Spensus AI**. Saat AI daring aktif, Anda dapat menanyakan apa saja yang aman dan wajar: materi, proposal, surat, modul, ide, analisis, rencana, kode, ringkasan, serta kebutuhan lainnya.", { model: backend.aiConfigured ? backend.model : "Portal luring" });
     }
 
-    async function ask(raw) {
-      const prompt = String(raw || "").trim();
-      if (!prompt || busy) return;
-      busy = true;
-      input.value = "";
-      input.style.height = "auto";
-      addMessage("user", prompt);
-      history.push({ role: "user", text: prompt });
-      const thinking = addMessage("assistant", "Menelaah pertanyaan dan mencocokkannya dengan konteks portal…", { mode: "thinking" });
-      thinking.classList.add("is-thinking");
-      form.classList.add("is-busy");
+    async function ask(value) {
+      const prompt = String(value || "").trim(); if (!prompt || busy) return;
+      busy = true; input.value = ""; add("user", prompt); history.push({ role: "user", text: prompt });
+      const wait = add("assistant", "Sedang menyusun jawaban terbaik…", { model: "Memproses" }); wait.classList.add("thinking"); form.classList.add("busy");
       try {
         let answer;
-        if (REMOTE_READY && navigator.onLine) {
-          try { answer = await remoteAnswer(prompt, history); }
-          catch (error) {
-            answer = localAnswer(prompt);
-            answer.text += `\n\nCatatan: ${error.message}`;
-          }
-        } else answer = localAnswer(prompt);
-        thinking.remove();
-        lastAnswer = answer.text;
-        addMessage("assistant", answer.text, answer);
-        history.push({ role: "assistant", text: answer.text });
-        saveHistory(history);
-      } finally {
-        busy = false;
-        form.classList.remove("is-busy");
-        input.focus({ preventScroll: true });
-      }
+        if (!backend.checked) await checkBackend();
+        if (backend.aiConfigured && navigator.onLine) answer = await askRemote(prompt, history);
+        else answer = { text: offlineAnswer(prompt), model: "Portal luring", sources: [] };
+        wait.remove(); lastAnswer = answer.text; add("assistant", answer.text, answer);
+        history.push({ role: "assistant", text: answer.text }); saveHistory(history);
+      } catch (error) {
+        wait.remove();
+        const message = /OpenAI API belum dikonfigurasi/i.test(error?.message || "")
+          ? "OpenAI API belum diaktifkan pada Google Apps Script. Jalankan fungsi **aktifkanSpensusAI** setelah API key diisi, kemudian deploy versi baru."
+          : `Layanan AI gagal: ${error?.message || "kesalahan tidak diketahui"}`;
+        lastAnswer = message; add("assistant", message, { model: "Perlu konfigurasi" });
+      } finally { busy = false; form.classList.remove("busy"); input.focus(); }
     }
 
     form.addEventListener("submit", (event) => { event.preventDefault(); ask(input.value); });
-    input.addEventListener("input", () => {
-      input.style.height = "auto";
-      input.style.height = `${Math.min(input.scrollHeight, 150)}px`;
+    input?.addEventListener("input", () => { input.style.height = "auto"; input.style.height = `${Math.min(input.scrollHeight, 120)}px`; });
+    $("[data-v48-new]", root)?.addEventListener("click", reset);
+    $("[data-v48-read]", root)?.addEventListener("click", () => { if (!lastAnswer || !("speechSynthesis" in window)) return; speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(lastAnswer)); });
+    $("[data-v48-word]", root)?.addEventListener("click", () => { if (lastAnswer) wordDownload(lastAnswer); });
+    $("[data-v48-voice]", root)?.addEventListener("click", () => {
+      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Recognition) return;
+      const recognition = new Recognition(); recognition.lang = "id-ID"; recognition.interimResults = false;
+      recognition.onresult = (event) => { input.value = event.results[0][0].transcript; input.focus(); };
+      recognition.start();
     });
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); }
+    messages.addEventListener("click", async (event) => {
+      const copy = event.target.closest("[data-v48-copy]"); if (!copy) return;
+      const text = copy.closest(".v48-ai-message")?.querySelector("section")?.innerText || "";
+      try { await navigator.clipboard.writeText(text); copy.textContent = "Tersalin"; setTimeout(() => copy.textContent = "Salin", 1000); } catch {}
     });
-
-    root.addEventListener("click", async (event) => {
-      const action = event.target.closest("[data-v44-action]");
-      if (action) {
-        if (action.dataset.v44Action === "chapter") {
-          document.querySelector('[data-open-panel="student"]')?.click();
-          setTimeout(() => document.querySelector(`[data-chapter="${CSS.escape(action.dataset.v44Value)}"]`)?.click(), 450);
-        }
-        return;
-      }
-      if (event.target.closest("[data-v44-new-chat]")) resetChat();
-      if (event.target.closest("[data-v44-copy]")) {
-        const text = event.target.closest(".ai-message-bubble")?.querySelector(".v44-ai-content")?.innerText || "";
-        try { await navigator.clipboard.writeText(text); event.target.textContent = "✓ Tersalin"; }
-        catch { event.target.textContent = "Gagal menyalin"; }
-      }
-      if (event.target.closest("[data-v44-read]") && lastAnswer && "speechSynthesis" in window) {
-        speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(lastAnswer);
-        utterance.lang = "id-ID";
-        speechSynthesis.speak(utterance);
-      }
-      if (event.target.closest("[data-v44-voice]")) {
-        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!Recognition) { input.placeholder = "Dikte suara belum didukung browser ini."; return; }
-        const recognition = new Recognition();
-        recognition.lang = "id-ID";
-        recognition.interimResults = false;
-        recognition.onresult = (result) => { input.value = result.results[0][0].transcript; input.focus(); };
-        recognition.start();
-      }
-    });
-
-    $$("[data-ai-prompt]", root).forEach((button) => {
-      const clone = button.cloneNode(true);
-      button.replaceWith(clone);
-      clone.addEventListener("click", () => ask(clone.dataset.aiPrompt));
-    });
-
-    messages.innerHTML = "";
-    if (history.length) history.forEach((item) => addMessage(item.role, item.text, { mode: item.role === "assistant" ? (REMOTE_READY ? "online" : "offline") : "" }));
-    else resetChat();
+    $$('[data-ai-prompt]', root).forEach((button) => button.addEventListener("click", () => ask(button.dataset.aiPrompt)));
+    document.addEventListener("paibp-ai-status", updateStatus);
+    checkBackend().then(() => { updateStatus(); if (!history.length) reset(); else { messages.innerHTML = ""; history.forEach((item) => add(item.role === "user" ? "user" : "assistant", item.text, { model: item.role === "assistant" ? backend.model : "" })); } });
   }
 
   function initialize() {
-    $$(".spensus-ai-instance").forEach(enhanceRoot);
-    new MutationObserver(() => $$(".spensus-ai-instance").forEach(enhanceRoot))
-      .observe(document.body, { childList: true, subtree: true });
+    const roots = $$(".spensus-ai-instance,#spensus-ai-drawer-v27"); roots.forEach(enhance);
+    const observer = new MutationObserver((records) => {
+      for (const record of records) for (const node of record.addedNodes) {
+        if (!(node instanceof Element)) continue;
+        if (node.matches?.(".spensus-ai-instance,#spensus-ai-drawer-v27")) enhance(node);
+        $$(".spensus-ai-instance,#spensus-ai-drawer-v27", node).forEach(enhance);
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    setTimeout(() => observer.disconnect(), 20000);
   }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true });
-  else initialize();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true }); else initialize();
 })();

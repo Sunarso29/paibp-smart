@@ -1,69 +1,31 @@
 (() => {
   "use strict";
-  const VERSION = "47";
-  document.querySelectorAll("[data-year]").forEach((element) => {
-    if (!element.textContent.trim()) element.textContent = new Date().getFullYear();
-  });
-
-  const assetPath = (value) => {
-    try { return new URL(value, document.baseURI).pathname; }
-    catch { return String(value || "").split("?")[0]; }
-  };
-  const hasAsset = (selector, path, property) => [...document.querySelectorAll(selector)]
-    .some((element) => assetPath(element[property]) === assetPath(path));
-
-  function addStyle(path) {
-    if (hasAsset('link[rel="stylesheet"]', path, "href")) return;
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
-    document.head.append(link);
+  const VERSION = "48";
+  document.querySelectorAll("[data-year]").forEach((node) => { if (!node.textContent.trim()) node.textContent = new Date().getFullYear(); });
+  const pathOf = (value) => { try { return new URL(value, document.baseURI).pathname; } catch { return String(value || "").split("?")[0]; } };
+  const exists = (selector, path, prop) => [...document.querySelectorAll(selector)].some((node) => pathOf(node[prop]) === pathOf(path));
+  function style(path) { if (exists('link[rel="stylesheet"]', path, "href")) return; const node = document.createElement("link"); node.rel = "stylesheet"; node.href = new URL(`${path}?v=${VERSION}`, document.baseURI).href; document.head.append(node); }
+  function script(path, ready) {
+    if (ready?.()) return Promise.resolve();
+    if (exists('script[src]', path, "src")) return Promise.resolve();
+    return new Promise((resolve, reject) => { const node = document.createElement("script"); node.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href; node.async = false; node.onload = resolve; node.onerror = reject; document.body.append(node); });
   }
-
-  function addScript(path, readyCheck) {
-    if (readyCheck?.()) return Promise.resolve();
-    const existing = [...document.querySelectorAll('script[src]')]
-      .find((node) => assetPath(node.src) === assetPath(path));
-    if (existing) return new Promise((resolve) => {
-      existing.addEventListener("load", resolve, { once: true });
-      setTimeout(resolve, 800);
-    });
-    return new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
-      script.async = false;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.body.append(script);
-    });
+  let islamicPromise = null;
+  function loadIslamic() {
+    if (islamicPromise) return islamicPromise;
+    style("v38-upgrade.css"); style("v39-upgrade.css"); style("v40-upgrade.css");
+    islamicPromise = script("v38-upgrade.js", () => Boolean(document.querySelector(".v38-worship-button")))
+      .then(() => script("v39-upgrade.js", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
+      .then(() => script("v40-upgrade.js", () => /^4[6-8]-quran-cp$/.test(document.documentElement.dataset.portalBuild || "")))
+      .catch(() => {});
+    return islamicPromise;
   }
-
-  let upgradesPromise = null;
-  function loadFeatureUpgrades() {
-    if (upgradesPromise) return upgradesPromise;
-    addStyle("v38-upgrade.css");
-    addStyle("v39-upgrade.css");
-    addStyle("v40-upgrade.css");
-    addStyle("spensus-ai-v44.css");
-    upgradesPromise = addScript("v38-upgrade.js", () => Boolean(document.querySelector(".v38-worship-button")))
-      .then(() => addScript("v39-upgrade.js", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
-      .then(() => addScript("v40-upgrade.js", () => document.documentElement.dataset.portalBuild === "47-quran-cp"))
-      .then(() => { document.documentElement.dataset.portalBuild = "47-ready"; })
-      .catch(() => { document.documentElement.dataset.portalBuild = "47-partial"; });
-    return upgradesPromise;
-  }
-
-  window.PAIBP_LOAD_FEATURE_UPGRADES = loadFeatureUpgrades;
-  document.documentElement.dataset.portalBuild = "47-light";
-
-  const path = location.pathname.toLowerCase();
-  if (/(?:fitur|akses-guru|kendali-editor)\.html$/.test(path)) {
-    if ("requestIdleCallback" in window) requestIdleCallback(loadFeatureUpgrades, { timeout: 700 });
-    else setTimeout(loadFeatureUpgrades, 120);
-  }
-
+  window.PAIBP_LOAD_FEATURE_UPGRADES = loadIslamic;
+  document.documentElement.dataset.portalBuild = "48-light";
   document.addEventListener("click", (event) => {
-    const trigger = event.target.closest('[data-open-panel="teacher"],[data-open-panel="islamic"],a[href*="fitur.html"],a[href*="akses-guru.html"],a[href*="kendali-editor.html"]');
-    if (trigger) loadFeatureUpgrades();
-  }, { capture: true });
+    if (event.target.closest('[data-open-panel="islamic"],[data-islamic-view],a[href*="fitur.html"]')) loadIslamic();
+  }, true);
+  if (/fitur\.html$/i.test(location.pathname)) {
+    if ("requestIdleCallback" in window) requestIdleCallback(loadIslamic, { timeout: 1000 }); else setTimeout(loadIslamic, 300);
+  }
 })();
