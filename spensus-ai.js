@@ -1,13 +1,13 @@
 (() => {
   "use strict";
-  const VERSION = "48";
+  const VERSION = "49";
   const CONFIG = window.PAIBP_CONFIG || {};
   const ENDPOINT = String(CONFIG.aiEndpoint || CONFIG.syncEndpoint || "").trim();
   const READ_KEY = String(CONFIG.syncReadKey || "").trim();
   const TOKEN = String(CONFIG.aiPublicToken || "").trim();
   const ENDPOINT_READY = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/i.test(ENDPOINT) && Boolean(TOKEN);
-  const HISTORY_KEY = "paibp-smart-ai-history-v48";
-  const SESSION_KEY = "paibp-smart-ai-session-v48";
+  const HISTORY_KEY = "paibp-smart-ai-history-v49";
+  const SESSION_KEY = "paibp-smart-ai-session-v49";
   const MAX_HISTORY = 16;
   const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
   const $$ = (selector, root = document) => [...(root?.querySelectorAll?.(selector) || [])];
@@ -62,7 +62,7 @@
       backend = {
         checked: true,
         aiConfigured: Boolean(info?.aiConfigured),
-        model: String(info?.openAIModel || info?.model || "gpt-5.1"),
+        model: String(info?.geminiModel || info?.aiModel || info?.model || "gemini-3.5-flash"),
         error: "",
       };
     } catch (error) {
@@ -91,14 +91,16 @@
       role: document.body?.dataset.portalRole || "umum", page: location.pathname, origin: location.origin,
     });
     if (!payload?.ok) throw new Error(payload?.error || "Layanan AI belum siap.");
-    return { text: String(payload.answer || "Jawaban belum tersedia."), model: payload.model || backend.model || "OpenAI", sources: Array.isArray(payload.sources) ? payload.sources : [] };
+    const answer = String(payload.answer || "").trim();
+    if (!answer) throw new Error("Gemini mengembalikan jawaban kosong. Coba pertanyaan yang lebih ringkas.");
+    return { text: answer, model: payload.model || backend.model || "Google Gemini", sources: Array.isArray(payload.sources) ? payload.sources : [] };
   }
 
   function offlineAnswer(prompt) {
     const lower = String(prompt || "").toLocaleLowerCase("id");
     const relevant = chapters.filter((chapter) => lower.includes(String(chapter.title || "").toLocaleLowerCase("id").split(" ")[0])).slice(0, 3);
     if (relevant.length) return `Mode luring menemukan materi berikut:\n\n${relevant.map((chapter, index) => `${index + 1}. **Kelas ${chapter.grade} Bab ${chapter.number}: ${chapter.title}**\n${chapter.overview || ""}`).join("\n\n")}`;
-    return "Spensus AI penuh belum aktif pada server. Mode luring hanya dapat mencari materi portal. Aktifkan OpenAI API di Google Apps Script agar saya dapat menjawab pertanyaan umum, menyusun proposal, membuat naskah, menganalisis, membantu coding, dan kebutuhan lainnya.";
+    return "Spensus AI penuh belum aktif pada server. Mode luring hanya dapat mencari materi portal. Aktifkan Gemini API gratis di Google Apps Script agar saya dapat menjawab pertanyaan umum, menyusun proposal, membuat naskah, menganalisis, membantu coding, dan kebutuhan lainnya.";
   }
 
   function wordDownload(text) {
@@ -135,7 +137,7 @@
     function updateStatus() {
       const state = $("[data-v48-ai-state]", root); const badge = $("[data-v48-mode]", root);
       if (backend.aiConfigured) {
-        if (state) state.textContent = `${backend.model || "OpenAI"} • pertanyaan umum + konteks portal`;
+        if (state) state.textContent = `${backend.model || "Google Gemini"} • pertanyaan umum + konteks portal`;
         if (badge) { badge.textContent = "AI aktif"; badge.dataset.tone = "online"; }
       } else {
         if (state) state.textContent = "API AI belum diaktifkan; pencarian portal tetap tersedia";
@@ -151,7 +153,7 @@
 
     function reset() {
       history = []; saveHistory(history); messages.innerHTML = "";
-      add("assistant", "Assalamu'alaikum. Saya **Spensus AI**. Saat AI daring aktif, Anda dapat menanyakan apa saja yang aman dan wajar: materi, proposal, surat, modul, ide, analisis, rencana, kode, ringkasan, serta kebutuhan lainnya.", { model: backend.aiConfigured ? backend.model : "Portal luring" });
+      add("assistant", "Assalamu'alaikum. Saya **Spensus AI**. Saat Gemini daring aktif, Anda dapat menanyakan apa saja yang aman dan wajar: materi, proposal, surat, modul, ide, analisis, rencana, kode, ringkasan, serta kebutuhan lainnya.", { model: backend.aiConfigured ? backend.model : "Portal luring" });
     }
 
     async function ask(value) {
@@ -167,8 +169,8 @@
         history.push({ role: "assistant", text: answer.text }); saveHistory(history);
       } catch (error) {
         wait.remove();
-        const message = /OpenAI API belum dikonfigurasi/i.test(error?.message || "")
-          ? "OpenAI API belum diaktifkan pada Google Apps Script. Jalankan fungsi **aktifkanSpensusAI** setelah API key diisi, kemudian deploy versi baru."
+        const message = /Gemini API belum dikonfigurasi|Gemini API key|Gemini API belum/i.test(error?.message || "")
+          ? "Gemini API belum diaktifkan pada Google Apps Script. Tempel Gemini API key dari Google AI Studio pada fungsi **aktifkanSpensusAI**, jalankan fungsi tersebut, lalu deploy Versi baru."
           : `Layanan AI gagal: ${error?.message || "kesalahan tidak diketahui"}`;
         lastAnswer = message; add("assistant", message, { model: "Perlu konfigurasi" });
       } finally { busy = false; form.classList.remove("busy"); input.focus(); }
