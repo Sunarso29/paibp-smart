@@ -5,30 +5,31 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v54-final-system",
+  realtimeManagedBy: "v55-stable",
   realtimeEndpoint: "",
-  realtimeReadKey: "",
+  realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "54";
-  const pathOf = (value) => {
-    try { return new URL(value, document.baseURI).pathname; }
-    catch { return String(value || "").split("?")[0]; }
-  };
-  const exists = (selector, path, prop) =>
-    [...document.querySelectorAll(selector)].some((node) => pathOf(node[prop]) === pathOf(path));
-  const addStyle = (path) => {
+  const VERSION = "55";
+  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const loaded = new Map();
+  const pathOf = (value) => { try { return new URL(value, document.baseURI).pathname; } catch { return String(value || "").split("?")[0]; } };
+  const exists = (selector, path, prop) => [...document.querySelectorAll(selector)].some((node) => pathOf(node[prop]) === pathOf(path));
+
+  function style(path) {
     if (exists('link[rel="stylesheet"]', path, "href")) return;
     const node = document.createElement("link");
     node.rel = "stylesheet";
     node.href = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
     document.head.append(node);
-  };
-  const addScript = (path) => {
-    if (exists("script[src]", path, "src")) return Promise.resolve();
-    return new Promise((resolve, reject) => {
+  }
+
+  function script(path) {
+    if (loaded.has(path)) return loaded.get(path);
+    if (exists('script[src]', path, "src")) return Promise.resolve();
+    const promise = new Promise((resolve, reject) => {
       const node = document.createElement("script");
       node.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
       node.defer = true;
@@ -36,37 +37,42 @@ window.PAIBP_CONFIG = Object.freeze({
       node.onerror = reject;
       document.head.append(node);
     });
+    loaded.set(path, promise);
+    return promise;
+  }
+
+  style("final-ui-v55.css");
+
+  const boot = () => {
+    script("realtime-v55.js").catch(() => {});
+    script("final-ui-v55.js").catch(() => {});
   };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once:true });
+  else boot();
 
-  [
-    "cp2025-v48.css",
-    "spensus-ai-v48.css",
-    "realtime-v43.css",
-    "realtime-v48.css",
-    "final-ui-v54.css"
-  ].forEach(addStyle);
+  const teacherPage = /^(akses-guru|kendali-editor)\.html$/.test(page);
+  const loadTeacher = () => {
+    style("cp2025-v48.css");
+    script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v55.js")).catch(() => {});
+  };
+  if (teacherPage) setTimeout(loadTeacher, 250);
 
-  addScript("cp2025-loader-v48.js").catch(() => {});
-  addScript("learning-guard-v48.js").catch(() => {});
-  addScript("realtime-v43.js").catch(() => {});
-  addScript("realtime-v54.js").catch(() => {});
-  addScript("cp2025-exact-v54.js").catch(() => {});
-  addScript("spensus-ai-v54-patch.js").catch(() => {});
-  addScript("final-ui-v54.js").catch(() => {});
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-ai-open],.workspace-ai-nav-v27")) {
+      style("spensus-ai-v48.css");
+      script("spensus-ai-v55.js").catch(() => {});
+    }
+  }, { passive:true });
 
-  if (localStorage.getItem("paibp-smart-v54-cache-reset") !== "done") {
+  if (localStorage.getItem("paibp-smart-v55-cache-reset") !== "done") {
     setTimeout(async () => {
       try {
         const keys = await caches.keys();
-        await Promise.all(
-          keys
-            .filter((key) => /paibp-smart/i.test(key) && !/v54/.test(key))
-            .map((key) => caches.delete(key))
-        );
-        localStorage.setItem("paibp-smart-v54-cache-reset", "done");
+        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v55/.test(key)).map((key) => caches.delete(key)));
+        localStorage.setItem("paibp-smart-v55-cache-reset", "done");
         const registration = await navigator.serviceWorker?.getRegistration?.();
         registration?.update?.().catch(() => {});
       } catch {}
-    }, 350);
+    }, 900);
   }
 })();

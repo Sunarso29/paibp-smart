@@ -1,0 +1,83 @@
+(() => {
+  "use strict";
+  const VERSION = "55";
+  const CAT_KEY = "paibp-smart-cat-session-v55";
+  const PROGRESS_KEY = "paibp-smart-progress-v3";
+  const TEACHER_KEY = "paibp-smart-teacher-identity-v1";
+  const AUTH_KEY = "paibp-smart-authority-v55";
+  const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
+  const $$ = (selector, root = document) => [...(root?.querySelectorAll?.(selector) || [])];
+  const clean = (value) => String(value || "").replace(/\s+/g," ").trim();
+  const parse = (value, fallback) => { try { return JSON.parse(value); } catch { return fallback; } };
+  const esc = (value) => String(value ?? "").replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
+  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  let cat = parse(sessionStorage.getItem(CAT_KEY), null) || { active:false,targetChapter:"",startedAt:0,releasedAt:0 };
+  let previousPanel = "panel-welcome";
+  let completionTimer = 0;
+  let historyArmed = false;
+  let practiceBuilt = false;
+
+  function identity() { return parse(localStorage.getItem(TEACHER_KEY), {}) || {}; }
+  function ownerMatches() {
+    const i = identity();
+    const name = String(i.name || i.teacherName || "").toLocaleLowerCase("id");
+    const school = String(i.workUnit || i.school || i.teacherSchool || "").toLocaleLowerCase("id");
+    return name.includes("sunarso") && school.includes("smp negeri 1 susukan");
+  }
+  function role() {
+    const bodyRole = String(document.body?.dataset.portalRole || "").toLowerCase();
+    const gateway = String(document.body?.dataset.privateGateway || "").toLowerCase();
+    const stored = sessionStorage.getItem(AUTH_KEY) || "";
+    const editorToken = sessionStorage.getItem("paibp-smart-owner-gateway-v30") === "yes" || sessionStorage.getItem("paibp-smart-editor-unlocked") === "true" || localStorage.getItem("paibp-smart-editor-unlocked") === "true";
+    if (page === "kendali-editor.html" || gateway === "editor" || stored === "editor" || (editorToken && ownerMatches())) { sessionStorage.setItem(AUTH_KEY,"editor"); return "editor"; }
+    const i = identity();
+    const known = Boolean(i.name || i.teacherName) && Boolean(i.workUnit || i.school || i.teacherSchool);
+    if (page === "akses-guru.html" || gateway === "guru" || bodyRole === "guru" || stored === "teacher" || known) { sessionStorage.setItem(AUTH_KEY,"teacher"); return "teacher"; }
+    return "student";
+  }
+  const privileged = () => role() !== "student";
+  function toast(message) {
+    let node = $("#v55-toast"); if (!node) { node=document.createElement("div");node.id="v55-toast";node.setAttribute("role","status");document.body.append(node); }
+    node.textContent=message;node.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>node.classList.remove("show"),2600);
+  }
+  function panelStudent(){return $("#panel-student,[data-panel='student']");}
+  function activePanel(){return $(".workspace-panel:not([hidden])");}
+  function showStudent(){const p=panelStudent();if(!p)return;p.hidden=false;p.removeAttribute("hidden");$$('.workspace-panel').forEach(n=>{if(n!==p)n.hidden=true;});}
+  function restore(){const s=panelStudent();if(s)s.hidden=true;const target=document.getElementById(previousPanel)||$("#panel-welcome,[data-panel='welcome']");if(target)target.hidden=false;}
+  function saveCat(){try{sessionStorage.setItem(CAT_KEY,JSON.stringify(cat));}catch{}}
+  function removeLegacy(){["paibp-smart-cat-session-v52","paibp-smart-cat-session-v53","paibp-smart-cat-session-v54","paibp-smart-focus-session-v48","paibp-smart-focus-session-v50"].forEach(k=>sessionStorage.removeItem(k));document.documentElement.classList.remove("v48-student-focus","v50-task-focus","v52-cat-mode","v53-cat-mode","v54-cat-mode");["#v48-focus-gate","#v50-focus-resume","#v52-cat-bar","#v53-cat-bar","#v54-cat-bar","#v54-supervisor-tools"].forEach(s=>$(s)?.remove());}
+  function catBar(){let b=$("#v55-cat-bar");if(!b){b=document.createElement("header");b.id="v55-cat-bar";b.innerHTML='<div><span>MODE CAT PAIBP SMART</span><strong>Selesaikan materi, latihan, LKPD, evaluasi, dan refleksi</strong></div><div><b>↕ Scroll aktif</b><small>Menu lain terbuka setelah bab selesai</small></div>';document.body.append(b);}return b;}
+  function supervisor(){if(!privileged())return;let t=$("#v55-supervisor-tools");if(!t){t=document.createElement("aside");t.id="v55-supervisor-tools";document.body.append(t);}const editor=role()==="editor";t.innerHTML=`<span>${editor?"EDITOR":"GURU"} • PRATINJAU MURID</span><button type="button">${editor?"Kembali ke Editor":"Keluar Pratinjau"}</button>`;$("button",t).onclick=()=>{t.remove();restore();if(editor&&page!=="kendali-editor.html")location.href="kendali-editor.html";};}
+  function enterPreview(){removeLegacy();cat.active=false;saveCat();clearInterval(completionTimer);previousPanel=activePanel()?.id||"panel-welcome";showStudent();supervisor();}
+  async function secure(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen?.({navigationUI:"hide"});}catch{}try{await screen.orientation?.lock?.("portrait-primary");}catch{}}
+  function enterCat(){if(privileged()){enterPreview();return;}removeLegacy();previousPanel=activePanel()?.id||"panel-welcome";cat={active:true,targetChapter:"",startedAt:Date.now(),releasedAt:0};saveCat();document.documentElement.classList.add("v55-cat-mode");showStudent();catBar();if(!historyArmed){historyArmed=true;try{history.pushState({v55cat:true},"",location.href);}catch{}}clearInterval(completionTimer);completionTimer=setInterval(checkComplete,10000);}
+  function releaseCat(){cat.active=false;cat.releasedAt=Date.now();saveCat();clearInterval(completionTimer);document.documentElement.classList.remove("v55-cat-mode");$("#v55-cat-bar")?.remove();try{screen.orientation?.unlock?.();}catch{}document.exitFullscreen?.().catch?.(()=>{});toast("Tugas selesai. Navigasi keluar sudah dibuka.");}
+  function completed(){const p=parse(localStorage.getItem(PROGRESS_KEY),{})||{};return [...new Set([p.completed,p.completedIds,p.chaptersCompleted].filter(Array.isArray).flat().map(String))];}
+  function activeChapter(){const n=$("[data-chapter].active,[data-chapter-id].active,[data-material-id].active,[aria-current='true'][data-chapter]");return n?.dataset.chapter||n?.dataset.chapterId||n?.dataset.materialId||cat.targetChapter||"";}
+  function checkComplete(){if(!cat.active||privileged())return;const id=activeChapter();if(id&&completed().includes(String(id)))releaseCat();}
+  function allowed(target){if(target.matches("input,textarea,select,option,label"))return true;if(!target.closest("#panel-student,[data-panel='student']"))return false;return !/beranda|fitur islami|game|portal guru|about|kontak|keluar|tutup|menu utama/i.test(clean(target.textContent));}
+  function block(event){if(!cat.active||privileged())return;const target=event.target.closest("a,button,[data-open-panel],[data-close-workspace]");if(!target)return;const ch=target.closest("[data-chapter],[data-chapter-id],[data-material-id]");if(ch){cat.targetChapter=ch.dataset.chapter||ch.dataset.chapterId||ch.dataset.materialId||cat.targetChapter;saveCat();}if(target.matches('[data-open-panel="student"]')||allowed(target))return;event.preventDefault();event.stopImmediatePropagation();showStudent();toast("Mode CAT aktif. Selesaikan bab sebelum membuka menu lain.");}
+
+  function colorize(){const tones=["forest","sunset","ocean","violet","coral","teal","indigo","gold"];$$('.hero-access-panel .access-tile').forEach((n,i)=>n.dataset.v55Tone=tones[i%tones.length]);$$('.feature-grid article,.home-feature-card,.feature-card-v25').forEach((n,i)=>{n.classList.add('v55-feature-color');n.dataset.v55Tone=tones[(i+2)%tones.length];});}
+  const islamPattern=/beranda|al qur|hisnul|dzikir pagi|dzikir petang|kalender hijriah|bahasa arab|khutbah/i;
+  function islamNav(){const p=$("#panel-islamic,[data-panel='islamic']");if(!p)return;const controls=$$("a,button,[role='tab']",p).filter(n=>islamPattern.test(clean(n.textContent)));if(controls.length<5)return;let best=null;for(const control of controls){let n=control.parentElement;for(let d=0;n&&n!==p&&d<5;d++,n=n.parentElement){const count=$$("a,button,[role='tab']",n).filter(x=>islamPattern.test(clean(x.textContent))).length;if(count>=5&&(!best||count>best.count))best={node:n,count};}}best?.node.classList.add("v55-islamic-nav");}
+
+  const modules=[
+    {id:"wudhu",title:"Wudhu",summary:"Sembilan tahap wudhu dari niat sampai doa.",poster:"assets/simulasi-v55/wudhu-poster.webp",steps:[
+      ["Niat dan basmalah","Berniat wudhu karena Allah Subhanahu Wata'ala lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],["Membasuh telapak tangan","Membasuh kedua telapak tangan sampai pergelangan tiga kali."],["Berkumur","Mengambil air, berkumur, lalu mengeluarkannya."],["Membersihkan hidung","Memasukkan air ke hidung secukupnya lalu mengeluarkannya."],["Membasuh wajah","Membasuh seluruh wajah secara merata tiga kali."],["Membasuh tangan sampai siku","Mendahulukan kanan lalu kiri, masing-masing tiga kali."],["Mengusap kepala","Mengusap kepala satu kali."],["Mengusap telinga","Membersihkan bagian dalam dan luar kedua telinga."],["Membasuh kaki dan berdoa","Membasuh kaki sampai mata kaki lalu membaca doa setelah wudhu.","أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللّٰهُ","Asyhadu allā ilāha illallāh"]]},
+    {id:"sholat",title:"Sholat",summary:"Gerakan dari takbiratul ihram sampai salam lengkap dengan bacaan pokok.",steps:[
+      ["Takbiratul ihram","Berdiri menghadap kiblat, berniat, dan mengangkat kedua tangan.","اللّٰهُ أَكْبَرُ","Allāhu akbar"],["Berdiri dan membaca","Bersedekap, membaca doa iftitah, Al Fatihah, dan Al Qur'an Surat pilihan.","الْحَمْدُ لِلّٰهِ رَبِّ الْعَالَمِينَ","Alhamdu lillāhi rabbil 'ālamīn"],["Ruku","Membungkuk dengan punggung rata dan tuma'ninah.","سُبْحَانَ رَبِّيَ الْعَظِيمِ وَبِحَمْدِهِ","Subhāna rabbiyal 'azhīmi wa bihamdih"],["I'tidal","Bangkit dari ruku dan berdiri tegak.","سَمِعَ اللّٰهُ لِمَنْ حَمِدَهُ","Sami'allāhu liman hamidah"],["Sujud","Meletakkan tujuh anggota sujud dan tuma'ninah.","سُبْحَانَ رَبِّيَ الْأَعْلَى وَبِحَمْدِهِ","Subhāna rabbiyal a'lā wa bihamdih"],["Duduk antara dua sujud","Duduk dengan tuma'ninah sambil membaca doa.","رَبِّ اغْفِرْلِي وَارْحَمْنِي وَاجْبُرْنِي","Rabbighfirlī warhamnī wajburnī"],["Tasyahud","Duduk tasyahud membaca tahiyat dan sholawat.","اَلتَّحِيَّاتُ لِلّٰهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ","At-tahiyyātu lillāhi wash-shalawātu wath-thayyibāt"],["Salam","Menoleh ke kanan lalu kiri untuk mengakhiri sholat.","السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ","Assalāmu'alaikum warahmatullāh"]]},
+    {id:"jamaah",title:"Sholat Berjamaah",summary:"Posisi imam, shaf, gerakan bersama, dan makmum masbuk.",steps:[["Imam di depan","Imam berdiri paling depan menghadap kiblat."],["Luruskan dan rapatkan shaf","Makmum membentuk barisan lurus dan rapat."],["Ikuti imam","Makmum bergerak setelah imam dan tidak mendahuluinya."],["Makmum masbuk","Menyempurnakan rakaat setelah imam salam."]]},
+    {id:"tayamum",title:"Tayamum",summary:"Pengganti wudhu ketika air tidak tersedia atau membahayakan.",steps:[["Pastikan sebab","Tidak ada air atau pemakaian air membahayakan."],["Niat","Berniat tayamum karena Allah Subhanahu Wata'ala."],["Sentuhkan tangan","Menyentuhkan telapak tangan pada debu suci."],["Usap wajah","Mengusap seluruh wajah satu kali."],["Usap tangan","Mengusap tangan kanan dan kiri secara tertib."]]},
+    {id:"puasa",title:"Puasa",summary:"Alur puasa dari niat, sahur, menjaga diri, sampai berbuka.",steps:[["Niat","Berniat puasa sesuai jenis dan waktunya."],["Sahur","Makan dan minum secukupnya sebelum Subuh."],["Menahan diri","Menahan makan, minum, dan pembatal puasa."],["Menjaga akhlak","Menjaga ucapan dan memperbanyak amal baik."],["Berbuka","Segera berbuka saat Maghrib tiba."]]},
+    {id:"zakat",title:"Zakat",summary:"Mengenali jenis, menghitung, berniat, dan menyalurkan zakat.",steps:[["Kenali jenis","Membedakan zakat fitrah dan zakat mal."],["Hitung kewajiban","Memeriksa ukuran, nishab, haul, dan jumlah."],["Niat","Berniat menunaikan zakat karena Allah Subhanahu Wata'ala."],["Salurkan","Menyerahkan kepada amil atau mustahik yang berhak."]]},
+    {id:"haji",title:"Haji",summary:"Urutan pokok manasik dari ihram sampai tahallul.",steps:[["Ihram dan niat","Memakai ihram dan berniat dari miqat."],["Wukuf","Berdiam, berdzikir, dan berdoa di Arafah."],["Mabit Muzdalifah","Bermalam dan mempersiapkan batu jumrah."],["Melontar jumrah","Melontar jumrah di Mina dengan tertib."],["Tawaf","Mengelilingi Ka'bah tujuh putaran."],["Sa'i","Berjalan antara Shafa dan Marwah tujuh kali."],["Tahallul","Mencukur atau memotong rambut."]]},
+    {id:"kurban",title:"Kurban",summary:"Pemilihan hewan, penyembelihan sesuai syariat, dan pembagian.",steps:[["Niat dan waktu","Berniat kurban pada waktu yang ditentukan."],["Pilih hewan sehat","Hewan cukup umur, sehat, dan tidak cacat."],["Persiapan","Menghadapkan hewan ke kiblat dan memperlakukannya baik."],["Penyembelihan","Membaca basmalah dan menggunakan alat tajam."],["Pembagian","Membagikan daging secara bersih dan adil."]]}
+  ];
+  function imagePath(m,i){const ext=(m.id==="wudhu"||m.id==="sholat")?"webp":"svg";return `assets/simulasi-v55/${m.id}-${String(i+1).padStart(2,"0")}.${ext}`;}
+  function buildPractice(){if(practiceBuilt)return;const p=$("#panel-islamic,[data-panel='islamic']");if(!p)return;practiceBuilt=true;const board=document.createElement("section");board.id="v55-practice-board";board.innerHTML=`<header class="v55-practice-head"><div><span>PANDUAN VISUAL DAN PRAKTIK</span><h3>Simulasi Ibadah Langkah demi Langkah</h3><p>Visual tiap tahap berbeda, tata cara runtut, serta bacaan Arab dan latin terbaca jelas.</p></div><b>ONLINE + LURING</b></header><nav class="v55-practice-tabs">${modules.map((m,i)=>`<button type="button" data-v55-module="${m.id}" aria-selected="${i===0}">${m.title}</button>`).join("")}</nav><div data-v55-content></div>`;p.append(board);const content=$("[data-v55-content]",board);const render=(m)=>{content.innerHTML=`<section class="v55-module-intro"><div><h4>${esc(m.title)}</h4><p>${esc(m.summary)}</p></div><b>${m.steps.length} tahap</b></section>${m.poster?`<figure class="v55-poster"><img src="${m.poster}" alt="Urutan lengkap ${esc(m.title)}"><figcaption>Urutan lengkap ${esc(m.title)}</figcaption></figure>`:""}<div class="v55-step-grid">${m.steps.map((s,i)=>`<article class="v55-step"><figure><img src="${imagePath(m,i)}" alt="${esc(s[0])}" loading="lazy" onerror="this.closest('figure').classList.add('image-error');this.style.display='none'"><span>${i+1}</span></figure><div class="v55-step-copy"><small>TAHAP ${i+1}</small><h5>${esc(s[0])}</h5><p>${esc(s[1])}</p>${s[2]||s[3]?`<aside><strong lang="ar" dir="rtl">${esc(s[2]||"")}</strong><em>${esc(s[3]||"")}</em></aside>`:""}</div></article>`).join("")}</div><p class="v55-source-note">Visual disimpan lokal di dalam aplikasi agar tetap tersedia saat luring. Wudhu menggunakan contoh karakter yang diberikan editor portal.</p>`;};render(modules[0]);$$('[data-v55-module]',board).forEach(btn=>btn.onclick=()=>{const m=modules.find(x=>x.id===btn.dataset.v55Module);$$('[data-v55-module]',board).forEach(x=>x.setAttribute('aria-selected',String(x===btn)));render(m);});}
+  function aiMobile(){const p=$(".ai-drawer-panel-v27,.spensus-ai-v48");if(p)p.classList.add("v55-ai-mobile");}
+  function init(){document.documentElement.dataset.paibpFinal=VERSION;removeLegacy();colorize();islamNav();if(privileged()){cat.active=false;saveCat();}document.addEventListener("click",(e)=>{const entry=e.target.closest('[data-open-panel="student"]');if(entry){privileged()?setTimeout(enterPreview,0):(enterCat(),secure());return;}if(e.target.closest('[data-open-panel="islamic"],[data-islamic-view]'))setTimeout(()=>{islamNav();buildPractice();},80);if(e.target.closest('[data-ai-open],.workspace-ai-nav-v27'))setTimeout(aiMobile,80);if(cat.active)block(e);},true);window.addEventListener("popstate",()=>{if(cat.active&&!privileged()){try{history.pushState({v55cat:true},"",location.href);}catch{}showStudent();toast("Tombol kembali dibatasi selama Mode CAT.");}});window.addEventListener("storage",checkComplete);if(cat.active&&!privileged()){document.documentElement.classList.add("v55-cat-mode");showStudent();catBar();completionTimer=setInterval(checkComplete,10000);}setTimeout(()=>{colorize();islamNav();},700);}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+  window.PAIBP_V55=Object.freeze({version:VERSION,role,enterCat,releaseCat,enterPreview,buildPractice});
+})();
