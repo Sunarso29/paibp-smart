@@ -1,10 +1,13 @@
-const CORE_CACHE = "paibp-smart-v51-core";
-const DATA_CACHE = "paibp-smart-v51-data";
-const AUDIO_CACHE = "paibp-smart-v51-audio";
+const CORE_CACHE = "paibp-smart-v52-core";
+const DATA_CACHE = "paibp-smart-v52-data";
+const AUDIO_CACHE = "paibp-smart-v52-audio";
+const MEDIA_CACHE = "paibp-smart-v52-media";
 const CORE_ASSETS = [
   "./", "./index.html", "./app-config.js",
   "./final-ui-v50.css", "./final-ui-v50.js",
-  "./final-ui-v51.css", "./final-ui-v51.js",
+  "./final-ui-v51.css",
+  "./final-ui-v52.css", "./final-ui-v52.js",
+  "./assets/simulasi/wudhu-reference-v52.png",
   "./cp2025-v48.css", "./cp2025-loader-v48.js",
   "./spensus-ai-v48.css", "./spensus-ai.js",
   "./learning-guard-v48.css", "./learning-guard-v48.js",
@@ -24,7 +27,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     await Promise.all(keys
-      .filter((key) => key.startsWith("paibp-smart") && ![CORE_CACHE, DATA_CACHE, AUDIO_CACHE].includes(key))
+      .filter((key) => key.startsWith("paibp-smart") && ![CORE_CACHE, DATA_CACHE, AUDIO_CACHE, MEDIA_CACHE].includes(key))
       .map((key) => caches.delete(key)));
     await self.clients.claim();
   })());
@@ -114,7 +117,20 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.origin !== self.location.origin) {
-    event.respondWith(fetch(request).catch(() => caches.match(request)));
+    if (/\.(?:png|jpg|jpeg|webp|svg)(?:$|\?)/i.test(url.href) || /wikimedia\.org$/i.test(url.hostname)) {
+      event.respondWith((async () => {
+        const cache = await caches.open(MEDIA_CACHE);
+        const cached = await cache.match(request, { ignoreSearch: false });
+        if (cached) return cached;
+        try {
+          const response = await fetch(request);
+          if (response.ok || response.type === "opaque") await cache.put(request, response.clone());
+          return response;
+        } catch { return cached || Response.error(); }
+      })());
+    } else {
+      event.respondWith(fetch(request).catch(() => caches.match(request)));
+    }
     return;
   }
 

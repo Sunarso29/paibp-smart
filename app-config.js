@@ -5,35 +5,35 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v51-final",
+  realtimeManagedBy: "v52-cat-mobile-visual",
   realtimeEndpoint: "",
   realtimeReadKey: "",
 });
 
 (() => {
   "use strict";
-  const VERSION = "51";
+  const VERSION = "52";
   const pathOf = (value) => { try { return new URL(value, document.baseURI).pathname; } catch { return String(value || "").split("?")[0]; } };
   const exists = (selector, path, prop) => [...document.querySelectorAll(selector)].some((node) => pathOf(node[prop]) === pathOf(path));
   const addStyle = (path) => { if (exists('link[rel="stylesheet"]', path, "href")) return; const node = document.createElement("link"); node.rel = "stylesheet"; node.href = new URL(`${path}?v=${VERSION}`, document.baseURI).href; document.head.append(node); };
   const addScript = (path) => { if (exists('script[src]', path, "src")) return Promise.resolve(); return new Promise((resolve, reject) => { const node = document.createElement("script"); node.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href; node.defer = true; node.onload = resolve; node.onerror = reject; document.head.append(node); }); };
 
-  ["cp2025-v48.css","spensus-ai-v48.css","learning-guard-v48.css","realtime-v43.css","realtime-v48.css","final-ui-v50.css","final-ui-v51.css"].forEach(addStyle);
+  ["cp2025-v48.css","spensus-ai-v48.css","learning-guard-v48.css","realtime-v43.css","realtime-v48.css","final-ui-v50.css","final-ui-v51.css","final-ui-v52.css"].forEach(addStyle);
   addScript("cp2025-loader-v48.js").catch(() => {});
   addScript("learning-guard-v48.js").catch(() => {});
   addScript("realtime-v48-status.js").catch(() => {});
-  addScript("final-ui-v50.js").catch(() => {});
-  addScript("final-ui-v51.js").catch(() => {});
+  // V50/V51 JS tidak dimuat lagi agar overlay lama dan visual lama tidak hidup kembali.
+  addScript("final-ui-v52.js").catch(() => {});
 
   // Rekap akses dimuat langsung agar setiap kunjungan tercatat sejak halaman pertama terbuka.
   addScript("realtime-v43.js").catch(() => {});
 
-  if (localStorage.getItem("paibp-smart-v51-cache-reset") !== "done") {
+  if (localStorage.getItem("paibp-smart-v52-cache-reset") !== "done") {
     setTimeout(async () => {
       try {
         const keys = await caches.keys();
-        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v51/.test(key)).map((key) => caches.delete(key)));
-        localStorage.setItem("paibp-smart-v51-cache-reset", "done");
+        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v52/.test(key)).map((key) => caches.delete(key)));
+        localStorage.setItem("paibp-smart-v52-cache-reset", "done");
         const registration = await navigator.serviceWorker?.getRegistration?.();
         registration?.update?.().catch(() => {});
       } catch {}
