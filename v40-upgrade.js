@@ -1,13 +1,13 @@
 (() => {
   "use strict";
 
-  const BUILD = "46";
+  const BUILD = "47";
   const QURAN_CACHE = "paibp-smart-quran-v40";
   const AUDIO_CACHE = "paibp-smart-quran-audio-v40";
   const TAFSIR_PREFIX = "paibp-smart-tafsir-v40-";
   const CP_MODE_KEY = "paibp-smart-curriculum-mode-v40";
-  const CP_FAST_MANIFEST_URL = "cp2025-manifest-v46.json";
-  const CP_FAST_CHUNK_DIR = "cp2025-chunks-v46";
+  const CP_FAST_MANIFEST_URL = "cp2025-manifest-v47.json";
+  const CP_FAST_CHUNK_PREFIX = "cp2025-chunk-";
   const CP_MANIFEST_URL = "assets/cp-2025/manifest.json";
   const CP_PREVIEW_PACK_URL = "cp2025-preview-pack.b64";
   const CP_SOURCE_PACK_URL = "cp2025-source-pack.b64";
@@ -506,7 +506,7 @@
       let existing = document.querySelector('script[src*="vendor/jszip.min.js"]');
       if (!existing) {
         existing = document.createElement("script");
-        existing.src = "vendor/jszip.min.js?v=44";
+        existing.src = "vendor/jszip.min.js?v=47";
         existing.async = false;
         document.head.append(existing);
       }
@@ -604,31 +604,22 @@
 
   async function loadCpManifest() {
     if (cpManifestPromise) return cpManifestPromise;
-    cpManifestPromise = (async () => {
-      try {
-        const manifest = await fetchCpJson(`${CP_FAST_MANIFEST_URL}?v=${BUILD}`);
-        if (!manifest?.records?.length) throw new Error("Manifest cepat CP Lama 2025 kosong.");
+    cpManifestPromise = fetchCpJson(`${CP_FAST_MANIFEST_URL}?v=${BUILD}`)
+      .then((manifest) => {
+        if (!manifest?.records?.length) throw new Error("Manifest CP Lama 2025 kosong atau belum terunggah.");
         return manifest;
-      } catch (fastError) {
-        try {
-          const response = await fetch(CP_MANIFEST_URL, { cache: "force-cache" });
-          if (response.ok) return response.json();
-        } catch {}
-        const bundle = await loadCpBundle();
-        if (!bundle?.manifest?.records?.length) throw fastError;
-        return bundle.manifest;
-      }
-    })().catch((error) => {
-      cpManifestPromise = null;
-      throw error;
-    });
+      })
+      .catch((error) => {
+        cpManifestPromise = null;
+        throw new Error(`CP Lama 2025 belum siap: ${error?.message || "manifest tidak ditemukan"}. Unggah seluruh file V47 ke root repository.`);
+      });
     return cpManifestPromise;
   }
 
   async function loadCpChunk(name) {
     if (!name) throw new Error("Kelompok pratinjau CP Lama 2025 tidak dikenali.");
     if (cpChunkPromises.has(name)) return cpChunkPromises.get(name);
-    const promise = fetchCpJson(`${CP_FAST_CHUNK_DIR}/${name}.json?v=${BUILD}`)
+    const promise = fetchCpJson(`${CP_FAST_CHUNK_PREFIX}${name}-v47.json?v=${BUILD}`)
       .then((chunk) => {
         if (!chunk?.previews) throw new Error(`Isi kelompok ${name} tidak valid.`);
         return chunk;
@@ -643,24 +634,11 @@
 
   async function loadCpPreview(record) {
     const key = `${record.id}.json`;
-    if (record.previewChunk) {
-      try {
-        const chunk = await loadCpChunk(record.previewChunk);
-        const payload = chunk.previews?.[key] || chunk.previews?.[record.preview?.split("/").pop()];
-        if (!payload) throw new Error(`Pratinjau ${record.title} tidak ditemukan.`);
-        return { payload, media: chunk.media || {} };
-      } catch (fastError) {
-        // Jatuh ke paket lama hanya jika data cepat belum tersedia.
-      }
-    }
-    try {
-      const response = await fetch(record.preview, { cache: "force-cache" });
-      if (response.ok) return { payload: await response.json(), media: {} };
-    } catch {}
-    const bundle = await loadCpBundle();
-    const payload = bundle.previews?.[key] || bundle.previews?.[record.preview?.split("/").pop()];
-    if (!payload) throw new Error(`Pratinjau ${record.title} tidak ditemukan dalam paket.`);
-    return { payload, media: bundle.media || {} };
+    if (!record.previewChunk) throw new Error(`Kelompok pratinjau ${record.title} belum tercantum pada manifest.`);
+    const chunk = await loadCpChunk(record.previewChunk);
+    const payload = chunk.previews?.[key] || chunk.previews?.[record.preview?.split("/").pop()];
+    if (!payload) throw new Error(`Pratinjau ${record.title} tidak ditemukan dalam file ${record.previewChunk}.`);
+    return { payload, media: chunk.media || {} };
   }
 
   function cpMediaSource(mediaBase, image) {

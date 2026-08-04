@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-
+  const VERSION = "47";
   document.querySelectorAll("[data-year]").forEach((element) => {
     if (!element.textContent.trim()) element.textContent = new Date().getFullYear();
   });
@@ -9,43 +9,61 @@
     try { return new URL(value, document.baseURI).pathname; }
     catch { return String(value || "").split("?")[0]; }
   };
-  const findAsset = (selector, path, property) => [...document.querySelectorAll(selector)]
-    .find((element) => assetPath(element[property]) === assetPath(path));
-  const addStyle = (path) => {
-    if (findAsset('link[rel="stylesheet"]', path, "href")) return;
+  const hasAsset = (selector, path, property) => [...document.querySelectorAll(selector)]
+    .some((element) => assetPath(element[property]) === assetPath(path));
+
+  function addStyle(path) {
+    if (hasAsset('link[rel="stylesheet"]', path, "href")) return;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = new URL(path, document.baseURI).href;
+    link.href = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
     document.head.append(link);
-  };
-  const ensureScript = (path, readyCheck) => new Promise((resolve, reject) => {
-    const existing = findAsset("script[src]", path, "src");
-    if (existing) {
-      if (readyCheck?.()) { resolve(); return; }
+  }
+
+  function addScript(path, readyCheck) {
+    if (readyCheck?.()) return Promise.resolve();
+    const existing = [...document.querySelectorAll('script[src]')]
+      .find((node) => assetPath(node.src) === assetPath(path));
+    if (existing) return new Promise((resolve) => {
       existing.addEventListener("load", resolve, { once: true });
-      existing.addEventListener("error", reject, { once: true });
-      window.setTimeout(resolve, 1200);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = new URL(path, document.baseURI).href;
-    script.async = false;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.body.append(script);
-  });
+      setTimeout(resolve, 800);
+    });
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
+      script.async = false;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.body.append(script);
+    });
+  }
 
-  addStyle("v38-upgrade.css?v=46");
-  addStyle("v39-upgrade.css?v=46");
-  addStyle("v40-upgrade.css?v=46");
-  addStyle("spensus-ai-v44.css?v=46");
-  addStyle("learning-guard-v44.css?v=46");
+  let upgradesPromise = null;
+  function loadFeatureUpgrades() {
+    if (upgradesPromise) return upgradesPromise;
+    addStyle("v38-upgrade.css");
+    addStyle("v39-upgrade.css");
+    addStyle("v40-upgrade.css");
+    addStyle("spensus-ai-v44.css");
+    upgradesPromise = addScript("v38-upgrade.js", () => Boolean(document.querySelector(".v38-worship-button")))
+      .then(() => addScript("v39-upgrade.js", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
+      .then(() => addScript("v40-upgrade.js", () => document.documentElement.dataset.portalBuild === "47-quran-cp"))
+      .then(() => { document.documentElement.dataset.portalBuild = "47-ready"; })
+      .catch(() => { document.documentElement.dataset.portalBuild = "47-partial"; });
+    return upgradesPromise;
+  }
 
-  ensureScript("v38-upgrade.js?v=46", () => Boolean(document.querySelector(".v38-worship-button")))
-    .then(() => ensureScript("v39-upgrade.js?v=46", () => document.documentElement.dataset.portalBuild === "39-quran-worship"))
-    .then(() => ensureScript("v40-upgrade.js?v=46", () => document.documentElement.dataset.portalBuild === "46-quran-cp"))
-    .then(() => ensureScript("learning-guard-v44.js?v=46", () => Boolean(document.querySelector("#v44-focus-gate"))))
-    .catch(() => { document.documentElement.dataset.portalBuild = "46-partial"; });
+  window.PAIBP_LOAD_FEATURE_UPGRADES = loadFeatureUpgrades;
+  document.documentElement.dataset.portalBuild = "47-light";
 
-  document.documentElement.dataset.portalBuild = "46-loader";
+  const path = location.pathname.toLowerCase();
+  if (/(?:fitur|akses-guru|kendali-editor)\.html$/.test(path)) {
+    if ("requestIdleCallback" in window) requestIdleCallback(loadFeatureUpgrades, { timeout: 700 });
+    else setTimeout(loadFeatureUpgrades, 120);
+  }
+
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest('[data-open-panel="teacher"],[data-open-panel="islamic"],a[href*="fitur.html"],a[href*="akses-guru.html"],a[href*="kendali-editor.html"]');
+    if (trigger) loadFeatureUpgrades();
+  }, { capture: true });
 })();
