@@ -186,3 +186,296 @@ html body #v56-practice-board figure.v57-media-error::after{
   html body #v56-practice-board .v56-step figure img{min-height:190px!important}
   html body #v56-practice-board .v56-step-copy{padding:14px!important}
 }
+/* PAIBP SMART V58 — audit kontras menyeluruh + pemulihan kuncian bab */
+:root{
+  --v58-ink:#12382f;
+  --v58-muted:#5d746d;
+  --v58-green:#08745d;
+  --v58-dark:#063e34;
+  --v58-blue:#145b8f;
+  --v58-gold:#f5c95d;
+  --v58-line:rgba(7,101,79,.18);
+  --v58-soft:#eef8f4;
+  --v58-white:#fff;
+  --v58-shadow:0 18px 48px rgba(4,48,41,.16);
+}
+
+/* Logo sekolah selalu mempunyai bidang kontras sendiri. */
+img.v58-logo-contrast{
+  background:#fff!important;
+  border:2px solid rgba(245,201,93,.95)!important;
+  border-radius:22%!important;
+  padding:clamp(3px,.7vw,8px)!important;
+  box-shadow:0 10px 26px rgba(3,45,38,.24)!important;
+  object-fit:contain!important;
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+}
+.brand-mark img.v58-logo-contrast,.brand-footer img.v58-logo-contrast{padding:3px!important}
+.access-panel-head img.v58-logo-contrast,.school-identity-card img.v58-logo-contrast{background:#fffdf4!important}
+
+
+
+/* Ikon akses dan ikon fitur tidak boleh putih di atas bidang putih. */
+.hero-access-panel .access-tile .access-icon,
+.feature-showcase-v25 .feature-card-v25 .feature-icon-v25,
+.school-orbit .orbit-item,
+.school-orbit [class*="icon"]{
+  background:#fff!important;
+  color:#12483e!important;
+  -webkit-text-fill-color:#12483e!important;
+  border:1px solid rgba(8,116,93,.18)!important;
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+}
+.hero-access-panel .access-tile .access-icon svg,
+.hero-access-panel .access-tile .access-icon svg *,
+.feature-showcase-v25 .feature-card-v25 .feature-icon-v25 svg,
+.feature-showcase-v25 .feature-card-v25 .feature-icon-v25 svg *{
+  color:inherit!important;
+  fill:currentColor!important;
+  stroke:currentColor!important;
+  opacity:1!important;
+}
+#v56-class-control select,#v56-class-control input,
+#panel-islamic select,#panel-islamic input,#panel-islamic textarea{color-scheme:light!important}
+
+/* Kendali CAT: nilai select/input tidak lagi putih di atas putih. */
+#v56-class-control .v56-control-grid select,
+#v56-class-control .v56-control-grid select option,
+#v56-class-control .v56-control-grid input,
+#v56-class-control .v56-duration,
+#v56-class-control .v56-duration em{
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  opacity:1!important;
+}
+#v56-class-control .v56-control-grid select,
+#v56-class-control .v56-control-grid input{
+  background:#fff!important;
+  border:2px solid rgba(245,201,93,.78)!important;
+  box-shadow:inset 0 0 0 1px rgba(6,62,52,.07)!important;
+}
+#v56-class-control .v56-control-actions{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#v56-class-control .v56-control-actions button{display:block!important;width:100%!important;white-space:normal!important;line-height:1.25!important}
+@media(max-width:980px){
+  #v56-class-control .v56-control-grid{grid-template-columns:1fr 1fr!important}
+  #v56-class-control .v56-control-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:620px){
+  #v56-class-control{width:calc(100% - 16px)!important;padding:16px!important}
+  #v56-class-control header{display:grid!important;align-items:start!important}
+  #v56-class-control .v56-control-grid{grid-template-columns:1fr!important}
+  #v56-class-control .v56-control-actions{grid-template-columns:1fr!important}
+}
+
+/* Beranda: kartu terang memakai teks gelap, bukan warisan putih dari deteksi gradien V56. */
+#spensus-terkini,
+#spensus-terkini .news-placeholder,
+#spensus-terkini .news-placeholder div,
+.public-feedback,
+.public-feedback-v24,
+#public-feedback-list{
+  background:#fff!important;
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+}
+#spensus-terkini :where(h1,h2,h3,h4,h5,h6,p,strong,small,span),
+.public-feedback :where(h1,h2,h3,h4,h5,h6,p,strong,small,span),
+#public-feedback-list :where(h1,h2,h3,h4,h5,h6,p,strong,small,span){
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  opacity:1!important;
+}
+#spensus-terkini .news-placeholder{
+  border:2px dashed rgba(8,116,93,.30)!important;
+  background:linear-gradient(135deg,#eef9f5,#fff7dc)!important;
+}
+#public-feedback-list{max-height:320px!important;min-height:110px!important;overflow:auto!important;border-radius:16px!important}
+.public-feedback{border:1px solid var(--v58-line)!important;box-shadow:0 10px 25px rgba(4,48,41,.08)!important}
+
+/* Fitur Islami: semua bidang terang mempunyai warna teks pasti. */
+#panel-islamic .islamic-content{
+  background:linear-gradient(180deg,#fbfdfc,#f4faf7)!important;
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+}
+#panel-islamic .islamic-content > section,
+#panel-islamic [data-islamic-page]{color:var(--v58-ink)!important;-webkit-text-fill-color:var(--v58-ink)!important}
+#panel-islamic [data-islamic-page] :where(h1,h2,h3,h4,h5,h6,p,label,li,dt,dd){
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  opacity:1!important;
+}
+#panel-islamic .subheading-row,
+#panel-islamic .subheading-row > div,
+#panel-islamic .document-note,
+#panel-islamic .save-status{
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+}
+#panel-islamic .document-note,
+#panel-islamic .save-status{
+  background:#e9f8f2!important;
+  border:1px solid rgba(8,116,93,.22)!important;
+  border-radius:14px!important;
+  padding:11px 14px!important;
+}
+
+/* Al Qur'an */
+#panel-islamic .quran-controls,
+#panel-islamic .quran-reader,
+#panel-islamic .tajwid-legend{
+  background:#fff!important;
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  border-color:rgba(8,116,93,.20)!important;
+}
+#panel-islamic .quran-controls label,
+#panel-islamic .quran-controls input,
+#panel-islamic .quran-controls select,
+#panel-islamic .quran-reader,
+#panel-islamic .quran-reader *{
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  opacity:1!important;
+}
+#panel-islamic .quran-controls input,
+#panel-islamic .quran-controls select{
+  background:#fff!important;
+  border:1px solid rgba(8,116,93,.28)!important;
+}
+#panel-islamic .quran-controls button,
+#panel-islamic .quran-controls button *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+#panel-islamic .quran-controls button:last-child{color:#3b2500!important;-webkit-text-fill-color:#3b2500!important}
+#panel-islamic .tajwid-legend span{
+  color:#243a35!important;
+  -webkit-text-fill-color:#243a35!important;
+  border:1px solid rgba(25,55,47,.14)!important;
+  font-weight:900!important;
+  opacity:1!important;
+}
+
+/* Hisnul Muslim dan dzikir */
+#panel-islamic .hisnul-stats article,
+#panel-islamic .hisnul-toolbar,
+#panel-islamic .dua-list article,
+#panel-islamic .dua-card{
+  background:#fff!important;
+  border-color:rgba(8,116,93,.20)!important;
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+}
+#panel-islamic .hisnul-stats article :where(span,strong,small),
+#panel-islamic .hisnul-toolbar :where(label,span,strong,small),
+#panel-islamic .dua-list article :where(h1,h2,h3,h4,h5,h6,p,small,strong,em),
+#panel-islamic .dua-card :where(h1,h2,h3,h4,h5,h6,p,small,strong,em){
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  opacity:1!important;
+}
+#panel-islamic .hisnul-toolbar input,
+#panel-islamic .hisnul-toolbar select{
+  background:#fff!important;
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  border:1px solid rgba(8,116,93,.28)!important;
+}
+#panel-islamic .hisnul-toolbar button,
+#panel-islamic .hisnul-toolbar button *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
+/* Tajwid dan modul latihan: judul/paragraf gelap, simbol warna tetap dipertahankan. */
+#panel-islamic [data-islamic-page="tajwid"] :where(h1,h2,h3,h4,h5,h6,p,label,small),
+#panel-islamic .tajwid-dashboard :where(h1,h2,h3,h4,h5,h6,p,label,small),
+#panel-islamic .tajwid-module :where(h1,h2,h3,h4,h5,h6,p,label,small),
+#panel-islamic .tajwid-stage :where(h1,h2,h3,h4,h5,h6,p,label,small){
+  color:var(--v58-ink)!important;
+  -webkit-text-fill-color:var(--v58-ink)!important;
+  opacity:1!important;
+}
+#panel-islamic .tajwid-dashboard,
+#panel-islamic .tajwid-module,
+#panel-islamic .tajwid-stage,
+#panel-islamic .tajwid-letter-grid > *{
+  border-color:rgba(8,116,93,.18)!important;
+}
+
+/* Tombol dan menu berwarna tetap menggunakan warna yang kontras. */
+#panel-islamic .islamic-menu button,
+#panel-islamic .islamic-menu button *,
+#panel-islamic .cta,
+#panel-islamic .cta *,
+#panel-islamic .btn:not(.quran-controls button:last-child),
+#panel-islamic .btn:not(.quran-controls button:last-child) *{
+  opacity:1!important;
+}
+
+/* Pemulihan menu kuncian bab. */
+#v58-editor-chapter-control{
+  width:min(1180px,calc(100% - 28px));
+  margin:22px auto;
+  border:1px solid var(--v58-line);
+  border-radius:27px;
+  background:#fff;
+  box-shadow:var(--v58-shadow);
+  overflow:hidden;
+}
+#v58-editor-chapter-control>header{
+  display:flex;
+  justify-content:space-between;
+  gap:22px;
+  align-items:flex-start;
+  padding:25px;
+  background:linear-gradient(130deg,#063e34,#08745d 62%,#145b8f);
+}
+#v58-editor-chapter-control>header,
+#v58-editor-chapter-control>header :where(span,h2,p,strong){color:#fff!important;-webkit-text-fill-color:#fff!important}
+#v58-editor-chapter-control>header span{font-size:.67rem;font-weight:950;letter-spacing:.11em;color:#c8f7e6!important;-webkit-text-fill-color:#c8f7e6!important}
+#v58-editor-chapter-control h2{margin:6px 0!important;font-size:clamp(1.35rem,3vw,2rem)!important}
+#v58-editor-chapter-control>header p{margin:0!important;max-width:700px;color:#e0f6ee!important;-webkit-text-fill-color:#e0f6ee!important;line-height:1.55!important}
+.v58-policy-modes{display:flex;gap:7px;flex:0 0 auto}
+.v58-policy-modes button{border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:10px 13px;background:rgba(255,255,255,.12);color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:900;cursor:pointer}
+.v58-policy-modes button[aria-pressed="true"]{background:var(--v58-gold)!important;border-color:var(--v58-gold)!important;color:#2e260d!important;-webkit-text-fill-color:#2e260d!important}
+.v58-lock-grade-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:20px}
+.v58-lock-grade-grid section{padding:15px;border:1px solid var(--v58-line);border-radius:18px;background:#f7fbf9}
+.v58-lock-grade-grid h3{margin:0 0 10px;color:var(--v58-ink)!important;-webkit-text-fill-color:var(--v58-ink)!important}
+.v58-lock-grade-grid label{display:flex;gap:9px;align-items:flex-start;padding:9px;border-radius:12px;cursor:pointer;color:var(--v58-ink)!important;-webkit-text-fill-color:var(--v58-ink)!important}
+.v58-lock-grade-grid label:hover{background:#eaf7f2}
+.v58-lock-grade-grid label.v58-force-locked{background:#fff1d2;border:1px solid rgba(183,117,14,.18)}
+.v58-lock-grade-grid label.v58-first-chapter{opacity:.72;cursor:default}
+.v58-lock-grade-grid input{margin-top:4px;accent-color:#b66f0c}
+.v58-lock-grade-grid strong,.v58-lock-grade-grid small{display:block;color:var(--v58-ink)!important;-webkit-text-fill-color:var(--v58-ink)!important}
+.v58-lock-grade-grid small{margin-top:2px;color:var(--v58-muted)!important;-webkit-text-fill-color:var(--v58-muted)!important;font-size:.66rem;line-height:1.35}
+#v58-editor-chapter-control>footer{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:16px 20px;background:#edf7f3}
+#v58-editor-chapter-control>footer span{color:var(--v58-muted)!important;-webkit-text-fill-color:var(--v58-muted)!important;font-size:.72rem}
+#v58-editor-chapter-control>footer button{border:0;border-radius:12px;padding:12px 16px;background:linear-gradient(135deg,#08745d,#145b8f);color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:950;cursor:pointer}
+
+.v58-chapter-locked{position:relative!important;filter:saturate(.76)!important;border-color:rgba(112,128,122,.26)!important;background:linear-gradient(145deg,#f8fbfa,#edf3f1)!important}
+.v58-chapter-locked .chapter-preview{opacity:.68!important}
+.v58-chapter-locked .chapter-package-actions{opacity:.62!important}
+.v58-button-locked{cursor:not-allowed!important;filter:grayscale(.35)!important}
+.v58-chapter-lock-notice{display:flex;align-items:flex-start;gap:11px;margin:14px 0 0;padding:12px 14px;border:1px solid rgba(158,105,24,.20);border-radius:15px;background:linear-gradient(135deg,#fff7dc,#f5f8f6);color:#5d4a22!important;-webkit-text-fill-color:#5d4a22!important}
+.v58-chapter-lock-notice>span{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#f7df98}
+.v58-chapter-lock-notice strong,.v58-chapter-lock-notice small{display:block;color:#5d4a22!important;-webkit-text-fill-color:#5d4a22!important}
+.v58-chapter-lock-notice small{margin-top:3px;color:#75694e!important;-webkit-text-fill-color:#75694e!important;font-size:.7rem;line-height:1.45}
+#v58-toast{position:fixed;left:50%;bottom:22px;z-index:310000;max-width:min(92vw,660px);padding:12px 16px;border-radius:14px;background:#8c5b17;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 18px 50px rgba(0,0,0,.28);font-size:.79rem;font-weight:850;line-height:1.45;transform:translate(-50%,25px);opacity:0;pointer-events:none;transition:.2s}
+#v58-toast.show{transform:translate(-50%,0);opacity:1}
+#v58-toast[data-tone="success"]{background:#08745d}
+#v58-toast[data-tone="error"]{background:#9c3030}
+
+@media(max-width:820px){
+  #v58-editor-chapter-control>header{display:grid}
+  .v58-policy-modes{width:100%}.v58-policy-modes button{flex:1}
+  .v58-lock-grade-grid{grid-template-columns:1fr}
+  #v58-editor-chapter-control>footer{display:grid}
+  #v58-editor-chapter-control>footer button{width:100%}
+}
+@media(max-width:520px){#v58-editor-chapter-control{width:calc(100% - 16px)}}
