@@ -1,0 +1,10 @@
+(() => {
+  "use strict";
+  const VERSION="56",CONFIG=window.PAIBP_CONFIG||{},ENDPOINT=String(CONFIG.aiEndpoint||CONFIG.syncEndpoint||"").trim(),TOKEN=String(CONFIG.aiPublicToken||"").trim(),READ=String(CONFIG.syncReadKey||"").trim();
+  const READY=/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/i.test(ENDPOINT)&&Boolean(TOKEN);
+  const $=(s,r=document)=>r?.querySelector?.(s)||null,$$=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
+  function jsonp(params,timeout=60000){return new Promise((resolve,reject)=>{if(!READY){reject(new Error("Endpoint AI belum lengkap"));return;}const cb=`spensusV56_${Date.now()}_${Math.random().toString(36).slice(2)}`,n=document.createElement("script"),u=new URL(ENDPOINT);let done=false;const finish=(e,v)=>{if(done)return;done=true;clearTimeout(t);try{delete window[cb]}catch{}n.remove();e?reject(e):resolve(v)};window[cb]=v=>finish(null,v);Object.entries({...params,callback:cb}).forEach(([k,v])=>u.searchParams.set(k,String(v??"")));n.src=u.href;n.async=true;n.onerror=()=>finish(new Error("Server AI tidak dapat dijangkau"));const t=setTimeout(()=>finish(new Error("Respons AI melewati batas waktu")),timeout);document.head.append(n);});}
+  async function status(){try{return READ?await jsonp({action:"setupInfo",readKey:READ},12000):await jsonp({action:"health"},12000)}catch(e){return{ok:false,aiConfigured:false,error:e.message}}}
+  function patch(){const panel=$(".ai-drawer-panel-v27,.spensus-ai-v48");if(!panel)return;panel.classList.add("v56-ai-mobile");$$('.v48-ai-tools',panel).slice(1).forEach(n=>n.remove());status().then(info=>{const state=$("[data-v48-ai-state]",panel),badge=$("[data-v48-mode]",panel);if(info?.aiConfigured){if(state)state.textContent=`${info.geminiModel||"Google Gemini"} • aktif`;if(badge){badge.textContent="AI aktif";badge.dataset.tone="online";}}else{if(state)state.textContent="Gemini belum aktif pada backend";if(badge){badge.textContent="Perlu aktivasi";badge.dataset.tone="offline";}}});}
+  setTimeout(patch,80);document.addEventListener("paibp-ai-status",patch,{once:true});window.PAIBP_SPENSUS_V56={version:VERSION,patch,status};
+})();
