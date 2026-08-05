@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v56-class-cat",
+  realtimeManagedBy: "v57-contrast-media",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "56";
+  const VERSION = "57";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
   const pathOf = (value) => { try { return new URL(value, document.baseURI).pathname; } catch { return String(value || "").split("?")[0]; } };
@@ -42,11 +42,12 @@ window.PAIBP_CONFIG = Object.freeze({
   }
 
   style("final-ui-v56.css");
+  style("final-ui-v57.css");
 
   const boot = async () => {
     try { await script("media-pack-v56.js"); } catch {}
     script("realtime-v56.js").catch(() => {});
-    script("final-ui-v56.js").catch(() => {});
+    script("final-ui-v56.js").then(() => script("final-ui-v57.js")).catch(() => {});
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once:true });
   else boot();
@@ -65,12 +66,12 @@ window.PAIBP_CONFIG = Object.freeze({
     }
   }, { passive:true });
 
-  if (localStorage.getItem("paibp-smart-v56-cache-reset") !== "done") {
+  if (localStorage.getItem("paibp-smart-v57-cache-reset") !== "done") {
     setTimeout(async () => {
       try {
         const keys = await caches.keys();
-        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v56/.test(key)).map((key) => caches.delete(key)));
-        localStorage.setItem("paibp-smart-v56-cache-reset", "done");
+        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v57/.test(key)).map((key) => caches.delete(key)));
+        localStorage.setItem("paibp-smart-v57-cache-reset", "done");
         const registration = await navigator.serviceWorker?.getRegistration?.();
         registration?.update?.().catch(() => {});
       } catch {}

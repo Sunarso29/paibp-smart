@@ -1,0 +1,188 @@
+/* PAIBP SMART V57 — perbaikan final kontras dan media simulasi */
+:root{
+  --v57-ink:#102f29;
+  --v57-cream:#fff4c7;
+  --v57-gold:#ffc43d;
+  --v57-mint:#a9f0d1;
+  --v57-white:#ffffff;
+}
+
+/* Batalkan aturan V56 yang memaksa seluruh isi simulasi menjadi putih. */
+html body #v56-practice-board .v56-step,
+html body #v56-practice-board .v56-step *{
+  text-shadow:none!important;
+}
+
+/* Papan utama tetap gelap, hidup, dan kontras. */
+html body #v56-practice-board{
+  padding:clamp(14px,2.5vw,28px)!important;
+  border:2px solid rgba(255,196,61,.72)!important;
+  background:
+    radial-gradient(circle at 91% 8%,rgba(255,196,61,.30),transparent 26%),
+    radial-gradient(circle at 5% 92%,rgba(66,213,169,.22),transparent 30%),
+    linear-gradient(145deg,#043c35 0%,#123d6c 56%,#642e8e 100%)!important;
+  box-shadow:0 22px 55px rgba(3,39,34,.28)!important;
+}
+html body #v56-practice-board .v56-practice-head,
+html body #v56-practice-board .v56-practice-head *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+html body #v56-practice-board .v56-practice-head span{
+  color:#8ff0cf!important;
+  -webkit-text-fill-color:#8ff0cf!important;
+}
+html body #v56-practice-board .v56-practice-head p{
+  color:#e2fff5!important;
+  -webkit-text-fill-color:#e2fff5!important;
+}
+html body #v56-practice-board .v56-practice-head>b{
+  background:#ffc43d!important;
+  color:#3c2900!important;
+  -webkit-text-fill-color:#3c2900!important;
+}
+
+/* Tab simulasi: warna berbeda, teks selalu terbaca. */
+html body #v56-practice-board .v56-practice-tabs button{
+  border:2px solid rgba(255,255,255,.48)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.18)!important;
+}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+1){background:linear-gradient(135deg,#008c78,#12b892)!important}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+2){background:linear-gradient(135deg,#5f2ca2,#9658d2)!important}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+3){background:linear-gradient(135deg,#c55519,#ef941f)!important}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+4){background:linear-gradient(135deg,#0f6f87,#1aa6be)!important}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+5){background:linear-gradient(135deg,#263f8d,#3f72ce)!important}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+6){background:linear-gradient(135deg,#a93859,#df5d75)!important}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+7){background:linear-gradient(135deg,#8b6500,#d49b00)!important}
+html body #v56-practice-board .v56-practice-tabs button:nth-child(8n+8){background:linear-gradient(135deg,#087058,#12a47e)!important}
+html body #v56-practice-board .v56-practice-tabs button[aria-selected="true"]{
+  outline:3px solid #fff!important;
+  outline-offset:2px!important;
+  box-shadow:0 0 0 5px rgba(255,196,61,.66),0 9px 22px rgba(0,0,0,.24)!important;
+}
+
+/* Judul modul: biru gelap dengan putih, bukan putih di atas putih. */
+html body #v56-practice-board .v56-module-intro{
+  border:1px solid rgba(255,255,255,.30)!important;
+  background:linear-gradient(135deg,#0b4e83,#2558a3)!important;
+  box-shadow:0 11px 28px rgba(0,0,0,.17)!important;
+}
+html body #v56-practice-board .v56-module-intro,
+html body #v56-practice-board .v56-module-intro h4,
+html body #v56-practice-board .v56-module-intro p,
+html body #v56-practice-board .v56-module-intro span{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+html body #v56-practice-board .v56-module-intro>b{
+  background:#ffc43d!important;
+  color:#302000!important;
+  -webkit-text-fill-color:#302000!important;
+}
+
+/* Poster tidak lagi memakai latar pucat. */
+html body #v56-practice-board .v56-poster{
+  border:2px solid rgba(255,255,255,.34)!important;
+  background:linear-gradient(135deg,#b74767,#7344b5)!important;
+}
+html body #v56-practice-board .v56-poster figcaption{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+html body #v56-practice-board .v56-poster img{
+  min-height:180px!important;
+  background:#d9f6ed!important;
+  object-fit:contain!important;
+}
+
+/* Kartu tahap dibuat gelap dan berwarna. Semua tulisan putih terbaca tegas. */
+html body #v56-practice-board .v56-step{
+  border:1px solid rgba(255,255,255,.28)!important;
+  background:linear-gradient(145deg,#075d50,#0a8a72)!important;
+  box-shadow:0 13px 30px rgba(0,0,0,.20)!important;
+}
+html body #v56-practice-board .v56-step:nth-child(8n+2){background:linear-gradient(145deg,#254c88,#3971bd)!important}
+html body #v56-practice-board .v56-step:nth-child(8n+3){background:linear-gradient(145deg,#713c96,#9858bd)!important}
+html body #v56-practice-board .v56-step:nth-child(8n+4){background:linear-gradient(145deg,#a44a22,#db7427)!important}
+html body #v56-practice-board .v56-step:nth-child(8n+5){background:linear-gradient(145deg,#126276,#168fa5)!important}
+html body #v56-practice-board .v56-step:nth-child(8n+6){background:linear-gradient(145deg,#953b58,#cc526d)!important}
+html body #v56-practice-board .v56-step:nth-child(8n+7){background:linear-gradient(145deg,#355225,#568536)!important}
+html body #v56-practice-board .v56-step:nth-child(8n+8){background:linear-gradient(145deg,#243f72,#365aa0)!important}
+html body #v56-practice-board .v56-step,
+html body #v56-practice-board .v56-step .v56-step-copy,
+html body #v56-practice-board .v56-step .v56-step-copy small,
+html body #v56-practice-board .v56-step .v56-step-copy h5,
+html body #v56-practice-board .v56-step .v56-step-copy p{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+html body #v56-practice-board .v56-step .v56-step-copy small{
+  color:#c6ffec!important;
+  -webkit-text-fill-color:#c6ffec!important;
+}
+html body #v56-practice-board .v56-step figure{
+  min-height:210px!important;
+  background:
+    radial-gradient(circle at 15% 18%,rgba(255,255,255,.72),transparent 22%),
+    linear-gradient(135deg,#bdeedc,#a9c9f6)!important;
+}
+html body #v56-practice-board .v56-step figure img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:210px!important;
+  object-fit:contain!important;
+  opacity:1!important;
+  visibility:visible!important;
+  background:linear-gradient(135deg,#d7f8ec,#d7e4ff)!important;
+}
+html body #v56-practice-board .v56-step figure span{
+  background:#003f36!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border:2px solid #ffc43d!important;
+}
+
+/* Kotak bacaan: emas, teks gelap. */
+html body #v56-practice-board .v56-step-copy aside{
+  border:1px solid #ffdb6e!important;
+  border-left:5px solid #ffc43d!important;
+  background:#fff0ad!important;
+}
+html body #v56-practice-board .v56-step-copy aside strong,
+html body #v56-practice-board .v56-step-copy aside em{
+  color:#382b05!important;
+  -webkit-text-fill-color:#382b05!important;
+}
+
+/* Catatan sumber dibuat biru terang dengan teks putih. */
+html body #v56-practice-board .v56-source-note{
+  border:1px solid rgba(255,255,255,.35)!important;
+  background:linear-gradient(135deg,#0b7188,#3156a0)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
+/* Gambar gagal tidak meninggalkan ruang kosong tanpa penjelasan. */
+html body #v56-practice-board figure.v57-media-error{
+  display:grid!important;
+  place-items:center!important;
+  min-height:210px!important;
+  background:linear-gradient(135deg,#ffc43d,#f28b31)!important;
+}
+html body #v56-practice-board figure.v57-media-error::after{
+  content:"Visual sedang dimuat ulang";
+  color:#382100!important;
+  -webkit-text-fill-color:#382100!important;
+  font-weight:950!important;
+}
+
+@media(max-width:720px){
+  html body #v56-practice-board{padding:11px!important;border-radius:18px!important}
+  html body #v56-practice-board .v56-step-grid{grid-template-columns:1fr!important}
+  html body #v56-practice-board .v56-step figure,
+  html body #v56-practice-board .v56-step figure img{min-height:190px!important}
+  html body #v56-practice-board .v56-step-copy{padding:14px!important}
+}
