@@ -1,0 +1,12 @@
+/* PAIBP SMART V63 — respons navigasi dan tab tanpa jeda */
+html{scroll-behavior:auto!important}
+.links a,.about-tabs-v29 button,.access-tile,.cta,.btn,button,[role="button"]{
+  transition-delay:0s!important;transition-duration:.1s!important;animation-delay:0s!important;touch-action:manipulation;
+}
+.about-tabs-v29 button:hover,.links a:hover,.access-tile:hover{transform:none!important}
+@media(max-width:900px){
+  .topbar,.hero-access-panel,.v63-overlay,.v63-dialog,.about-tabs-v29{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .hero,.about-hero-v29{background-attachment:scroll!important}
+  *{text-rendering:optimizeSpeed}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

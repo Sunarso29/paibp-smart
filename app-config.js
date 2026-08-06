@@ -5,14 +5,16 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v62-headmaster-visual-fix",
+  realtimeManagedBy: "v63-final-sync-fix",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
+
 (() => {
   "use strict";
-  const VERSION = "62";
+  const VERSION = "63";
+  window.__PAIBP_VERSION__ = VERSION;
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
   const pathOf = (value) => { try { return new URL(value, document.baseURI).pathname; } catch { return String(value || "").split("?")[0]; } };
@@ -32,7 +34,7 @@ window.PAIBP_CONFIG = Object.freeze({
     const promise = new Promise((resolve, reject) => {
       const node = document.createElement("script");
       node.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
-      node.defer = true;
+      node.async = false;
       node.onload = resolve;
       node.onerror = reject;
       document.head.append(node);
@@ -41,30 +43,38 @@ window.PAIBP_CONFIG = Object.freeze({
     return promise;
   }
 
-  style("final-ui-v56.css");
-  style("final-ui-v57.css");
-  style("cat-session-v61.css");
-
-  const boot = async () => {
-    try { await script("media-pack-v56.js"); } catch {}
-    script("realtime-v56.js").catch(() => {});
-    try { await script("cat-session-v61.js"); } catch {}
-    try { await script("final-ui-v56.js"); } catch {}
-    script("final-ui-v57.js").catch(() => {});
-  };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once:true });
-  else boot();
-
-  if (page === "about-spensus.html") {
-    style("headmasters-v62.css");
-    script("headmasters-v62.js").catch(() => {});
+  function idle(task, timeout = 1200) {
+    if ("requestIdleCallback" in window) requestIdleCallback(task, {timeout});
+    else setTimeout(task, Math.min(timeout, 350));
   }
 
+  style("performance-v63.css");
+
+  // About Spensus memuat foto kepala sekolah secara statis.
+  // Mesin CAT dan media berat tidak dimuat pada halaman ini.
+  if (page === "about-spensus.html") return;
+
+  const catPages = /^(index|akses-guru|kendali-editor)\.html$/.test(page);
+  if (catPages) {
+    style("cat-session-v63.css");
+    script("cat-session-v63.js").catch(() => {});
+  }
+
+  // Fitur tambahan dimuat setelah antarmuka utama siap agar klik menu tidak tertunda.
+  idle(async () => {
+    style("final-ui-v56.css");
+    style("final-ui-v57.css");
+    try { await script("final-ui-v56.js"); } catch {}
+    script("final-ui-v57.js").catch(() => {});
+    script("realtime-v56.js").catch(() => {});
+    script("media-pack-v56.js").catch(() => {});
+  }, 900);
+
   if (/^(akses-guru|kendali-editor)\.html$/.test(page)) {
-    setTimeout(() => {
+    idle(() => {
       style("cp2025-v48.css");
       script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v56.js")).catch(() => {});
-    }, 220);
+    }, 1500);
   }
 
   document.addEventListener("click", (event) => {
@@ -72,17 +82,17 @@ window.PAIBP_CONFIG = Object.freeze({
       style("spensus-ai-v48.css");
       script("spensus-ai-v56.js").catch(() => {});
     }
-  }, { passive:true });
+  }, {passive:true});
 
-  if (localStorage.getItem("paibp-smart-v62-cache-reset") !== "done") {
+  if (localStorage.getItem("paibp-smart-v63-cache-reset") !== "done") {
     setTimeout(async () => {
       try {
         const keys = await caches.keys();
-        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v62/.test(key)).map((key) => caches.delete(key)));
-        localStorage.setItem("paibp-smart-v62-cache-reset", "done");
-        const registration = await navigator.serviceWorker?.getRegistration?.();
-        registration?.update?.().catch(() => {});
+        await Promise.all(keys.map((key) => caches.delete(key)));
+        localStorage.setItem("paibp-smart-v63-cache-reset", "done");
+        const registrations = await navigator.serviceWorker?.getRegistrations?.();
+        registrations?.forEach((registration) => registration.update().catch(() => {}));
       } catch {}
-    }, 500);
+    }, 250);
   }
 })();
