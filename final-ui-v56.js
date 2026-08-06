@@ -219,6 +219,7 @@
   }
 
   function ensureAuthorityPanel() {
+    if (window.PAIBP_CAT_V59) return;
     if (!privileged()) return;
     let panel = $("#v56-class-control");
     if (!panel) {
@@ -397,6 +398,7 @@
   }
 
   function startCat(policy = {}) {
+    if (window.PAIBP_CAT_V59) { window.PAIBP_CAT_V59.startFromLegacy?.(policy); return; }
     if (privileged()) return;
     const grade = classContext.grade || normalizeGrade(policy.grade);
     if (!grade) return;
@@ -461,6 +463,7 @@
   }
 
   function applyPolicy(policy) {
+    if (window.PAIBP_CAT_V59) return;
     if (privileged() || !classContext.grade) return;
     if (!policy) {
       if (classContext.catRequested && !cat.active) startCat({
@@ -491,7 +494,7 @@
 
   function handleSnapshot(data) {
     snapshot = data;
-    applyPolicy(selectPolicy(data));
+    if (!window.PAIBP_CAT_V59) applyPolicy(selectPolicy(data));
   }
 
   function blockCatNavigation(event) {
@@ -533,6 +536,7 @@
   }
 
   function enterStudentRoom() {
+    if (window.PAIBP_CAT_V59) { window.PAIBP_CAT_V59.enterStudentRoom?.(); return; }
     if (privileged()) {
       cat.active = false;
       saveCat();
@@ -778,7 +782,7 @@
       if (event.key === KEYS.progress) checkCompletion();
     });
 
-    if (cat.active && !privileged()) {
+    if (cat.active && !privileged() && !window.PAIBP_CAT_V59) {
       document.documentElement.classList.add("v56-cat-mode");
       showStudentPanel();
       applyGradeLock();
@@ -790,14 +794,14 @@
 
     clearInterval(policyInterval);
     policyInterval = setInterval(() => {
-      if (classContext.grade && !privileged()) window.PAIBP_REALTIME_V56?.refresh?.();
+      if (!window.PAIBP_CAT_V59 && classContext.grade && !privileged()) window.PAIBP_REALTIME_V56?.refresh?.();
     }, 15000);
 
     setTimeout(() => {
       colorizePortal();
       repairIslamicNav();
       repairContrast();
-      if (privileged()) ensureAuthorityPanel();
+      if (privileged() && !window.PAIBP_CAT_V59) ensureAuthorityPanel();
     }, 800);
   }
 

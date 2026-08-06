@@ -404,18 +404,30 @@
       if (event.key === POLICY_KEY) { policy = readPolicy(); applyChapterLocks(); renderEditorControl(); }
     });
 
+    const observeTargets = [
+      $("#panel-student,[data-panel='student']"),
+      $("#panel-islamic,[data-panel='islamic']"),
+      $("#panel-teacher,[data-panel='teacher']"),
+      $("#panel-editor,[data-panel='editor']")
+    ].filter(Boolean);
+    let mutationQueued = false;
     const observer = new MutationObserver((records) => {
-      for (const record of records) {
-        for (const node of record.addedNodes) {
-          if (!(node instanceof Element)) continue;
-          repairVisuals(node);
+      if (mutationQueued) return;
+      mutationQueued = true;
+      requestAnimationFrame(() => {
+        mutationQueued = false;
+        for (const record of records) {
+          for (const node of record.addedNodes) {
+            if (node instanceof Element) repairVisuals(node);
+          }
         }
-      }
-      bindListObserver();
+        bindListObserver();
+        applyChapterLocks();
+      });
     });
-    observer.observe(document.body, {childList:true,subtree:true});
+    observeTargets.forEach((target) => observer.observe(target, {childList:true,subtree:true}));
 
-    setInterval(() => { clearBrokenContrast(); bindListObserver(); applyChapterLocks(); renderEditorControl(); }, 2200);
+    setTimeout(() => { clearBrokenContrast(); bindListObserver(); applyChapterLocks(); renderEditorControl(); }, 1200);
     setInterval(refreshRemotePolicy, 180000);
   }
 
