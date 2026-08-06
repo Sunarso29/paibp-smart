@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v60-seven-core-fixes",
+  realtimeManagedBy: "v61-final-stable",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "60";
+  const VERSION = "61";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
   const pathOf = (value) => { try { return new URL(value, document.baseURI).pathname; } catch { return String(value || "").split("?")[0]; } };
@@ -43,12 +43,12 @@ window.PAIBP_CONFIG = Object.freeze({
 
   style("final-ui-v56.css");
   style("final-ui-v57.css");
-  style("cat-session-v60.css");
+  style("cat-session-v61.css");
 
   const boot = async () => {
     try { await script("media-pack-v56.js"); } catch {}
     script("realtime-v56.js").catch(() => {});
-    try { await script("cat-session-v60.js"); } catch {}
+    try { await script("cat-session-v61.js"); } catch {}
     try { await script("final-ui-v56.js"); } catch {}
     script("final-ui-v57.js").catch(() => {});
   };
@@ -56,8 +56,8 @@ window.PAIBP_CONFIG = Object.freeze({
   else boot();
 
   if (page === "about-spensus.html") {
-    style("headmasters-v60.css");
-    script("headmasters-v60.js").catch(() => {});
+    style("headmasters-v61.css");
+    script("headmasters-v61.js").catch(() => {});
   }
 
   if (/^(akses-guru|kendali-editor)\.html$/.test(page)) {
@@ -74,12 +74,12 @@ window.PAIBP_CONFIG = Object.freeze({
     }
   }, { passive:true });
 
-  if (localStorage.getItem("paibp-smart-v60-cache-reset") !== "done") {
+  if (localStorage.getItem("paibp-smart-v61-cache-reset") !== "done") {
     setTimeout(async () => {
       try {
         const keys = await caches.keys();
-        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v60/.test(key)).map((key) => caches.delete(key)));
-        localStorage.setItem("paibp-smart-v60-cache-reset", "done");
+        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v61/.test(key)).map((key) => caches.delete(key)));
+        localStorage.setItem("paibp-smart-v61-cache-reset", "done");
         const registration = await navigator.serviceWorker?.getRegistration?.();
         registration?.update?.().catch(() => {});
       } catch {}
