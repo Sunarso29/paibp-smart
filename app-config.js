@@ -5,15 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v63-final-sync-fix",
+  realtimeManagedBy: "v64-clean-session",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
-
 (() => {
   "use strict";
-  const VERSION = "63";
+  const VERSION = "64";
   window.__PAIBP_VERSION__ = VERSION;
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
@@ -48,10 +47,9 @@ window.PAIBP_CONFIG = Object.freeze({
     else setTimeout(task, Math.min(timeout, 350));
   }
 
+  script("emergency-v64.js").catch(() => {});
   style("performance-v63.css");
 
-  // About Spensus memuat foto kepala sekolah secara statis.
-  // Mesin CAT dan media berat tidak dimuat pada halaman ini.
   if (page === "about-spensus.html") return;
 
   const catPages = /^(index|akses-guru|kendali-editor)\.html$/.test(page);
@@ -60,7 +58,6 @@ window.PAIBP_CONFIG = Object.freeze({
     script("cat-session-v63.js").catch(() => {});
   }
 
-  // Fitur tambahan dimuat setelah antarmuka utama siap agar klik menu tidak tertunda.
   idle(async () => {
     style("final-ui-v56.css");
     style("final-ui-v57.css");
@@ -84,12 +81,12 @@ window.PAIBP_CONFIG = Object.freeze({
     }
   }, {passive:true});
 
-  if (localStorage.getItem("paibp-smart-v63-cache-reset") !== "done") {
+  if (localStorage.getItem("paibp-smart-v64-cache-reset") !== "done") {
     setTimeout(async () => {
       try {
         const keys = await caches.keys();
         await Promise.all(keys.map((key) => caches.delete(key)));
-        localStorage.setItem("paibp-smart-v63-cache-reset", "done");
+        localStorage.setItem("paibp-smart-v64-cache-reset", "done");
         const registrations = await navigator.serviceWorker?.getRegistrations?.();
         registrations?.forEach((registration) => registration.update().catch(() => {}));
       } catch {}
