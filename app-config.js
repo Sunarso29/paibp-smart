@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v61-final-stable",
+  realtimeManagedBy: "v62-headmaster-visual-fix",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "61";
+  const VERSION = "62";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
   const pathOf = (value) => { try { return new URL(value, document.baseURI).pathname; } catch { return String(value || "").split("?")[0]; } };
@@ -56,8 +56,8 @@ window.PAIBP_CONFIG = Object.freeze({
   else boot();
 
   if (page === "about-spensus.html") {
-    style("headmasters-v61.css");
-    script("headmasters-v61.js").catch(() => {});
+    style("headmasters-v62.css");
+    script("headmasters-v62.js").catch(() => {});
   }
 
   if (/^(akses-guru|kendali-editor)\.html$/.test(page)) {
@@ -74,12 +74,12 @@ window.PAIBP_CONFIG = Object.freeze({
     }
   }, { passive:true });
 
-  if (localStorage.getItem("paibp-smart-v61-cache-reset") !== "done") {
+  if (localStorage.getItem("paibp-smart-v62-cache-reset") !== "done") {
     setTimeout(async () => {
       try {
         const keys = await caches.keys();
-        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v61/.test(key)).map((key) => caches.delete(key)));
-        localStorage.setItem("paibp-smart-v61-cache-reset", "done");
+        await Promise.all(keys.filter((key) => /paibp-smart/i.test(key) && !/v62/.test(key)).map((key) => caches.delete(key)));
+        localStorage.setItem("paibp-smart-v62-cache-reset", "done");
         const registration = await navigator.serviceWorker?.getRegistration?.();
         registration?.update?.().catch(() => {});
       } catch {}

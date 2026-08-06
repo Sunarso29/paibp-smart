@@ -1,61 +1,7 @@
-const CORE_CACHE="paibp-smart-v61-core";
-const DATA_CACHE="paibp-smart-v61-data";
-const MEDIA_CACHE="paibp-smart-v61-media";
-const CORE=[
-  "./","./index.html","./app-config.js?v=61",
-  "./final-ui-v56.css?v=61","./final-ui-v57.css?v=61","./cat-session-v61.css?v=61",
-  "./media-pack-v56.js?v=61","./cat-session-v61.js?v=61","./final-ui-v56.js?v=61","./final-ui-v57.js?v=61",
-  "./realtime-v56.js?v=61","./spensus-ai-v56.js?v=61","./cp2025-exact-v56.js?v=61","./headmasters-v61.css?v=61","./headmasters-v61.js?v=61","./reset-cache-v61.html"
-];
-
-self.addEventListener("install",event=>event.waitUntil(
-  caches.open(CORE_CACHE)
-    .then(cache=>Promise.allSettled(CORE.map(item=>cache.add(item))))
-    .then(()=>self.skipWaiting())
-));
-
-self.addEventListener("activate",event=>event.waitUntil((async()=>{
-  const keys=await caches.keys();
-  await Promise.all(keys.filter(key=>key.startsWith("paibp-smart")&&![CORE_CACHE,DATA_CACHE,MEDIA_CACHE].includes(key)).map(key=>caches.delete(key)));
-  await self.clients.claim();
-})()));
-
-self.addEventListener("message",event=>{
-  if(event.data?.type==="CLEAR_ALL_CACHES"){
-    event.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(key=>caches.delete(key)))));
-  }
-});
-
-async function networkFirst(request,name){
-  const cache=await caches.open(name);
-  try{
-    const response=await fetch(request,{cache:"no-store"});
-    if(response.ok)cache.put(request,response.clone());
-    return response;
-  }catch{
-    return(await cache.match(request,{ignoreSearch:true}))||Response.error();
-  }
-}
-
-self.addEventListener("fetch",event=>{
-  const request=event.request;
-  if(request.method!=="GET")return;
-  const url=new URL(request.url);
-  if(url.origin!==self.location.origin){
-    event.respondWith(fetch(request).catch(()=>caches.match(request)));
-    return;
-  }
-  if(request.mode==="navigate"){
-    event.respondWith(networkFirst(request,CORE_CACHE).catch(()=>caches.match(new URL("./index.html",self.registration.scope).href)));
-    return;
-  }
-  if(/cp2025-|assets\/cp-2025\//i.test(url.pathname)){
-    event.respondWith(networkFirst(request,DATA_CACHE));
-    return;
-  }
-  if(/media-pack-v56\.js|\.(?:png|jpg|jpeg|webp|svg|woff2?)$/i.test(url.pathname)){
-    event.respondWith(networkFirst(request,MEDIA_CACHE));
-    return;
-  }
-  event.respondWith(networkFirst(request,CORE_CACHE));
-});
+const CORE_CACHE="paibp-smart-v62-core";
+const CORE=["./","./index.html","./about-spensus.html","./app-config.js?v=62","./headmasters-v62.css?v=62","./headmasters-v62.js?v=62","./reset-cache-v62.html"];
+self.addEventListener("install",event=>event.waitUntil(caches.open(CORE_CACHE).then(cache=>Promise.allSettled(CORE.map(item=>cache.add(item)))).then(()=>self.skipWaiting())));
+self.addEventListener("activate",event=>event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(key=>key.startsWith("paibp-smart")&&key!==CORE_CACHE).map(key=>caches.delete(key)));await self.clients.claim()})()));
+self.addEventListener("message",event=>{if(event.data?.type==="CLEAR_ALL_CACHES")event.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(key=>caches.delete(key)))))});
+async function networkFirst(request){const cache=await caches.open(CORE_CACHE);try{const response=await fetch(request,{cache:"no-store"});if(response.ok)cache.put(request,response.clone());return response}catch{return(await cache.match(request,{ignoreSearch:true}))||Response.error()}}
+self.addEventListener("fetch",event=>{if(event.request.method!=="GET")return;const url=new URL(event.request.url);if(url.origin!==self.location.origin){event.respondWith(fetch(event.request).catch(()=>caches.match(event.request)));return}event.respondWith(networkFirst(event.request))});
