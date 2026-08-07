@@ -1,4 +1,4 @@
-const CACHE_NAME="paibp-smart-v77-colorful-static";
+const CACHE_NAME="paibp-smart-v78-quran-kemenag-static";
 const STATIC=["./logo-spensus.png","./assets/icons/icon-192.png"];
 
 self.addEventListener("install",(event)=>{
