@@ -1,0 +1,52 @@
+name: PAIBP SMART V73 Core Slim
+
+on:
+  push:
+    paths:
+      - '.github/workflows/v73-core-slim.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  slim-core-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Remove forced legacy script chain from core pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          files = [Path('index.html'), Path('akses-guru.html'), Path('kendali-editor.html')]
+          pattern = re.compile(r'<script\s+src=["\']app-config\.js(?:\?[^"\']*)?["\']></script>.*?</body>', re.I | re.S)
+          replacement = '<script src="app-config.js?v=73"></script>\n</body>'
+
+          for path in files:
+              if not path.exists():
+                  continue
+              text = path.read_text(encoding='utf-8')
+              updated, count = pattern.subn(replacement, text, count=1)
+              if count:
+                  path.write_text(updated, encoding='utf-8', newline='\n')
+                  print(f'patched {path}')
+              else:
+                  print(f'no marker found in {path}')
+          PY
+
+      - name: Commit V73 slim pages
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git config user.name "PAIBP SMART Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html akses-guru.html kendali-editor.html
+          git commit -m "PAIBP SMART V73 remove forced legacy startup scripts"
+          git push
