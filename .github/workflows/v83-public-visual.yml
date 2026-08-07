@@ -1,0 +1,52 @@
+name: V83 public visual only
+
+on:
+  push:
+    paths:
+      - '.github/workflows/v83-public-visual.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Add V83 visual stylesheets only
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          pages = [
+            'fitur.html','mapel-lain.html','literasi-digital.html','artikel-islam.html',
+            'about-spensus.html','contact.html','privacy.html','terms.html','support.html'
+          ]
+          links='<link rel="stylesheet" href="visual-v83.css?v=83"><link rel="stylesheet" href="visual-public-v83.css?v=83">'
+          for name in pages:
+              p=Path(name)
+              if not p.exists():
+                  continue
+              text=p.read_text(encoding='utf-8')
+              if 'visual-v83.css?v=83' in text:
+                  continue
+              if '</head>' not in text.lower():
+                  raise SystemExit(f'No head closing tag: {name}')
+              pos=text.lower().rfind('</head>')
+              text=text[:pos]+links+text[pos:]
+              p.write_text(text,encoding='utf-8')
+          PY
+      - name: Commit public visual links
+        shell: bash
+        run: |
+          rm -f .github/workflows/v83-public-visual.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V83 apply vivid visual layer across public pages only"
+          git push
