@@ -58,6 +58,7 @@ window.PAIBP_CONFIG = Object.freeze({
   /* V83: lapisan visual saja; tidak mengubah konten atau struktur data. */
   style("visual-v83.css");
   style("visual-v84.css");
+  style("icon-guard-v84.css");
   if (page === "index.html") {
     /* Pulihkan lapisan visual penuh warna yang dipakai pada V38/V39. */
     style("v38-upgrade.css");

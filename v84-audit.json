@@ -1,0 +1,200 @@
+{
+  "build": "84",
+  "status": "PASS",
+  "documentFormats": {
+    "VII": {
+      "CP": {
+        "source": "CP PAI Kelas VII Deep Learning.docx",
+        "tableColumns": [
+          1,
+          2,
+          3,
+          3
+        ],
+        "distinctRequiredShape": 2,
+        "ok": true
+      },
+      "ATP": {
+        "source": "ATP PAI Kelas VII Deep Learning.docx",
+        "tableColumns": [
+          2,
+          4,
+          3
+        ],
+        "distinctRequiredShape": 4,
+        "ok": true
+      },
+      "KKTP": {
+        "source": "KKTP PAI Kelas VII Deep Learning.docx",
+        "tableColumns": [
+          1,
+          6,
+          3,
+          6,
+          3
+        ],
+        "distinctRequiredShape": 6,
+        "ok": true
+      },
+      "PROTA": {
+        "source": "Prota PAI Kelas VII Deep Learning.docx",
+        "tableColumns": [
+          1,
+          4,
+          3
+        ],
+        "distinctRequiredShape": 4,
+        "ok": true
+      },
+      "PROMES": {
+        "source": "Promes PAI Kelas VII Deep Learning.docx",
+        "tableColumns": [
+          1,
+          32,
+          3,
+          32,
+          3
+        ],
+        "distinctRequiredShape": 32,
+        "ok": true
+      }
+    },
+    "VIII": {
+      "CP": {
+        "source": "CP PAI Kelas 8 Deep Learning Revisi CP Terbaru.docx",
+        "tableColumns": [
+          1,
+          2,
+          3
+        ],
+        "distinctRequiredShape": 2,
+        "ok": true
+      },
+      "ATP": {
+        "source": "ATP PAI Kelas 8 Deep Learning Revisi CP Terbaru.docx",
+        "tableColumns": [
+          2,
+          4,
+          3
+        ],
+        "distinctRequiredShape": 4,
+        "ok": true
+      },
+      "KKTP": {
+        "source": "KKTP PAIBP Kelas 8 Revisi CP Terbaru.docx",
+        "tableColumns": [
+          1,
+          7,
+          3,
+          3,
+          7,
+          4,
+          3
+        ],
+        "distinctRequiredShape": 7,
+        "ok": true
+      },
+      "PROTA": {
+        "source": "Prota PAI Kelas 8 Deep Learning Revisi CP Terbaru.docx",
+        "tableColumns": [
+          1,
+          5,
+          5,
+          3,
+          3
+        ],
+        "distinctRequiredShape": 5,
+        "ok": true
+      },
+      "PROMES": {
+        "source": "Promes PAI Kelas 8 Deep Learning Revisi CP Terbaru.docx",
+        "tableColumns": [
+          1,
+          32,
+          2,
+          3,
+          32,
+          2,
+          3
+        ],
+        "distinctRequiredShape": 32,
+        "ok": true
+      }
+    },
+    "IX": {
+      "CP": {
+        "source": "CP PAI Kelas IX Deep Learning.docx",
+        "tableColumns": [
+          1,
+          2,
+          3,
+          3
+        ],
+        "distinctRequiredShape": 2,
+        "ok": true
+      },
+      "ATP": {
+        "source": "ATP PAI Kelas IX Deep Learning.docx",
+        "tableColumns": [
+          1,
+          3,
+          3
+        ],
+        "distinctRequiredShape": 3,
+        "ok": true
+      },
+      "KKTP": {
+        "source": "KKTP PAI Kelas IX Deep Learning.docx",
+        "tableColumns": [
+          1,
+          6,
+          2,
+          3,
+          6,
+          2,
+          3
+        ],
+        "distinctRequiredShape": 6,
+        "ok": true
+      },
+      "PROTA": {
+        "source": "Prota PAI Kelas IX Deep Learning.docx",
+        "tableColumns": [
+          1,
+          4,
+          4,
+          3
+        ],
+        "distinctRequiredShape": 4,
+        "ok": true
+      },
+      "PROMES": {
+        "source": "Promes PAI Kelas IX Deep Learning.docx",
+        "tableColumns": [
+          1,
+          32,
+          2,
+          3,
+          32,
+          2,
+          3
+        ],
+        "distinctRequiredShape": 32,
+        "ok": true
+      }
+    }
+  },
+  "checks": {
+    "exactVII": true,
+    "exactVIII": true,
+    "exactIX": true,
+    "renderer": true,
+    "noManualVII": true,
+    "teacherVisual": true,
+    "configV84": true,
+    "oldCpOverlayRemoved": true,
+    "serviceWorkerV84": true,
+    "portalPages": true,
+    "iconGuard": true
+  }
+}
