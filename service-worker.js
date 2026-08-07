@@ -21,7 +21,7 @@ self.addEventListener("fetch",(event)=>{
 
   const fresh = event.request.mode==="navigate"
     || ["script","style","document"].includes(event.request.destination)
-    || /app-config|v38-upgrade|v39-upgrade|islamic-lite|islamic-data|islamic-learning|islamic-upgrade|khutbah|hadith|arabic|script\.js|teacher-cat|cat-session|net-v71|mobile-fix|stable-v72|service-worker/i.test(url.pathname);
+    || /app-config|v38-upgrade|v39-upgrade|islamic-lite|islamic-data|islamic-learning|islamic-upgrade|khutbah|hadith|arabic|script\.js|teacher-cat|cat-session|net-v71|mobile-fix|stable-v72|quran-kemenag|quran-kemenag-runtime|service-worker/i.test(url.pathname);
 
   if(fresh){
     event.respondWith(

@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v77-colorful-v39-plus-v76-root-fix",
+  realtimeManagedBy: "v78-quran-kemenag-local-plus-v76-root-fix",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "77";
+  const VERSION = "78";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -89,8 +89,8 @@ window.PAIBP_CONFIG = Object.freeze({
   function menuShell() {
     const button = document.querySelector(".menu-btn");
     const nav = document.querySelector(".links");
-    if (!button || !nav || button.dataset.v77) return;
-    button.dataset.v77 = "1";
+    if (!button || !nav || button.dataset.v78) return;
+    button.dataset.v78 = "1";
     button.addEventListener("click", (event) => {
       event.stopImmediatePropagation();
       const open = !nav.classList.contains("open");
@@ -152,7 +152,7 @@ window.PAIBP_CONFIG = Object.freeze({
       document.documentElement.dataset.portalUi = "v39-colorful-restored";
       return true;
     })().catch((error) => {
-      console.warn("PAIBP V77 visual runtime", error);
+      console.warn("PAIBP V78 visual runtime", error);
       visualPromise = null;
       return false;
     });
@@ -197,11 +197,13 @@ window.PAIBP_CONFIG = Object.freeze({
       await ensureVisualRuntime();
       /* Pengaman Quran Kemenag tetap dijalankan terakhir agar pemulihan V39 tidak mengganti sumber Quran yang sudah diamankan. */
       await ensureIslamicLite();
+      /* Override pengalihan Quran lama: pembaca V78 membaca database lokal di repository. */
+      await script("quran-kemenag-runtime-v78.js");
       window.__PAIBP_WORKSPACE_CORE_READY__ = true;
       return true;
     })().catch((error) => {
       workspaceCorePromise = null;
-      console.error("PAIBP V77 workspace core", error);
+      console.error("PAIBP V78 workspace core", error);
       return false;
     });
     return workspaceCorePromise;
