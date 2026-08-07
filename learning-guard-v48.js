@@ -4,7 +4,7 @@
   const CONFIG = window.PAIBP_CONFIG || {};
   const ENDPOINT = String(CONFIG.syncEndpoint || CONFIG.realtimeEndpoint || "").trim();
   const READ_KEY = String(CONFIG.syncReadKey || CONFIG.realtimeReadKey || "").trim();
-  const CONFIGURED = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/i.test(ENDPOINT);
+  const CONFIGURED = (() => { try { return new URL(ENDPOINT).protocol === "https:"; } catch { return false; } })();
   const POLICY_KEY = "paibp-smart-chapter-policy-v48";
   const LEGACY_POLICY_KEY = "paibp-smart-chapter-policy-v44";
   const PROGRESS_KEY = "paibp-smart-progress-v3";
@@ -34,6 +34,15 @@
       || localStorage.getItem(EDITOR_KEY) === "true"
       || document.body?.dataset.teacherOwner === "yes";
   }
+
+  function isTeacher() {
+    const file = (location.pathname.split("/").pop() || "").toLowerCase();
+    const role = String(document.body?.dataset.portalRole || "").toLowerCase();
+    const gateway = String(document.body?.dataset.privateGateway || "").toLowerCase();
+    return file === "akses-guru.html" || role === "guru" || gateway === "guru";
+  }
+
+  const canManage = () => isEditor() || isTeacher();
 
   function teacherIdentity() {
     const source = parse(localStorage.getItem(TEACHER_KEY), {}) || {};
@@ -84,8 +93,8 @@
   }
 
   function lockReason(chapter, completed = completedIds()) {
-    if (isEditor() || Number(chapter.number) === 1) return "";
-    if (policy.forceLocked.includes(chapter.id)) return "Bab ini dikunci langsung oleh editor.";
+    if (canManage() || Number(chapter.number) === 1) return "";
+    if (policy.forceLocked.includes(chapter.id)) return "Bab ini dikunci langsung oleh guru/editor.";
     if (policy.mode === "open") return "";
     const previous = previousChapter(chapter);
     if (!previous || completed.includes(previous.id)) return "";
@@ -129,7 +138,7 @@
 
   function applyLocks() {
     scheduled = false;
-    if (!studentActive || isEditor()) return;
+    if (!studentActive || canManage()) return;
     const list = $("#chapter-list");
     if (!list) return;
     const completed = completedIds();
@@ -252,7 +261,7 @@
       if (remote) {
         saveLocalPolicy(remote);
         scheduleLocks();
-        if (isEditor()) renderEditorPanel();
+        if (canManage()) renderEditorPanel();
       }
       return remote;
     }).finally(() => { remotePromise = null; });
@@ -261,7 +270,7 @@
 
   function sendPolicy(next) {
     if (!CONFIGURED || !READ_KEY) {
-      toast("Tersimpan pada perangkat editor. Sinkronisasi daring belum aktif.", "warning");
+      toast("Tersimpan pada perangkat pengelola. Sinkronisasi daring belum aktif.", "warning");
       return;
     }
     fetch(ENDPOINT, {
@@ -279,7 +288,7 @@
   }
 
   function renderEditorPanel() {
-    if (!isEditor() || !chapters.length) return;
+    if (!canManage() || !chapters.length) return;
     $("#v44-editor-chapter-control")?.remove();
     $("#v45-editor-chapter-control")?.remove();
     let panel = $("#v48-editor-chapter-control");
@@ -294,7 +303,7 @@
       grade,
       items: chapters.filter((item) => item.grade === grade).sort((a, b) => Number(a.number) - Number(b.number)),
     }));
-    panel.innerHTML = `<header><div><span>KENDALI EDITOR • AKSES MURID</span><h2>Atur pembelajaran berurutan tanpa membebani portal</h2><p><strong>Urut &amp; Terkunci</strong>: Bab 1 terbuka, bab berikutnya terbuka setelah tugas sebelumnya selesai. Centang hanya untuk mengunci paksa.</p></div><div><button type="button" data-v48-mode="sequential" aria-pressed="${policy.mode === "sequential"}">Urut &amp; Terkunci</button><button type="button" data-v48-mode="open" aria-pressed="${policy.mode === "open"}">Buka Semua</button></div></header><div class="v48-editor-grid">${groups.map(({ grade, items }) => `<section><h3>Kelas ${grade}</h3>${items.map((chapter) => `<label class="${Number(chapter.number) === 1 ? "is-first" : policy.forceLocked.includes(chapter.id) ? "is-locked" : ""}"><input type="checkbox" data-v48-lock="${escapeHtml(chapter.id)}" ${policy.forceLocked.includes(chapter.id) ? "checked" : ""} ${Number(chapter.number) === 1 ? "disabled" : ""}><span><strong>Bab ${chapter.number}</strong><small>${escapeHtml(chapter.title)}${Number(chapter.number) === 1 ? " • terbuka pertama" : ""}</small></span></label>`).join("")}</section>`).join("")}</div><footer><span><strong>Dicentang = dikunci paksa.</strong> Tidak dicentang = mengikuti urutan normal.</span><button type="button" data-v48-save>Simpan dan Terapkan ke Murid</button></footer>`;
+    panel.innerHTML = `<header><div><span>KENDALI GURU / EDITOR • AKSES MURID</span><h2>Atur pembelajaran berurutan tanpa membebani portal</h2><p><strong>Urut &amp; Terkunci</strong>: Bab 1 terbuka, bab berikutnya terbuka setelah tugas sebelumnya selesai. Centang hanya untuk mengunci paksa.</p></div><div><button type="button" data-v48-mode="sequential" aria-pressed="${policy.mode === "sequential"}">Urut &amp; Terkunci</button><button type="button" data-v48-mode="open" aria-pressed="${policy.mode === "open"}">Buka Semua</button></div></header><div class="v48-editor-grid">${groups.map(({ grade, items }) => `<section><h3>Kelas ${grade}</h3>${items.map((chapter) => `<label class="${Number(chapter.number) === 1 ? "is-first" : policy.forceLocked.includes(chapter.id) ? "is-locked" : ""}"><input type="checkbox" data-v48-lock="${escapeHtml(chapter.id)}" ${policy.forceLocked.includes(chapter.id) ? "checked" : ""} ${Number(chapter.number) === 1 ? "disabled" : ""}><span><strong>Bab ${chapter.number}</strong><small>${escapeHtml(chapter.title)}${Number(chapter.number) === 1 ? " • terbuka pertama" : ""}</small></span></label>`).join("")}</section>`).join("")}</div><footer><span><strong>Dicentang = dikunci paksa.</strong> Tidak dicentang = mengikuti urutan normal.</span><button type="button" data-v48-save>Simpan dan Terapkan ke Murid</button></footer>`;
     $$('[data-v48-mode]', panel).forEach((button) => button.addEventListener("click", () => {
       $$('[data-v48-mode]', panel).forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
     }));
@@ -315,7 +324,7 @@
 
   function handleClick(event) {
     const lockedButton = event.target.closest('[data-chapter]');
-    if (lockedButton && studentActive && !isEditor()) {
+    if (lockedButton && studentActive && !canManage()) {
       const chapter = chapters.find((item) => item.id === lockedButton.dataset.chapter);
       const reason = chapter ? lockReason(chapter) : "";
       if (reason) {
@@ -344,7 +353,7 @@
     if (event.target.closest('[data-open-panel="student"]')) setTimeout(activateStudent, 80);
     if (event.target.closest('[data-close-workspace]')) deactivateStudent();
     if (event.target.closest('[data-grade-filter],[data-semester-filter],#back-to-library,#toggle-lesson-complete')) setTimeout(connectChapterList, 80);
-    if (isEditor() && event.target.closest('[data-open-editor],.owner-control-button,[href*="kendali-editor"]')) setTimeout(renderEditorPanel, 80);
+    if (canManage() && event.target.closest('[data-open-editor],.owner-control-button,[href*="kendali-editor"]')) setTimeout(renderEditorPanel, 80);
   }
 
   function initialize(attempt = 0) {
@@ -357,7 +366,7 @@
     document.documentElement.dataset.learningGuardV48 = "ready";
     document.addEventListener("click", handleClick, true);
     window.addEventListener("storage", (event) => {
-      if (event.key === POLICY_KEY || event.key === LEGACY_POLICY_KEY) { loadLocalPolicy(); scheduleLocks(); if (isEditor()) renderEditorPanel(); }
+      if (event.key === POLICY_KEY || event.key === LEGACY_POLICY_KEY) { loadLocalPolicy(); scheduleLocks(); if (canManage()) renderEditorPanel(); }
       if (event.key === PROGRESS_KEY) scheduleLocks();
     });
     document.addEventListener("fullscreenchange", () => {
@@ -370,7 +379,7 @@
         pauseFocus("Murid meninggalkan halaman. Tekan tombol untuk melanjutkan pembelajaran.");
       }
     });
-    if (isEditor()) { renderEditorPanel(); loadRemotePolicy(); }
+    if (canManage()) { renderEditorPanel(); loadRemotePolicy(); }
     if (document.body?.dataset.portalRole === "murid" || $("#panel-student:not([hidden])")) activateStudent();
   }
 

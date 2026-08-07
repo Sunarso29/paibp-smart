@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v80-worship-teacher-restore-plus-v79-quran",
+  realtimeManagedBy: "v81-classroom-access-plus-v80-worship-v79-quran",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "80";
+  const VERSION = "81";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -154,7 +154,7 @@ window.PAIBP_CONFIG = Object.freeze({
       document.documentElement.dataset.portalUi = "v39-colorful-restored";
       return true;
     })().catch((error) => {
-      console.warn("PAIBP V80 visual runtime", error);
+      console.warn("PAIBP V81 visual runtime", error);
       visualPromise = null;
       return false;
     });
@@ -196,6 +196,9 @@ window.PAIBP_CONFIG = Object.freeze({
         "docx-export.js",
         "script.js"
       ]);
+      /* V81: pulihkan kebijakan bab berurutan dan penguncian materi guru/editor. */
+      style("learning-guard-v48.css");
+      await script("learning-guard-v48.js");
       await ensureVisualRuntime();
       /* Pengaman Quran Kemenag tetap dijalankan terakhir agar pemulihan V39 tidak mengganti sumber Quran yang sudah diamankan. */
       await ensureIslamicLite();
@@ -205,7 +208,7 @@ window.PAIBP_CONFIG = Object.freeze({
       return true;
     })().catch((error) => {
       workspaceCorePromise = null;
-      console.error("PAIBP V80 workspace core", error);
+      console.error("PAIBP V81 workspace core", error);
       return false;
     });
     return workspaceCorePromise;
@@ -270,21 +273,65 @@ window.PAIBP_CONFIG = Object.freeze({
     }, true);
   }
 
+  function isStudentPhone() {
+    const role = String(document.body?.dataset.portalRole || "").toLowerCase();
+    const file = page;
+    if (role === "guru" || file === "akses-guru.html" || file === "kendali-editor.html") return true;
+    const ua = navigator.userAgent || "";
+    const phoneUA = /iPhone|iPod|Windows Phone|IEMobile|Opera Mini|Android.+Mobile|Mobile Safari/i.test(ua);
+    return phoneUA && Number(navigator.maxTouchPoints || 1) > 0;
+  }
+
+  function showStudentPhoneGate() {
+    let gate = document.getElementById("v81-phone-gate");
+    if (!gate) {
+      gate = document.createElement("div");
+      gate.id = "v81-phone-gate";
+      gate.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:18px;background:rgba(2,35,30,.94);backdrop-filter:blur(10px)";
+      gate.innerHTML = '<section style="width:min(540px,100%);padding:28px;border-radius:28px;background:#fff;color:#173b33;box-shadow:0 30px 90px rgba(0,0,0,.35);text-align:center"><div style="font-size:3rem">📱</div><span style="display:block;margin-top:8px;font-size:.72rem;font-weight:900;letter-spacing:.1em;color:#08745e">AKSES RUANG MURID</span><h2 style="margin:8px 0 10px;color:#143b33">Gunakan HP murid</h2><p style="margin:0;line-height:1.65;color:#5d716b">Ruang Murid diwajibkan dibuka melalui HP. Login NISN, kamera depan, lokasi, identitas kelas, dan kendali guru diterapkan pada perangkat tersebut.</p><button type="button" data-v81-close-phone style="margin-top:18px;min-height:46px;padding:10px 18px;border:0;border-radius:14px;background:#08745e;color:#fff;font-weight:900">Kembali</button></section>';
+      document.body.append(gate);
+      gate.querySelector("[data-v81-close-phone]")?.addEventListener("click", () => gate.remove());
+    }
+    return gate;
+  }
+
   function studentGameGate() {
     let busy = false;
     document.addEventListener("click", async (event) => {
       const button = event.target.closest('[data-open-panel="student"],[data-open-panel="games"]');
       if (!button || busy) return;
       const name = button.dataset.openPanel;
+
+      if (name === "student" && window.__PAIBP_STUDENT_GATE_BYPASS__ === true) {
+        openPanel("student");
+        return;
+      }
+
       event.preventDefault();
       event.stopImmediatePropagation();
-      openPanel(name);
+
+      if (name === "student") {
+        if (!isStudentPhone()) { showStudentPhoneGate(); return; }
+        busy = true;
+        button.setAttribute("aria-busy", "true");
+        try {
+          /* Login/CAT harus siap sebelum Ruang Murid dibuka. */
+          await Promise.all([loadCat(), loadWorkspaceCore()]);
+          const cat = window.PAIBP_CAT_V69 || window.PAIBP_CAT_V67 || window.PAIBP_CAT_V65;
+          if (cat?.openStudent) cat.openStudent();
+          else if (cat?.showLogin) cat.showLogin();
+        } finally {
+          button.removeAttribute("aria-busy");
+          busy = false;
+        }
+        return;
+      }
+
+      openPanel("games");
       if (window.__PAIBP_WORKSPACE_CORE_READY__) return;
       busy = true;
       button.setAttribute("aria-busy", "true");
-      const jobs = [loadWorkspaceCore()];
-      if (name === "student" || catLink) jobs.push(loadCat());
-      await Promise.all(jobs);
+      await loadWorkspaceCore();
       button.removeAttribute("aria-busy");
       busy = false;
     }, true);
@@ -308,7 +355,7 @@ window.PAIBP_CONFIG = Object.freeze({
         const trigger = document.querySelector("#teacher-gateway-trigger");
         if (trigger) trigger.click();
         else openPanel("teacher");
-      }).catch((error) => console.error("PAIBP V80 Portal Guru", error));
+      }).catch((error) => console.error("PAIBP V81 Portal Guru", error));
       return;
     }
 
@@ -320,6 +367,7 @@ window.PAIBP_CONFIG = Object.freeze({
     if (page === "index.html") {
       /* Tampilan berwarna dan Simulasi Ibadah dipulihkan tanpa menunggu pengguna membuka panel. */
       ensureVisualRuntime();
+      loadCat().catch(() => {});
       studentGameGate();
       if (catLink) {
         setPortalMode("active", "murid");
