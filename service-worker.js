@@ -1,4 +1,4 @@
-const CACHE_NAME="paibp-smart-v69-static";
+const CACHE_NAME="paibp-smart-v70-static";
 const STATIC=["./logo-spensus.png","./assets/icons/icon-192.png"];
 self.addEventListener("install",event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.allSettled(STATIC.map(item=>cache.add(item)))))});
 self.addEventListener("activate",event=>event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)));await self.clients.claim()})()));
@@ -7,7 +7,7 @@ self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET")return;
   const url=new URL(event.request.url);
   if(url.origin!==self.location.origin)return;
-  const fresh=event.request.mode==="navigate"||["script","style","document"].includes(event.request.destination)||/app-config|cat-session|cleanup-v68|performance|service-worker|reset-cache|uji-server|compat-v67/i.test(url.pathname);
+  const fresh=event.request.mode==="navigate"||["script","style","document"].includes(event.request.destination)||/app-config|cat-session|stability-v70|mobile-fix-v70|cleanup-v68|performance|service-worker|reset-cache|uji-server|compat-v67/i.test(url.pathname);
   if(fresh){event.respondWith(fetch(new Request(event.request,{cache:"no-store"})).catch(()=>caches.match(event.request,{ignoreSearch:true})));return}
   if(event.request.destination==="image")event.respondWith((async()=>{const cache=await caches.open(CACHE_NAME),hit=await cache.match(event.request);if(hit)return hit;try{const res=await fetch(event.request);if(res.ok)cache.put(event.request,res.clone());return res}catch{return Response.error()}})())
 });
