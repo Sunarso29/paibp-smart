@@ -1,0 +1,62 @@
+name: V82 manifest source fix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/v82-manifest-source-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix source paths and hashes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, hashlib, re
+          root=Path('.')
+          def patch_records(records):
+              for rec in records:
+                  ext=str(rec.get('format','docx')).lower()
+                  src=root / f"cp2025-source-{rec['id']}.{ext}"
+                  if not src.exists():
+                      raise SystemExit(f"Missing source: {src}")
+                  data=src.read_bytes()
+                  rec['file']=src.as_posix()
+                  if 'sourceFile' in rec:
+                      rec['sourceFile']=src.as_posix()
+                  rec['size']=len(data)
+                  rec['sha256']=hashlib.sha256(data).hexdigest()
+                  rec['originalName']=rec.get('originalName','').replace('_Hadis_','_Hadits_').replace(' Hadis ',' Hadits ')
+                  rec['title']=re.sub(r'\bHadis\b','Hadits',rec.get('title',''))
+          p=root/'cp2025-manifest-v47.json'
+          data=json.loads(p.read_text(encoding='utf-8'))
+          patch_records(data['records'])
+          data['source']='CP Lama 2025 — Referensi Nasional'
+          p.write_text(json.dumps(data,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+          p=root/'cp2025-manifest-v48.js'
+          raw=p.read_text(encoding='utf-8')
+          prefix='window.PAIBP_CP2025_V48_MANIFEST = Object.freeze('
+          inner=raw[len(prefix):].rstrip()[:-2]
+          data=json.loads(inner)
+          patch_records(data['records'])
+          data['source']='CP Lama 2025 — Referensi Nasional'
+          p.write_text(prefix+json.dumps(data,ensure_ascii=False,separators=(',',':'))+');\n',encoding='utf-8')
+          PY
+      - name: Commit source manifest repair
+        shell: bash
+        run: |
+          rm -f .github/workflows/v82-manifest-source-fix.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "V82 point CP2025 manifests to cleaned national source files"
+          git push
