@@ -74,7 +74,7 @@
   };
 
   const WUDHU_STEPS = [
-    ["Niat dan basmalah", "Berniat bersuci karena Allah Subhanahu Wata'ala di dalam hati, kemudian membaca basmalah."],
+    ["Niat dan basmalah", "Berniat bersuci karena Alloh Subhanahu Wata'ala di dalam hati, kemudian membaca basmalah."],
     ["Mencuci telapak tangan kanan", "Alirkan air pada telapak tangan kanan, gosok punggung tangan, telapak, sela-sela jari, ujung jari, dan bagian bawah kuku."],
     ["Mencuci telapak tangan kiri", "Lakukan dengan teliti seperti tangan kanan. Pastikan tidak ada bagian yang tetap kering."],
     ["Periksa cincin dan penghalang air", "Bila memakai cincin yang longgar, putar atau gerakkan agar air mengenai kulit di bawahnya. Bersihkan bahan yang menghalangi air seperti cat tebal atau lem."],

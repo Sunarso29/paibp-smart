@@ -602,7 +602,7 @@
     {
       id:"wudhu", title:"Wudhu", icon:"💧", summary:"Sembilan tahap wudhu dari niat sampai doa setelah wudhu.", poster:"wudhu-poster.webp",
       steps:[
-        ["wudhu-01.webp","Niat dan basmalah","Berniat dalam hati untuk bersuci karena Allah Subhanahu Wata'ala, lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
+        ["wudhu-01.webp","Niat dan basmalah","Berniat dalam hati untuk bersuci karena Alloh Subhanahu Wata'ala, lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
         ["wudhu-02.webp","Membasuh telapak tangan","Membasuh kedua telapak tangan sampai pergelangan sebanyak tiga kali."],
         ["wudhu-03.webp","Berkumur","Mengambil air dengan tangan kanan, berkumur, lalu mengeluarkannya."],
         ["wudhu-04.webp","Membersihkan hidung","Memasukkan air ke hidung secukupnya lalu mengeluarkannya."],
@@ -639,7 +639,7 @@
       id:"tayamum", title:"Tayamum", icon:"🪨", summary:"Tayamum sebagai pengganti wudhu ketika air tidak tersedia atau membahayakan.",
       steps:[
         ["tayamum-01.svg","Pastikan sebab tayamum","Tidak menemukan air atau penggunaan air membahayakan kesehatan."],
-        ["tayamum-02.svg","Niat dan basmalah","Berniat tayamum karena Allah Subhanahu Wata'ala lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
+        ["tayamum-02.svg","Niat dan basmalah","Berniat tayamum karena Alloh Subhanahu Wata'ala lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
         ["tayamum-03.svg","Sentuhkan telapak tangan","Menyentuhkan kedua telapak tangan pada debu atau permukaan suci."],
         ["tayamum-04.svg","Usap wajah","Mengusap seluruh wajah satu kali secara merata."],
         ["tayamum-05.svg","Usap kedua tangan","Mengusap tangan kanan lalu kiri secara tertib."]
@@ -660,7 +660,7 @@
       steps:[
         ["zakat-01.svg","Kenali jenis zakat","Membedakan zakat fitrah dan zakat mal serta syarat masing-masing."],
         ["zakat-02.svg","Hitung kewajiban","Memeriksa ukuran, nishab, haul, dan jumlah yang wajib dikeluarkan."],
-        ["zakat-03.svg","Niat","Berniat menunaikan zakat karena Allah Subhanahu Wata'ala."],
+        ["zakat-03.svg","Niat","Berniat menunaikan zakat karena Alloh Subhanahu Wata'ala."],
         ["zakat-04.svg","Salurkan kepada mustahik","Menyerahkan melalui amil atau langsung kepada golongan yang berhak."]
       ]
     },

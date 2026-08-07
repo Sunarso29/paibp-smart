@@ -344,7 +344,7 @@
       id:"wudhu", label:"💧 Wudhu", title:"Wudhu Lengkap dan Tertib",
       intro:"Setiap langkah ditampilkan dengan adegan visual anak SMP, urutan pelaksanaan, dan bacaan yang relevan.",
       steps:[
-        {title:"Niat dan membaca basmalah", action:"wudhu-niat", note:"Hadapkan hati untuk berwudhu karena Allah Subhanahu Wata'ala. Niat cukup di dalam hati, kemudian membaca basmalah.", arabic:"بِسْمِ اللَّهِ", latin:"Bismillāh", meaning:"Dengan nama Allah."},
+        {title:"Niat dan membaca basmalah", action:"wudhu-niat", note:"Hadapkan hati untuk berwudhu karena Alloh Subhanahu Wata'ala. Niat cukup di dalam hati, kemudian membaca basmalah.", arabic:"بِسْمِ اللَّهِ", latin:"Bismillāh", meaning:"Dengan nama Allah."},
         {title:"Membasuh kedua telapak tangan", action:"wudhu-hands", note:"Basuh kedua telapak tangan sampai pergelangan tiga kali. Mulai dari tangan kanan dan sela-sela jari dibersihkan."},
         {title:"Berkumur dan membersihkan hidung", action:"wudhu-mouth", note:"Ambil air dengan tangan kanan, berkumur, masukkan air perlahan ke hidung, lalu keluarkan menggunakan tangan kiri. Lakukan tiga kali."},
         {title:"Membasuh seluruh wajah", action:"wudhu-face", note:"Basuh dari batas tumbuh rambut sampai dagu dan dari telinga kanan sampai telinga kiri secara merata sebanyak tiga kali."},
@@ -385,7 +385,7 @@
       intro:"Pengganti wudhu ketika air tidak tersedia atau penggunaannya membahayakan.",
       steps:[
         {title:"Pastikan sebab tayamum", action:"tayamum", note:"Cari air terlebih dahulu. Tayamum dilakukan ketika air tidak ada, sulit dijangkau, atau penggunaan air membahayakan kesehatan."},
-        {title:"Niat dan basmalah", action:"wudhu-niat", note:"Berniat tayamum di dalam hati karena Allah Subhanahu Wata'ala dan membaca basmalah.", arabic:"بِسْمِ اللَّهِ", latin:"Bismillāh", meaning:"Dengan nama Allah."},
+        {title:"Niat dan basmalah", action:"wudhu-niat", note:"Berniat tayamum di dalam hati karena Alloh Subhanahu Wata'ala dan membaca basmalah.", arabic:"بِسْمِ اللَّهِ", latin:"Bismillāh", meaning:"Dengan nama Allah."},
         {title:"Tepukkan telapak tangan", action:"tayamum", note:"Tepukkan kedua telapak tangan satu kali pada tanah atau debu yang suci, lalu tipiskan debu berlebih."},
         {title:"Usap wajah", action:"wudhu-face", note:"Usapkan kedua telapak tangan ke seluruh wajah satu kali secara merata."},
         {title:"Usap kedua tangan", action:"wudhu-arms", note:"Usap tangan kanan dan kiri secara tertib sesuai tuntunan yang dipelajari."},
@@ -395,7 +395,7 @@
       id:"puasa", label:"🌙 Puasa", title:"Puasa dari Niat sampai Berbuka",
       intro:"Alur harian puasa yang mudah dipahami dan dipraktikkan murid.",
       steps:[
-        {title:"Niat", action:"fasting", note:"Niat puasa dilakukan sesuai jenis puasa. Niat berada di dalam hati karena Allah Subhanahu Wata'ala."},
+        {title:"Niat", action:"fasting", note:"Niat puasa dilakukan sesuai jenis puasa. Niat berada di dalam hati karena Alloh Subhanahu Wata'ala."},
         {title:"Sahur", action:"fasting", note:"Makan dan minum secukupnya menjelang fajar. Hindari berlebihan dan pilih makanan yang sehat."},
         {title:"Menahan diri", action:"fasting", note:"Sejak terbit fajar sampai terbenam matahari, tahan makan, minum, dan segala hal yang membatalkan puasa."},
         {title:"Menjaga akhlak", action:"fasting", note:"Jaga ucapan, pandangan, emosi, dan perilaku. Perbanyak membaca Al Qur'an, dzikir, sedekah, dan kebaikan."},
@@ -408,7 +408,7 @@
       steps:[
         {title:"Kenali jenis zakat", action:"zakat", note:"Bedakan zakat fitrah dan zakat mal. Pelajari syarat, waktu, serta harta yang dikenai zakat."},
         {title:"Hitung kewajiban", action:"zakat", note:"Zakat fitrah mengikuti ukuran yang ditetapkan. Zakat mal dihitung setelah memenuhi nishab dan haul sesuai jenis hartanya."},
-        {title:"Niat", action:"zakat", note:"Niatkan zakat karena Allah Subhanahu Wata'ala, bukan untuk dipuji atau mendapatkan balasan manusia."},
+        {title:"Niat", action:"zakat", note:"Niatkan zakat karena Alloh Subhanahu Wata'ala, bukan untuk dipuji atau mendapatkan balasan manusia."},
         {title:"Serahkan kepada amil atau mustahik", action:"zakat", note:"Salurkan melalui amil terpercaya atau kepada mustahik yang benar-benar berhak."},
         {title:"Catat dan pastikan sampai", action:"zakat", note:"Pastikan jumlah, waktu, dan penerima tercatat agar penyaluran tertib dan dapat dipertanggungjawabkan."},
       ],
@@ -429,7 +429,7 @@
       id:"kurban", label:"🐐 Kurban", title:"Pelaksanaan Ibadah Kurban",
       intro:"Dari niat, pemilihan hewan, penyembelihan syar'i, sampai pembagian daging yang tertib.",
       steps:[
-        {title:"Niat dan waktu pelaksanaan", action:"qurban", note:"Niatkan ibadah kurban karena Allah Subhanahu Wata'ala dan laksanakan pada waktu yang telah ditentukan."},
+        {title:"Niat dan waktu pelaksanaan", action:"qurban", note:"Niatkan ibadah kurban karena Alloh Subhanahu Wata'ala dan laksanakan pada waktu yang telah ditentukan."},
         {title:"Pilih hewan yang memenuhi syarat", action:"qurban", note:"Hewan cukup umur, sehat, tidak cacat, dan diperoleh dengan cara yang halal."},
         {title:"Penyembelihan secara syar'i", action:"qurban", note:"Hadapkan hewan ke kiblat, perlakukan dengan baik, gunakan alat tajam, dan baca basmalah serta takbir.", arabic:"بِسْمِ اللَّهِ، اللَّهُ أَكْبَرُ", latin:"Bismillāh, Allāhu akbar", meaning:"Dengan nama Allah, Allah Mahabesar."},
         {title:"Pengolahan higienis", action:"qurban", note:"Jaga kebersihan tempat, alat, daging, dan petugas agar aman serta tidak mencemari lingkungan."},

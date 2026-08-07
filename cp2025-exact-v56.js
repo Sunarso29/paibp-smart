@@ -88,8 +88,8 @@
         toolbar.innerHTML = `
           <button type="button" data-v56-fast>Tampilan Cepat</button>
           <button type="button" data-v56-online>Pratinjau Online</button>
-          <a href="${source}" target="_blank" rel="noopener">Buka Berkas Asli</a>
-          <a href="${source}" download>Unduh Dokumen Asli</a>
+          <a href="${source}" target="_blank" rel="noopener">Buka Berkas Referensi</a>
+          <a href="${source}" download>Unduh Dokumen Referensi</a>
           <span>${clean(record.originalName || record.title)}</span>`;
 
         const showFast = () => {
@@ -106,7 +106,7 @@
             root.append(viewer);
           }
           if (!navigator.onLine) {
-            viewer.innerHTML = `<div class="v56-viewer-fallback"><div><strong>Pratinjau online memerlukan internet.</strong><p>Gunakan Tampilan Cepat, Buka Berkas Asli, atau Unduh Dokumen Asli.</p></div></div>`;
+            viewer.innerHTML = `<div class="v56-viewer-fallback"><div><strong>Pratinjau online memerlukan internet.</strong><p>Gunakan Tampilan Cepat, Buka Berkas Referensi, atau Unduh Dokumen Referensi.</p></div></div>`;
           } else {
             viewer.innerHTML = `<div class="v56-viewer-switch"><button type="button" data-provider="office">Microsoft</button><button type="button" data-provider="google">Google</button></div><iframe title="Pratinjau dokumen sumber" src="${viewerUrl(record, provider)}" loading="eager"></iframe>`;
             $$("[data-provider]", viewer).forEach((button) => button.addEventListener("click", () => {

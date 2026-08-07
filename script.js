@@ -103,17 +103,17 @@ if (workspace && appData) {
   ];
 
   const questionBank = [
-    ["Sumber utama ajaran Islam yang menjadi wahyu Allah Subhanahu Wata'ala adalah…", ["Al Qur'an", "Pendapat pribadi", "Pesan berantai", "Kebiasaan kelompok"], 0, "Al Qur'an merupakan wahyu dan sumber utama ajaran Islam."],
+    ["Sumber utama ajaran Islam yang menjadi wahyu Alloh Subhanahu Wata'ala adalah…", ["Al Qur'an", "Pendapat pribadi", "Pesan berantai", "Kebiasaan kelompok"], 0, "Al Qur'an merupakan wahyu dan sumber utama ajaran Islam."],
     ["Ketika menerima berita yang belum jelas, tindakan paling tepat adalah…", ["Langsung membagikan", "Melakukan tabayun", "Menambah judul sensasional", "Menyalahkan pengirim"], 1, "Tabayun memeriksa sumber, bukti, konteks, dan dampak sebelum menyimpulkan."],
     ["Contoh amanah di sekolah adalah…", ["Menyalin tugas teman", "Menjalankan tugas piket", "Menyembunyikan barang temuan", "Memalsukan data"], 1, "Amanah terlihat dalam pelaksanaan tanggung jawab dengan jujur."],
     ["Sikap khalifah terhadap alam ditunjukkan dengan…", ["Menghabiskan sumber daya", "Merawat dan menggunakan secara bertanggung jawab", "Membuang sampah ke sungai", "Mengabaikan pencemaran"], 1, "Kekhalifahan merupakan amanah untuk menjaga kemaslahatan dan keberlanjutan."],
-    ["Tawakal yang benar dilakukan…", ["Tanpa usaha", "Setelah ikhtiar yang layak", "Dengan menyalahkan keadaan", "Setelah meninggalkan kewajiban"], 1, "Tawakal menyerahkan hasil kepada Allah Subhanahu Wata'ala setelah berikhtiar."],
+    ["Tawakal yang benar dilakukan…", ["Tanpa usaha", "Setelah ikhtiar yang layak", "Dengan menyalahkan keadaan", "Setelah meninggalkan kewajiban"], 1, "Tawakal menyerahkan hasil kepada Alloh Subhanahu Wata'ala setelah berikhtiar."],
     ["Menghormati perbedaan tanpa mencampuradukkan akidah merupakan bentuk…", ["Toleransi", "Gibah", "Riba", "Taklid buta"], 0, "Toleransi menjaga penghormatan, keadilan, serta batas keyakinan."],
     ["Kejujuran akademik ketika menggunakan AI ditunjukkan dengan…", ["Menyalin tanpa membaca", "Memeriksa hasil dan mengakui bantuan", "Menghapus semua sumber", "Mengaku seluruhnya karya sendiri"], 1, "Teknologi boleh membantu, tetapi isi perlu diperiksa dan proses diakui."],
     ["Sujud yang berkaitan dengan kelupaan tertentu dalam sholat adalah…", ["Sujud syukur", "Sujud tilawah", "Sujud sahwi", "Sujud biasa"], 2, "Sujud sahwi dilakukan karena sebab kelupaan tertentu dalam sholat."],
     ["Rukhsah adalah…", ["Keringanan syariat karena sebab yang diakui", "Alasan meninggalkan semua ibadah", "Kebiasaan yang dibuat sendiri", "Larangan mempelajari fikih"], 0, "Rukhsah merupakan kemudahan yang memiliki sebab dan ketentuan."],
     ["Sikap yang sesuai iman kepada Hari Akhir adalah…", ["Berbuat tanpa tanggung jawab", "Jujur meskipun tidak diawasi", "Mengejar keuntungan dengan segala cara", "Mempercayai ramalan tanggal kiamat"], 1, "Iman kepada Hari Akhir membangun kesadaran pertanggungjawaban."],
-    ["Al-Khabir mendorong murid untuk…", ["Bekerja ceroboh", "Teliti dan bertanggung jawab", "Merasa paling tahu", "Mengabaikan fakta"], 1, "Kesadaran kepada Allah Subhanahu Wata'ala Yang Maha Teliti mendorong kecermatan."],
+    ["Al-Khabir mendorong murid untuk…", ["Bekerja ceroboh", "Teliti dan bertanggung jawab", "Merasa paling tahu", "Mengabaikan fakta"], 1, "Kesadaran kepada Alloh Subhanahu Wata'ala Yang Maha Teliti mendorong kecermatan."],
     ["Salah satu etos ilmiah yang dapat diteladani dari ilmuwan Muslim adalah…", ["Menolak koreksi", "Mencatat data dan sumber", "Mengubah hasil", "Mengandalkan dugaan"], 1, "Pengetahuan yang dapat dipercaya memerlukan data, metode, dan keterbukaan terhadap koreksi."],
     ["Dalam transaksi, penjual wajib…", ["Menyembunyikan cacat barang", "Menjelaskan kondisi barang dengan jujur", "Mengubah harga setelah sepakat", "Memaksa pembeli"], 1, "Kejelasan dan kerelaan para pihak menjadi prinsip penting muamalah."],
     ["Perbedaan fikih dapat terjadi karena…", ["Semua ulama tidak belajar", "Perbedaan dalil, metode, bahasa, atau konteks", "Agama tidak memiliki pedoman", "Tidak ada adab keilmuan"], 1, "Perbedaan ilmiah dapat lahir dari metode dan konteks yang dapat dipertanggungjawabkan."],
@@ -1044,14 +1044,14 @@ if (workspace && appData) {
   }
 
   const chapterDalil = {
-    "VII-2": ["Al Qur'an Surat Al-A'raf ayat 180", "Al Qur'an Surat Al-Hasyr ayat 22–24", "Hadits Riwayat tentang sembilan puluh sembilan nama Allah Subhanahu Wata'ala"],
+    "VII-2": ["Al Qur'an Surat Al-A'raf ayat 180", "Al Qur'an Surat Al-Hasyr ayat 22–24", "Hadits Riwayat tentang sembilan puluh sembilan nama Alloh Subhanahu Wata'ala"],
     "VII-3": ["Al Qur'an Surat Al-'Ankabut ayat 45", "Al Qur'an Surat Al-Ahzab ayat 41–42", "Al Qur'an Surat Al-Baqarah ayat 152"],
     "VII-4": ["Al Qur'an Surat Al-Hajj ayat 77", "Al Qur'an Surat Al-Isra' ayat 107–109", "Hadits Riwayat tentang sujud syukur, sahwi, dan tilawah"],
     "VII-5": ["Al Qur'an Surat Ali 'Imran ayat 137", "Al Qur'an Surat Al-Hasyr ayat 18", "Sumber sejarah Daulah Umayyah pada buku dan modul resmi"],
     "VII-7": ["Al Qur'an Surat Al-Hasyr ayat 18", "Al Qur'an Surat Qaf ayat 18", "Hadits Riwayat tentang muhasabah dan tanggung jawab amal"],
     "VII-9": ["Al Qur'an Surat Al-Baqarah ayat 185", "Al Qur'an Surat An-Nisa' ayat 101", "Hadits Riwayat tentang mengambil keringanan syariat"],
     "VII-10": ["Al Qur'an Surat Ali 'Imran ayat 137", "Al Qur'an Surat At-Taubah ayat 122", "Sumber sejarah Andalusia pada buku dan modul resmi"],
-    "VIII-2": ["Al Qur'an Surat Al-Baqarah ayat 4", "Al Qur'an Surat Al-Ma'idah ayat 48", "Hadits Riwayat tentang berpegang pada petunjuk Allah Subhanahu Wata'ala"],
+    "VIII-2": ["Al Qur'an Surat Al-Baqarah ayat 4", "Al Qur'an Surat Al-Ma'idah ayat 48", "Hadits Riwayat tentang berpegang pada petunjuk Alloh Subhanahu Wata'ala"],
     "VIII-3": ["Al Qur'an Surat An-Nisa' ayat 58", "Al Qur'an Surat At-Taubah ayat 119", "Hadits Riwayat tentang kejujuran yang menuntun kepada kebaikan"],
     "VIII-4": ["Al Qur'an Surat Fussilat ayat 37", "Al Qur'an Surat Al-Ma'idah ayat 32", "Hadits Riwayat tentang sholat gerhana, istisqa, dan jenazah"],
     "VIII-5": ["Al Qur'an Surat Al-'Alaq ayat 1–5", "Al Qur'an Surat Az-Zumar ayat 9", "Sumber sejarah budaya literasi Daulah Abbasiyah"],
@@ -1164,7 +1164,7 @@ if (workspace && appData) {
         explanation: chapter.overview,
       },
     ];
-    const quranAndTajwidChapter = /qur|hadis|tajwid/i.test(`${chapter.element} ${chapter.title}`);
+    const quranAndTajwidChapter = /qur|hadits|tajwid/i.test(`${chapter.element} ${chapter.title}`);
     if (quranAndTajwidChapter) {
       items.push(
         {
@@ -3204,12 +3204,12 @@ if (workspace && appData) {
     const planningRows = teacherPlanningRows(gradeChapters);
     const totalHours = planningRows.reduce((sum, row) => sum + row.hours, 0);
     const purposeItems = [
-      "Meningkatkan keimanan, ketakwaan kepada Allah Subhanahu Wata'ala, serta membiasakan akhlak mulia dalam kehidupan sehari-hari;",
+      "Meningkatkan keimanan, ketakwaan kepada Alloh Subhanahu Wata'ala, serta membiasakan akhlak mulia dalam kehidupan sehari-hari;",
       "Memahami prinsip-prinsip ajaran Islam berdasarkan Al Qur'an, Hadits Riwayat, akidah Ahl al-Sunnah wa al-Jama'ah, fikih, akhlak, dan sejarah peradaban Islam secara utuh, benar, dan bertanggung jawab;",
       "Menghayati nilai-nilai ajaran Islam sehingga mampu mengambil keputusan berdasarkan pertimbangan syariat, kemaslahatan, dan hikmah dalam menghadapi berbagai persoalan kehidupan;",
       "Menerapkan kemampuan bernalar kritis, kreatif, komunikatif, kolaboratif, dan reflektif dalam memahami, menganalisis, serta menyelesaikan permasalahan berdasarkan nilai-nilai Islam;",
       "Membangun sikap moderat (wasatiyyah), toleran, menghargai keberagaman, serta menjunjung tinggi persatuan dalam kehidupan bermasyarakat, berbangsa, dan bernegara;",
-      "Mengembangkan kepedulian terhadap lingkungan sebagai amanah Allah Subhanahu Wata'ala dengan menjalankan fungsi manusia sebagai khalifah di muka bumi;",
+      "Mengembangkan kepedulian terhadap lingkungan sebagai amanah Alloh Subhanahu Wata'ala dengan menjalankan fungsi manusia sebagai khalifah di muka bumi;",
       "Menumbuhkan semangat menuntut ilmu, berinovasi, berkarya, serta mengambil ibrah dari perkembangan sejarah peradaban Islam sebagai inspirasi dalam membangun peradaban masa depan;",
       "Membentuk pribadi muslim yang mampu mengintegrasikan iman, ilmu, amal saleh, dan akhlak mulia secara konsisten dalam kehidupan nyata.",
     ];

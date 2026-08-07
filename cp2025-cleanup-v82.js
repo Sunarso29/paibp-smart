@@ -15,7 +15,7 @@
       [/Penyusun\s*:\s*Sunarso\s*,?\s*S\.?Pd\.?I\.?\s*,?\s*Gr\.?/gi, "Penyusun : Sunarso, S.Pd.I, Gr"],
       [/\b(?:Allah|Alloh)\s+(?:Swt\.?|SWT\.?)\b/gi, "Alloh Subhanahu Wata'ala"],
       [/\bAllah\s+Subhanahu\s+Wata[’']?ala\b/gi, "Alloh Subhanahu Wata'ala"],
-      [/\b(?:salat|shalat)\b/gi, "sholat"],
+      [/\b(?:sholat|sholat)\b/gi, "sholat"],
       [/\bzikir\b/gi, "dzikir"],
       [/\bhusnuzan\b/gi, "husnudzon"],
       [/\bhadis\b/gi, "hadits"],

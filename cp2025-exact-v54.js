@@ -83,7 +83,7 @@
     toolbar.innerHTML = `
       <button type="button" data-v54-exact data-mode="exact">Pratinjau Asli</button>
       <button type="button" data-v54-fast data-mode="fast">Tampilan Cepat</button>
-      <a href="${source}" download="${record.originalName || record.title}">Unduh Dokumen Asli</a>
+      <a href="${source}" download="${record.originalName || record.title}">Unduh Dokumen Referensi</a>
       <span>${record.originalName || record.title}</span>`;
     $("[data-v54-exact]", toolbar)?.addEventListener("click", () => showExact(root, record));
     $("[data-v54-fast]", toolbar)?.addEventListener("click", () => showFast(root));

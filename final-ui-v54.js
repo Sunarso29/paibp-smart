@@ -475,7 +475,7 @@
     {
       id: "wudhu", title: "Wudhu", summary: "Sembilan tahap wudhu dari niat sampai doa setelah wudhu.",
       color: "blue", steps: [
-        ["Niat dan basmalah","Berniat wudhu karena Allah Subhanahu Wata'ala, lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
+        ["Niat dan basmalah","Berniat wudhu karena Alloh Subhanahu Wata'ala, lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
         ["Membasuh telapak tangan","Membasuh kedua telapak tangan sampai pergelangan sebanyak tiga kali."],
         ["Berkumur","Mengambil air dengan tangan kanan, berkumur, lalu mengeluarkannya."],
         ["Membersihkan hidung","Memasukkan air ke hidung secukupnya, kemudian mengeluarkannya."],
@@ -512,7 +512,7 @@
       id: "tayamum", title: "Tayamum", summary: "Pengganti wudhu ketika air tidak tersedia atau penggunaannya membahayakan.",
       color: "teal", steps: [
         ["Memastikan sebab tayamum","Tidak menemukan air atau penggunaan air membahayakan kesehatan."],
-        ["Niat","Berniat tayamum karena Allah Subhanahu Wata'ala."],
+        ["Niat","Berniat tayamum karena Alloh Subhanahu Wata'ala."],
         ["Menyentuhkan tangan ke debu suci","Menyentuhkan kedua telapak tangan pada permukaan berdebu yang suci."],
         ["Mengusap wajah","Mengusap seluruh wajah secara merata."],
         ["Mengusap kedua tangan","Mengusap tangan kanan dan kiri secara tertib."]
@@ -533,7 +533,7 @@
       color: "gold", steps: [
         ["Mengenali jenis zakat","Membedakan zakat fitrah dan zakat mal serta syaratnya."],
         ["Menghitung kewajiban","Memeriksa ukuran, nishab, haul, dan jumlah yang harus dikeluarkan."],
-        ["Niat","Berniat menunaikan zakat karena Allah Subhanahu Wata'ala."],
+        ["Niat","Berniat menunaikan zakat karena Alloh Subhanahu Wata'ala."],
         ["Menyalurkan kepada yang berhak","Menyerahkan melalui amil atau langsung kepada mustahik sesuai ketentuan."]
       ]
     },

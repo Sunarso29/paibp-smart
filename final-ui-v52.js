@@ -9,7 +9,7 @@
   const CAT_KEY = "paibp-smart-cat-session-v52";
   const PROGRESS_KEY = "paibp-smart-progress-v3";
   const LEGACY_FOCUS_KEYS = ["paibp-smart-focus-session-v48", "paibp-smart-focus-session-v50"];
-  const SHOLAT_IMAGE = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Salat%20Positions%20and%20Prayers%20-%20White%20Background%20RGB.jpg?width=900";
+  const SHOLAT_IMAGE = "https://commons.wikimedia.org/wiki/Special:Redirect/file/sholat%20Positions%20and%20Prayers%20-%20White%20Background%20RGB.jpg?width=900";
   const WUDHU_IMAGE = "assets/simulasi/wudhu-reference-v52.png";
 
   const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -315,7 +315,7 @@
       id: "wudhu", title: "Wudhu", icon: "💧", summary: "Urutan wudhu yang runtut dari basmalah sampai doa.", image: WUDHU_IMAGE,
       source: "Visual karakter referensi disediakan editor portal.",
       steps: [
-        ["🤲", "Niat dan basmalah", "Berniat wudhu karena Allah Subhanahu Wata'ala, kemudian membaca basmalah.", "بِسْمِ اللّٰهِ", "Bismillāh"],
+        ["🤲", "Niat dan basmalah", "Berniat wudhu karena Alloh Subhanahu Wata'ala, kemudian membaca basmalah.", "بِسْمِ اللّٰهِ", "Bismillāh"],
         ["👐", "Membasuh telapak tangan", "Membasuh kedua telapak tangan hingga pergelangan sebanyak tiga kali.", "", ""],
         ["👄", "Berkumur", "Mengambil air dengan tangan kanan, berkumur, kemudian mengeluarkannya.", "", ""],
         ["👃", "Membersihkan hidung", "Memasukkan air ke hidung secukupnya lalu mengeluarkannya.", "", ""],
@@ -354,7 +354,7 @@
       id: "tayamum", title: "Tayamum", icon: "🪨", summary: "Pengganti wudhu ketika air tidak tersedia atau tidak dapat digunakan.",
       steps: [
         ["✅", "Pastikan sebab", "Tidak menemukan air atau penggunaan air membahayakan."],
-        ["🤲", "Niat", "Berniat tayamum karena Allah Subhanahu Wata'ala."],
+        ["🤲", "Niat", "Berniat tayamum karena Alloh Subhanahu Wata'ala."],
         ["🪨", "Sentuhkan tangan", "Menyentuhkan telapak tangan pada debu yang suci."],
         ["🙂", "Usap wajah", "Mengusap seluruh wajah satu kali."],
         ["👐", "Usap tangan", "Mengusap tangan kanan dan kiri secara tertib."],
@@ -375,7 +375,7 @@
       steps: [
         ["📘", "Kenali jenis", "Bedakan zakat fitrah dan zakat mal."],
         ["🧮", "Hitung kewajiban", "Periksa ukuran, nishab, dan haul sesuai ketentuan."],
-        ["🤲", "Niat", "Berniat menunaikan zakat karena Allah Subhanahu Wata'ala."],
+        ["🤲", "Niat", "Berniat menunaikan zakat karena Alloh Subhanahu Wata'ala."],
         ["📦", "Serahkan", "Menyalurkan melalui amil atau kepada mustahik yang berhak."],
         ["✅", "Pastikan tepat", "Memastikan jumlah dan penerima sesuai ketentuan."],
       ],

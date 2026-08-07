@@ -2,7 +2,7 @@
   const concepts = [
     {
       term: "Al Qur'an",
-      meaning: "Wahyu Allah Subhanahu Wata'ala yang menjadi sumber utama ajaran Islam.",
+      meaning: "Wahyu Alloh Subhanahu Wata'ala yang menjadi sumber utama ajaran Islam.",
       application: "Membaca ayat, memahami makna, dan membiasakan petunjuknya dalam kehidupan.",
       misconception: "Al Qur'an cukup dibaca tanpa perlu dipahami dan diamalkan.",
       dalil: "Al Qur'an Surat Al-Baqarah ayat 2",
@@ -52,7 +52,7 @@
     },
     {
       term: "Tawakal",
-      meaning: "Menyerahkan hasil kepada Allah Subhanahu Wata'ala setelah melakukan ikhtiar yang benar.",
+      meaning: "Menyerahkan hasil kepada Alloh Subhanahu Wata'ala setelah melakukan ikhtiar yang benar.",
       application: "Belajar teratur, berdoa, mengikuti ujian dengan jujur, lalu menerima hasil sambil mengevaluasi.",
       misconception: "Tawakal berarti menunggu hasil tanpa melakukan usaha.",
       dalil: "Al Qur'an Surat Ali 'Imran ayat 159",
@@ -62,11 +62,11 @@
     },
     {
       term: "Syukur",
-      meaning: "Mengakui nikmat Allah Subhanahu Wata'ala dengan hati, lisan, dan penggunaan nikmat untuk kebaikan.",
+      meaning: "Mengakui nikmat Alloh Subhanahu Wata'ala dengan hati, lisan, dan penggunaan nikmat untuk kebaikan.",
       application: "Mengucapkan hamdalah, menjaga nikmat, dan membagikan manfaat kepada sesama.",
       misconception: "Syukur cukup diucapkan tanpa perlu menjaga atau menggunakan nikmat dengan baik.",
       dalil: "Al Qur'an Surat Ibrahim ayat 7",
-      sequence: "Sadari nikmat–puji Allah Subhanahu Wata'ala–gunakan dengan baik–berbagi manfaat",
+      sequence: "Sadari nikmat–puji Alloh Subhanahu Wata'ala–gunakan dengan baik–berbagi manfaat",
       scenario: "Murid memperoleh perangkat belajar baru.",
       action: "Merawat perangkat, memakainya untuk belajar, dan membantu teman sesuai kemampuan.",
     },
@@ -112,7 +112,7 @@
     },
     {
       term: "Dzikir",
-      meaning: "Mengingat Allah Subhanahu Wata'ala melalui bacaan yang disyariatkan serta kesadaran hati.",
+      meaning: "Mengingat Alloh Subhanahu Wata'ala melalui bacaan yang disyariatkan serta kesadaran hati.",
       application: "Membaca dzikir pagi dan petang dengan tertib sambil memahami maknanya.",
       misconception: "Dzikir hanya dilakukan ketika sedang memiliki masalah.",
       dalil: "Al Qur'an Surat Ar-Ra'd ayat 28",
@@ -182,7 +182,7 @@
     },
     {
       term: "Tobat",
-      meaning: "Kembali kepada Allah Subhanahu Wata'ala dengan meninggalkan dosa, menyesal, dan bertekad memperbaiki.",
+      meaning: "Kembali kepada Alloh Subhanahu Wata'ala dengan meninggalkan dosa, menyesal, dan bertekad memperbaiki.",
       application: "Menghentikan kesalahan, memohon ampun, tidak mengulangi, dan memulihkan hak orang lain.",
       misconception: "Tobat cukup diucapkan meskipun kesalahan sengaja terus dilakukan.",
       dalil: "Al Qur'an Surat At-Tahrim ayat 8",
@@ -258,7 +258,7 @@
 
   const prophetFacts = [
     ["Nabi pertama dan manusia pertama adalah …", "Nabi Adam 'Alaihissalam", ["Nabi Nuh 'Alaihissalam", "Nabi Ibrahim 'Alaihissalam", "Nabi Musa 'Alaihissalam"], "Nabi Adam 'Alaihissalam merupakan nabi dan manusia pertama."],
-    ["Nabi yang berdakwah sangat lama dan membuat bahtera atas perintah Allah Subhanahu Wata'ala adalah …", "Nabi Nuh 'Alaihissalam", ["Nabi Hud 'Alaihissalam", "Nabi Shalih 'Alaihissalam", "Nabi Yunus 'Alaihissalam"], "Nabi Nuh 'Alaihissalam membuat bahtera sebagai bagian dari perintah Allah Subhanahu Wata'ala."],
+    ["Nabi yang berdakwah sangat lama dan membuat bahtera atas perintah Alloh Subhanahu Wata'ala adalah …", "Nabi Nuh 'Alaihissalam", ["Nabi Hud 'Alaihissalam", "Nabi Shalih 'Alaihissalam", "Nabi Yunus 'Alaihissalam"], "Nabi Nuh 'Alaihissalam membuat bahtera sebagai bagian dari perintah Alloh Subhanahu Wata'ala."],
     ["Nabi yang dikenal sebagai khalilullah dan menjadi teladan tauhid adalah …", "Nabi Ibrahim 'Alaihissalam", ["Nabi Ismail 'Alaihissalam", "Nabi Ishaq 'Alaihissalam", "Nabi Ya'qub 'Alaihissalam"], "Nabi Ibrahim 'Alaihissalam dikenal sebagai khalilullah dan teladan keteguhan tauhid."],
     ["Nabi yang membantu Nabi Ibrahim 'Alaihissalam meninggikan fondasi Ka'bah adalah …", "Nabi Ismail 'Alaihissalam", ["Nabi Ishaq 'Alaihissalam", "Nabi Yusuf 'Alaihissalam", "Nabi Harun 'Alaihissalam"], "Nabi Ismail 'Alaihissalam membantu Nabi Ibrahim 'Alaihissalam membangun Ka'bah."],
     ["Nabi yang menghadapi ujian sumur, perbudakan, dan penjara sebelum menjadi pejabat di Mesir adalah …", "Nabi Yusuf 'Alaihissalam", ["Nabi Ayyub 'Alaihissalam", "Nabi Yunus 'Alaihissalam", "Nabi Zakariya 'Alaihissalam"], "Kisah Nabi Yusuf 'Alaihissalam mengajarkan kesabaran, kehormatan diri, dan pemaafan."],
@@ -267,7 +267,7 @@
     ["Nabi yang menerima Kitab Zabur adalah …", "Nabi Dawud 'Alaihissalam", ["Nabi Sulaiman 'Alaihissalam", "Nabi Isa 'Alaihissalam", "Nabi Idris 'Alaihissalam"], "Kitab Zabur diturunkan kepada Nabi Dawud 'Alaihissalam."],
     ["Nabi yang diberi kerajaan besar dan kemampuan memahami bahasa makhluk adalah …", "Nabi Sulaiman 'Alaihissalam", ["Nabi Dawud 'Alaihissalam", "Nabi Ayyub 'Alaihissalam", "Nabi Yahya 'Alaihissalam"], "Nabi Sulaiman 'Alaihissalam diberi kerajaan dan berbagai karunia yang digunakan dalam ketaatan."],
     ["Nabi yang berdoa dari dalam perut ikan adalah …", "Nabi Yunus 'Alaihissalam", ["Nabi Zakariya 'Alaihissalam", "Nabi Shalih 'Alaihissalam", "Nabi Hud 'Alaihissalam"], "Nabi Yunus 'Alaihissalam berdoa dan bertasbih ketika berada dalam perut ikan."],
-    ["Nabi yang menjadi teladan kesabaran ketika mengalami sakit dan kehilangan adalah …", "Nabi Ayyub 'Alaihissalam", ["Nabi Yusuf 'Alaihissalam", "Nabi Yunus 'Alaihissalam", "Nabi Idris 'Alaihissalam"], "Nabi Ayyub 'Alaihissalam tetap sabar dan kembali kepada Allah Subhanahu Wata'ala."],
+    ["Nabi yang menjadi teladan kesabaran ketika mengalami sakit dan kehilangan adalah …", "Nabi Ayyub 'Alaihissalam", ["Nabi Yusuf 'Alaihissalam", "Nabi Yunus 'Alaihissalam", "Nabi Idris 'Alaihissalam"], "Nabi Ayyub 'Alaihissalam tetap sabar dan kembali kepada Alloh Subhanahu Wata'ala."],
     ["Nabi yang berdoa memohon keturunan pada usia lanjut dan dikaruniai Nabi Yahya 'Alaihissalam adalah …", "Nabi Zakariya 'Alaihissalam", ["Nabi Ya'qub 'Alaihissalam", "Nabi Ishaq 'Alaihissalam", "Nabi Luth 'Alaihissalam"], "Nabi Zakariya 'Alaihissalam berdoa dengan penuh harap dan dikaruniai Nabi Yahya 'Alaihissalam."],
     ["Nabi yang menerima Kitab Injil adalah …", "Nabi Isa 'Alaihissalam", ["Nabi Musa 'Alaihissalam", "Nabi Dawud 'Alaihissalam", "Nabi Muhammad Sholallohu 'Alaihi Wasallam"], "Kitab Injil diturunkan kepada Nabi Isa 'Alaihissalam."],
     ["Nabi dan rasul terakhir yang menerima Al Qur'an adalah …", "Nabi Muhammad Sholallohu 'Alaihi Wasallam", ["Nabi Isa 'Alaihissalam", "Nabi Musa 'Alaihissalam", "Nabi Ibrahim 'Alaihissalam"], "Nabi Muhammad Sholallohu 'Alaihi Wasallam adalah penutup para nabi dan rasul."],

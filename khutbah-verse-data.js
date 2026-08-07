@@ -81,7 +81,7 @@ window.PAIBP_KHUTBAH_VERSES = Object.freeze({
     "surahArabic": "البقرة",
     "ayah": 153,
     "text": "يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ ٱسۡتَعِينُواْ بِٱلصَّبۡرِ وَٱلصَّلَوٰةِۚ إِنَّ ٱللَّهَ مَعَ ٱلصَّـٰبِرِينَ",
-    "translation": "Wahai orang-orang yang beriman! Mohonlah pertolongan (kepada Allah) dengan sabar dan salat. Sungguh, Allah beserta orang-orang yang sabar"
+    "translation": "Wahai orang-orang yang beriman! Mohonlah pertolongan (kepada Allah) dengan sabar dan sholat. Sungguh, Allah beserta orang-orang yang sabar"
   },
   "39:53": {
     "surah": "Az-Zumar",
@@ -102,7 +102,7 @@ window.PAIBP_KHUTBAH_VERSES = Object.freeze({
     "surahArabic": "العنكبوت",
     "ayah": 45,
     "text": "ٱتۡلُ مَآ أُوحِيَ إِلَيۡكَ مِنَ ٱلۡكِتَٰبِ وَأَقِمِ ٱلصَّلَوٰةَۖ إِنَّ ٱلصَّلَوٰةَ تَنۡهَىٰ عَنِ ٱلۡفَحۡشَآءِ وَٱلۡمُنكَرِۗ وَلَذِكۡرُ ٱللَّهِ أَكۡبَرُۗ وَٱللَّهُ يَعۡلَمُ مَا تَصۡنَعُونَ",
-    "translation": "Bacalah Kitab (Alquran) yang telah diwahyukan kepadamu (Muhammad) dan laksanakanlah salat. Sesungguhnya salat itu mencegah dari (perbuatan) keji dan mungkar. Dan (ketahuilah) mengingat Allah (salat) itu lebih besar (keutamaannya dari ibadah yang lain). Allah mengetahui apa yang kamu kerjakan"
+    "translation": "Bacalah Kitab (Alquran) yang telah diwahyukan kepadamu (Muhammad) dan laksanakanlah sholat. Sesungguhnya sholat itu mencegah dari (perbuatan) keji dan mungkar. Dan (ketahuilah) mengingat Allah (sholat) itu lebih besar (keutamaannya dari ibadah yang lain). Allah mengetahui apa yang kamu kerjakan"
   },
   "2:183": {
     "surah": "Al-Baqarah",
@@ -144,7 +144,7 @@ window.PAIBP_KHUTBAH_VERSES = Object.freeze({
     "surahArabic": "الشورى",
     "ayah": 38,
     "text": "وَٱلَّذِينَ ٱسۡتَجَابُواْ لِرَبِّهِمۡ وَأَقَامُواْ ٱلصَّلَوٰةَ وَأَمۡرُهُمۡ شُورَىٰ بَيۡنَهُمۡ وَمِمَّا رَزَقۡنَٰهُمۡ يُنفِقُونَ",
-    "translation": "dan (bagi) orang-orang yang menerima (mematuhi) seruan Tuhan dan melaksanakan salat, sedang urusan mereka (diputuskan) dengan musyawarah antara mereka; dan mereka menginfakkan sebagian dari rezeki yang Kami berikan kepada mereka"
+    "translation": "dan (bagi) orang-orang yang menerima (mematuhi) seruan Tuhan dan melaksanakan sholat, sedang urusan mereka (diputuskan) dengan musyawarah antara mereka; dan mereka menginfakkan sebagian dari rezeki yang Kami berikan kepada mereka"
   },
   "103:1": {
     "surah": "Al-'Asr",

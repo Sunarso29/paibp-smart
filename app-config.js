@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v81-classroom-access-plus-v80-worship-v79-quran",
+  realtimeManagedBy: "v82-cp2025-cleanup-plus-v81-classroom",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "81";
+  const VERSION = "82";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -348,7 +348,7 @@ window.PAIBP_CONFIG = Object.freeze({
       Promise.all([
         loadWorkspaceCore(),
         script("teacher-cat-v72.js"),
-        script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v56.js")).catch(() => false)
+        script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v56.js")).then(() => script("cp2025-cleanup-v82.js")).catch(() => false)
       ]).then(() => {
         setPortalMode("active", "guru");
         document.documentElement.dataset.teacherPortal = "full-v80";

@@ -14,7 +14,7 @@
       id:"wudhu", title:"Wudhu", kicker:"BERSUCI", color:"#168bd2", icon:"💧",
       summary:"Visual urutan wudhu dari niat, membasuh anggota wudhu, sampai doa.",
       steps:[
-        ["Niat dan basmalah","Berniat wudhu karena Allah Subhanahu Wata'ala di dalam hati, kemudian membaca basmalah."],
+        ["Niat dan basmalah","Berniat wudhu karena Alloh Subhanahu Wata'ala di dalam hati, kemudian membaca basmalah."],
         ["Telapak tangan","Membasuh kedua telapak tangan dan membersihkan sela-sela jari."],
         ["Berkumur dan hidung","Berkumur dan membersihkan hidung dengan air secara wajar."],
         ["Membasuh wajah","Membasuh seluruh wajah secara merata."],
@@ -79,7 +79,7 @@
         ["Kenali jenis zakat","Bedakan zakat fitrah dan zakat mal beserta ketentuannya."],
         ["Periksa syarat","Periksa syarat, ukuran, nishab, dan haul bila berlaku."],
         ["Hitung kewajiban","Hitung jumlah yang harus ditunaikan secara benar."],
-        ["Niat","Berniat menunaikan zakat karena Allah Subhanahu Wata'ala."],
+        ["Niat","Berniat menunaikan zakat karena Alloh Subhanahu Wata'ala."],
         ["Salurkan","Serahkan melalui amil atau kepada mustahik yang berhak sesuai ketentuan."],
         ["Catat dan evaluasi","Pastikan jumlah serta penyaluran tercatat dengan tertib."]
       ]
@@ -114,7 +114,7 @@
       id:"aqiqah", title:"Aqiqah", kicker:"AQIQAH", color:"#c94f78", icon:"👶",
       summary:"Visual persiapan aqiqah, penyembelihan, pemberian nama, mencukur rambut, dan berbagi makanan.",
       steps:[
-        ["Niat dan persiapan","Keluarga berniat melaksanakan aqiqah sebagai bentuk syukur kepada Allah Subhanahu Wata'ala."],
+        ["Niat dan persiapan","Keluarga berniat melaksanakan aqiqah sebagai bentuk syukur kepada Alloh Subhanahu Wata'ala."],
         ["Periksa waktu dan kemampuan","Pelaksanaan disesuaikan dengan tuntunan, kondisi, dan kemampuan keluarga."],
         ["Pilih hewan yang layak","Pastikan hewan sehat dan memenuhi ketentuan yang dipelajari."],
         ["Penyembelihan syar'i","Penyembelihan dilakukan oleh orang yang mampu dengan cara yang baik, aman, dan sesuai tuntunan."],

@@ -58,7 +58,7 @@
       intro: "Simulasi ini membantu memahami urutan wudhu, bagian yang wajib diperhatikan, adab, serta kesalahan yang perlu dihindari. Praktik langsung tetap perlu dibimbing guru atau orang yang memahami tata cara wudhu.",
       note: "Gunakan air secukupnya, pastikan air mengenai anggota wudhu, dan jangan menganggap animasi sebagai pengganti praktik nyata.",
       steps: [
-        ["Niat dan basmalah","Berniat untuk bersuci karena Allah Subhanahu Wata'ala, kemudian membaca basmalah."],
+        ["Niat dan basmalah","Berniat untuk bersuci karena Alloh Subhanahu Wata'ala, kemudian membaca basmalah."],
         ["Mencuci kedua telapak tangan","Cuci kedua telapak tangan dan sela-sela jari dengan bersih."],
         ["Berkumur dan membersihkan hidung","Berkumur, memasukkan air ke hidung dengan wajar, lalu mengeluarkannya."],
         ["Membasuh wajah","Basuh seluruh wajah dari batas tumbuh rambut sampai dagu dan dari telinga ke telinga."],
@@ -113,7 +113,7 @@
         ["Memeriksa syarat","Pastikan kepemilikan, nisab, haul, dan syarat lain sesuai jenis zakat."],
         ["Menghitung harta","Catat nilai harta yang menjadi objek zakat secara jujur dan terpisah dari kebutuhan pokok."],
         ["Menentukan kadar","Gunakan kadar yang sesuai dengan jenis zakat dan dasar perhitungannya."],
-        ["Menetapkan niat","Niatkan zakat sebagai ibadah karena Allah Subhanahu Wata'ala."],
+        ["Menetapkan niat","Niatkan zakat sebagai ibadah karena Alloh Subhanahu Wata'ala."],
         ["Memilih penerima","Salurkan kepada golongan yang berhak atau melalui lembaga yang dapat dipertanggungjawabkan."],
         ["Menyimpan bukti","Simpan catatan perhitungan dan penyaluran untuk transparansi pribadi atau lembaga."],
         ["Melanjutkan kepedulian","Zakat tidak menggantikan sedekah, infak, dan tanggung jawab sosial lainnya."]
@@ -128,7 +128,7 @@
       steps: [
         ["Persiapan dan ilmu","Pelajari syarat, rukun, wajib, larangan ihram, kesehatan, dokumen, dan tata perjalanan."],
         ["Miqat dan ihram","Bersiap di miqat, berniat ihram sesuai ibadah, lalu menjaga larangan ihram."],
-        ["Talbiyah","Perbanyak talbiyah dengan memahami makna ketundukan kepada Allah Subhanahu Wata'ala."],
+        ["Talbiyah","Perbanyak talbiyah dengan memahami makna ketundukan kepada Alloh Subhanahu Wata'ala."],
         ["Thawaf","Mengelilingi Ka'bah tujuh putaran sesuai arah dan ketentuan, dimulai dari Hajar Aswad."],
         ["Sa'i","Berjalan tujuh kali antara Shafa dan Marwah dengan dzikir dan doa."],
         ["Wukuf dan rangkaian haji","Untuk haji, laksanakan wukuf di Arafah, mabit, dan rangkaian berikutnya sesuai jadwal."],

@@ -10,7 +10,7 @@
       ayah: 102,
       focus: "Takwa tidak berhenti pada ucapan, tetapi tampak dalam ketaatan, kejujuran, dan kehati-hatian.",
       points: [
-        "Takwa menuntun seorang muslim untuk menjaga hubungan dengan Allah Subhanahu Wata'ala dan sesama manusia.",
+        "Takwa menuntun seorang muslim untuk menjaga hubungan dengan Alloh Subhanahu Wata'ala dan sesama manusia.",
         "Ketaatan yang konsisten lebih membekas daripada semangat besar yang hanya berlangsung sesaat.",
         "Setiap keputusan perlu diuji dengan kehalalan, kemaslahatan, dan tanggung jawabnya.",
       ],
@@ -172,7 +172,7 @@
     },
     {
       id: "taubat",
-      title: "Jangan Berputus Asa dari Rahmat Allah Subhanahu Wata'ala",
+      title: "Jangan Berputus Asa dari Rahmat Alloh Subhanahu Wata'ala",
       category: "Penguatan Diri",
       surah: 39,
       ayah: 53,
@@ -316,7 +316,7 @@
       category: "Ekonomi Umat",
       surah: 65,
       ayah: 2,
-      focus: "Takwa mendorong usaha halal, tanggung jawab, dan keyakinan kepada pertolongan Allah Subhanahu Wata'ala.",
+      focus: "Takwa mendorong usaha halal, tanggung jawab, dan keyakinan kepada pertolongan Alloh Subhanahu Wata'ala.",
       points: [
         "Rezeki bukan hanya jumlah harta, tetapi juga kesehatan, ketenangan, dan keluarga.",
         "Kehalalan cara memperoleh harta tidak boleh dikorbankan.",
@@ -424,7 +424,7 @@
     "Semoga perubahan kecil yang dijaga dengan ikhlas menjadi jalan datangnya kebaikan yang lebih luas.",
     "Yang dinilai bukan hanya rencana kita, tetapi juga kesungguhan untuk melaksanakannya.",
     "Jangan meremehkan kebaikan sederhana yang dilakukan secara terus-menerus.",
-    "Mintalah pertolongan Allah Subhanahu Wata'ala sambil terus memperbaiki usaha.",
+    "Mintalah pertolongan Alloh Subhanahu Wata'ala sambil terus memperbaiki usaha.",
     "Mari pulang dengan satu niat yang jelas dan satu tindakan yang benar-benar dilaksanakan.",
     "Semoga ilmu yang didengar menjadi hujah yang membimbing, bukan sekedar informasi yang dilupakan.",
     "Perbaikan tidak harus menunggu sempurna, tetapi harus dimulai dengan jujur.",
@@ -432,7 +432,7 @@
     "Kebaikan pribadi akan semakin bermakna ketika menghadirkan ketenteraman bagi sesama.",
     "Semoga rumah, tempat kerja, dan lingkungan kita menjadi saksi tumbuhnya amal saleh.",
     "Mari mengevaluasi kembali komitmen ini sebelum Jum'at berikutnya.",
-    "Semoga Allah Subhanahu Wata'ala melindungi kita dari ilmu yang tidak diamalkan.",
+    "Semoga Alloh Subhanahu Wata'ala melindungi kita dari ilmu yang tidak diamalkan.",
     "Setiap amanah memiliki waktunya; jangan menunda kebaikan yang sudah mampu dilakukan.",
     "Persatuan akan terjaga ketika hak, adab, dan keadilan ditempatkan dengan benar.",
     "Semoga kesulitan yang dihadapi tidak menjauhkan kita dari petunjuk.",
@@ -461,7 +461,7 @@
   const weeklyEmphases = [
     "Tekankan perbaikan yang dapat diukur, bukan sekedar keinginan yang tidak pernah dijalankan.",
     "Dahulukan kewajiban sebelum memperbanyak hal tambahan.",
-    "Jaga keseimbangan antara hak Allah Subhanahu Wata'ala, keluarga, pekerjaan, dan masyarakat.",
+    "Jaga keseimbangan antara hak Alloh Subhanahu Wata'ala, keluarga, pekerjaan, dan masyarakat.",
     "Pastikan cara yang ditempuh sama baiknya dengan tujuan yang ingin dicapai.",
     "Libatkan keluarga agar kebaikan lebih mudah dipertahankan.",
     "Gunakan teknologi sebagai alat bantu, bukan penguasa waktu dan perhatian.",

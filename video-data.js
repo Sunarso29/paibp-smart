@@ -21,8 +21,8 @@
       ["bhtbvivNAD8", "Sejarah Daulah Umayyah", "Pembelajaran SKI Kemenag"],
     ],
     "VII-6": [
-      ["X9UEVsbz1pw", "Gambaran Besarnya Kekuasaan Allah Subhanahu Wata'ala", "Yufid.TV"],
-      ["gu0NqImCQvM", "Allah Subhanahu Wata'ala Menjaga Alam Semesta", "Yufid.TV"],
+      ["X9UEVsbz1pw", "Gambaran Besarnya Kekuasaan Alloh Subhanahu Wata'ala", "Yufid.TV"],
+      ["gu0NqImCQvM", "Alloh Subhanahu Wata'ala Menjaga Alam Semesta", "Yufid.TV"],
     ],
     "VII-7": [
       ["Mz5Hbt-8MFA", "Pentingnya Muhasabah dalam Perspektif Al Qur'an", "TV Muhammadiyah"],
@@ -45,8 +45,8 @@
       ["jIuvm1t7h3o", "Menjaga Lingkungan melalui Green Qurban", "TV Muhammadiyah"],
     ],
     "VIII-2": [
-      ["8Uq4IEl4E94", "Berapa Kitab yang Diturunkan Allah Subhanahu Wata'ala?", "Yufid.TV"],
-      ["3tkCq74uv44", "Cara Beriman kepada Kitab Allah Subhanahu Wata'ala", "Yufid.TV"],
+      ["8Uq4IEl4E94", "Berapa Kitab yang Diturunkan Alloh Subhanahu Wata'ala?", "Yufid.TV"],
+      ["3tkCq74uv44", "Cara Beriman kepada Kitab Alloh Subhanahu Wata'ala", "Yufid.TV"],
     ],
     "VIII-3": [
       ["A0c4Cky8CdU", "Keutamaan Pedagang yang Jujur dan Amanah", "Yufid.TV"],
@@ -65,7 +65,7 @@
       ["M1rfdWbIAhY", "Apa, Mengapa, dan Bagaimana Moderasi Beragama", "Kementerian Agama RI"],
     ],
     "VIII-7": [
-      ["DSX3NaYmQIw", "Tanda Beriman kepada Rasul Allah Subhanahu Wata'ala", "Yufid.TV"],
+      ["DSX3NaYmQIw", "Tanda Beriman kepada Rasul Alloh Subhanahu Wata'ala", "Yufid.TV"],
       ["KVG1MlTLlow", "Iman kepada Nabi dan Rasul", "Kajian Hadits Jibril"],
     ],
     "VIII-8": [

@@ -310,7 +310,7 @@
 
   const MODULES=[
     {id:"wudhu",title:"Wudhu",icon:"💧",summary:"Sembilan tahap wudhu sesuai urutan visual.",poster:"assets/simulasi/wudhu-poster-v53.webp",steps:[
-      ["Niat dan basmalah","Berniat wudhu karena Allah Subhanahu Wata'ala lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
+      ["Niat dan basmalah","Berniat wudhu karena Alloh Subhanahu Wata'ala lalu membaca basmalah.","بِسْمِ اللّٰهِ","Bismillāh"],
       ["Membasuh telapak tangan","Membasuh kedua telapak tangan sampai pergelangan sebanyak tiga kali."],
       ["Berkumur","Mengambil air dengan tangan kanan, berkumur, kemudian mengeluarkannya."],
       ["Membersihkan hidung","Memasukkan air ke hidung secukupnya lalu mengeluarkannya."],
@@ -334,7 +334,7 @@
       ["Imam di depan","Imam berdiri paling depan menghadap kiblat."],["Luruskan shaf","Makmum merapatkan dan meluruskan barisan."],["Ikuti imam","Makmum bergerak setelah imam dan tidak mendahuluinya."],["Makmum masbuk","Menyempurnakan rakaat setelah imam salam."]
     ]},
     {id:"tayamum",title:"Tayamum",icon:"🪨",summary:"Pengganti wudhu ketika air tidak tersedia atau membahayakan.",steps:[
-      ["Pastikan sebab","Tidak ada air atau penggunaan air membahayakan."],["Niat","Berniat tayamum karena Allah Subhanahu Wata'ala."],["Sentuhkan tangan","Menyentuhkan telapak tangan pada debu yang suci."],["Usap wajah","Mengusap seluruh wajah satu kali."],["Usap tangan","Mengusap kedua tangan secara tertib."]
+      ["Pastikan sebab","Tidak ada air atau penggunaan air membahayakan."],["Niat","Berniat tayamum karena Alloh Subhanahu Wata'ala."],["Sentuhkan tangan","Menyentuhkan telapak tangan pada debu yang suci."],["Usap wajah","Mengusap seluruh wajah satu kali."],["Usap tangan","Mengusap kedua tangan secara tertib."]
     ]},
     {id:"puasa",title:"Puasa",icon:"🌙",summary:"Alur puasa dari niat sampai berbuka.",steps:[
       ["Niat","Berniat puasa sesuai jenis dan waktunya."],["Sahur","Makan sahur secukupnya."],["Menahan diri","Menahan makan, minum, dan pembatal puasa."],["Menjaga akhlak","Menjaga ucapan serta memperbanyak amal baik."],["Berbuka","Berbuka ketika waktu Maghrib tiba."]
