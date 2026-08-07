@@ -25,8 +25,7 @@
     const panel = teacherPanel();
     const active = $('[data-teacher-doc="cp"][aria-pressed="true"]', panel);
     if (active) return true;
-    const selected = $('[data-teacher-doc="cp"].active,[data-teacher-doc="cp"].is-active', panel);
-    return Boolean(selected);
+    return Boolean($('[data-teacher-doc="cp"].active,[data-teacher-doc="cp"].is-active', panel));
   }
 
   function oldModeActive() {
@@ -41,25 +40,18 @@
 
   function sourceDocumentHtml() {
     return `
-      <section class="cp26-source-shell" data-cp2026-source="${BUILD}">
-        <div class="cp26-source-toolbar">
-          <div>
-            <span>CP 2026 • BERDASARKAN FILE LAMPIRAN</span>
-            <strong>${esc(SOURCE_NAME)}</strong>
-          </div>
-          <small>Struktur dan rumusan CP mengikuti sumber lampiran; tidak memakai ringkasan operasional buatan aplikasi.</small>
-        </div>
-        <article class="cp26-source-paper">
-          <h2>CAPAIAN PEMBELAJARAN (CP)</h2>
-          <p class="cp26-regulation"><strong>A. Capaian Pembelajaran (CP) Berdasarkan</strong> ${esc(SOURCE.regulation)}</p>
-          <p>${esc(SOURCE.intro)}</p>
+      <article class="cp26-source-paper" data-cp2026-source="${BUILD}" data-source-name="${esc(SOURCE_NAME)}">
+        <h2>CAPAIAN PEMBELAJARAN (CP)</h2>
+        <p class="cp26-regulation"><strong>A. Capaian Pembelajaran (CP) Berdasarkan</strong> ${esc(SOURCE.regulation)}</p>
+        <p>${esc(SOURCE.intro)}</p>
+        <div class="cp26-source-elements">
           ${SOURCE.elements.map(([title, text]) => `
             <section class="cp26-source-element">
               <h3>${esc(title)}</h3>
               <p>${esc(text)}</p>
             </section>`).join("")}
-        </article>
-      </section>`;
+        </div>
+      </article>`;
   }
 
   function render(force = false) {
