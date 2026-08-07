@@ -1,0 +1,117 @@
+name: V82 canonical CP2025 identity
+
+on:
+  push:
+    paths:
+      - '.github/workflows/v82-canonical-identity.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  canonicalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install python-docx openpyxl
+      - name: Canonicalize school author and remove signature blocks
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, json, hashlib
+          from docx import Document
+          from openpyxl import load_workbook
+
+          ROOT=Path('.')
+          SCHOOL='SMP Negeri 1 Susukan'
+          AUTHOR='Sunarso, S.Pd.I, Gr'
+          school_line=re.compile(r'^\s*(Sekolah|Satuan\s+Pendidikan)\s*[:：]\s*.*$',re.I)
+          author_line=re.compile(r'^\s*Penyusun\s*[:：]\s*.*$',re.I)
+          sign_line=re.compile(r'(?:^|\b)(Mengetahui\s*,?|Kepala\s+SMP\s+Negeri|Guru\s+Mata\s+Pelajaran\s+PAI(?:\s+dan\s+Budi\s+Pekerti)?|NIP\.?\s*\d{8,}|Demak\s*,\s*Juli\s*2026)(?:$|\b)',re.I)
+          def canonical(text):
+              if not isinstance(text,str): return text
+              stripped=' '.join(text.split())
+              m=school_line.match(stripped)
+              if m: return f'{m.group(1)} : {SCHOOL}'
+              if author_line.match(stripped): return f'Penyusun : {AUTHOR}'
+              return text
+          def remove_p(p):
+              el=p._element;parent=el.getparent()
+              if parent is not None: parent.remove(el)
+          def remove_t(t):
+              el=t._element;parent=el.getparent()
+              if parent is not None: parent.remove(el)
+          def set_p(p,text):
+              if p.text==text:return
+              if p.runs:
+                  p.runs[0].text=text
+                  for r in p.runs[1:]:r.text=''
+              else:p.add_run(text)
+          def ttext(t):return ' '.join(c.text for r in t.rows for c in r.cells)
+          def clean_table(t):
+              if sign_line.search(' '.join(ttext(t).split())): remove_t(t);return
+              for row in list(t.rows):
+                  for cell in row.cells:
+                      for p in list(cell.paragraphs):
+                          txt=' '.join(p.text.split())
+                          if sign_line.search(txt): remove_p(p)
+                          else:set_p(p,canonical(p.text))
+                      for nt in list(cell.tables):clean_table(nt)
+                  if not any(' '.join(c.text.split()) for c in row.cells):
+                      try:t._tbl.remove(row._tr)
+                      except:pass
+              if not ' '.join(ttext(t).split()):remove_t(t)
+          def clean_container(c):
+              for p in list(c.paragraphs):
+                  txt=' '.join(p.text.split())
+                  if sign_line.search(txt):remove_p(p)
+                  else:set_p(p,canonical(p.text))
+              for t in list(c.tables):clean_table(t)
+          for path in ROOT.glob('cp2025-source-*.docx'):
+              d=Document(path);clean_container(d)
+              for s in d.sections:clean_container(s.header);clean_container(s.footer)
+              d.save(path)
+          for path in ROOT.glob('cp2025-source-*.xlsx'):
+              wb=load_workbook(path);changed=False
+              for ws in wb.worksheets:
+                  for row in ws.iter_rows():
+                      for cell in row:
+                          if isinstance(cell.value,str) and not cell.value.startswith('='):
+                              v=canonical(cell.value)
+                              if v!=cell.value:cell.value=v;changed=True
+              if changed:wb.save(path)
+          for path in ROOT.glob('cp2025-*'):
+              if not path.is_file() or path.suffix.lower() not in {'.js','.json','.html','.txt','.md'}:continue
+              text=path.read_text(encoding='utf-8')
+              text=re.sub(r'(?im)(^|["\'>])\s*(Sekolah|Satuan\s+Pendidikan)\s*[:：]\s*[^<"\\n]*',lambda m:m.group(1)+m.group(2)+' : '+SCHOOL,text)
+              text=re.sub(r'(?im)(^|["\'>])\s*Penyusun\s*[:：]\s*[^<"\\n]*',lambda m:m.group(1)+'Penyusun : '+AUTHOR,text)
+              path.write_text(text,encoding='utf-8')
+          def patch(records):
+              for rec in records:
+                  f=ROOT/rec.get('file','')
+                  if f.exists():
+                      b=f.read_bytes();rec['size']=len(b);rec['sha256']=hashlib.sha256(b).hexdigest()
+          p=ROOT/'cp2025-manifest-v47.json'
+          if p.exists():
+              data=json.loads(p.read_text(encoding='utf-8'));patch(data.get('records',[]));p.write_text(json.dumps(data,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+          p=ROOT/'cp2025-manifest-v48.js'
+          if p.exists():
+              raw=p.read_text(encoding='utf-8');prefix='window.PAIBP_CP2025_V48_MANIFEST = Object.freeze(';data=json.loads(raw[len(prefix):].rstrip()[:-2]);patch(data.get('records',[]));p.write_text(prefix+json.dumps(data,ensure_ascii=False,separators=(',',':'))+');\n',encoding='utf-8')
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          rm -f .github/workflows/v82-canonical-identity.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V82 canonicalize school and author fields in all CP2025 documents"
+          git push
