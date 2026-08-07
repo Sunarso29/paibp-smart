@@ -1,0 +1,33 @@
+(() => {
+  "use strict";
+  const V="72", CFG=window.PAIBP_CONFIG||{}, API=String(CFG.syncEndpoint||"").replace(/\/+$/,"");
+  const READ=String(CFG.syncReadKey||"");
+  const CLASSES=["VII","VIII","IX"].flatMap(g=>["A","B","C","D","E","F","G","H"].map(s=>({code:g+s,label:g+" "+s})));
+  const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const editor=/kendali-editor\.html$/i.test(location.pathname)||String(document.body?.dataset.privateGateway||"").toLowerCase()==="editor";
+  let classes=[]; let busy=false; let timer=0;
+
+  function teacher(){try{return JSON.parse(localStorage.getItem("paibp-smart-teacher-identity-v1")||"{}")||{}}catch{return{}}}
+  function hash(v){let h=2166136261;for(const ch of String(v||"")){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
+  function scope(){if(editor)return"editor-global";const t=teacher();return`guru-${hash(`${String(t.name||t.teacherName||"").toLowerCase()}|${String(t.workUnit||t.school||t.teacherSchool||"").toLowerCase()}`)}`}
+  async function get(action,p={},timeout=18000){
+    if(!API)throw new Error("Endpoint belum tersedia");const u=new URL(API);u.searchParams.set("action",action);u.searchParams.set("_",Date.now());Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,String(v??"")));
+    const c=new AbortController(),to=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(u,{cache:"no-store",headers:{Accept:"application/json"},signal:c.signal});const j=await r.json();if(!r.ok||j?.ok===false)throw new Error(j?.error||`HTTP ${r.status}`);return j}finally{clearTimeout(to)}
+  }
+  function cacheKey(){return editor?"paibp-v72-editor-classes":"paibp-v72-teacher-classes"}
+  function readCache(){try{return JSON.parse(localStorage.getItem(cacheKey())||"[]")||[]}catch{return[]}}
+  function saveCache(v){try{localStorage.setItem(cacheKey(),JSON.stringify(v))}catch{}}
+  function status(text,state){const n=$("#v72-status");if(n){n.textContent=text;n.dataset.state=state||""}}
+  function render(){const list=$("#v72-active-list");if(!list)return;const active=classes.filter(x=>x.active);list.innerHTML=active.length?active.map(x=>`<article><div><strong>${esc(x.classLabel||x.classCode)}</strong><small>${x.deadlineEpoch?`Berakhir ${new Date(Number(x.deadlineEpoch)).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}`:"CAT aktif"}</small></div><button type="button" data-v72-stop="${esc(x.classCode)}">Matikan sekarang</button></article>`).join(""):"<p class='v72-empty'>Tidak ada kelas CAT aktif.</p>";updateTime()}
+  function updateTime(){const sel=$("#v72-class"),out=$("#v72-time");if(!sel||!out)return;const x=classes.find(c=>c.classCode===sel.value&&c.active);out.textContent=x?`Mulai ${x.startedAtEpoch?new Date(Number(x.startedAtEpoch)).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}):"—"} • Berakhir ${x.deadlineEpoch?new Date(Number(x.deadlineEpoch)).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}):"—"}`:"Kelas terpilih sedang nonaktif"}
+  async function refresh(silent=false){if(busy)return;busy=true;try{const r=await get("classListV66",{readKey:READ,actorScope:scope(),actorRole:editor?"editor":"teacher"});classes=Array.isArray(r.classes)?r.classes:[];saveCache(classes);render();status(`Server tersambung • Backend ${r.version||"66"}`,"online")}catch(e){const old=readCache();if(old.length){classes=old;render();status("Sinkronisasi tertunda • data terakhir ditampilkan","stale")}else status(e?.name==="AbortError"?"Server lambat • coba lagi":"Server belum tersambung","error");if(!silent)console.warn("V72 CAT",e)}finally{busy=false}}
+  async function command(cmd,classCode){const t=teacher(),dur=Math.max(5,Math.min(240,Number($("#v72-duration")?.value||45)));status("Mengirim perintah…","pending");const r=await get("classControlV66",{readKey:READ,command:cmd,classCode,durationMinutes:dur,actorScope:scope(),actorRole:editor?"editor":"teacher",teacherName:t.name||t.teacherName||(editor?"Editor":"Guru"),teacherSchool:t.workUnit||t.school||t.teacherSchool||"SMP Negeri 1 Susukan"},22000);await refresh(true);return r}
+  function linkFor(code){const u=new URL("index.html",document.baseURI);u.searchParams.set("cat","1");u.searchParams.set("kelas",code);u.searchParams.set("v",V);return u.href}
+  function mount(){if($("#v72-cat"))return;const host=$("main")||document.body;const p=document.createElement("section");p.id="v72-cat";p.innerHTML=`<header><div><span>${editor?"KENDALI EDITOR":"KENDALI GURU"}</span><h2>CAT Kelas Aktif</h2><p>Ringan, langsung, dan hanya memuat kendali kelas.</p></div><b id="v72-status">Menghubungkan server…</b></header><div class="v72-grid"><label>Kelas<select id="v72-class">${CLASSES.map(c=>`<option value="${c.code}">${c.label}</option>`).join("")}</select></label><label>Durasi<div class="v72-duration"><input id="v72-duration" type="number" min="5" max="240" value="45"><span>menit</span></div></label><div class="v72-actions"><button data-cmd="link">Salin Tautan</button><button data-cmd="activate">Aktifkan CAT</button><button data-cmd="reset">Ulang Timer</button><button data-cmd="stop">Matikan Kelas</button>${editor?'<button data-cmd="stopAll">Matikan Semua CAT</button>':""}</div></div><p id="v72-time">Kelas terpilih sedang nonaktif</p><div class="v72-active"><h3>Kelas Aktif</h3><div id="v72-active-list"><p class="v72-empty">Memuat…</p></div></div>`;host.prepend(p);
+    $("#v72-class").addEventListener("change",updateTime);
+    p.addEventListener("click",async e=>{const b=e.target.closest("button[data-cmd],button[data-v72-stop]");if(!b)return;if(b.disabled)return;try{b.disabled=true;if(b.dataset.v72Stop){await command("stop",b.dataset.v72Stop)}else{const cmd=b.dataset.cmd,code=$("#v72-class").value;if(cmd==="link"){const link=linkFor(code);try{await navigator.clipboard.writeText(link);status("Tautan kelas disalin","online")}catch{window.prompt("Salin tautan kelas:",link)}}else if(cmd==="stopAll"){await command("stopAll","VIIA")}else await command(cmd,code)}}catch(x){status(x?.name==="AbortError"?"Server lambat • perintah belum terkonfirmasi":(x.message||"Perintah gagal"),"error")}finally{b.disabled=false}});
+    refresh(); timer=setInterval(()=>{if(!document.hidden)refresh(true)},45000);
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh(true)},{passive:true});
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mount,{once:true});else mount();
+})();
