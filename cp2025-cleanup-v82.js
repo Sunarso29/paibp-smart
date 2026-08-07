@@ -9,7 +9,7 @@
   function standardize(value) {
     let text = String(value ?? "");
     const rules = [
-      [/Penyusun\s*:\s*Sunarso\s*,?\s*S\.?Pd\.?I\.?\s*,?\s*Gr\.?/gi, "Penyusun : Sunarso, S.Pd.I, Gr"],
+      [/Penyusun\s*:\s*Sunarso\s*,?\s*S\.?Pd\.?I\.?\s*,?\s*Gr\.?/gi, "Penyusun : Sunarso, S.Pd.I, Grnarso, S.Pd.I, Gr"],
       [/\b(?:Allah|Alloh)\s+(?:Swt|SWT)\.?/gi, "Alloh Subhanahu Wata'ala"],
       [/\bAllah\s+Subhanahu\s+Wata[’']?ala\b/gi, "Alloh Subhanahu Wata'ala"],
       [/\b(?:s[a]lat|sh[a]lat)\b/gi, "sholat"],
