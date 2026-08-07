@@ -50,3 +50,5 @@ jobs:
           git add index.html akses-guru.html kendali-editor.html
           git commit -m "PAIBP SMART V73 remove forced legacy startup scripts"
           git push
+
+# trigger: 2026-08-07-v73
