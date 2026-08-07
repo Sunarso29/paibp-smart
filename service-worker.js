@@ -1,13 +1,5 @@
-const CACHE_NAME="paibp-smart-v70-static";
+const CACHE_NAME="paibp-smart-v72-static";
 const STATIC=["./logo-spensus.png","./assets/icons/icon-192.png"];
-self.addEventListener("install",event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.allSettled(STATIC.map(item=>cache.add(item)))))});
-self.addEventListener("activate",event=>event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)));await self.clients.claim()})()));
-self.addEventListener("message",event=>{if(event.data?.type==="CLEAR_ALL_CACHES")event.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(key=>caches.delete(key)))))});
-self.addEventListener("fetch",event=>{
-  if(event.request.method!=="GET")return;
-  const url=new URL(event.request.url);
-  if(url.origin!==self.location.origin)return;
-  const fresh=event.request.mode==="navigate"||["script","style","document"].includes(event.request.destination)||/app-config|cat-session|stability-v70|mobile-fix-v70|cleanup-v68|performance|service-worker|reset-cache|uji-server|compat-v67/i.test(url.pathname);
-  if(fresh){event.respondWith(fetch(new Request(event.request,{cache:"no-store"})).catch(()=>caches.match(event.request,{ignoreSearch:true})));return}
-  if(event.request.destination==="image")event.respondWith((async()=>{const cache=await caches.open(CACHE_NAME),hit=await cache.match(event.request);if(hit)return hit;try{const res=await fetch(event.request);if(res.ok)cache.put(event.request,res.clone());return res}catch{return Response.error()}})())
-});
+self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE_NAME).then(c=>Promise.allSettled(STATIC.map(x=>c.add(x)))))});
+self.addEventListener("activate",e=>e.waitUntil((async()=>{const ks=await caches.keys();await Promise.all(ks.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)));await self.clients.claim()})()));
+self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;const fresh=e.request.mode==="navigate"||["script","style","document"].includes(e.request.destination)||/app-config|teacher-cat-v72|stable-v72|net-v71|cat-session|mobile-fix-v70|service-worker/i.test(u.pathname);if(fresh){e.respondWith(fetch(new Request(e.request,{cache:"no-store"})).catch(()=>caches.match(e.request,{ignoreSearch:true})));return}if(e.request.destination==="image")e.respondWith((async()=>{const c=await caches.open(CACHE_NAME),h=await c.match(e.request);if(h)return h;try{const r=await fetch(e.request);if(r.ok)c.put(e.request,r.clone());return r}catch{return Response.error()}})())});
