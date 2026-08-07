@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v78-quran-kemenag-local-plus-v76-root-fix",
+  realtimeManagedBy: "v79-quran-feature-restore-plus-v76-root-fix",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "78";
+  const VERSION = "79";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -89,8 +89,8 @@ window.PAIBP_CONFIG = Object.freeze({
   function menuShell() {
     const button = document.querySelector(".menu-btn");
     const nav = document.querySelector(".links");
-    if (!button || !nav || button.dataset.v78) return;
-    button.dataset.v78 = "1";
+    if (!button || !nav || button.dataset.v79) return;
+    button.dataset.v79 = "1";
     button.addEventListener("click", (event) => {
       event.stopImmediatePropagation();
       const open = !nav.classList.contains("open");
@@ -152,7 +152,7 @@ window.PAIBP_CONFIG = Object.freeze({
       document.documentElement.dataset.portalUi = "v39-colorful-restored";
       return true;
     })().catch((error) => {
-      console.warn("PAIBP V78 visual runtime", error);
+      console.warn("PAIBP V79 visual runtime", error);
       visualPromise = null;
       return false;
     });
@@ -203,7 +203,7 @@ window.PAIBP_CONFIG = Object.freeze({
       return true;
     })().catch((error) => {
       workspaceCorePromise = null;
-      console.error("PAIBP V78 workspace core", error);
+      console.error("PAIBP V79 workspace core", error);
       return false;
     });
     return workspaceCorePromise;
