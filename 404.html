@@ -6,21 +6,38 @@
 <meta content="Halaman tidak ditemukan pada situs PAIBP SMART SMP." name="description"/>
 <meta content="noindex" name="robots"/>
 <meta content="#087f68" name="theme-color"/>
-<title>Halaman Tidak Ditemukan — PAIBP SMART SMP</title>
+<title>PAIBP SMART SMP</title>
 <link href="/paibp-smart/logo-spensus.png" rel="icon" type="image/png"/>
 <link href="/paibp-smart/styles.css?v=37" rel="stylesheet"/>
 <link href="v29-ui.css?v=37" rel="stylesheet"/><link href="v30-ui.css?v=37" rel="stylesheet"/><link href="v32-ui.css?v=37" rel="stylesheet"/><link href="manifest.webmanifest" rel="manifest"/><link href="assets/icons/icon-192.png" rel="apple-touch-icon"/><link href="v33-multimapel.css?v=37" rel="stylesheet"/><link rel="stylesheet" href="v37-final.css?v=37"></head>
 <body>
 <main class="error-page" id="main">
 <div class="container">
-<article class="policy error-card">
+<article class="policy error-card" id="error-card">
 <img alt="Logo SMP Negeri 1 Susukan" class="error-logo" height="220" src="/paibp-smart/logo-spensus.png" width="224"/>
-<h1 class="error-code">404</h1>
-<h2>Halaman tidak ditemukan</h2>
-<p>Alamat yang Anda buka mungkin salah, sudah dipindahkan, atau tidak tersedia.</p>
+<h1 class="error-code" id="error-code">404</h1>
+<h2 id="error-title">Halaman tidak ditemukan</h2>
+<p id="error-text">Alamat yang Anda buka mungkin salah, sudah dipindahkan, atau tidak tersedia.</p>
 <a class="btn" href="/paibp-smart/">Kembali ke Beranda</a>
 </article>
 </div>
 </main>
+<script>
+(async()=>{
+  if(!/\/reset-cache-v\d+\.html$/i.test(location.pathname)) return;
+  document.getElementById('error-code').textContent='✓';
+  document.getElementById('error-title').textContent='Memulihkan PAIBP SMART';
+  document.getElementById('error-text').textContent='Membersihkan koneksi kelas dan sesi CAT lama…';
+  document.querySelector('#error-card a')?.remove();
+  const stale=/paibp-smart-(?:cat|class-context|student-session|policy-cache|focus-session)/i;
+  for(const store of [localStorage,sessionStorage]){
+    try{for(let i=store.length-1;i>=0;i--){const k=store.key(i)||'';if(k!=='paibp-smart-student-identity-v1'&&stale.test(k))store.removeItem(k)}}catch{}
+  }
+  try{for(const k of await caches.keys())await caches.delete(k)}catch{}
+  try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister()}catch{}
+  document.getElementById('error-text').textContent='Sesi lama sudah dibersihkan. Membuka versi terbaru…';
+  setTimeout(()=>location.replace('/paibp-smart/index.html?reset=1&v=69&t='+Date.now()),600);
+})();
+</script>
 <script src="v29-ui.js?v=37"></script><script src="v30-ui.js?v=37"></script></body>
 </html>
