@@ -1,18 +1,18 @@
 window.PAIBP_CONFIG = Object.freeze({
-  syncEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
+  syncEndpoint: "https://paibp-smart-api.sunarso29.workers.dev",
   syncReadKey: "b082937b2165453ba7d9f81ecac063b00310b339ec0643da",
   aiEndpoint: "https://script.google.com/macros/s/AKfycbyRxOw6oWDZUuQxwuqOMRO92KOwqOGF_9J6rPzSfxr9Dqy9kAQGJ9qZA6Tm_deUOgtjKg/exec",
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v67-direct-jsonp-final",
+  realtimeManagedBy: "v68-cloudflare-proxy",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "67";
+  const VERSION = "68";
   window.__PAIBP_VERSION__ = VERSION;
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
@@ -22,6 +22,7 @@ window.PAIBP_CONFIG = Object.freeze({
   function script(path){if(loaded.has(path))return loaded.get(path);if(exists('script[src]',path,"src"))return Promise.resolve();const p=new Promise((resolve,reject)=>{const n=document.createElement("script");n.src=new URL(`${path}?v=${VERSION}`,document.baseURI).href;n.async=false;n.onload=resolve;n.onerror=reject;document.head.append(n)});loaded.set(path,p);return p}
   function idle(task,timeout=2000){if("requestIdleCallback" in window)requestIdleCallback(task,{timeout});else setTimeout(task,Math.min(timeout,700))}
 
+  script("cleanup-v68.js").catch(()=>{});
   style("performance-v65.css");
   if (page === "about-spensus.html") return;
 
@@ -56,10 +57,10 @@ window.PAIBP_CONFIG = Object.freeze({
     }
   },{passive:true});
 
-  if(localStorage.getItem("paibp-smart-v67-cache-reset")!=="done")setTimeout(async()=>{
+  if(localStorage.getItem("paibp-smart-v68-cache-reset")!=="done")setTimeout(async()=>{
     try{
       const keys=await caches.keys();await Promise.all(keys.map((key)=>caches.delete(key)));
-      localStorage.setItem("paibp-smart-v67-cache-reset","done");
+      localStorage.setItem("paibp-smart-v68-cache-reset","done");
       const regs=await navigator.serviceWorker?.getRegistrations?.();regs?.forEach((reg)=>reg.update().catch(()=>{}));
     }catch{}
   },250);
