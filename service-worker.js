@@ -1,4 +1,4 @@
-const CACHE_NAME="paibp-smart-v83-source-visual-static";
+const CACHE_NAME="paibp-smart-v84-source-docs-static";
 const STATIC=["./logo-spensus.png","./assets/icons/icon-192.png"];
 
 self.addEventListener("install",(event)=>{
@@ -21,7 +21,7 @@ self.addEventListener("fetch",(event)=>{
 
   const fresh = event.request.mode==="navigate"
     || ["script","style","document"].includes(event.request.destination)
-    || /app-config|v38-upgrade|v39-upgrade|islamic-lite|islamic-data|islamic-learning|islamic-upgrade|khutbah|hadith|arabic|script\.js|teacher-cat|cat-session|net-v71|mobile-fix|stable-v72|quran-kemenag|quran-kemenag-runtime|worship-restore|learning-guard|cp2025-cleanup|cp2025-loader|cp2025-exact|cp2026-source|visual-v83|cat-session|service-worker/i.test(url.pathname);
+    || /app-config|v38-upgrade|v39-upgrade|islamic-lite|islamic-data|islamic-learning|islamic-upgrade|khutbah|hadith|arabic|script\.js|teacher-cat|cat-session|net-v71|mobile-fix|stable-v72|quran-kemenag|quran-kemenag-runtime|worship-restore|learning-guard|cp2025-cleanup|cp2025-loader|cp2025-exact|cp2026-source|visual-v83|visual-v84|teacher-docs-v84|teacher-v84|cat-session|service-worker/i.test(url.pathname);
 
   if(fresh){
     event.respondWith(

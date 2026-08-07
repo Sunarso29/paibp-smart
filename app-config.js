@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v83-source-cp2026-visual-plus-v82",
+  realtimeManagedBy: "v84-source-faithful-teacher-docs",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "83";
+  const VERSION = "84";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -57,6 +57,7 @@ window.PAIBP_CONFIG = Object.freeze({
   style("mobile-fix-v70.css");
   /* V83: lapisan visual saja; tidak mengubah konten atau struktur data. */
   style("visual-v83.css");
+  style("visual-v84.css");
   if (page === "index.html") {
     /* Pulihkan lapisan visual penuh warna yang dipakai pada V38/V39. */
     style("v38-upgrade.css");
@@ -344,13 +345,14 @@ window.PAIBP_CONFIG = Object.freeze({
     if (page === "about-spensus.html") return;
 
     if (page === "akses-guru.html") {
+      style("teacher-docs-v84.css");
       /* Portal Guru V80: muat kembali seluruh perangkat guru; CAT hanya salah satu alat. */
       setPortalMode("active", "guru");
       style("cp2025-v48.css");
       Promise.all([
         loadWorkspaceCore(),
         script("teacher-cat-v72.js"),
-        script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v56.js")).then(() => script("cp2025-cleanup-v82.js")).then(() => script("cp2026-source-v83.js")).catch(() => false)
+        script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v56.js")).then(() => script("cp2025-cleanup-v82.js")).catch(() => false)
       ]).then(() => {
         setPortalMode("active", "guru");
         document.documentElement.dataset.teacherPortal = "full-v80";
