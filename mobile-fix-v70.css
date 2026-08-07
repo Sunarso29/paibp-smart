@@ -1,0 +1,70 @@
+/* PAIBP SMART V70 — teacher panel + mobile Islamic repair */
+#v56-class-badge,#v56-class-context,#v59-class-context,#v60-class-context,#v61-class-context,#v63-class-context,[data-class-context],[class*="class-context"],[class*="connected-class"],[class*="kelas-terhubung"]{display:none!important}
+
+/* V69/V70 teacher panel — match current DOM names */
+#v65-cat-control{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important}
+#v65-cat-control .v65-control-grid{grid-template-columns:minmax(220px,1.15fr) minmax(150px,.65fr) minmax(320px,1.1fr)!important;align-items:end!important}
+#v65-cat-control .v65-control-grid>label>span{display:block;margin-bottom:6px;color:#16483e;font-size:.78rem;font-weight:900}
+#v65-cat-control .v65-control-grid>label>div{display:flex;align-items:stretch}
+#v65-cat-control .v65-control-grid>label>div input{min-width:0;flex:1;border-radius:13px 0 0 13px!important}
+#v65-cat-control .v65-control-grid>label>div em{display:grid;place-items:center;padding:0 11px;border:2px solid #d2e4dd;border-left:0;border-radius:0 13px 13px 0;background:#fff;color:#143e35;font-style:normal;font-weight:900}
+#v65-cat-control .v65-actions{display:flex!important;flex-wrap:wrap!important;gap:9px!important;align-items:center!important}
+#v65-cat-control .v65-actions button{min-height:44px!important;padding:9px 14px!important;border:0!important;border-radius:12px!important;color:#fff!important;font:inherit!important;font-weight:900!important;cursor:pointer!important;box-shadow:0 6px 14px rgba(4,57,47,.09)!important}
+#v65-cat-control .v65-actions button:nth-child(1){background:#cf8b0f!important}
+#v65-cat-control .v65-actions button:nth-child(2){background:#08745d!important}
+#v65-cat-control .v65-actions button:nth-child(3){background:#176a96!important}
+#v65-cat-control .v65-actions button:nth-child(4){background:#c4404d!important}
+#v65-cat-control .v65-actions button:nth-child(5){background:#9f2636!important}
+#v65-cat-control [data-active-wrap]{margin-top:18px;padding-top:15px;border-top:1px solid #d7e8e2}
+#v65-cat-control [data-active-wrap]>h3{margin:0 0 10px;color:#113f35;font-size:1.05rem}
+#v65-cat-control [data-classes]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#v65-cat-control [data-classes]>article{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;border:1px solid #d5e7e0;border-radius:14px;background:#fff}
+#v65-cat-control [data-classes]>article>div{display:grid;gap:2px}
+#v65-cat-control [data-classes] strong{color:#0a4f40}
+#v65-cat-control [data-classes] small{color:#607a73;font-size:.72rem}
+#v65-cat-control [data-classes] button{flex:0 0 auto;min-height:38px;padding:7px 10px;border:0;border-radius:10px;background:#c43d4c;color:#fff;font-weight:900;cursor:pointer}
+#v65-cat-control [data-time-info]{margin:12px 0 0;color:#315e54;font-weight:750}
+
+/* Mobile Islamic layout: remove tall colored strips and force clean cards */
+@media(max-width:760px){
+  #panel-islamic{overflow:hidden!important;padding:16px 12px!important}
+  #panel-islamic .panel-heading{display:grid!important;gap:10px!important;margin-bottom:16px!important}
+  #panel-islamic .islamic-app-layout{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;background:transparent!important}
+  #panel-islamic .islamic-menu{position:static!important;inset:auto!important;display:flex!important;flex-direction:row!important;gap:8px!important;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0 0 14px!important;padding:4px 2px 8px!important;overflow-x:auto!important;overflow-y:hidden!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;scroll-snap-type:x proximity!important;-webkit-overflow-scrolling:touch!important}
+  #panel-islamic .islamic-menu button{position:static!important;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;max-width:none!important;min-height:42px!important;height:auto!important;margin:0!important;padding:9px 12px!important;border:1px solid #d2e5dd!important;border-radius:999px!important;background:#fff!important;color:#174b40!important;font-size:.78rem!important;font-weight:850!important;line-height:1.2!important;transform:none!important;box-shadow:none!important;scroll-snap-align:start!important}
+  #panel-islamic .islamic-menu button[aria-pressed="true"]{border-color:#087f68!important;background:#087f68!important;color:#fff!important}
+  #panel-islamic .islamic-content{position:static!important;display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important;padding:0!important;overflow:visible!important;background:transparent!important;border:0!important;box-shadow:none!important}
+  #panel-islamic .islamic-content>[data-islamic-page]{position:static!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important;padding:0!important;transform:none!important;overflow:visible!important;background:transparent!important}
+  #panel-islamic .date-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;width:100%!important;margin:0 0 14px!important;padding:0!important;background:transparent!important}
+  #panel-islamic .date-card{position:static!important;display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:16px 18px!important;border:1px solid #d6e7e1!important;border-radius:18px!important;background:linear-gradient(135deg,#f8fffc,#fff9e8)!important;color:#113e35!important;transform:none!important;box-shadow:0 8px 22px rgba(5,61,51,.06)!important;overflow:hidden!important}
+  #panel-islamic .date-card span{display:block!important;margin-bottom:4px!important;color:#4f7168!important;font-size:.72rem!important;font-weight:900!important;letter-spacing:.06em!important;text-transform:uppercase!important}
+  #panel-islamic .date-card strong{display:block!important;color:#103f35!important;font-size:1.35rem!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+  #panel-islamic .prayer-block,#panel-islamic .daily-motivation,#panel-islamic .quran-reader,#panel-islamic .dua-list,#panel-islamic .khutbah-layout,#panel-islamic .tajwid-learning-layout{position:static!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:12px 0!important;transform:none!important;overflow:hidden!important}
+  #panel-islamic .prayer-block{padding:16px!important;border:1px solid #d7e8e2!important;border-radius:20px!important;background:#fff!important;box-shadow:0 9px 24px rgba(5,61,51,.06)!important}
+  #panel-islamic .subheading-row{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;align-items:start!important}
+  #panel-islamic .prayer-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;width:100%!important}
+  #panel-islamic .prayer-grid>div{min-width:0!important;padding:12px 10px!important;border:1px solid #deebe6!important;border-radius:14px!important;background:#f7fbf9!important;text-align:center!important}
+  #panel-islamic .prayer-grid span{display:block!important;color:#607b73!important;font-size:.72rem!important}
+  #panel-islamic .prayer-grid strong{display:block!important;color:#103f35!important;font-size:1.05rem!important}
+  #panel-islamic .prayer-countdown{display:grid!important;gap:3px!important;width:100%!important;margin-top:12px!important;padding:12px 14px!important;border-radius:14px!important;background:#edf8f4!important;color:#174b40!important}
+  #panel-islamic .daily-motivation{padding:16px!important;border-radius:18px!important;background:linear-gradient(135deg,#fff7d7,#f3fbf7)!important;color:#173f36!important}
+  #panel-islamic .quran-controls,#panel-islamic .hisnul-toolbar,#panel-islamic .adhkar-audio-toolbar{display:grid!important;grid-template-columns:1fr!important;gap:9px!important;width:100%!important}
+  #panel-islamic input,#panel-islamic select,#panel-islamic button{max-width:100%!important}
+  #panel-islamic .calendar-toolbar{display:grid!important;grid-template-columns:1fr!important;gap:8px!important;text-align:center!important}
+  #panel-islamic .calendar-legend{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+  #panel-islamic .khutbah-layout,#panel-islamic .tajwid-learning-layout{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+  #panel-islamic .arabic-standard-grid{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
+  #panel-islamic *{max-inline-size:100%}
+
+  #v65-cat-control{width:calc(100% - 14px)!important;padding:15px!important;border-radius:19px!important}
+  #v65-cat-control .v65-control-grid{grid-template-columns:1fr!important;gap:10px!important}
+  #v65-cat-control .v65-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+  #v65-cat-control .v65-actions button{min-width:0!important;padding:9px 8px!important}
+  #v65-cat-control [data-classes]{grid-template-columns:1fr!important}
+  #v65-cat-control [data-classes]>article{align-items:flex-start!important}
+}
+
+@media(max-width:420px){
+  #panel-islamic .prayer-grid{grid-template-columns:1fr 1fr!important}
+  #v65-cat-control .v65-actions{grid-template-columns:1fr!important}
+}
