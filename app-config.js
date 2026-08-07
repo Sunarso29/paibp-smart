@@ -5,55 +5,61 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v76-portal-mode-root-fix",
+  realtimeManagedBy: "v77-colorful-v39-plus-v76-root-fix",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "76";
+  const VERSION = "77";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
   const loaded = new Map();
   window.__PAIBP_VERSION__ = VERSION;
 
-  const pathOf = (v) => {
-    try { return new URL(v, document.baseURI).pathname; }
-    catch { return String(v || "").split("?")[0]; }
+  const pathOf = (value) => {
+    try { return new URL(value, document.baseURI).pathname; }
+    catch { return String(value || "").split("?")[0]; }
   };
-  const exists = (sel, path, prop) => [...document.querySelectorAll(sel)].some((n) => pathOf(n[prop]) === pathOf(path));
+  const exists = (selector, path, prop) => [...document.querySelectorAll(selector)]
+    .some((node) => pathOf(node[prop]) === pathOf(path));
 
   function style(path) {
     if (exists('link[rel="stylesheet"]', path, "href")) return;
-    const n = document.createElement("link");
-    n.rel = "stylesheet";
-    n.href = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
-    document.head.append(n);
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
+    document.head.append(link);
   }
 
   function script(path) {
     if (loaded.has(path)) return loaded.get(path);
     if (exists('script[src]', path, "src")) return Promise.resolve(true);
-    const p = new Promise((resolve, reject) => {
-      const n = document.createElement("script");
-      n.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
-      n.async = false;
-      n.onload = () => resolve(true);
-      n.onerror = () => reject(new Error(`Gagal memuat ${path}`));
-      document.head.append(n);
+    const promise = new Promise((resolve, reject) => {
+      const node = document.createElement("script");
+      node.src = new URL(`${path}?v=${VERSION}`, document.baseURI).href;
+      node.async = false;
+      node.onload = () => resolve(true);
+      node.onerror = () => reject(new Error(`Gagal memuat ${path}`));
+      document.head.append(node);
     });
-    loaded.set(path, p);
-    return p;
+    loaded.set(path, promise);
+    return promise;
   }
 
   async function series(paths) {
-    for (const p of paths) await script(p);
+    for (const path of paths) await script(path);
   }
 
   style("stable-v72.css");
   style("mobile-fix-v70.css");
+  if (page === "index.html") {
+    /* Pulihkan lapisan visual penuh warna yang dipakai pada V38/V39. */
+    style("v38-upgrade.css");
+    style("v39-upgrade.css");
+  }
 
   function purgeLegacyClassState() {
     if (catLink) return;
@@ -67,8 +73,8 @@ window.PAIBP_CONFIG = Object.freeze({
       "paibp-smart-focus-session-v48", "paibp-smart-focus-session-v50"
     ];
     for (const store of [localStorage, sessionStorage]) {
-      for (const k of keys) {
-        try { store.removeItem(k); } catch {}
+      for (const key of keys) {
+        try { store.removeItem(key); } catch {}
       }
     }
     const selectors = [
@@ -77,20 +83,20 @@ window.PAIBP_CONFIG = Object.freeze({
       "[data-class-context]", "[class*='class-context']",
       "[class*='connected-class']", "[class*='kelas-terhubung']"
     ];
-    selectors.forEach((sel) => document.querySelectorAll(sel).forEach((n) => n.remove()));
+    selectors.forEach((selector) => document.querySelectorAll(selector).forEach((node) => node.remove()));
   }
 
   function menuShell() {
-    const btn = document.querySelector(".menu-btn");
+    const button = document.querySelector(".menu-btn");
     const nav = document.querySelector(".links");
-    if (!btn || !nav || btn.dataset.v76) return;
-    btn.dataset.v76 = "1";
-    btn.addEventListener("click", (e) => {
-      e.stopImmediatePropagation();
+    if (!button || !nav || button.dataset.v77) return;
+    button.dataset.v77 = "1";
+    button.addEventListener("click", (event) => {
+      event.stopImmediatePropagation();
       const open = !nav.classList.contains("open");
       nav.classList.toggle("open", open);
-      btn.setAttribute("aria-expanded", String(open));
-      btn.textContent = open ? "×" : "☰";
+      button.setAttribute("aria-expanded", String(open));
+      button.textContent = open ? "×" : "☰";
     });
   }
 
@@ -106,13 +112,16 @@ window.PAIBP_CONFIG = Object.freeze({
   function openPanel(name) {
     const target = panelTarget(name);
     if (!target) return false;
-    const role = ["student", "islamic", "games"].includes(name) ? "murid" : (document.body.dataset.portalRole || "umum");
+    const role = ["student", "islamic", "games"].includes(name)
+      ? "murid"
+      : (document.body.dataset.portalRole || "umum");
     setPortalMode("active", role);
-    document.querySelectorAll(".workspace-panel").forEach((p) => { p.hidden = p !== target; });
+    document.querySelectorAll(".workspace-panel").forEach((panel) => { panel.hidden = panel !== target; });
     target.hidden = false;
-    document.querySelectorAll(".workspace-role-nav [data-open-panel]").forEach((b) => {
-      b.classList.toggle("is-active", b.dataset.openPanel === name);
-      b.setAttribute("aria-pressed", String(b.dataset.openPanel === name));
+    document.querySelectorAll(".workspace-role-nav [data-open-panel]").forEach((button) => {
+      const active = button.dataset.openPanel === name;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
     });
     const portal = document.getElementById("portal");
     if (portal) requestAnimationFrame(() => portal.scrollIntoView({ block: "start", behavior: "auto" }));
@@ -122,21 +131,39 @@ window.PAIBP_CONFIG = Object.freeze({
   function closeWorkspace() {
     setPortalMode("home", "umum");
     const welcome = panelTarget("welcome");
-    document.querySelectorAll(".workspace-panel").forEach((p) => { p.hidden = p !== welcome; });
+    document.querySelectorAll(".workspace-panel").forEach((panel) => { panel.hidden = panel !== welcome; });
     if (welcome) welcome.hidden = false;
-    document.querySelectorAll(".workspace-role-nav [data-open-panel]").forEach((b) => {
-      b.classList.remove("is-active");
-      b.setAttribute("aria-pressed", "false");
+    document.querySelectorAll(".workspace-role-nav [data-open-panel]").forEach((button) => {
+      button.classList.remove("is-active");
+      button.setAttribute("aria-pressed", "false");
     });
     const hero = document.querySelector(".hero,[data-home-only]");
     if (hero) requestAnimationFrame(() => hero.scrollIntoView({ block: "start", behavior: "auto" }));
   }
 
+  let visualPromise = null;
+  function ensureVisualRuntime() {
+    if (page !== "index.html") return Promise.resolve(true);
+    if (visualPromise) return visualPromise;
+    visualPromise = (async () => {
+      /* V38 membuat tombol Simulasi Ibadah; V39 memberi scene visual dan penyempurnaan warnanya. */
+      await script("v38-upgrade.js");
+      await script("v39-upgrade.js");
+      document.documentElement.dataset.portalUi = "v39-colorful-restored";
+      return true;
+    })().catch((error) => {
+      console.warn("PAIBP V77 visual runtime", error);
+      visualPromise = null;
+      return false;
+    });
+    return visualPromise;
+  }
+
   let islamicLitePromise = null;
   function ensureIslamicLite() {
     if (islamicLitePromise) return islamicLitePromise;
-    islamicLitePromise = script("islamic-lite-v73.js").catch((e) => {
-      console.warn("PAIBP Islamic Lite", e);
+    islamicLitePromise = script("islamic-lite-v73.js").catch((error) => {
+      console.warn("PAIBP Islamic Lite", error);
       islamicLitePromise = null;
       return false;
     });
@@ -167,12 +194,14 @@ window.PAIBP_CONFIG = Object.freeze({
         "docx-export.js",
         "script.js"
       ]);
+      await ensureVisualRuntime();
+      /* Pengaman Quran Kemenag tetap dijalankan terakhir agar pemulihan V39 tidak mengganti sumber Quran yang sudah diamankan. */
       await ensureIslamicLite();
       window.__PAIBP_WORKSPACE_CORE_READY__ = true;
       return true;
-    })().catch((e) => {
+    })().catch((error) => {
       workspaceCorePromise = null;
-      console.error("PAIBP V76 workspace core", e);
+      console.error("PAIBP V77 workspace core", error);
       return false;
     });
     return workspaceCorePromise;
@@ -186,9 +215,9 @@ window.PAIBP_CONFIG = Object.freeze({
       await script("net-v71.js");
       await script("cat-session-v67.js");
       return true;
-    })().catch((e) => {
+    })().catch((error) => {
       catPromise = null;
-      console.warn("PAIBP CAT", e);
+      console.warn("PAIBP CAT", error);
       return false;
     });
     return catPromise;
@@ -197,64 +226,62 @@ window.PAIBP_CONFIG = Object.freeze({
   function openIslamicImmediately(button) {
     openPanel("islamic");
     button?.setAttribute("aria-busy", "true");
-    ensureIslamicLite().finally(() => button?.removeAttribute("aria-busy"));
-    loadWorkspaceCore().then((ok) => {
-      if (!ok) return;
-      const active = document.querySelector('#panel-islamic [data-islamic-view][aria-pressed="true"]')
-        || document.querySelector('#panel-islamic [data-islamic-view="home"]');
-      active?.click();
-    });
+    Promise.all([ensureVisualRuntime(), loadWorkspaceCore()])
+      .finally(() => button?.removeAttribute("aria-busy"))
+      .then(() => {
+        const active = document.querySelector('#panel-islamic [data-islamic-view][aria-pressed="true"]')
+          || document.querySelector('#panel-islamic [data-islamic-view="home"]');
+        active?.click();
+      });
   }
 
   function shell() {
     menuShell();
     purgeLegacyClassState();
-    document.querySelectorAll("[data-year]").forEach((n) => { n.textContent = new Date().getFullYear(); });
+    document.querySelectorAll("[data-year]").forEach((node) => { node.textContent = new Date().getFullYear(); });
 
-    document.addEventListener("click", (e) => {
-      const close = e.target.closest("[data-close-workspace]");
+    document.addEventListener("click", (event) => {
+      const close = event.target.closest("[data-close-workspace]");
       if (close) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
+        event.preventDefault();
+        event.stopImmediatePropagation();
         closeWorkspace();
         return;
       }
 
-      const b = e.target.closest("[data-open-panel]");
-      if (!b) return;
-      const name = b.dataset.openPanel;
+      const button = event.target.closest("[data-open-panel]");
+      if (!button) return;
+      const name = button.dataset.openPanel;
 
       if (name === "islamic") {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        openIslamicImmediately(b);
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        openIslamicImmediately(button);
         return;
       }
 
       if (name === "student" || name === "games") return;
-      e.preventDefault();
+      event.preventDefault();
       openPanel(name);
     }, true);
   }
 
   function studentGameGate() {
     let busy = false;
-    document.addEventListener("click", async (e) => {
-      const b = e.target.closest('[data-open-panel="student"],[data-open-panel="games"]');
-      if (!b || busy) return;
-      const name = b.dataset.openPanel;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest('[data-open-panel="student"],[data-open-panel="games"]');
+      if (!button || busy) return;
+      const name = button.dataset.openPanel;
+      event.preventDefault();
+      event.stopImmediatePropagation();
       openPanel(name);
-
       if (window.__PAIBP_WORKSPACE_CORE_READY__) return;
       busy = true;
-      b.setAttribute("aria-busy", "true");
+      button.setAttribute("aria-busy", "true");
       const jobs = [loadWorkspaceCore()];
       if (name === "student" || catLink) jobs.push(loadCat());
       await Promise.all(jobs);
-      b.removeAttribute("aria-busy");
+      button.removeAttribute("aria-busy");
       busy = false;
     }, true);
   }
@@ -269,6 +296,8 @@ window.PAIBP_CONFIG = Object.freeze({
     }
 
     if (page === "index.html") {
+      /* Tampilan berwarna dan Simulasi Ibadah dipulihkan tanpa menunggu pengguna membuka panel. */
+      ensureVisualRuntime();
       studentGameGate();
       if (catLink) {
         setPortalMode("active", "murid");
