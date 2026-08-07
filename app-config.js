@@ -28,7 +28,7 @@ window.PAIBP_CONFIG = Object.freeze({
   const corePages = /^(index|akses-guru|kendali-editor)\.html$/.test(page);
   if (corePages) {
     style("cat-session-v65.css");
-    script("cat-session-v67.js").catch(()=>{});
+    script("compat-v67.js").then(()=>script("cat-session-v67.js")).catch(()=>{});
   }
 
   idle(async()=>{
