@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v66-bridge-final",
+  realtimeManagedBy: "v67-direct-jsonp-final",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "66";
+  const VERSION = "67";
   window.__PAIBP_VERSION__ = VERSION;
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
@@ -28,10 +28,9 @@ window.PAIBP_CONFIG = Object.freeze({
   const corePages = /^(index|akses-guru|kendali-editor)\.html$/.test(page);
   if (corePages) {
     style("cat-session-v65.css");
-    script("cat-session-v66.js").catch(()=>{});
+    script("cat-session-v67.js").catch(()=>{});
   }
 
-  // Muat fitur lama hanya ketika browser sudah senggang. Ini penting untuk HP RAM kecil.
   idle(async()=>{
     style("final-ui-v56.css");
     style("final-ui-v57.css");
@@ -39,8 +38,6 @@ window.PAIBP_CONFIG = Object.freeze({
     script("final-ui-v57.js").catch(()=>{});
   },2200);
 
-
-  // Paket media besar tidak dimuat saat halaman awal. Muat hanya saat murid membuka konten praktik/media.
   let mediaRequested=false;
   document.addEventListener("click",(event)=>{
     if(mediaRequested)return;
@@ -59,10 +56,10 @@ window.PAIBP_CONFIG = Object.freeze({
     }
   },{passive:true});
 
-  if(localStorage.getItem("paibp-smart-v66-cache-reset")!=="done")setTimeout(async()=>{
+  if(localStorage.getItem("paibp-smart-v67-cache-reset")!=="done")setTimeout(async()=>{
     try{
       const keys=await caches.keys();await Promise.all(keys.map((key)=>caches.delete(key)));
-      localStorage.setItem("paibp-smart-v66-cache-reset","done");
+      localStorage.setItem("paibp-smart-v67-cache-reset","done");
       const regs=await navigator.serviceWorker?.getRegistrations?.();regs?.forEach((reg)=>reg.update().catch(()=>{}));
     }catch{}
   },250);
