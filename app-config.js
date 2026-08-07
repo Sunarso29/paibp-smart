@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v69-stable-worker-fetch",
+  realtimeManagedBy: "v70-stable-worker",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "69";
+  const VERSION = "70";
   window.__PAIBP_VERSION__ = VERSION;
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const loaded = new Map();
@@ -20,25 +20,34 @@ window.PAIBP_CONFIG = Object.freeze({
   const exists = (selector,path,prop) => [...document.querySelectorAll(selector)].some((node)=>pathOf(node[prop])===pathOf(path));
   function style(path){if(exists('link[rel="stylesheet"]',path,"href"))return;const n=document.createElement("link");n.rel="stylesheet";n.href=new URL(`${path}?v=${VERSION}`,document.baseURI).href;document.head.append(n)}
   function script(path){if(loaded.has(path))return loaded.get(path);if(exists('script[src]',path,"src"))return Promise.resolve();const p=new Promise((resolve,reject)=>{const n=document.createElement("script");n.src=new URL(`${path}?v=${VERSION}`,document.baseURI).href;n.async=false;n.onload=resolve;n.onerror=reject;document.head.append(n)});loaded.set(path,p);return p}
-  function idle(task,timeout=2000){if("requestIdleCallback" in window)requestIdleCallback(task,{timeout});else setTimeout(task,Math.min(timeout,800))}
+  function idle(task,timeout=2000){if("requestIdleCallback" in window)requestIdleCallback(task,{timeout});else setTimeout(task,Math.min(timeout,900))}
 
-  script("cleanup-v68.js").catch(()=>{});
   style("performance-v65.css");
+  style("mobile-fix-v70.css");
+  script("stability-v70.js").catch(()=>{});
   if (page === "about-spensus.html") return;
 
+  const lowMemory = Number(navigator.deviceMemory || 8) <= 4 || matchMedia("(max-width:760px)").matches;
   const corePages = /^(index|akses-guru|kendali-editor)\.html$/.test(page);
   if (corePages) {
     style("cat-session-v65.css");
-    script("cat-session-v67.js").catch(()=>{});
+    script("stability-v70.js").then(()=>script("cat-session-v67.js")).catch(()=>{});
   }
 
-  const lowMemory = Number(navigator.deviceMemory || 8) <= 4;
-  idle(async()=>{
+  let legacyLoaded = false;
+  async function loadLegacy(){
+    if(legacyLoaded)return;legacyLoaded=true;
     style("final-ui-v56.css");
     style("final-ui-v57.css");
     try{await script("final-ui-v56.js")}catch{}
     script("final-ui-v57.js").catch(()=>{});
-  }, lowMemory ? 4800 : 2800);
+  }
+  if(!lowMemory) idle(loadLegacy,3000);
+  else document.addEventListener("click",function onDemand(event){
+    if(event.target.closest('[data-chapter],[data-material-id],[data-practice],[data-open-practice],#v56-practice-board')){
+      document.removeEventListener("click",onDemand,true);loadLegacy();
+    }
+  },true);
 
   let mediaRequested=false;
   document.addEventListener("click",(event)=>{
@@ -50,7 +59,7 @@ window.PAIBP_CONFIG = Object.freeze({
 
   if (/^(akses-guru|kendali-editor)\.html$/.test(page)) idle(()=>{
     style("cp2025-v48.css");script("cp2025-loader-v48.js").then(()=>script("cp2025-exact-v56.js")).catch(()=>{});
-  }, lowMemory ? 6000 : 3800);
+  }, lowMemory ? 7000 : 4200);
 
   document.addEventListener("click",(event)=>{
     if(event.target.closest("[data-ai-open],.workspace-ai-nav-v27")){
@@ -58,10 +67,10 @@ window.PAIBP_CONFIG = Object.freeze({
     }
   },{passive:true});
 
-  if(localStorage.getItem("paibp-smart-v69-cache-reset")!=="done")setTimeout(async()=>{
+  if(localStorage.getItem("paibp-smart-v70-cache-reset")!=="done")setTimeout(async()=>{
     try{
       const keys=await caches.keys();await Promise.all(keys.map((key)=>caches.delete(key)));
-      localStorage.setItem("paibp-smart-v69-cache-reset","done");
+      localStorage.setItem("paibp-smart-v70-cache-reset","done");
       const regs=await navigator.serviceWorker?.getRegistrations?.();regs?.forEach((reg)=>reg.update().catch(()=>{}));
     }catch{}
   },250);
