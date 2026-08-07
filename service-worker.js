@@ -1,4 +1,4 @@
-const CACHE_NAME="paibp-smart-v79-quran-feature-static";
+const CACHE_NAME="paibp-smart-v80-worship-teacher-static";
 const STATIC=["./logo-spensus.png","./assets/icons/icon-192.png"];
 
 self.addEventListener("install",(event)=>{
@@ -21,7 +21,7 @@ self.addEventListener("fetch",(event)=>{
 
   const fresh = event.request.mode==="navigate"
     || ["script","style","document"].includes(event.request.destination)
-    || /app-config|v38-upgrade|v39-upgrade|islamic-lite|islamic-data|islamic-learning|islamic-upgrade|khutbah|hadith|arabic|script\.js|teacher-cat|cat-session|net-v71|mobile-fix|stable-v72|quran-kemenag|quran-kemenag-runtime|service-worker/i.test(url.pathname);
+    || /app-config|v38-upgrade|v39-upgrade|islamic-lite|islamic-data|islamic-learning|islamic-upgrade|khutbah|hadith|arabic|script\.js|teacher-cat|cat-session|net-v71|mobile-fix|stable-v72|quran-kemenag|quran-kemenag-runtime|worship-restore|service-worker/i.test(url.pathname);
 
   if(fresh){
     event.respondWith(

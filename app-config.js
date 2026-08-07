@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v79-quran-feature-restore-plus-v76-root-fix",
+  realtimeManagedBy: "v80-worship-teacher-restore-plus-v79-quran",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "79";
+  const VERSION = "80";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -89,8 +89,8 @@ window.PAIBP_CONFIG = Object.freeze({
   function menuShell() {
     const button = document.querySelector(".menu-btn");
     const nav = document.querySelector(".links");
-    if (!button || !nav || button.dataset.v79) return;
-    button.dataset.v79 = "1";
+    if (!button || !nav || button.dataset.v80) return;
+    button.dataset.v80 = "1";
     button.addEventListener("click", (event) => {
       event.stopImmediatePropagation();
       const open = !nav.classList.contains("open");
@@ -149,10 +149,12 @@ window.PAIBP_CONFIG = Object.freeze({
       /* V38 membuat tombol Simulasi Ibadah; V39 memberi scene visual dan penyempurnaan warnanya. */
       await script("v38-upgrade.js");
       await script("v39-upgrade.js");
+      /* V80 mengembalikan Simulasi Ibadah lengkap tanpa mengubah Quran V79. */
+      await script("worship-restore-v80.js");
       document.documentElement.dataset.portalUi = "v39-colorful-restored";
       return true;
     })().catch((error) => {
-      console.warn("PAIBP V79 visual runtime", error);
+      console.warn("PAIBP V80 visual runtime", error);
       visualPromise = null;
       return false;
     });
@@ -203,7 +205,7 @@ window.PAIBP_CONFIG = Object.freeze({
       return true;
     })().catch((error) => {
       workspaceCorePromise = null;
-      console.error("PAIBP V79 workspace core", error);
+      console.error("PAIBP V80 workspace core", error);
       return false;
     });
     return workspaceCorePromise;
@@ -262,7 +264,7 @@ window.PAIBP_CONFIG = Object.freeze({
         return;
       }
 
-      if (name === "student" || name === "games") return;
+      if (name === "student" || name === "games" || name === "teacher" || name === "editor") return;
       event.preventDefault();
       openPanel(name);
     }, true);
@@ -292,7 +294,25 @@ window.PAIBP_CONFIG = Object.freeze({
     shell();
     if (page === "about-spensus.html") return;
 
-    if (/^(akses-guru|kendali-editor)\.html$/.test(page)) {
+    if (page === "akses-guru.html") {
+      /* Portal Guru V80: muat kembali seluruh perangkat guru; CAT hanya salah satu alat. */
+      setPortalMode("active", "guru");
+      style("cp2025-v48.css");
+      Promise.all([
+        loadWorkspaceCore(),
+        script("teacher-cat-v72.js"),
+        script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v56.js")).catch(() => false)
+      ]).then(() => {
+        setPortalMode("active", "guru");
+        document.documentElement.dataset.teacherPortal = "full-v80";
+        const trigger = document.querySelector("#teacher-gateway-trigger");
+        if (trigger) trigger.click();
+        else openPanel("teacher");
+      }).catch((error) => console.error("PAIBP V80 Portal Guru", error));
+      return;
+    }
+
+    if (page === "kendali-editor.html") {
       script("teacher-cat-v72.js").catch(() => {});
       return;
     }
