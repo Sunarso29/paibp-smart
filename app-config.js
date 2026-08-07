@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v75-islamic-immediate-open",
+  realtimeManagedBy: "v76-portal-mode-root-fix",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "75";
+  const VERSION = "76";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -83,8 +83,8 @@ window.PAIBP_CONFIG = Object.freeze({
   function menuShell() {
     const btn = document.querySelector(".menu-btn");
     const nav = document.querySelector(".links");
-    if (!btn || !nav || btn.dataset.v75) return;
-    btn.dataset.v75 = "1";
+    if (!btn || !nav || btn.dataset.v76) return;
+    btn.dataset.v76 = "1";
     btn.addEventListener("click", (e) => {
       e.stopImmediatePropagation();
       const open = !nav.classList.contains("open");
@@ -94,14 +94,42 @@ window.PAIBP_CONFIG = Object.freeze({
     });
   }
 
+  function setPortalMode(mode, role) {
+    document.body.dataset.portalMode = mode;
+    if (role) document.body.dataset.portalRole = role;
+  }
+
+  function panelTarget(name) {
+    return document.getElementById(`panel-${name}`) || document.querySelector(`[data-panel="${name}"]`);
+  }
+
   function openPanel(name) {
-    const target = document.querySelector(`#panel-${CSS.escape(name)},[data-panel="${CSS.escape(name)}"]`);
+    const target = panelTarget(name);
     if (!target) return false;
+    const role = ["student", "islamic", "games"].includes(name) ? "murid" : (document.body.dataset.portalRole || "umum");
+    setPortalMode("active", role);
     document.querySelectorAll(".workspace-panel").forEach((p) => { p.hidden = p !== target; });
     target.hidden = false;
-    const portal = document.querySelector("#portal");
+    document.querySelectorAll(".workspace-role-nav [data-open-panel]").forEach((b) => {
+      b.classList.toggle("is-active", b.dataset.openPanel === name);
+      b.setAttribute("aria-pressed", String(b.dataset.openPanel === name));
+    });
+    const portal = document.getElementById("portal");
     if (portal) requestAnimationFrame(() => portal.scrollIntoView({ block: "start", behavior: "auto" }));
     return true;
+  }
+
+  function closeWorkspace() {
+    setPortalMode("home", "umum");
+    const welcome = panelTarget("welcome");
+    document.querySelectorAll(".workspace-panel").forEach((p) => { p.hidden = p !== welcome; });
+    if (welcome) welcome.hidden = false;
+    document.querySelectorAll(".workspace-role-nav [data-open-panel]").forEach((b) => {
+      b.classList.remove("is-active");
+      b.setAttribute("aria-pressed", "false");
+    });
+    const hero = document.querySelector(".hero,[data-home-only]");
+    if (hero) requestAnimationFrame(() => hero.scrollIntoView({ block: "start", behavior: "auto" }));
   }
 
   let islamicLitePromise = null;
@@ -144,7 +172,7 @@ window.PAIBP_CONFIG = Object.freeze({
       return true;
     })().catch((e) => {
       workspaceCorePromise = null;
-      console.error("PAIBP V75 workspace core", e);
+      console.error("PAIBP V76 workspace core", e);
       return false;
     });
     return workspaceCorePromise;
@@ -167,14 +195,14 @@ window.PAIBP_CONFIG = Object.freeze({
   }
 
   function openIslamicImmediately(button) {
-    button?.setAttribute("aria-busy", "true");
     openPanel("islamic");
+    button?.setAttribute("aria-busy", "true");
     ensureIslamicLite().finally(() => button?.removeAttribute("aria-busy"));
     loadWorkspaceCore().then((ok) => {
       if (!ok) return;
       const active = document.querySelector('#panel-islamic [data-islamic-view][aria-pressed="true"]')
         || document.querySelector('#panel-islamic [data-islamic-view="home"]');
-      if (active) active.click();
+      active?.click();
     });
   }
 
@@ -187,7 +215,8 @@ window.PAIBP_CONFIG = Object.freeze({
       const close = e.target.closest("[data-close-workspace]");
       if (close) {
         e.preventDefault();
-        openPanel("welcome");
+        e.stopImmediatePropagation();
+        closeWorkspace();
         return;
       }
 
@@ -214,24 +243,19 @@ window.PAIBP_CONFIG = Object.freeze({
       const b = e.target.closest('[data-open-panel="student"],[data-open-panel="games"]');
       if (!b || busy) return;
       const name = b.dataset.openPanel;
-
-      if (window.__PAIBP_WORKSPACE_CORE_READY__) {
-        e.preventDefault();
-        openPanel(name);
-        return;
-      }
-
       e.preventDefault();
       e.stopImmediatePropagation();
+
+      openPanel(name);
+
+      if (window.__PAIBP_WORKSPACE_CORE_READY__) return;
       busy = true;
       b.setAttribute("aria-busy", "true");
       const jobs = [loadWorkspaceCore()];
       if (name === "student" || catLink) jobs.push(loadCat());
-      const result = await Promise.all(jobs);
+      await Promise.all(jobs);
       b.removeAttribute("aria-busy");
       busy = false;
-      if (result.some((v) => v === false)) return;
-      openPanel(name);
     }, true);
   }
 
@@ -246,7 +270,10 @@ window.PAIBP_CONFIG = Object.freeze({
 
     if (page === "index.html") {
       studentGameGate();
-      if (catLink) Promise.all([loadCat(), loadWorkspaceCore()]).catch(() => {});
+      if (catLink) {
+        setPortalMode("active", "murid");
+        Promise.all([loadCat(), loadWorkspaceCore()]).catch(() => {});
+      }
     }
   }
 
