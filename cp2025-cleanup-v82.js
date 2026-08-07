@@ -4,22 +4,19 @@
   const ROOT_SELECTOR = "#teacher-document";
   const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
-  const signaturePattern = /(?:Demak\s*,\s*Juli\s*2026|Mengetahui\s*,?|Kepala\s+SMP\s+Negeri\s+1\s+Kebonagung|Priyantono\s*,?\s*S\.?Pd\.?\s*,?\s*M\.?Pd\.?|196902251994031005|Guru\s+Mata\s+Pelajaran\s+PAI(?:\s+dan\s+Budi\s+Pekerti)?|Syaekudin\s*,?\s*S\.?Ag\.?\s*,?\s*M\.?Pd\.?I\.?|197209052005011004)/i;
-  const nipOnlyPattern = /^NIP\.?\s*\d{8,}$/i;
+  const signaturePattern = /(?:^|\b)(?:Demak\s*,\s*Juli\s*2026|Mengetahui\s*,?|Kepala\s+SMP\s+Negeri|Guru\s+Mata\s+Pelajaran\s+PAI(?:\s+dan\s+Budi\s+Pekerti)?|NIP\.?\s*\d{8,})(?:$|\b)/i;
 
   function standardize(value) {
     let text = String(value ?? "");
     const rules = [
-      [/SMP\s+Negeri\s+1\s+Kebonagung/gi, "SMP Negeri 1 Susukan"],
-      [/Syaekudin\s*,?\s*S\.?Ag\.?\s*,?\s*M\.?Pd\.?I\.?/gi, "Sunarso, S.Pd.I, Gr"],
       [/Penyusun\s*:\s*Sunarso\s*,?\s*S\.?Pd\.?I\.?\s*,?\s*Gr\.?/gi, "Penyusun : Sunarso, S.Pd.I, Gr"],
-      [/\b(?:Allah|Alloh)\s+(?:Swt\.?|SWT\.?)\b/gi, "Alloh Subhanahu Wata'ala"],
+      [/\b(?:Allah|Alloh)\s+(?:Swt|SWT)\.?/gi, "Alloh Subhanahu Wata'ala"],
       [/\bAllah\s+Subhanahu\s+Wata[’']?ala\b/gi, "Alloh Subhanahu Wata'ala"],
-      [/\b(?:sholat|sholat)\b/gi, "sholat"],
-      [/\bzikir\b/gi, "dzikir"],
-      [/\bhusnuzan\b/gi, "husnudzon"],
-      [/\bhadis\b/gi, "hadits"],
-      [/\bMuhammad\s+(?:saw\.?|SAW\.?)\b/g, "Muhammad Sholallohu 'Alaihi Wasalam"],
+      [/\b(?:s[a]lat|sh[a]lat)\b/gi, "sholat"],
+      [/\bz[i]kir\b/gi, "dzikir"],
+      [/\bhusn[u]zan\b/gi, "husnudzon"],
+      [/\bhad[i]s\b/gi, "hadits"],
+      [/\bMuhammad\s+s[a]w\.?/gi, "Muhammad Sholallohu 'Alaihi Wasalam"],
       [/CP\s+LAMA\s+2025\s*•\s*SUMBER\s+ASLI/gi, "CP LAMA 2025 • REFERENSI NASIONAL"],
       [/Dokumen\s+sumber\s+asli/gi, "Dokumen referensi nasional"],
       [/Buka\s+Berkas\s+Asli/gi, "Buka Berkas Referensi"],
@@ -35,7 +32,7 @@
     root.querySelectorAll(".v48-source-document p,.v48-source-document table,.v48-source-document .v48-table-scroll,.v48-doc-header,.v48-doc-footer").forEach((node) => {
       const text = clean(node.textContent);
       if (!text) return;
-      if (signaturePattern.test(text) || nipOnlyPattern.test(text)) {
+      if (signaturePattern.test(text)) {
         const wrap = node.matches("table") ? node.closest(".v48-table-scroll") : null;
         (wrap || node).remove();
       }
@@ -59,8 +56,7 @@
     });
     root.querySelectorAll("table").forEach((table) => {
       const meaningful = clean(table.textContent) || table.querySelector("img,input,select,textarea,button,svg");
-      const rows = table.querySelectorAll("tr").length;
-      if (!meaningful || !rows) {
+      if (!meaningful || !table.querySelector("tr")) {
         const wrap = table.closest(".v48-table-scroll");
         (wrap || table).remove();
       }
@@ -74,7 +70,7 @@
     root.querySelectorAll("p,div,span,td,th").forEach((node) => {
       if (node.children.length) return;
       const text = clean(node.textContent);
-      if (signaturePattern.test(text) || nipOnlyPattern.test(text)) node.remove();
+      if (signaturePattern.test(text)) node.remove();
     });
   }
 
