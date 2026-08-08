@@ -1,0 +1,46 @@
+name: V85 final visual cascade
+on:
+  push:
+    paths:
+      - '.github/workflows/v85-final-cascade.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Put V85 runtime visual last
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p=Path('app-config.js')
+          s=p.read_text(encoding='utf-8')
+          marker='''  if (page === "index.html") {\n    /* Pulihkan lapisan visual penuh warna yang dipakai pada V38/V39. */\n    style("v38-upgrade.css");\n    style("v39-upgrade.css");\n  }\n'''
+          replacement=marker+'  /* V85 harus menjadi lapisan visual terakhir; tidak mengubah konten/fungsi. */\n  style("visual-runtime-v85.css");\n'
+          if 'style("visual-runtime-v85.css")' not in s:
+              if marker not in s: raise SystemExit('app-config visual marker not found')
+              s=s.replace(marker,replacement,1)
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('service-worker.js')
+          s=p.read_text(encoding='utf-8')
+          if 'visual-runtime-v85' not in s:
+              s=s.replace('visual-v85|','visual-v85|visual-runtime-v85|')
+          p.write_text(s,encoding='utf-8')
+
+          Path('.github/workflows/v85-final-cascade.yml').unlink(missing_ok=True)
+          PY
+          node --check app-config.js
+          grep -q 'style("visual-runtime-v85.css")' app-config.js
+          grep -q 'visual-runtime-v85' service-worker.js
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "V85 make visual and icon polish final cascade without content changes"
+          git push
