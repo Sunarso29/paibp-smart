@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  /* Compatibility/bootstrap shim: no MutationObserver, no DOM rescans. */
+  /* Lightweight compatibility/bootstrap shim: no MutationObserver, no DOM rescans. */
   const hasScript=(name)=>[...document.scripts].some(s=>String(s.src||"").includes(name));
   const hasStyle=(name)=>[...document.querySelectorAll('link[rel="stylesheet"]')].some(l=>String(l.href||"").includes(name));
   const addScript=(name,version)=>{
@@ -18,14 +18,14 @@
     document.head.append(l);
   };
 
-  addScript("icon-art-v86.js","86");
-  addStyle("visual-fix-v87.css","87");
+  addScript("icon-art-v86.js","88");
+  addStyle("visual-fix-v87.css","88");
   if((location.pathname.split("/").pop()||"index.html").toLowerCase()==="akses-guru.html"){
-    addScript("teacher-preview-fix-v87.js","87");
+    addScript("teacher-preview-fix-v87.js","88");
   }
 
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
-    const register=()=>navigator.serviceWorker.register("service-worker.js?v=87").then(r=>r.update()).catch(()=>null);
+    const register=()=>navigator.serviceWorker.register("service-worker.js?v=88").then(r=>r.update()).catch(()=>null);
     if(document.readyState==="complete")register();
     else window.addEventListener("load",register,{once:true});
   }
