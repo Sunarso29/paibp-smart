@@ -1,10 +1,12 @@
-const CACHE_NAME="paibp-smart-v86-fast-static";
+const CACHE_NAME="paibp-smart-v87-fast-static";
 const STATIC=[
   "./logo-spensus.png",
   "./assets/icons/icon-192.png",
   "./visual-v86.css?v=86",
   "./icon-v86.css?v=86",
-  "./icon-art-v86.js?v=86"
+  "./icon-art-v86.js?v=86",
+  "./visual-fix-v87.css?v=87",
+  "./teacher-preview-fix-v87.js?v=87"
 ];
 
 self.addEventListener("install",(event)=>{
@@ -57,7 +59,7 @@ self.addEventListener("fetch",(event)=>{
     return;
   }
 
-  if(url.searchParams.get("v")==="86" && (request.destination==="script" || request.destination==="style")){
+  if(["86","87"].includes(url.searchParams.get("v")) && (request.destination==="script" || request.destination==="style")){
     event.respondWith(cacheFirst(request));
     return;
   }
