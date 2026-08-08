@@ -14,13 +14,19 @@
     "appVersion": "85",
     "serviceWorkerCache": "paibp-smart-v85-visual-static",
     "visualLayer": "visual-v85.css",
-    "iconLayer": "icon-depth-v85.css",
+    "iconDepthLayer": "icon-depth-v85.css",
+    "iconArtworkCss": "icon-art-v85.css",
+    "iconArtworkRuntime": "icon-art-v85.js",
     "finalRuntimeCascade": "visual-runtime-v85.css",
     "legacyIconGuardVisibilityOnly": true,
     "darkSurfaceTextForcedReadable": true,
     "lightSurfaceTextForcedReadable": true,
     "whiteOnWhiteIconPrevention": true,
     "greenOnGreenTextPrevention": true,
+    "teacherMenuEmojiReplacedByLocalSvg": true,
+    "islamicMenuEmojiReplacedByLocalSvg": true,
+    "panelKickerEmojiReplacedByLocalSvg": true,
+    "textOnlyDirectoryIconsReplacedByLocalSvg": true,
     "teacherDocumentFormatsPreservedFromV84": true
   }
 }
