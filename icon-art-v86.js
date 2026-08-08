@@ -12,7 +12,7 @@
     headphones:'<path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="3" y="12.5" width="4" height="7" rx="2"/><rect x="17" y="12.5" width="4" height="7" rx="2"/>',
     bulb:'<path d="M8.4 15.4a6 6 0 1 1 7.2 0c-1 .7-1.6 1.5-1.7 2.6h-3.8c-.1-1.1-.7-1.9-1.7-2.6Z"/><path d="M10 21h4M9.8 18h4.4M12 2V1"/>',
     compass:'<circle cx="12" cy="12" r="8.5"/><path d="m15.7 8.3-2 5.4-5.4 2 2-5.4 5.4-2Z"/>',
-    book:'<path d="M4 5.5c0-1.1.9-2 2-2h5.2v16H6a2 2 0 0 0-2 2V5.5Z"/><path d="M20 5.5c0-1.1-.9-2-2-2h-5.2v16H18a2 2 0 0 1 2 2V5.5Z"/>',
+    book:'<path d="M4 5.5c0-1.1.9-2 2-2h5.2v16H6a2 2 0 0 0-2 2V5.5Z"/><path d="M20 5.5c0-1.1-.9-2-2-2h-5.2v16H18a2 2 0 0 1 2 2V5.5Z"/><path d="M8 7.3h2M14 7.3h2"/>',
     check:'<circle cx="12" cy="12" r="8.6"/><path d="m8.2 12.2 2.5 2.6 5.3-5.7"/>',
     route:'<circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M7.8 6h3.7c2.7 0 3.9 1.4 3.9 3.4 0 2.3-1.5 3.6-4 3.6H9.6c-2.1 0-3.3 1.1-3.3 3"/>',
     year:'<rect x="3.5" y="5.2" width="17" height="15" rx="2.3"/><path d="M7.2 3v4.2M16.8 3v4.2M3.5 9.4h17M7 13h4M7 16.5h7"/>',
@@ -26,12 +26,52 @@
   };
   const svg=(name)=>`<svg class="v86-svg-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${icons[name]||icons.grid}</svg>`;
   const strip=(text)=>String(text||'').replace(/^\s*[\p{Extended_Pictographic}\uFE0F\u200D\u20E3\u2600-\u27BF]+\s*/u,'').trimStart();
-  function teacher(){const map={cp:'book',kktp:'check',atp:'route',prota:'year',promes:'calendar',calendar:'school',effective:'calculator',module:'books',access:'chart',submissions:'inbox'};document.querySelectorAll('.teacher-doc-menu [data-teacher-doc]').forEach(btn=>{const h=btn.querySelector(':scope > span');if(!h||h.dataset.v86Art)return;h.innerHTML=svg(map[btn.dataset.teacherDoc]||'grid');h.dataset.v86Art='1';});}
-  function islamic(){const map={home:'home',quran:'quran',hisnul:'prayer',morning:'morning',evening:'moon',calendar:'calendar',arabic:'language',khutbah:'mic',tajwid:'headphones',insights:'bulb',worship:'compass'};document.querySelectorAll('.islamic-menu [data-islamic-view]').forEach(btn=>{if(btn.dataset.v86Art)return;const label=strip(btn.textContent);btn.textContent='';const disc=document.createElement('span');disc.className='v86-icon-disc';disc.innerHTML=svg(map[btn.dataset.islamicView]||'grid');const txt=document.createElement('span');txt.className='v86-icon-label';txt.textContent=label;btn.append(disc,txt);btn.dataset.v86Art='1';});}
-  function misc(){document.querySelectorAll('.directory-feature-icon').forEach(el=>{if(el.querySelector('svg')||el.dataset.v86Art)return;const href=el.closest('a')?.getAttribute('href')||'';el.innerHTML=svg(href.includes('artikel')?'pen':'grid');el.dataset.v86Art='1';});document.querySelectorAll('.welcome-icon').forEach(el=>{if(el.dataset.v86Art)return;el.innerHTML=svg('books');el.dataset.v86Art='1';});}
-  let queued=false;function run(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;teacher();islamic();misc();});}
-  function delayed(){run();setTimeout(run,180);setTimeout(run,650);}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
-  document.addEventListener('click',(e)=>{if(e.target.closest('[data-open-panel="islamic"],[data-islamic-view],[data-open-panel="teacher"],[data-teacher-doc]'))delayed();},{passive:true});
+
+  function teacher(){
+    const map={cp:'book',kktp:'check',atp:'route',prota:'year',promes:'calendar',calendar:'school',effective:'calculator',module:'books',access:'chart',submissions:'inbox'};
+    document.querySelectorAll('.teacher-doc-menu [data-teacher-doc]').forEach(btn=>{
+      let holder=btn.querySelector(':scope > span');
+      if(!holder){ holder=document.createElement('span'); btn.prepend(holder); }
+      if(!holder.querySelector('svg.v86-svg-art')) holder.innerHTML=svg(map[btn.dataset.teacherDoc]||'grid');
+      holder.dataset.v86Art='1';
+      holder.setAttribute('aria-hidden','true');
+    });
+  }
+
+  function islamic(){
+    const map={home:'home',quran:'quran',hisnul:'prayer',morning:'morning',evening:'moon',calendar:'calendar',arabic:'language',khutbah:'mic',tajwid:'headphones',insights:'bulb',worship:'compass'};
+    document.querySelectorAll('.islamic-menu [data-islamic-view]').forEach(btn=>{
+      const existing=btn.querySelector('.v86-icon-disc');
+      if(existing?.querySelector('svg.v86-svg-art')) return;
+      const label=strip(btn.querySelector('.v86-icon-label')?.textContent || btn.textContent);
+      btn.textContent='';
+      const disc=document.createElement('span');disc.className='v86-icon-disc';disc.innerHTML=svg(map[btn.dataset.islamicView]||'grid');
+      const txt=document.createElement('span');txt.className='v86-icon-label';txt.textContent=label;
+      btn.append(disc,txt);btn.dataset.v86Art='1';
+    });
+  }
+
+  function misc(){
+    document.querySelectorAll('.directory-feature-icon').forEach(el=>{
+      if(el.querySelector('svg.v86-svg-art'))return;
+      const href=el.closest('a')?.getAttribute('href')||'';
+      el.innerHTML=svg(href.includes('artikel')?'pen':'grid');el.dataset.v86Art='1';
+    });
+    document.querySelectorAll('.welcome-icon').forEach(el=>{
+      if(el.querySelector('svg.v86-svg-art'))return;
+      el.innerHTML=svg('books');el.dataset.v86Art='1';
+    });
+  }
+
+  let queued=false;
+  function run(){
+    if(queued)return;queued=true;
+    requestAnimationFrame(()=>{queued=false;teacher();islamic();misc();});
+  }
+  function delayed(){run();setTimeout(run,120);setTimeout(run,420);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',delayed,{once:true});else delayed();
+  document.addEventListener('click',(e)=>{
+    if(e.target.closest('[data-open-panel="islamic"],[data-islamic-view],[data-open-panel="teacher"],[data-teacher-doc],[data-teacher-grade]'))delayed();
+  },{passive:true});
   window.PAIBP_ICON_ART_V86=Object.freeze({run:delayed});
 })();
