@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v85-visual-only-source-faithful-teacher-docs",
+  realtimeManagedBy: "v86-fast-full-colour-source-faithful",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "85";
+  const VERSION = "86";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -53,21 +53,26 @@ window.PAIBP_CONFIG = Object.freeze({
     for (const path of paths) await script(path);
   }
 
+  function disableLegacyVisualLayers() {
+    const legacy = [
+      "visual-v83.css","visual-public-v83.css","visual-v84.css","visual-v85.css",
+      "icon-depth-v85.css","icon-guard-v84.css","visual-runtime-v85.css",
+      "v38-upgrade.css","v39-upgrade.css"
+    ];
+    document.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+      const href = String(link.getAttribute("href") || "");
+      if (!legacy.some((name) => href.includes(name))) return;
+      link.disabled = true;
+      link.media = "not all";
+    });
+  }
+
+  disableLegacyVisualLayers();
   style("stable-v72.css");
   style("mobile-fix-v70.css");
-  /* V83: lapisan visual saja; tidak mengubah konten atau struktur data. */
-  style("visual-v83.css");
-  style("visual-v84.css");
-  style("visual-v85.css");
-  style("icon-depth-v85.css");
-  style("icon-guard-v84.css");
-  if (page === "index.html") {
-    /* Pulihkan lapisan visual penuh warna yang dipakai pada V38/V39. */
-    style("v38-upgrade.css");
-    style("v39-upgrade.css");
-  }
-  /* V85 harus menjadi lapisan visual terakhir; tidak mengubah konten/fungsi. */
-  style("visual-runtime-v85.css");
+  style("visual-v86.css");
+  style("icon-v86.css");
+  script("icon-art-v86.js").catch(() => {});
 
   function purgeLegacyClassState() {
     if (catLink) return;
@@ -97,8 +102,8 @@ window.PAIBP_CONFIG = Object.freeze({
   function menuShell() {
     const button = document.querySelector(".menu-btn");
     const nav = document.querySelector(".links");
-    if (!button || !nav || button.dataset.v80) return;
-    button.dataset.v80 = "1";
+    if (!button || !nav || button.dataset.v86) return;
+    button.dataset.v86 = "1";
     button.addEventListener("click", (event) => {
       event.stopImmediatePropagation();
       const open = !nav.classList.contains("open");
@@ -121,8 +126,7 @@ window.PAIBP_CONFIG = Object.freeze({
     const target = panelTarget(name);
     if (!target) return false;
     const role = ["student", "islamic", "games"].includes(name)
-      ? "murid"
-      : (document.body.dataset.portalRole || "umum");
+      ? "murid" : (document.body.dataset.portalRole || "umum");
     setPortalMode("active", role);
     document.querySelectorAll(".workspace-panel").forEach((panel) => { panel.hidden = panel !== target; });
     target.hidden = false;
@@ -151,18 +155,17 @@ window.PAIBP_CONFIG = Object.freeze({
 
   let visualPromise = null;
   function ensureVisualRuntime() {
-    if (page !== "index.html") return Promise.resolve(true);
+    if (page !== "index.html" && page !== "akses-guru.html") return Promise.resolve(true);
     if (visualPromise) return visualPromise;
     visualPromise = (async () => {
-      /* V38 membuat tombol Simulasi Ibadah; V39 memberi scene visual dan penyempurnaan warnanya. */
-      await script("v38-upgrade.js");
-      await script("v39-upgrade.js");
-      /* V80 mengembalikan Simulasi Ibadah lengkap tanpa mengubah Quran V79. */
+      await script("worship-shell-v86.js");
       await script("worship-restore-v80.js");
-      document.documentElement.dataset.portalUi = "v39-colorful-restored";
+      window.PAIBP_WORSHIP_SHELL_V86?.mount?.();
+      window.PAIBP_ICON_ART_V86?.run?.();
+      document.documentElement.dataset.portalUi = "v86-fast-colour";
       return true;
     })().catch((error) => {
-      console.warn("PAIBP V81 visual runtime", error);
+      console.warn("PAIBP V86 worship runtime", error);
       visualPromise = null;
       return false;
     });
@@ -185,38 +188,27 @@ window.PAIBP_CONFIG = Object.freeze({
     if (window.__PAIBP_WORKSPACE_CORE_READY__) return true;
     if (workspaceCorePromise) return workspaceCorePromise;
     workspaceCorePromise = (async () => {
+      const payloads = [
+        "content-data.js", "calendar-data.js", "islamic-data.js", "islamic-learning-data.js",
+        "khutbah-source-data.js", "khutbah-verse-data.js", "hadith-data.js", "arabic-data.js",
+        "assessment-data.js", "game-data.js", "video-data.js", "docx-export.js"
+      ];
+      await Promise.all(payloads.map((path) => script(path)));
       await series([
-        "content-data.js",
-        "calendar-data.js",
-        "islamic-data.js",
-        "islamic-learning-data.js",
-        "islamic-upgrade-v19.js",
-        "islamic-upgrade-v20.js",
-        "islamic-upgrade-v21.js",
-        "islamic-upgrade-v22.js",
-        "khutbah-source-data.js",
-        "khutbah-verse-data.js",
-        "hadith-data.js",
-        "arabic-data.js",
-        "assessment-data.js",
-        "game-data.js",
-        "video-data.js",
-        "docx-export.js",
+        "islamic-upgrade-v19.js", "islamic-upgrade-v20.js", "islamic-upgrade-v21.js", "islamic-upgrade-v22.js",
         "script.js"
       ]);
-      /* V81: pulihkan kebijakan bab berurutan dan penguncian materi guru/editor. */
       style("learning-guard-v48.css");
       await script("learning-guard-v48.js");
       await ensureVisualRuntime();
-      /* Pengaman Quran Kemenag tetap dijalankan terakhir agar pemulihan V39 tidak mengganti sumber Quran yang sudah diamankan. */
       await ensureIslamicLite();
-      /* Override pengalihan Quran lama: pembaca V78 membaca database lokal di repository. */
       await script("quran-kemenag-runtime-v78.js");
+      window.PAIBP_ICON_ART_V86?.run?.();
       window.__PAIBP_WORKSPACE_CORE_READY__ = true;
       return true;
     })().catch((error) => {
       workspaceCorePromise = null;
-      console.error("PAIBP V81 workspace core", error);
+      console.error("PAIBP V86 workspace core", error);
       return false;
     });
     return workspaceCorePromise;
@@ -241,20 +233,26 @@ window.PAIBP_CONFIG = Object.freeze({
   function openIslamicImmediately(button) {
     openPanel("islamic");
     button?.setAttribute("aria-busy", "true");
-    Promise.all([ensureVisualRuntime(), loadWorkspaceCore()])
-      .finally(() => button?.removeAttribute("aria-busy"))
+    Promise.all([
+      ensureVisualRuntime(),
+      ensureIslamicLite(),
+      script("quran-kemenag-runtime-v78.js")
+    ]).finally(() => button?.removeAttribute("aria-busy"))
       .then(() => {
+        window.PAIBP_ICON_ART_V86?.run?.();
         const active = document.querySelector('#panel-islamic [data-islamic-view][aria-pressed="true"]')
           || document.querySelector('#panel-islamic [data-islamic-view="home"]');
         active?.click();
       });
+    const warm = () => loadWorkspaceCore().catch(() => {});
+    if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 900 });
+    else setTimeout(warm, 260);
   }
 
   function shell() {
     menuShell();
     purgeLegacyClassState();
     document.querySelectorAll("[data-year]").forEach((node) => { node.textContent = new Date().getFullYear(); });
-
     document.addEventListener("click", (event) => {
       const close = event.target.closest("[data-close-workspace]");
       if (close) {
@@ -263,18 +261,15 @@ window.PAIBP_CONFIG = Object.freeze({
         closeWorkspace();
         return;
       }
-
       const button = event.target.closest("[data-open-panel]");
       if (!button) return;
       const name = button.dataset.openPanel;
-
       if (name === "islamic") {
         event.preventDefault();
         event.stopImmediatePropagation();
         openIslamicImmediately(button);
         return;
       }
-
       if (name === "student" || name === "games" || name === "teacher" || name === "editor") return;
       event.preventDefault();
       openPanel(name);
@@ -283,8 +278,7 @@ window.PAIBP_CONFIG = Object.freeze({
 
   function isStudentPhone() {
     const role = String(document.body?.dataset.portalRole || "").toLowerCase();
-    const file = page;
-    if (role === "guru" || file === "akses-guru.html" || file === "kendali-editor.html") return true;
+    if (role === "guru" || page === "akses-guru.html" || page === "kendali-editor.html") return true;
     const ua = navigator.userAgent || "";
     const phoneUA = /iPhone|iPod|Windows Phone|IEMobile|Opera Mini|Android.+Mobile|Mobile Safari/i.test(ua);
     return phoneUA && Number(navigator.maxTouchPoints || 1) > 0;
@@ -295,8 +289,8 @@ window.PAIBP_CONFIG = Object.freeze({
     if (!gate) {
       gate = document.createElement("div");
       gate.id = "v81-phone-gate";
-      gate.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:18px;background:rgba(2,35,30,.94);backdrop-filter:blur(10px)";
-      gate.innerHTML = '<section style="width:min(540px,100%);padding:28px;border-radius:28px;background:#fff;color:#173b33;box-shadow:0 30px 90px rgba(0,0,0,.35);text-align:center"><div style="font-size:3rem">📱</div><span style="display:block;margin-top:8px;font-size:.72rem;font-weight:900;letter-spacing:.1em;color:#08745e">AKSES RUANG MURID</span><h2 style="margin:8px 0 10px;color:#143b33">Gunakan HP murid</h2><p style="margin:0;line-height:1.65;color:#5d716b">Ruang Murid diwajibkan dibuka melalui HP. Login NISN, kamera depan, lokasi, identitas kelas, dan kendali guru diterapkan pada perangkat tersebut.</p><button type="button" data-v81-close-phone style="margin-top:18px;min-height:46px;padding:10px 18px;border:0;border-radius:14px;background:#08745e;color:#fff;font-weight:900">Kembali</button></section>';
+      gate.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:18px;background:rgba(2,35,30,.94)";
+      gate.innerHTML = '<section style="width:min(540px,100%);padding:28px;border-radius:28px;background:#fff;color:#173b33;box-shadow:0 24px 60px rgba(0,0,0,.28);text-align:center"><div style="font-size:3rem">📱</div><span style="display:block;margin-top:8px;font-size:.72rem;font-weight:900;letter-spacing:.1em;color:#08745e">AKSES RUANG MURID</span><h2 style="margin:8px 0 10px;color:#143b33">Gunakan HP murid</h2><p style="margin:0;line-height:1.65;color:#5d716b">Ruang Murid diwajibkan dibuka melalui HP. Login NISN, kamera depan, lokasi, identitas kelas, dan kendali guru diterapkan pada perangkat tersebut.</p><button type="button" data-v81-close-phone style="margin-top:18px;min-height:46px;padding:10px 18px;border:0;border-radius:14px;background:#08745e;color:#fff;font-weight:900">Kembali</button></section>';
       document.body.append(gate);
       gate.querySelector("[data-v81-close-phone]")?.addEventListener("click", () => gate.remove());
     }
@@ -309,21 +303,17 @@ window.PAIBP_CONFIG = Object.freeze({
       const button = event.target.closest('[data-open-panel="student"],[data-open-panel="games"]');
       if (!button || busy) return;
       const name = button.dataset.openPanel;
-
       if (name === "student" && window.__PAIBP_STUDENT_GATE_BYPASS__ === true) {
         openPanel("student");
         return;
       }
-
       event.preventDefault();
       event.stopImmediatePropagation();
-
       if (name === "student") {
         if (!isStudentPhone()) { showStudentPhoneGate(); return; }
         busy = true;
         button.setAttribute("aria-busy", "true");
         try {
-          /* Login/CAT harus siap sebelum Ruang Murid dibuka. */
           await Promise.all([loadCat(), loadWorkspaceCore()]);
           const cat = window.PAIBP_CAT_V69 || window.PAIBP_CAT_V67 || window.PAIBP_CAT_V65;
           if (cat?.openStudent) cat.openStudent();
@@ -334,7 +324,6 @@ window.PAIBP_CONFIG = Object.freeze({
         }
         return;
       }
-
       openPanel("games");
       if (window.__PAIBP_WORKSPACE_CORE_READY__) return;
       busy = true;
@@ -348,10 +337,8 @@ window.PAIBP_CONFIG = Object.freeze({
   function init() {
     shell();
     if (page === "about-spensus.html") return;
-
     if (page === "akses-guru.html") {
       style("teacher-docs-v84.css");
-      /* Portal Guru V80: muat kembali seluruh perangkat guru; CAT hanya salah satu alat. */
       setPortalMode("active", "guru");
       style("cp2025-v48.css");
       Promise.all([
@@ -360,23 +347,19 @@ window.PAIBP_CONFIG = Object.freeze({
         script("cp2025-loader-v48.js").then(() => script("cp2025-exact-v56.js")).then(() => script("cp2025-cleanup-v82.js")).catch(() => false)
       ]).then(() => {
         setPortalMode("active", "guru");
-        document.documentElement.dataset.teacherPortal = "full-v80";
+        document.documentElement.dataset.teacherPortal = "full-v86";
+        window.PAIBP_ICON_ART_V86?.run?.();
         const trigger = document.querySelector("#teacher-gateway-trigger");
         if (trigger) trigger.click();
         else openPanel("teacher");
-      }).catch((error) => console.error("PAIBP V81 Portal Guru", error));
+      }).catch((error) => console.error("PAIBP V86 Portal Guru", error));
       return;
     }
-
     if (page === "kendali-editor.html") {
       script("teacher-cat-v72.js").catch(() => {});
       return;
     }
-
     if (page === "index.html") {
-      /* Tampilan berwarna dan Simulasi Ibadah dipulihkan tanpa menunggu pengguna membuka panel. */
-      ensureVisualRuntime();
-      loadCat().catch(() => {});
       studentGameGate();
       if (catLink) {
         setPortalMode("active", "murid");
@@ -388,6 +371,6 @@ window.PAIBP_CONFIG = Object.freeze({
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
 
-  setTimeout(purgeLegacyClassState, 350);
-  setTimeout(purgeLegacyClassState, 1200);
+  if ("requestIdleCallback" in window) requestIdleCallback(() => purgeLegacyClassState(), { timeout: 1400 });
+  else setTimeout(purgeLegacyClassState, 850);
 })();
