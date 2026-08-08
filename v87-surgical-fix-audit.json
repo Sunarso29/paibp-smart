@@ -1,0 +1,31 @@
+{
+  "build": "87",
+  "scope": "surgical visual + teacher preview correction",
+  "codeAudit": "PASS",
+  "checks": {
+    "sourceBundlesChanged": false,
+    "cpAtpKktpProtaPromesLayoutSourceChanged": false,
+    "studentFeaturesChanged": false,
+    "quranFeaturesChanged": false,
+    "catChanged": false,
+    "teacherMaterialLockChanged": false,
+    "worshipSimulationChanged": false,
+    "homeGatePhotoRestoredByCss": true,
+    "teacherSvgWhiteOnWhiteFixed": true,
+    "atpIdentityValueContrastFixed": true,
+    "topBottomFormRemovedFromPreviewOnly": true,
+    "signatureBlocksRemovedFromPreviewOnly": true,
+    "sourceFilesKeepOriginalSignatureBlocks": true,
+    "duplicatePreviewComposerNormalized": "Sunarso, S.Pd.I, Gr",
+    "effectiveDaysHasDedicatedRenderer": true,
+    "globalMutationObserverAdded": false,
+    "serviceWorkerCache": "paibp-smart-v87-fast-static"
+  },
+  "filesAddedOrModifiedForV87": [
+    "visual-fix-v87.css",
+    "teacher-preview-fix-v87.js",
+    "icon-art-v85.js",
+    "service-worker.js",
+    "v87-surgical-fix-audit.json"
+  ]
+}
