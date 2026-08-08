@@ -110,8 +110,8 @@
     return true;
   }
 
-  function scheduleSanitize(){[60,180,520,1100].forEach(ms=>setTimeout(sanitizeExactPreview,ms));}
-  function scheduleEffective(){[80,240,650].forEach(ms=>setTimeout(renderEffective,ms));}
+  function scheduleSanitize(){[60,180,520,1100,2200,4200].forEach(ms=>setTimeout(sanitizeExactPreview,ms));}
+  function scheduleEffective(){[80,240,650,1400].forEach(ms=>setTimeout(renderEffective,ms));}
 
   document.addEventListener("click",(event)=>{
     const doc=event.target.closest("[data-teacher-doc]");
