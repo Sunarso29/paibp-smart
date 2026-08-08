@@ -1,0 +1,23 @@
+{
+  "build":"88",
+  "status":"PASS",
+  "scope":"teacher preview cleanup + readability + icon repair",
+  "checks":{
+    "sourceBundlesChanged":false,
+    "cpAtpKktpProtaPromesSourceFilesChanged":false,
+    "signatureRowsFilteredBeforeRender":true,
+    "signatureSourceFilesPreserved":true,
+    "topBottomFormFilteredFromPreview":true,
+    "hutKebonagungFilteredFromPreview":true,
+    "hutKabupatenDemakFilteredFromPreview":true,
+    "mgmpJatengCreditFilteredFromPreview":true,
+    "genericKebonagungIdentityNormalizedInPreview":true,
+    "teacherDocumentReadabilityMode":"white paper + dark navy text",
+    "navigationRemainsFullColour":true,
+    "teacherIconRedrawRequiresActualSvg":true,
+    "teacherIconWhiteOnWhiteGuard":true,
+    "effectiveDaysDedicatedRenderer":true,
+    "globalMutationObserverAdded":false,
+    "serviceWorkerCache":"paibp-smart-v88-fast-static"
+  }
+}
