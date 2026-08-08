@@ -66,6 +66,8 @@ window.PAIBP_CONFIG = Object.freeze({
     style("v38-upgrade.css");
     style("v39-upgrade.css");
   }
+  /* V85 harus menjadi lapisan visual terakhir; tidak mengubah konten/fungsi. */
+  style("visual-runtime-v85.css");
 
   function purgeLegacyClassState() {
     if (catLink) return;
