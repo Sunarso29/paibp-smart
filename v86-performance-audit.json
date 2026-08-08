@@ -1,0 +1,29 @@
+{
+  "build": "86",
+  "status": "PASS",
+  "scope": "performance + visual only",
+  "checks": {
+    "contentChanged": false,
+    "featureSetChanged": false,
+    "layoutReordered": false,
+    "homeCatPreload": false,
+    "homeV38V39RuntimePreload": false,
+    "legacyVisualLinksDisabledByLoader": true,
+    "singlePrimaryVisualLayer": "visual-v86.css",
+    "singlePrimaryIconLayer": "icon-v86.css",
+    "legacyGlobalIconMutationObserver": false,
+    "iconRuntime": "event-driven + requestAnimationFrame",
+    "workspacePayloadLoading": "parallel payloads + ordered dependencies",
+    "islamicHeavyCore": "idle warm-up after immediate panel open",
+    "worshipShellIndependent": true,
+    "worshipContentRuntime": "worship-restore-v80.js",
+    "quranRuntimePreserved": "quran-kemenag-runtime-v78.js",
+    "studentGatePreserved": true,
+    "teacherPortalPreserved": true,
+    "catPreserved": true,
+    "teacherMaterialLockPreserved": true,
+    "serviceWorkerCache": "paibp-smart-v86-fast-static",
+    "versionedCssJsCacheFirst": true,
+    "quranCachePreservedAcrossWorkerUpgrade": true
+  }
+}
