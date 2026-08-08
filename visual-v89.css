@@ -1,0 +1,38 @@
+/* V89 readability-first patch. No layout/content/feature changes. */
+:root{--v89-ink:#102a43;--v89-muted:#4d657d;--v89-paper:#ffffff;--v89-line:#d7e3ed}
+/* Home feedback + school identity: reading mode always wins over decorative dark fills. */
+#tanggapan :is([class*="feedback"],[class*="response"],[class*="latest"],[class*="comment"],form,aside,article),
+:is([class*="school-identity"],[class*="identity-school"],[class*="school-card"]){
+  color:var(--v89-ink)!important;
+  text-shadow:none!important;
+}
+#tanggapan :is([class*="feedback"],[class*="response"],[class*="latest"],[class*="comment"]),
+:is([class*="school-identity"],[class*="identity-school"],[class*="school-card"]){
+  background:linear-gradient(180deg,#fff 0%,#f8fbfd 100%)!important;
+  border-color:var(--v89-line)!important;
+}
+#tanggapan :is([class*="feedback"],[class*="response"],[class*="latest"],[class*="comment"],form,aside,article) :is(h1,h2,h3,h4,h5,strong,b,label,span,p,small),
+:is([class*="school-identity"],[class*="identity-school"],[class*="school-card"]) :is(h1,h2,h3,h4,h5,strong,b,label,span,p,small,a){
+  color:var(--v89-ink)!important;
+  -webkit-text-fill-color:var(--v89-ink)!important;
+  text-shadow:none!important;
+}
+#tanggapan input,#tanggapan select,#tanggapan textarea{background:#fff!important;color:#17324e!important;-webkit-text-fill-color:#17324e!important;border-color:#bcd0df!important}
+#tanggapan button{color:#172033!important;-webkit-text-fill-color:#172033!important}
+/* Teacher document reading surface: navigation may be vivid; paper stays calm and legible. */
+#teacher-document,.mm-admin-paper{background:#fff!important;color:#17324e!important}
+#teacher-document :is(p,li,td,small,span:not(.badge):not(.panel-kicker)),.mm-admin-paper :is(p,li,td,small,span){color:#294861!important;-webkit-text-fill-color:#294861!important;text-shadow:none!important}
+#teacher-document :is(h1,h2,h3,h4,h5,h6,strong,b,th),.mm-admin-paper :is(h1,h2,h3,h4,h5,h6,strong,b,th){color:#102d4b!important;-webkit-text-fill-color:#102d4b!important;text-shadow:none!important}
+#teacher-document table,.mm-admin-paper table{background:#fff!important}
+#teacher-document td,.mm-admin-paper td{background:#fff!important}
+#teacher-document tr:nth-child(even) td,.mm-admin-paper tr:nth-child(even) td{background:#f9fcff!important}
+#teacher-document th,.mm-admin-paper th{background:#e9f2f9!important;color:#123653!important;-webkit-text-fill-color:#123653!important}
+/* Keep vivid colors on navigation only. */
+.teacher-doc-menu button,.mm-admin-docnav button{color:#fff!important;-webkit-text-fill-color:#fff!important}
+.teacher-doc-menu button *,.mm-admin-docnav button *{color:inherit!important;-webkit-text-fill-color:inherit!important}
+/* Small-screen readability and cheap rendering. */
+@media(max-width:700px){
+  #tanggapan :is([class*="feedback"],[class*="response"],[class*="latest"],[class*="comment"],form,aside,article){box-shadow:none!important}
+  #teacher-document,.mm-admin-paper{border-radius:14px!important}
+  #teacher-document :is(p,li,td),.mm-admin-paper :is(p,li,td){font-size:.94rem!important;line-height:1.5!important}
+}
