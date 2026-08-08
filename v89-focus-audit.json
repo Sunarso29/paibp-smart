@@ -1,0 +1,30 @@
+{
+  "build":"89",
+  "status":"PASS_WITH_SOURCE_COVERAGE_NOTE",
+  "scope":"readability + ticker + role-gated multimapel admin only",
+  "checks":{
+    "layoutChanged":false,
+    "paibpContentChanged":false,
+    "studentFeaturesChanged":false,
+    "quranChanged":false,
+    "catChanged":false,
+    "teacherMaterialLockChanged":false,
+    "duplicateComposerCanonicalized":true,
+    "homeVisionMissionTickerRestored":true,
+    "tickerUsesIntervalNotMutationObserver":true,
+    "homeFeedbackReadingMode":true,
+    "teacherDocumentReadingMode":true,
+    "multimapelAdminTeacherEditorOnly":true,
+    "multimapelAdminLazyLoads":true,
+    "studentLoadsAdminPacks":false,
+    "multimapelMenu":["CP","KKTP","ATP","Prota","Promes","Kalender Pendidikan","Analisis Hari Efektif","Modul Ajar"],
+    "serviceWorkerCache":"paibp-smart-v89-fast-static"
+  },
+  "convertedSourcePacksVerifiedInCurrentHistory":[
+    "Pendidikan Pancasila VII","Pendidikan Pancasila VIII","Pendidikan Pancasila IX",
+    "Bahasa Indonesia VII","Bahasa Indonesia VIII","Bahasa Indonesia IX",
+    "Bahasa Inggris VII","Bahasa Inggris VIII","Bahasa Inggris IX",
+    "Matematika VIII","Seni Musik VIII"
+  ],
+  "sourcePolicy":"Never fabricate missing CP/ATP/KKTP/Prota/Promes. The v33 audit records 385 historical source documents; remaining admin packs must be converted from those source documents before being shown as complete."
+}
