@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const BUILD = "84";
+  const BUILD = "88";
   const DOC_MAP = Object.freeze({cp:"CP",atp:"ATP",kktp:"KKTP",prota:"PROTA",promes:"PROMES"});
   const DATA = window.PAIBP_TEACHER_DOCS_V84C || {};
   const $ = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -23,20 +23,55 @@
     return Boolean($('[data-v48-cp-mode="2025"][aria-pressed="true"]'));
   }
 
+  function compact(value){ return String(value ?? "").replace(/\u00a0/g," ").replace(/\s+/g," ").trim(); }
+  function legacyPreviewText(value){
+    const text=compact(value);
+    return /HUT\s+SMPN?\s*1\s+Kebonagung/i.test(text)
+      || /HUT\s+Kabupaten\s+Demak/i.test(text)
+      || /Tim\s+MGMP\s+PAI\s+SMP\s+Provinsi\s+Jateng/i.test(text)
+      || /Tim\s+MGMP\s+PAI\s+SMP\s+Provinsi\s+Jawa\s+Tengah/i.test(text);
+  }
+  function formArtifact(value){ return /^(?:Top|Bottom)\s+of\s+Form$/i.test(compact(value)); }
+  function signatureText(value){
+    const text=compact(value);
+    const know=/\bMengetahui\b/i.test(text);
+    const head=/\bKepala\s+(?:SMP|Sekolah)\b/i.test(text);
+    const teacher=/\bGuru\s+(?:PAIBP|Mata\s+Pelajaran)/i.test(text);
+    const nip=/\bNIP\.?\s*\d/i.test(text);
+    const dated=/\b(?:Susukan|Demak)\s+(?:Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s+20\d{2}\b/i.test(text);
+    return (know&&(head||teacher||nip)) || (head&&teacher) || (dated&&teacher&&nip);
+  }
+  function normalizePreviewText(value){
+    let text=String(value ?? "");
+    const lines=text.split(/\n/).map((line)=>{
+      const clean=line.trim();
+      if(/^Penyusun\s*:/i.test(clean)) return "Penyusun : Sunarso, S.Pd.I, Gr";
+      if(/^Nama\s+Penyusun\s*:/i.test(clean)) return "Nama Penyusun : Sunarso, S.Pd.I, Gr";
+      if(/^Satuan\s+Pendidikan\s*:/i.test(clean) && /Kebonagung/i.test(clean)) return "Satuan Pendidikan : SMP Negeri 1 Susukan";
+      if(/^Nama\s+Sekolah\s*:/i.test(clean) && /Kebonagung/i.test(clean)) return "Nama Sekolah : SMP Negeri 1 Susukan";
+      return line;
+    });
+    text=lines.join("\n");
+    return text;
+  }
+  function suppressParagraph(value){ return formArtifact(value) || legacyPreviewText(value) || signatureText(value); }
+
   function paragraphParts(block) {
     return { text:block?.[1] ?? "", kind:block?.[2] || "p", align:block?.[3] || "" };
   }
 
   function renderParagraph(block) {
     const {text, kind, align} = paragraphParts(block);
+    if(suppressParagraph(text)) return "";
+    const safeText=normalizePreviewText(text);
     const style = align ? `text-align:${esc(align)};` : "";
     const cls = `v84-source-paragraph v84-${esc(kind)}`;
-    return `<p class="${cls}" style="${style}">${esc(text).replace(/\n/g,"<br>")}</p>`;
+    return `<p class="${cls}" style="${style}">${esc(safeText).replace(/\n/g,"<br>")}</p>`;
   }
 
   function renderCell(cell, rowIndex) {
     const colIndex = Number(cell?.[0] || 0);
-    const text = cell?.[1] ?? "";
+    const text = normalizePreviewText(cell?.[1] ?? "");
     const span = Math.max(1, Number(cell?.[2] || 1));
     const spanAttr = span > 1 ? ` colspan="${span}"` : "";
     const headish = rowIndex < 3 ? " v84-head-cell" : "";
@@ -52,11 +87,22 @@
     return `<td class="v84-cell v84-col-${colIndex + 1}${headish}">&nbsp;</td>`;
   }
 
+  function rowText(row){
+    return (Array.isArray(row)?row:[]).map((cell)=>String(cell?.[1] ?? "")).join(" ");
+  }
+
   function renderTable(block, tableIndex) {
     const cols = Math.max(1, Number(block?.[1] || 1));
     const sourceRows = Array.isArray(block?.[2]) ? block[2] : [];
+    const tableText=sourceRows.map(rowText).join(" ");
+    if(signatureText(tableText)) return "";
+    const filteredRows=sourceRows.filter((row)=>{
+      const text=rowText(row);
+      return !legacyPreviewText(text) && !signatureText(text) && !formArtifact(text);
+    });
+    if(!filteredRows.length) return "";
     const wide = cols >= 12 ? " v84-table-ultrawide" : cols >= 6 ? " v84-table-wide" : "";
-    const rows = sourceRows.map((row, rowIndex) => {
+    const rows = filteredRows.map((row, rowIndex) => {
       const sparse = Array.isArray(row) ? row.slice().sort((a,b)=>Number(a?.[0]||0)-Number(b?.[0]||0)) : [];
       let cursor = 0;
       let cells = "";
