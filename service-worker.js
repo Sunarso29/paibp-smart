@@ -1,5 +1,11 @@
-const CACHE_NAME="paibp-smart-v85-visual-static";
-const STATIC=["./logo-spensus.png","./assets/icons/icon-192.png"];
+const CACHE_NAME="paibp-smart-v86-fast-static";
+const STATIC=[
+  "./logo-spensus.png",
+  "./assets/icons/icon-192.png",
+  "./visual-v86.css?v=86",
+  "./icon-v86.css?v=86",
+  "./icon-art-v86.js?v=86"
+];
 
 self.addEventListener("install",(event)=>{
   self.skipWaiting();
@@ -9,40 +15,57 @@ self.addEventListener("install",(event)=>{
 self.addEventListener("activate",(event)=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
-    await Promise.all(keys.filter((key)=>key!==CACHE_NAME).map((key)=>caches.delete(key)));
+    await Promise.all(keys
+      .filter((key)=>key!==CACHE_NAME && !key.startsWith("paibp-quran-kemenag-"))
+      .map((key)=>caches.delete(key)));
     await self.clients.claim();
   })());
 });
 
+async function networkFirst(request){
+  const cache=await caches.open(CACHE_NAME);
+  try{
+    const response=await fetch(request);
+    if(response && response.ok) cache.put(request,response.clone());
+    return response;
+  }catch{
+    return await cache.match(request) || await cache.match(request,{ignoreSearch:true}) || Response.error();
+  }
+}
+
+async function cacheFirst(request){
+  const cache=await caches.open(CACHE_NAME);
+  const hit=await cache.match(request);
+  if(hit) return hit;
+  try{
+    const response=await fetch(request);
+    if(response && response.ok) cache.put(request,response.clone());
+    return response;
+  }catch{
+    return Response.error();
+  }
+}
+
 self.addEventListener("fetch",(event)=>{
-  if(event.request.method!=="GET") return;
-  const url=new URL(event.request.url);
+  const request=event.request;
+  if(request.method!=="GET") return;
+  const url=new URL(request.url);
   if(url.origin!==self.location.origin) return;
 
-  const fresh = event.request.mode==="navigate"
-    || ["script","style","document"].includes(event.request.destination)
-    || /app-config|v38-upgrade|v39-upgrade|islamic-lite|islamic-data|islamic-learning|islamic-upgrade|khutbah|hadith|arabic|script\.js|teacher-cat|cat-session|net-v71|mobile-fix|stable-v72|quran-kemenag|quran-kemenag-runtime|worship-restore|learning-guard|cp2025-cleanup|cp2025-loader|cp2025-exact|cp2026-source|visual-v83|visual-v84|visual-v85|visual-runtime-v85|icon-depth-v85|icon-art-v85|icon-guard-v84|teacher-docs-v84|teacher-v84|cat-session|service-worker/i.test(url.pathname);
-
-  if(fresh){
-    event.respondWith(
-      fetch(new Request(event.request,{cache:"no-store"}))
-        .catch(()=>caches.match(event.request,{ignoreSearch:true}))
-    );
+  if(request.mode==="navigate" || request.destination==="document"){
+    event.respondWith(networkFirst(request));
     return;
   }
 
-  if(event.request.destination==="image"){
-    event.respondWith((async()=>{
-      const cache=await caches.open(CACHE_NAME);
-      const hit=await cache.match(event.request);
-      if(hit) return hit;
-      try{
-        const response=await fetch(event.request);
-        if(response.ok) cache.put(event.request,response.clone());
-        return response;
-      }catch{
-        return Response.error();
-      }
-    })());
+  if(url.searchParams.get("v")==="86" && (request.destination==="script" || request.destination==="style")){
+    event.respondWith(cacheFirst(request));
+    return;
   }
+
+  if(request.destination==="image" || request.destination==="font"){
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  event.respondWith(networkFirst(request));
 });
