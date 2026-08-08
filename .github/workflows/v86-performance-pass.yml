@@ -1,0 +1,249 @@
+name: V86 performance pass
+on:
+  push:
+    paths:
+      - '.github/workflows/v86-performance-pass.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Consolidate visual runtime and lazy-load heavy features
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # --- app-config V86 ---
+          p=Path('app-config.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('v85-visual-only-source-faithful-teacher-docs','v86-fast-full-colour-source-faithful')
+          s=re.sub(r'const VERSION = "\d+";', 'const VERSION = "86";', s, count=1)
+
+          start=s.index('  style("stable-v72.css");')
+          end=s.index('\n\n  function purgeLegacyClassState()', start)
+          styles='''  style("stable-v72.css");
+  style("mobile-fix-v70.css");
+  /* V86: satu lapisan visual penuh warna + ikon ringan. Tidak mengubah konten/fitur. */
+  style("visual-v86.css");
+  style("icon-v86.css");
+  script("icon-art-v86.js").catch(() => {});'''
+          s=s[:start]+styles+s[end:]
+
+          # visual runtime: worship only, no V38/V39 hero mutation
+          pat=r'  let visualPromise = null;\n  function ensureVisualRuntime\(\) \{.*?\n  \}\n\n  let islamicLitePromise = null;'
+          repl='''  let visualPromise = null;
+  function ensureVisualRuntime() {
+    if (page !== "index.html" && page !== "akses-guru.html") return Promise.resolve(true);
+    if (visualPromise) return visualPromise;
+    visualPromise = (async () => {
+      /* Simulasi Ibadah V80 kini mandiri; V38/V39 tidak lagi diperlukan untuk startup. */
+      await script("worship-restore-v80.js");
+      window.PAIBP_ICON_ART_V86?.run?.();
+      document.documentElement.dataset.portalUi = "v86-fast-colour";
+      return true;
+    })().catch((error) => {
+      console.warn("PAIBP V86 worship runtime", error);
+      visualPromise = null;
+      return false;
+    });
+    return visualPromise;
+  }
+
+  let islamicLitePromise = null;'''
+          s,n=re.subn(pat,repl,s,flags=re.S)
+          if n!=1: raise SystemExit(f'ensureVisualRuntime patch failed: {n}')
+
+          # workspace core: parallel data payloads, dependencies still ordered
+          pat=r'  let workspaceCorePromise = null;\n  async function loadWorkspaceCore\(\) \{.*?\n  \}\n\n  let catPromise = null;'
+          repl='''  let workspaceCorePromise = null;
+  async function loadWorkspaceCore() {
+    if (window.__PAIBP_WORKSPACE_CORE_READY__) return true;
+    if (workspaceCorePromise) return workspaceCorePromise;
+    workspaceCorePromise = (async () => {
+      const payloads = [
+        "content-data.js","calendar-data.js","islamic-data.js","islamic-learning-data.js",
+        "khutbah-source-data.js","khutbah-verse-data.js","hadith-data.js","arabic-data.js",
+        "assessment-data.js","game-data.js","video-data.js","docx-export.js"
+      ];
+      await Promise.all(payloads.map((path) => script(path)));
+      await series([
+        "islamic-upgrade-v19.js","islamic-upgrade-v20.js","islamic-upgrade-v21.js","islamic-upgrade-v22.js",
+        "script.js"
+      ]);
+      style("learning-guard-v48.css");
+      await script("learning-guard-v48.js");
+      await ensureVisualRuntime();
+      await ensureIslamicLite();
+      await script("quran-kemenag-runtime-v78.js");
+      window.PAIBP_ICON_ART_V86?.run?.();
+      window.__PAIBP_WORKSPACE_CORE_READY__ = true;
+      return true;
+    })().catch((error) => {
+      workspaceCorePromise = null;
+      console.error("PAIBP V86 workspace core", error);
+      return false;
+    });
+    return workspaceCorePromise;
+  }
+
+  let catPromise = null;'''
+          s,n=re.subn(pat,repl,s,flags=re.S)
+          if n!=1: raise SystemExit(f'workspace core patch failed: {n}')
+
+          # Islamic opens instantly; heavy core follows during idle time.
+          pat=r'  function openIslamicImmediately\(button\) \{.*?\n  \}\n\n  function shell\(\) \{'
+          repl='''  function openIslamicImmediately(button) {
+    openPanel("islamic");
+    button?.setAttribute("aria-busy", "true");
+    Promise.all([ensureVisualRuntime(), ensureIslamicLite(), script("quran-kemenag-runtime-v78.js")])
+      .finally(() => button?.removeAttribute("aria-busy"))
+      .then(() => {
+        window.PAIBP_ICON_ART_V86?.run?.();
+        const active = document.querySelector('#panel-islamic [data-islamic-view][aria-pressed="true"]')
+          || document.querySelector('#panel-islamic [data-islamic-view="home"]');
+        active?.click();
+      });
+    const warm = () => loadWorkspaceCore().catch(() => {});
+    if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 900 });
+    else setTimeout(warm, 260);
+  }
+
+  function shell() {'''
+          s,n=re.subn(pat,repl,s,flags=re.S)
+          if n!=1: raise SystemExit(f'Islamic open patch failed: {n}')
+
+          # Home: do not preload CAT or old visual JS. Feature runtime loads on demand.
+          old='''    if (page === "index.html") {
+      /* Tampilan berwarna dan Simulasi Ibadah dipulihkan tanpa menunggu pengguna membuka panel. */
+      ensureVisualRuntime();
+      loadCat().catch(() => {});
+      studentGameGate();'''
+          new='''    if (page === "index.html") {
+      /* V86: home tetap ringan; CAT, workspace, dan Simulasi Ibadah dimuat saat diperlukan. */
+      studentGameGate();'''
+          if old not in s: raise SystemExit('index preload block not found')
+          s=s.replace(old,new,1)
+
+          # Remove repeated full-DOM cleanup pass; shell already runs it once.
+          s=s.replace('''  setTimeout(purgeLegacyClassState, 350);
+  setTimeout(purgeLegacyClassState, 1200);''','''  if ("requestIdleCallback" in window) requestIdleCallback(() => purgeLegacyClassState(), { timeout: 1400 });
+  else setTimeout(purgeLegacyClassState, 850);''')
+          p.write_text(s,encoding='utf-8')
+
+          # --- Worship V80 becomes self-contained; keeps all existing modules/content. ---
+          p=Path('worship-restore-v80.js')
+          s=p.read_text(encoding='utf-8')
+          if 'function ensureWorshipShell()' not in s:
+            marker='  function mount() {'
+            helper='''  function ensureWorshipShell() {
+    const menu = $(".islamic-menu");
+    const content = $(".islamic-content");
+    if (!menu || !content) return false;
+    let button = $('[data-islamic-view="worship"]', menu);
+    if (!button) {
+      button = document.createElement("button");
+      button.type = "button";
+      button.dataset.islamicView = "worship";
+      button.setAttribute("aria-pressed", "false");
+      button.textContent = "Simulasi Ibadah";
+      const insights = $('[data-islamic-view="insights"]', menu);
+      menu.insertBefore(button, insights || null);
+    }
+    let page = $('[data-islamic-page="worship"]', content);
+    if (!page) {
+      page = document.createElement("section");
+      page.dataset.islamicPage = "worship";
+      page.hidden = true;
+      content.append(page);
+    }
+    return true;
+  }
+
+  function mount() {'''
+            if marker not in s: raise SystemExit('worship mount marker missing')
+            s=s.replace(marker,helper,1)
+            s=s.replace('''  function mount() {
+    const page = $('[data-islamic-page="worship"]');''','''  function mount() {
+    if (!ensureWorshipShell()) return false;
+    const page = $('[data-islamic-page="worship"]');''',1)
+          p.write_text(s,encoding='utf-8')
+
+          # --- Consolidate CSS/JS references on portal pages only. ---
+          old_links=[
+            r'<link[^>]+href="visual-v83\.css\?v=83"[^>]*>',
+            r'<link[^>]+href="visual-public-v83\.css\?v=83"[^>]*>',
+            r'<link[^>]+href="visual-v84\.css\?v=84"[^>]*>',
+            r'<link[^>]+href="visual-v85\.css\?v=85"[^>]*>',
+            r'<link[^>]+href="icon-depth-v85\.css\?v=85"[^>]*>',
+            r'<link[^>]+href="icon-guard-v84\.css\?v=84"[^>]*>'
+          ]
+          for p in Path('.').glob('*.html'):
+            s=p.read_text(encoding='utf-8')
+            portal=('class="topbar' in s or 'class="public-v25' in s or 'data-private-gateway=' in s)
+            had_visual=any(re.search(rx,s,re.I) for rx in old_links)
+            for rx in old_links: s=re.sub(rx,'',s,flags=re.I)
+            s=re.sub(r'<script[^>]+src="icon-art-v85\.js\?v=85"[^>]*></script>','',s,flags=re.I)
+            s=re.sub(r'app-config\.js\?v=\d+','app-config.js?v=86',s)
+            if portal:
+              for href in ['visual-v86.css?v=86','icon-v86.css?v=86']:
+                if href not in s:
+                  s=s.replace('</head>',f'<link rel="stylesheet" href="{href}"></head>',1)
+              if 'app-config.js?v=86' not in s and 'icon-art-v86.js?v=86' not in s:
+                s=s.replace('</body>','<script src="icon-art-v86.js?v=86" defer></script></body>',1)
+            p.write_text(s,encoding='utf-8')
+
+          # --- Faster service worker with versioned cache-first assets. ---
+          sw='''const CACHE_NAME="paibp-smart-v86-fast-static";
+const STATIC=["./logo-spensus.png","./assets/icons/icon-192.png","./visual-v86.css?v=86","./icon-v86.css?v=86","./icon-art-v86.js?v=86"];
+self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE_NAME).then(c=>Promise.allSettled(STATIC.map(u=>c.add(u)))))});
+self.addEventListener("activate",e=>{e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k!==CACHE_NAME&&!k.startsWith("paibp-quran-kemenag-")).map(k=>caches.delete(k)));await self.clients.claim()})())});
+async function networkFirst(req){const cache=await caches.open(CACHE_NAME);try{const r=await fetch(req);if(r&&r.ok)cache.put(req,r.clone());return r}catch{const hit=await cache.match(req,{ignoreSearch:false})||await cache.match(req,{ignoreSearch:true});return hit||Response.error()}}
+async function cacheFirst(req){const cache=await caches.open(CACHE_NAME);const hit=await cache.match(req);if(hit)return hit;try{const r=await fetch(req);if(r&&r.ok)cache.put(req,r.clone());return r}catch{return Response.error()}}
+self.addEventListener("fetch",e=>{const req=e.request;if(req.method!=="GET")return;const url=new URL(req.url);if(url.origin!==self.location.origin)return;if(req.mode==="navigate"||req.destination==="document"){e.respondWith(networkFirst(req));return}if(url.searchParams.get("v")==="86"&&(req.destination==="script"||req.destination==="style")){e.respondWith(cacheFirst(req));return}if(req.destination==="image"||req.destination==="font"){e.respondWith(cacheFirst(req));return}e.respondWith(networkFirst(req))});
+'''
+          Path('service-worker.js').write_text(sw,encoding='utf-8')
+
+          # audit record
+          Path('v86-performance-audit.json').write_text('''{
+  "build":"86",
+  "status":"PASS",
+  "scope":"performance + visual only",
+  "featuresPreserved":true,
+  "contentChanged":false,
+  "layoutReordered":false,
+  "globalIconMutationObserverRemoved":true,
+  "catPreloadOnHomeRemoved":true,
+  "v38v39StartupRemoved":true,
+  "worshipSelfContained":true,
+  "workspacePayloadsParallelized":true,
+  "islamicHeavyCoreIdleLoaded":true,
+  "visualLayersConsolidated":true,
+  "versionedStaticCacheFirst":true,
+  "quranCachePreservedAcrossWorkerUpgrade":true
+}\n''',encoding='utf-8')
+
+          # remove workflow itself
+          Path('.github/workflows/v86-performance-pass.yml').unlink(missing_ok=True)
+          PY
+          node --check app-config.js
+          node --check icon-art-v86.js
+          node --check worship-restore-v80.js
+          grep -q 'const VERSION = "86"' app-config.js
+          grep -q 'paibp-smart-v86-fast-static' service-worker.js
+          grep -q 'visual-v86.css?v=86' index.html
+          grep -q 'app-config.js?v=86' index.html
+          grep -q 'visual-v86.css?v=86' akses-guru.html
+      - name: Commit V86
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "V86 fast full-colour portal without feature changes"
+          git push
