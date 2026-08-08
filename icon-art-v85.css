@@ -1,0 +1,7 @@
+/* V85 local SVG icon artwork — visual only. */
+svg.v85-svg-art{width:1.22em!important;height:1.22em!important;display:inline-block!important;vertical-align:-.2em!important;overflow:visible!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;opacity:1!important;visibility:visible!important;filter:drop-shadow(0 2px 3px rgba(7,35,69,.16))!important;mix-blend-mode:normal!important}
+svg.v85-svg-art :where(path,circle,rect,line,polyline,polygon,ellipse){fill:none!important;stroke:currentColor!important;stroke-width:inherit!important;stroke-linecap:round!important;stroke-linejoin:round!important;opacity:1!important;visibility:visible!important}
+.teacher-doc-menu button>span svg.v85-svg-art{width:1.28em!important;height:1.28em!important}
+.islamic-menu button svg.v85-svg-art{margin-right:.42em!important;color:#fff!important;stroke:#fff!important;filter:drop-shadow(0 2px 4px rgba(0,0,0,.22))!important}
+.panel-kicker svg.v85-svg-art{margin-right:.3em!important}
+.directory-feature-icon svg.v85-svg-art{margin:0!important}
