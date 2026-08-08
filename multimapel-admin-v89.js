@@ -5,157 +5,32 @@
   if(!db) return;
   const teacher=sessionStorage.getItem("paibp-smart-visitor-role-v1")==="guru";
   const editor=sessionStorage.getItem("paibp-smart-editor-unlocked")==="yes" || sessionStorage.getItem("paibp-smart-owner-gateway-v30")==="yes";
-  if(!teacher && !editor) return; // Murid tidak memuat data administrasi.
-
-  const SOURCE_GRADES={
-    "bahasa-indonesia":["VII","VIII","IX"],
-    "bahasa-inggris":["VII","VIII","IX"],
-    "pendidikan-pancasila":["VII","VIII","IX"],
-    "matematika":["VII","VIII","IX"],
-    "ipa":["VII","VIII","IX"],
-    "ips":["VIII","IX"],
-    "pjok":["VII","VIII","IX"],
-    "informatika":["IX"],
-    "prakarya":["VII"],
-    "seni-musik":["VIII"],
-    "seni-tari":["IX"]
-  };
-  const DOCS=[
-    ["CP","CP"],["KKTP","KKTP"],["ATP","ATP"],["PROTA","Prota"],["PROMES","Promes"],
-    ["CALENDAR","Kalender Pendidikan"],["EFFECTIVE","Analisis Hari Efektif"],["MODULE","Modul Ajar"]
-  ];
+  if(!teacher && !editor) return;
+  const SOURCE_GRADES={"bahasa-indonesia":["VII","VIII","IX"],"bahasa-inggris":["VII","VIII","IX"],"pendidikan-pancasila":["VII","VIII","IX"],"matematika":["VII","VIII","IX"],"ipa":["VII","VIII","IX"],"ips":["VIII","IX"],"pjok":["VII","VIII","IX"],"informatika":["IX"],"prakarya":["VII"],"seni-musik":["VIII"],"seni-tari":["IX"]};
+  const DOCS=[["CP","CP"],["KKTP","KKTP"],["ATP","ATP"],["PROTA","Prota"],["PROMES","Promes"],["CALENDAR","Kalender Pendidikan"],["EFFECTIVE","Analisis Hari Efektif"],["MODULE","Modul Ajar"]];
   const subjectById=Object.fromEntries(db.subjects.map(s=>[s.id,s]));
-  const $=(s,r=document)=>r?.querySelector?.(s)||null;
-  const $$=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
+  const $=(s,r=document)=>r?.querySelector?.(s)||null,$$=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
   const compact=v=>String(v??"").replace(/\u00a0/g," ").replace(/\s+/g," ").trim();
-  const roleLabel=editor?"Editor":"Guru";
-  let subject=Object.keys(SOURCE_GRADES)[0], grade=SOURCE_GRADES[subject][0], doc="CP";
-  const loaded=new Map();
-
-  function legacy(text){
-    const t=compact(text);
-    return /Kebonagung|Kabupaten\s+Demak|Tim\s+MGMP\s+PAI\s+SMP\s+Provinsi/i.test(t)
-      || /^(?:Top|Bottom)\s+of\s+Form$/i.test(t);
-  }
-  function signature(text){
-    const t=compact(text);
-    return (/\bMengetahui\b/i.test(t) && /\b(?:Kepala|Guru|NIP)\b/i.test(t))
-      || (/\bKepala\s+(?:Sekolah|SMP)\b/i.test(t) && /\bGuru\b/i.test(t))
-      || (/\bNIP\.?\s*\d/i.test(t) && /\bGuru\b/i.test(t));
-  }
-  function identity(text){
-    const t=compact(text);
-    return /^(?:Nama\s+Sekolah|Satuan\s+Pendidikan|Nama\s+Penyusun|Penyusun|NIP)\s*:/i.test(t);
-  }
-  function suppress(text){return !compact(text)||legacy(text)||signature(text)||identity(text);}
-
-  async function unpack(b64){
-    if(!("DecompressionStream" in window)) throw new Error("Browser belum mendukung dekompresi data administrasi ringan.");
-    const raw=atob(b64); const bytes=new Uint8Array(raw.length);
-    for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i);
-    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-    return JSON.parse(await new Response(stream).text());
-  }
-  function loadScript(src){
-    return new Promise((resolve,reject)=>{
-      if([...document.scripts].some(s=>String(s.src||"").includes(src))){resolve();return;}
-      const s=document.createElement("script");s.src=new URL(src,document.baseURI).href;s.defer=true;s.onload=resolve;s.onerror=()=>reject(new Error(`Gagal memuat ${src}`));document.head.append(s);
-    });
-  }
-  async function sourceData(id){
-    if(loaded.has(id)) return loaded.get(id);
-    const task=(async()=>{
-      await loadScript(`assets/multimapel-admin-v89/${id}.js?v=${BUILD}`);
-      const b64=window.SPENSUS_MULTIMAPEL_ADMIN_PACK?.[id];
-      if(!b64) throw new Error("Paket sumber tidak ditemukan.");
-      return unpack(b64);
-    })();
-    loaded.set(id,task);return task;
-  }
-
-  function subjectOptions(){
-    return db.subjects.map(s=>`<option value="${esc(s.id)}"${s.id===subject?" selected":""}>${esc(s.name)}${SOURCE_GRADES[s.id]?"":" — materi murid saja"}</option>`).join("");
-  }
-  function gradeOptions(){
-    const grades=SOURCE_GRADES[subject]||[];
-    return (grades.length?grades:["VII","VIII","IX"]).map(g=>`<option value="${g}"${g===grade?" selected":""}>Kelas ${g}${grades.length?"":" — sumber admin tidak tersedia"}</option>`).join("");
-  }
-  function tabs(){
-    return DOCS.map(([key,label],i)=>`<button type="button" data-mm-admin-doc="${key}" aria-pressed="${key===doc}" style="--i:${i}">${esc(label)}</button>`).join("");
-  }
-  function shell(){
-    const publicRoot=$("#multimapel-public-v33"); if(!publicRoot) return null;
-    let host=$("#multimapel-admin-v89");
-    if(!host){
-      host=document.createElement("section");host.id="multimapel-admin-v89";host.className="mm-admin-v89";host.setAttribute("aria-label","Administrasi mapel lain untuk guru dan editor");
-      publicRoot.parentElement.insertBefore(host,publicRoot);
-    }
-    host.innerHTML=`<header class="mm-admin-head"><div><span>AKSES ${roleLabel.toUpperCase()} • SUMBER ARSIP</span><h2>Administrasi Mapel Lain</h2><p>CP, ATP, KKTP, Prota dan Promes mengikuti struktur dokumen sumber masing-masing. Murid hanya melihat paket belajar di bagian bawah.</p></div><a href="#multimapel-public-v33">Materi murid ↓</a></header>
-      <div class="mm-admin-controls"><label>Mata pelajaran<select id="mm-admin-subject">${subjectOptions()}</select></label><label>Kelas<select id="mm-admin-grade">${gradeOptions()}</select></label></div>
-      <nav class="mm-admin-docnav" aria-label="Jenis perangkat">${tabs()}</nav>
-      <div class="mm-admin-status" id="mm-admin-status" aria-live="polite"></div>
-      <article class="mm-admin-paper" id="mm-admin-paper"></article>`;
-    bind(host);render();return host;
-  }
-  function bind(host){
-    $("#mm-admin-subject",host)?.addEventListener("change",e=>{
-      subject=e.target.value; const gs=SOURCE_GRADES[subject]||[]; grade=gs[0]||"VII"; doc="CP"; shell();
-    });
-    $("#mm-admin-grade",host)?.addEventListener("change",e=>{grade=e.target.value;render();});
-    $$("[data-mm-admin-doc]",host).forEach(b=>b.addEventListener("click",()=>{doc=b.dataset.mmAdminDoc;$$('[data-mm-admin-doc]',host).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));render();}));
-  }
-
-  function paragraphHtml(block){
-    const text=String(block?.[1]??""); if(suppress(text)) return "";
-    const kind=String(block?.[2]||""); const align=String(block?.[3]||"");
-    const heading=/heading/i.test(kind) || (/^[A-Z0-9][A-Z0-9 .()\-/]{5,}$/u.test(compact(text)) && compact(text).length<120);
-    const tag=heading?"h3":"p";
-    return `<${tag}${align?` style="text-align:${esc(align)}"`:""}>${esc(text).replace(/\n/g,"<br>")}</${tag}>`;
-  }
-  function tableHtml(block){
-    let rows=Array.isArray(block?.[2])?block[2]:[];
-    rows=rows.filter(row=>{
-      const text=(Array.isArray(row)?row:[]).join(" ");
-      if(legacy(text)||signature(text)) return false;
-      const meaningful=(Array.isArray(row)?row:[]).filter(c=>compact(c));
-      if(meaningful.length && meaningful.every(c=>identity(c)||/^(?:Nama Sekolah|Nama Penyusun|NIP|Satuan Pendidikan|Penyusun)/i.test(compact(c)))) return false;
-      return meaningful.length>0;
-    });
-    if(!rows.length) return "";
-    const cols=Math.max(...rows.map(r=>r.length),1);
-    return `<div class="mm-admin-tablewrap"><table><tbody>${rows.map((row,ri)=>`<tr>${[...row,...Array(Math.max(0,cols-row.length)).fill("")].map(cell=>`<${ri===0?"th":"td"}>${esc(cell).replace(/\n/g,"<br>")||"&nbsp;"}</${ri===0?"th":"td"}>`).join("")}</tr>`).join("")}</tbody></table></div>`;
-  }
-  function blocksHtml(blocks){return (blocks||[]).map(b=>b?.[0]==="p"?paragraphHtml(b):b?.[0]==="t"?tableHtml(b):"").join("");}
-
-  function modulesHtml(){
-    const items=db.modules.filter(m=>m.subject===subject && m.grade===grade).sort((a,b)=>Number(a.number)-Number(b.number));
-    if(!items.length) return empty("Modul ajar/paket belajar belum tersedia untuk kombinasi ini.");
-    return `<header class="mm-paper-title"><span>MODUL AJAR / PAKET BELAJAR</span><h2>${esc(subjectById[subject]?.name||subject)} • Kelas ${grade}</h2><p>Daftar ini menggunakan paket pembelajaran yang sudah tersedia untuk murid; administrasi sumber tidak dibuat ulang.</p></header><div class="mm-module-list">${items.map(m=>`<a href="mapel-lain.html?subject=${encodeURIComponent(subject)}&grade=${grade}&open=${encodeURIComponent(m.id)}"><b>${String(m.number).padStart(2,"0")}</b><span><strong>${esc(m.title)}</strong><small>Sumber: ${esc(m.sourceName||"paket pembelajaran")}</small></span><i>→</i></a>`).join("")}</div>`;
-  }
-  function schoolAdmin(kind){
-    const label=kind==="CALENDAR"?"Kalender Pendidikan":"Analisis Hari Efektif";
-    const q=kind==="CALENDAR"?"calendar":"effective";
-    return `<header class="mm-paper-title"><span>ADMINISTRASI SEKOLAH</span><h2>${label}</h2><p>${label} bersifat administrasi sekolah dan tidak dibuat berbeda-beda untuk setiap mata pelajaran.</p></header><div class="mm-school-link"><p>Gunakan dokumen sekolah yang sama seperti pada Portal Guru PAIBP agar tidak terjadi duplikasi atau data kalender yang berbeda.</p><a href="akses-guru.html?doc=${q}">Buka ${label} →</a></div>`;
-  }
-  function empty(msg){return `<div class="mm-admin-empty"><strong>Sumber administrasi belum tersedia.</strong><p>${esc(msg)}</p><p>Materi murid tetap dapat digunakan pada katalog pembelajaran di bawah.</p></div>`;}
-
-  async function render(){
-    const paper=$("#mm-admin-paper"), status=$("#mm-admin-status"); if(!paper)return;
-    if(doc==="MODULE"){paper.innerHTML=modulesHtml();status.textContent="Modul ditampilkan dari katalog pembelajaran yang sudah ada.";return;}
-    if(doc==="CALENDAR"||doc==="EFFECTIVE"){paper.innerHTML=schoolAdmin(doc);status.textContent="Administrasi sekolah diarahkan ke sumber tunggal Portal Guru.";return;}
-    const grades=SOURCE_GRADES[subject]||[];
-    if(!grades.includes(grade)){paper.innerHTML=empty(`Arsip sumber tidak memuat ${doc} ${subjectById[subject]?.name||subject} kelas ${grade}.`);status.textContent="Tidak ada data yang dibuat-buat.";return;}
-    status.textContent=`Memuat ${doc} ${subjectById[subject]?.name||subject} kelas ${grade}…`;
-    paper.innerHTML='<div class="mm-admin-loading">Menyiapkan dokumen sumber…</div>';
-    try{
-      const data=await sourceData(subject); const rec=data?.[grade]?.[doc];
-      if(!rec){paper.innerHTML=empty(`Dokumen ${doc} tidak ditemukan pada arsip sumber.`);status.textContent="Dokumen sumber tidak tersedia.";return;}
-      paper.innerHTML=`<header class="mm-paper-title mm-kind-${doc.toLowerCase()}"><span>${doc} • REFERENSI SUMBER</span><h2>${esc(subjectById[subject]?.name||subject)} • Kelas ${grade}</h2><p>Nama berkas: ${esc(rec.name)}</p></header><div class="mm-source-note"><strong>Sumber arsip pengguna</strong><span>${esc(rec.original)}</span></div><section class="mm-source-body">${blocksHtml(rec.blocks)}</section>`;
-      status.textContent=`${doc} dimuat secara lazy. Data administrasi tidak dibebankan ke akses murid.`;
-    }catch(err){paper.innerHTML=empty(err.message||"Dokumen belum dapat dimuat.");status.textContent="Paket sumber gagal dimuat.";}
-  }
-
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",shell,{once:true}); else shell();
-  window.SPENSUS_MULTIMAPEL_ADMIN_V89=Object.freeze({build:BUILD,render});
+  const roleLabel=editor?"Editor":"Guru";let subject=Object.keys(SOURCE_GRADES)[0],grade=SOURCE_GRADES[subject][0],doc="CP";const loaded=new Map();
+  function legacy(text){const t=compact(text);return /Kebonagung|Kabupaten\s+Demak|Tim\s+MGMP\s+PAI\s+SMP\s+Provinsi/i.test(t)||/^(?:Top|Bottom)\s+of\s+Form$/i.test(t)}
+  function signature(text){const t=compact(text);return (/\bMengetahui\b/i.test(t)&&/\b(?:Kepala|Guru|NIP)\b/i.test(t))||(/\bKepala\s+(?:Sekolah|SMP)\b/i.test(t)&&/\bGuru\b/i.test(t))||(/\bNIP\.?\s*\d/i.test(t)&&/\bGuru\b/i.test(t))}
+  function identity(text){return /^(?:Nama\s+Sekolah|Satuan\s+Pendidikan|Nama\s+Penyusun|Penyusun|NIP)\s*:/i.test(compact(text))}
+  function suppress(text){return !compact(text)||legacy(text)||signature(text)||identity(text)}
+  async function unpack(b64){if(!("DecompressionStream" in window))throw new Error("Browser belum mendukung dekompresi data administrasi ringan.");const raw=atob(b64),bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));return JSON.parse(await new Response(stream).text())}
+  function loadScript(src){return new Promise((resolve,reject)=>{if([...document.scripts].some(s=>String(s.src||"").includes(src))){resolve();return}const s=document.createElement("script");s.src=new URL(src,document.baseURI).href;s.defer=true;s.onload=resolve;s.onerror=()=>reject(new Error(`Gagal memuat ${src}`));document.head.append(s)})}
+  async function sourceData(id,gradeKey){const cacheKey=`${id}:${gradeKey}`;if(loaded.has(cacheKey))return loaded.get(cacheKey);const task=(async()=>{await loadScript(`assets/multimapel-admin-v89/${id}-${String(gradeKey).toLowerCase()}.js?v=${BUILD}`);const b64=window.SPENSUS_MULTIMAPEL_ADMIN_GRADE_PACK?.[cacheKey];if(!b64)throw new Error("Paket sumber kelas tidak ditemukan.");return unpack(b64)})();loaded.set(cacheKey,task);return task}
+  function subjectOptions(){return db.subjects.map(s=>`<option value="${esc(s.id)}"${s.id===subject?" selected":""}>${esc(s.name)}${SOURCE_GRADES[s.id]?"":" — materi murid saja"}</option>`).join("")}
+  function gradeOptions(){const grades=SOURCE_GRADES[subject]||[];return(grades.length?grades:["VII","VIII","IX"]).map(g=>`<option value="${g}"${g===grade?" selected":""}>Kelas ${g}${grades.length?"":" — sumber admin tidak tersedia"}</option>`).join("")}
+  function tabs(){return DOCS.map(([key,label],i)=>`<button type="button" data-mm-admin-doc="${key}" aria-pressed="${key===doc}" style="--i:${i}">${esc(label)}</button>`).join("")}
+  function shell(){const publicRoot=$("#multimapel-public-v33");if(!publicRoot)return null;let host=$("#multimapel-admin-v89");if(!host){host=document.createElement("section");host.id="multimapel-admin-v89";host.className="mm-admin-v89";host.setAttribute("aria-label","Administrasi mapel lain untuk guru dan editor");publicRoot.parentElement.insertBefore(host,publicRoot)}host.innerHTML=`<header class="mm-admin-head"><div><span>AKSES ${roleLabel.toUpperCase()} • SUMBER ARSIP</span><h2>Administrasi Mapel Lain</h2><p>CP, ATP, KKTP, Prota dan Promes mengikuti struktur dokumen sumber masing-masing. Murid hanya melihat paket belajar di bagian bawah.</p></div><a href="#multimapel-public-v33">Materi murid ↓</a></header><div class="mm-admin-controls"><label>Mata pelajaran<select id="mm-admin-subject">${subjectOptions()}</select></label><label>Kelas<select id="mm-admin-grade">${gradeOptions()}</select></label></div><nav class="mm-admin-docnav" aria-label="Jenis perangkat">${tabs()}</nav><div class="mm-admin-status" id="mm-admin-status" aria-live="polite"></div><article class="mm-admin-paper" id="mm-admin-paper"></article>`;bind(host);render();return host}
+  function bind(host){$("#mm-admin-subject",host)?.addEventListener("change",e=>{subject=e.target.value;const gs=SOURCE_GRADES[subject]||[];grade=gs[0]||"VII";doc="CP";shell()});$("#mm-admin-grade",host)?.addEventListener("change",e=>{grade=e.target.value;render()});$$("[data-mm-admin-doc]",host).forEach(b=>b.addEventListener("click",()=>{doc=b.dataset.mmAdminDoc;$$('[data-mm-admin-doc]',host).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));render()}))}
+  function paragraphHtml(block){const text=String(block?.[1]??"");if(suppress(text))return"";const kind=String(block?.[2]||""),align=String(block?.[3]||"");const heading=/heading/i.test(kind)||(/^[A-Z0-9][A-Z0-9 .()\-/]{5,}$/u.test(compact(text))&&compact(text).length<120),tag=heading?"h3":"p";return`<${tag}${align?` style="text-align:${esc(align)}"`:""}>${esc(text).replace(/\n/g,"<br>")}</${tag}>`}
+  function tableHtml(block){let rows=Array.isArray(block?.[2])?block[2]:[];rows=rows.filter(row=>{const text=(Array.isArray(row)?row:[]).join(" ");if(legacy(text)||signature(text))return false;const meaningful=(Array.isArray(row)?row:[]).filter(c=>compact(c));if(meaningful.length&&meaningful.every(c=>identity(c)||/^(?:Nama Sekolah|Nama Penyusun|NIP|Satuan Pendidikan|Penyusun)/i.test(compact(c))))return false;return meaningful.length>0});if(!rows.length)return"";const cols=Math.max(...rows.map(r=>r.length),1);return`<div class="mm-admin-tablewrap"><table><tbody>${rows.map((row,ri)=>`<tr>${[...row,...Array(Math.max(0,cols-row.length)).fill("")].map(cell=>`<${ri===0?"th":"td"}>${esc(cell).replace(/\n/g,"<br>")||"&nbsp;"}</${ri===0?"th":"td"}>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+  function blocksHtml(blocks){return(blocks||[]).map(b=>b?.[0]==="p"?paragraphHtml(b):b?.[0]==="t"?tableHtml(b):"").join("")}
+  function modulesHtml(){const items=db.modules.filter(m=>m.subject===subject&&m.grade===grade).sort((a,b)=>Number(a.number)-Number(b.number));if(!items.length)return empty("Modul ajar/paket belajar belum tersedia untuk kombinasi ini.");return`<header class="mm-paper-title"><span>MODUL AJAR / PAKET BELAJAR</span><h2>${esc(subjectById[subject]?.name||subject)} • Kelas ${grade}</h2><p>Daftar ini menggunakan paket pembelajaran yang sudah tersedia untuk murid; administrasi sumber tidak dibuat ulang.</p></header><div class="mm-module-list">${items.map(m=>`<a href="mapel-lain.html?subject=${encodeURIComponent(subject)}&grade=${grade}&open=${encodeURIComponent(m.id)}"><b>${String(m.number).padStart(2,"0")}</b><span><strong>${esc(m.title)}</strong><small>Sumber: ${esc(m.sourceName||"paket pembelajaran")}</small></span><i>→</i></a>`).join("")}</div>`}
+  function schoolAdmin(kind){const label=kind==="CALENDAR"?"Kalender Pendidikan":"Analisis Hari Efektif",q=kind==="CALENDAR"?"calendar":"effective";return`<header class="mm-paper-title"><span>ADMINISTRASI SEKOLAH</span><h2>${label}</h2><p>${label} bersifat administrasi sekolah dan tidak dibuat berbeda-beda untuk setiap mata pelajaran.</p></header><div class="mm-school-link"><p>Gunakan dokumen sekolah yang sama seperti pada Portal Guru PAIBP agar tidak terjadi duplikasi atau data kalender yang berbeda.</p><a href="akses-guru.html?doc=${q}">Buka ${label} →</a></div>`}
+  function empty(msg){return`<div class="mm-admin-empty"><strong>Sumber administrasi belum tersedia.</strong><p>${esc(msg)}</p><p>Materi murid tetap dapat digunakan pada katalog pembelajaran di bawah.</p></div>`}
+  async function render(){const paper=$("#mm-admin-paper"),status=$("#mm-admin-status");if(!paper)return;if(doc==="MODULE"){paper.innerHTML=modulesHtml();status.textContent="Modul ditampilkan dari katalog pembelajaran yang sudah ada.";return}if(doc==="CALENDAR"||doc==="EFFECTIVE"){paper.innerHTML=schoolAdmin(doc);status.textContent="Administrasi sekolah diarahkan ke sumber tunggal Portal Guru.";return}const grades=SOURCE_GRADES[subject]||[];if(!grades.includes(grade)){paper.innerHTML=empty(`Arsip sumber tidak memuat ${doc} ${subjectById[subject]?.name||subject} kelas ${grade}.`);status.textContent="Tidak ada data yang dibuat-buat.";return}status.textContent=`Memuat ${doc} ${subjectById[subject]?.name||subject} kelas ${grade}…`;paper.innerHTML='<div class="mm-admin-loading">Menyiapkan dokumen sumber…</div>';try{const data=await sourceData(subject,grade),rec=data?.[doc];if(!rec){paper.innerHTML=empty(`Dokumen ${doc} tidak ditemukan pada arsip sumber.`);status.textContent="Dokumen sumber tidak tersedia.";return}paper.innerHTML=`<header class="mm-paper-title mm-kind-${doc.toLowerCase()}"><span>${doc} • REFERENSI SUMBER</span><h2>${esc(subjectById[subject]?.name||subject)} • Kelas ${grade}</h2><p>Nama berkas: ${esc(rec.name)}</p></header><div class="mm-source-note"><strong>Sumber arsip pengguna</strong><span>${esc(rec.original)}</span></div><section class="mm-source-body">${blocksHtml(rec.blocks)}</section>`;status.textContent=`${doc} dimuat secara lazy. Data administrasi tidak dibebankan ke akses murid.`}catch(err){paper.innerHTML=empty(err.message||"Dokumen belum dapat dimuat.");status.textContent="Paket sumber gagal dimuat."}}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",shell,{once:true});else shell();window.SPENSUS_MULTIMAPEL_ADMIN_V89=Object.freeze({build:BUILD,render});
 })();
