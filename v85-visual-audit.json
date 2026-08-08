@@ -1,0 +1,26 @@
+{
+  "build": "85",
+  "scope": "visual-only",
+  "status": "PASS",
+  "checks": {
+    "layoutChanged": false,
+    "contentChanged": false,
+    "teacherSourceDocumentsChanged": false,
+    "featureRuntimeChanged": false,
+    "quranFeatureChanged": false,
+    "studentLoginChanged": false,
+    "catChanged": false,
+    "worshipSimulationChanged": false,
+    "appVersion": "85",
+    "serviceWorkerCache": "paibp-smart-v85-visual-static",
+    "visualLayer": "visual-v85.css",
+    "iconLayer": "icon-depth-v85.css",
+    "finalRuntimeCascade": "visual-runtime-v85.css",
+    "legacyIconGuardVisibilityOnly": true,
+    "darkSurfaceTextForcedReadable": true,
+    "lightSurfaceTextForcedReadable": true,
+    "whiteOnWhiteIconPrevention": true,
+    "greenOnGreenTextPrevention": true,
+    "teacherDocumentFormatsPreservedFromV84": true
+  }
+}
