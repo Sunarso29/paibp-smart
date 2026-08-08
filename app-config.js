@@ -5,14 +5,14 @@ window.PAIBP_CONFIG = Object.freeze({
   aiPublicToken: "7382e2e6784d413fa2c0b8175766058cfa8da581f1ca4143",
   realtimeEnabled: true,
   aiEnabled: true,
-  realtimeManagedBy: "v84-source-faithful-teacher-docs",
+  realtimeManagedBy: "v85-visual-only-source-faithful-teacher-docs",
   realtimeEndpoint: "",
   realtimeReadKey: ""
 });
 
 (() => {
   "use strict";
-  const VERSION = "84";
+  const VERSION = "85";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const params = new URLSearchParams(location.search);
   const catLink = params.get("cat") === "1" || params.get("ps_cat") === "1";
@@ -58,6 +58,8 @@ window.PAIBP_CONFIG = Object.freeze({
   /* V83: lapisan visual saja; tidak mengubah konten atau struktur data. */
   style("visual-v83.css");
   style("visual-v84.css");
+  style("visual-v85.css");
+  style("icon-depth-v85.css");
   style("icon-guard-v84.css");
   if (page === "index.html") {
     /* Pulihkan lapisan visual penuh warna yang dipakai pada V38/V39. */
