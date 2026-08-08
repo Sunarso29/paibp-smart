@@ -1,10 +1,12 @@
-/* V84 — global icon visibility/contrast guard. Visual only. */
-:where(.nav-svg,.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25,.rail-card-icon,.workspace-ai-nav-v27 .nav-svg,.orbit-item,.welcome-icon,.panel-kicker,.teacher-doc-menu button>span,.ai-drawer-brand-v27>span,.spensus-ai-launcher-v27>span){opacity:1!important;visibility:visible!important;mix-blend-mode:normal!important;filter:none!important;text-shadow:none!important;isolation:isolate!important}
-:where(.nav-svg,.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25,.rail-card-icon,.workspace-ai-nav-v27 .nav-svg,.orbit-item){display:grid!important;place-items:center!important;flex:0 0 auto!important;background:#fff!important;color:#102f5c!important;-webkit-text-fill-color:#102f5c!important;border:2px solid rgba(255,255,255,.94)!important;box-shadow:0 8px 22px rgba(5,24,54,.23),0 0 0 4px rgba(33,230,255,.15)!important;overflow:visible!important}
-:where(.nav-svg,.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25,.rail-card-icon,.workspace-ai-nav-v27 .nav-svg,.orbit-item) svg{display:block!important;opacity:1!important;visibility:visible!important;fill:currentColor!important;stroke:currentColor!important;color:inherit!important;-webkit-text-fill-color:currentColor!important;filter:none!important;mix-blend-mode:normal!important}
-.workspace-role-nav button{overflow:visible!important;isolation:isolate!important}.workspace-role-nav button .nav-svg{width:38px!important;height:38px!important;border-radius:13px!important}.workspace-role-nav button[aria-pressed="true"] .nav-svg,.workspace-role-nav button.is-active .nav-svg{box-shadow:0 0 0 3px #ffd21f,0 9px 24px rgba(5,24,54,.25)!important}
-.hero-action-icon{width:42px!important;height:42px!important;border-radius:14px!important}.access-icon,.directory-feature-icon,.feature-icon-v25{min-width:42px!important;min-height:42px!important;border-radius:14px!important}
-.islamic-menu button,.teacher-doc-menu button,.workspace-role-nav button{position:relative!important}.islamic-menu button::before,.teacher-doc-menu button::before,.workspace-role-nav button::before{pointer-events:none!important;mix-blend-mode:normal!important}
-/* White text may only sit on deliberately dark/saturated controls; icon badges remain white with dark glyphs. */
-:where(.access-tile,.directory-feature-v25,.feature-card-v25,.islamic-menu button,.teacher-doc-menu button) :where(svg,path){opacity:1!important;visibility:visible!important}
-@media(max-width:760px){.workspace-role-nav button .nav-svg{width:34px!important;height:34px!important}.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25{min-width:38px!important;min-height:38px!important}}
+/* V84 compatibility guard retained for visibility only.
+   V85 owns icon color/material/depth. No layout/content/function changes. */
+:where(.nav-svg,.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25,.rail-card-icon,.workspace-ai-nav-v27 .nav-svg,.orbit-item,.welcome-icon,.panel-kicker,.teacher-doc-menu button>span,.ai-drawer-brand-v27>span,.spensus-ai-launcher-v27>span){
+  opacity:1!important;visibility:visible!important;mix-blend-mode:normal!important;isolation:isolate!important;
+}
+:where(.nav-svg,.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25,.rail-card-icon,.workspace-ai-nav-v27 .nav-svg,.orbit-item) svg,
+:where(.access-tile,.directory-feature-v25,.feature-card-v25,.islamic-menu button,.teacher-doc-menu button) :where(svg,path,circle,rect,polygon,line,polyline){
+  display:block!important;opacity:1!important;visibility:visible!important;mix-blend-mode:normal!important;
+}
+.workspace-role-nav button{overflow:visible!important;isolation:isolate!important}
+.islamic-menu button,.teacher-doc-menu button,.workspace-role-nav button{position:relative!important}
+.islamic-menu button::before,.teacher-doc-menu button::before,.workspace-role-nav button::before{pointer-events:none!important;mix-blend-mode:normal!important}
