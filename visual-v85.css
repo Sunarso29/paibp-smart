@@ -1,0 +1,114 @@
+/* PAIBP SMART V85 — GEN ALPHA / GEN Z VISUAL POLISH ONLY.
+   DILARANG mengubah susunan, layout, konten, urutan, atau fungsi. */
+:root{
+  --v85-ink:#081a33;--v85-ink2:#17304f;--v85-paper:#ffffff;
+  --v85-cyan:#21e7ff;--v85-aqua:#22ffd0;--v85-blue:#1677ff;--v85-indigo:#5542ff;
+  --v85-violet:#9a3dff;--v85-magenta:#ff3fc8;--v85-rose:#ff456f;--v85-orange:#ff7a18;
+  --v85-gold:#ffd326;--v85-lime:#9fff3b;--v85-emerald:#00c98b;--v85-teal:#00c7ba;
+  --v85-deep:#06152f;--v85-deep2:#0a2b5d;
+  --v85-card-shadow:0 18px 42px rgba(7,29,65,.18),0 4px 12px rgba(20,65,120,.08);
+  --v85-neon-ring:0 0 0 1px rgba(255,255,255,.44),0 0 0 4px rgba(33,231,255,.10);
+}
+
+/* Vibrant ambient field — background only, no layout changes. */
+body{
+  background-image:
+    radial-gradient(circle at 6% 8%,rgba(33,231,255,.16),transparent 23%),
+    radial-gradient(circle at 94% 11%,rgba(255,63,200,.14),transparent 25%),
+    radial-gradient(circle at 79% 88%,rgba(159,255,59,.12),transparent 23%),
+    radial-gradient(circle at 17% 83%,rgba(85,66,255,.10),transparent 24%),
+    linear-gradient(180deg,#f4fbff 0%,#faf6ff 44%,#fffaf0 100%)!important;
+  color:var(--v85-ink)!important;
+}
+
+/* Top navigation: richer chromatic depth, text always readable. */
+.topbar{
+  background:
+    radial-gradient(circle at 16% -40%,rgba(33,231,255,.35),transparent 35%),
+    radial-gradient(circle at 82% 130%,rgba(255,63,200,.34),transparent 36%),
+    linear-gradient(112deg,#04152f 0%,#0a4aa4 34%,#6034cf 67%,#a31c7e 100%)!important;
+  box-shadow:0 16px 40px rgba(4,21,47,.31),inset 0 -1px rgba(255,255,255,.12)!important;
+}
+.topbar .links a,.topbar .brand strong,.topbar .brand small{color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px 12px rgba(0,0,0,.28)!important}
+.topbar .links a:hover,.topbar .links a.active,.topbar .links a[aria-current="page"]{
+  background:linear-gradient(135deg,rgba(33,231,255,.24),rgba(159,255,59,.14),rgba(255,63,200,.22))!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 8px 22px rgba(0,0,0,.17)!important;
+}
+
+/* Dark/saturated cards: force high-contrast copy. */
+:where(.access-tile,.feature-card-v25,.directory-feature-v25,.teacher-doc-menu button,.islamic-menu button,.v38-worship-hero,.v38-teacher-scope,.footer){color:#fff!important;-webkit-text-fill-color:#fff!important}
+:where(.access-tile,.feature-card-v25,.directory-feature-v25,.teacher-doc-menu button,.islamic-menu button,.v38-worship-hero,.v38-teacher-scope,.footer) :where(h1,h2,h3,h4,h5,h6,strong,b,small,p,span,i,a,label){color:#fff!important;-webkit-text-fill-color:#fff!important}
+:where(.access-tile,.feature-card-v25,.directory-feature-v25,.teacher-doc-menu button,.islamic-menu button) p{color:#eefaff!important;-webkit-text-fill-color:#eefaff!important}
+
+/* Light surfaces: never inherit dark-green-on-green or washed-out text from older layers. */
+:where(.teacher-controls,.v84-source-document,.v84-source-body,.rail-card,.feedback-card-v24,.lit-card-v35,.article-card,.profile-card,.teacher-card,.staff-card,.v38-worship-intro,.v38-worship-note,.v38-step,.v38-source-card,.v38-system-status,.v38-national-school-tools a){color:var(--v85-ink)!important;-webkit-text-fill-color:var(--v85-ink)!important}
+:where(.teacher-controls,.v84-source-document,.v84-source-body,.rail-card,.feedback-card-v24,.lit-card-v35,.article-card,.profile-card,.teacher-card,.staff-card,.v38-worship-intro,.v38-worship-note,.v38-step,.v38-source-card,.v38-system-status) :where(h1,h2,h3,h4,h5,h6,strong,b,label){color:#0a2446!important;-webkit-text-fill-color:#0a2446!important}
+:where(.teacher-controls,.v84-source-document,.v84-source-body,.rail-card,.feedback-card-v24,.lit-card-v35,.article-card,.profile-card,.teacher-card,.staff-card,.v38-worship-intro,.v38-worship-note,.v38-step,.v38-source-card,.v38-system-status) :where(p,small,span,li){color:#304966!important;-webkit-text-fill-color:#304966!important}
+
+/* Feature / directory cards: more variation without moving anything. */
+.feature-card-v25,.directory-feature-v25,.access-tile{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  border-color:rgba(255,255,255,.30)!important;
+  box-shadow:var(--v85-card-shadow),inset 0 1px rgba(255,255,255,.20)!important;
+}
+.feature-card-v25::after,.directory-feature-v25::after,.access-tile::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.24),transparent 24%,transparent 72%,rgba(255,255,255,.12));
+  opacity:.65;
+}
+.feature-card-v25:nth-child(10n+1),.directory-feature-v25:nth-child(10n+1),.access-tile:nth-child(10n+1){background:linear-gradient(145deg,#006fe8,#00c7f2 62%,#32f0d0)!important}
+.feature-card-v25:nth-child(10n+2),.directory-feature-v25:nth-child(10n+2),.access-tile:nth-child(10n+2){background:linear-gradient(145deg,#6137df,#9e3df5 55%,#ff43c5)!important}
+.feature-card-v25:nth-child(10n+3),.directory-feature-v25:nth-child(10n+3),.access-tile:nth-child(10n+3){background:linear-gradient(145deg,#00a66f,#00c98b 55%,#4be06e)!important}
+.feature-card-v25:nth-child(10n+4),.directory-feature-v25:nth-child(10n+4),.access-tile:nth-child(10n+4){background:linear-gradient(145deg,#ef5a22,#ff8a19 55%,#ffd326)!important}
+.feature-card-v25:nth-child(10n+5),.directory-feature-v25:nth-child(10n+5),.access-tile:nth-child(10n+5){background:linear-gradient(145deg,#c72c6c,#ff477f 58%,#ff83ad)!important}
+.feature-card-v25:nth-child(10n+6),.directory-feature-v25:nth-child(10n+6),.access-tile:nth-child(10n+6){background:linear-gradient(145deg,#1747bd,#3659f2 55%,#7145ff)!important}
+.feature-card-v25:nth-child(10n+7),.directory-feature-v25:nth-child(10n+7),.access-tile:nth-child(10n+7){background:linear-gradient(145deg,#007e8f,#00bfc0 55%,#25e7ff)!important}
+.feature-card-v25:nth-child(10n+8),.directory-feature-v25:nth-child(10n+8),.access-tile:nth-child(10n+8){background:linear-gradient(145deg,#8a5700,#d89100 52%,#ffd326)!important}
+.feature-card-v25:nth-child(10n+9),.directory-feature-v25:nth-child(10n+9),.access-tile:nth-child(10n+9){background:linear-gradient(145deg,#8e2fb9,#d03ed0 56%,#ff57a5)!important}
+.feature-card-v25:nth-child(10n+10),.directory-feature-v25:nth-child(10n+10),.access-tile:nth-child(10n+10){background:linear-gradient(145deg,#0c607f,#058bb6 55%,#21c9e5)!important}
+
+/* Teacher menu retains order/layout but gains stronger visual identity. */
+.teacher-doc-menu button{box-shadow:0 10px 25px rgba(3,17,41,.22),inset 0 1px rgba(255,255,255,.20)!important}
+.teacher-doc-menu button:nth-child(1){background:linear-gradient(135deg,#006ce8,#00c8ff 65%,#52edff)!important}
+.teacher-doc-menu button:nth-child(2){background:linear-gradient(135deg,#ff6519,#ffa419 68%,#ffd326)!important}
+.teacher-doc-menu button:nth-child(3){background:linear-gradient(135deg,#6432e7,#9b40ff 58%,#ff46ca)!important}
+.teacher-doc-menu button:nth-child(4){background:linear-gradient(135deg,#009b68,#00ca87 62%,#79e94f)!important}
+.teacher-doc-menu button:nth-child(5){background:linear-gradient(135deg,#2050db,#00a9ed 66%,#25e7ff)!important}
+.teacher-doc-menu button:nth-child(6){background:linear-gradient(135deg,#c82c73,#ff477e 66%,#ff8daf)!important}
+.teacher-doc-menu button:nth-child(7){background:linear-gradient(135deg,#8a5700,#d49200 62%,#ffd326)!important}
+.teacher-doc-menu button:nth-child(8){background:linear-gradient(135deg,#046378,#00a9a0 65%,#2de3c9)!important}
+.teacher-doc-menu button:nth-child(9){background:linear-gradient(135deg,#4939b8,#7147ed 62%,#aa57ff)!important}
+.teacher-doc-menu button:nth-child(10){background:linear-gradient(135deg,#a2274a,#e73e61 62%,#ff7b79)!important}
+
+/* Islamic sidebar: saturated backgrounds with explicit white text, never same-tone copy. */
+.islamic-menu button:nth-child(12n+1){background:linear-gradient(135deg,#006fe8,#00bfe9)!important}
+.islamic-menu button:nth-child(12n+2){background:linear-gradient(135deg,#6037df,#a13ff6)!important}
+.islamic-menu button:nth-child(12n+3){background:linear-gradient(135deg,#00a670,#00cc8b)!important}
+.islamic-menu button:nth-child(12n+4){background:linear-gradient(135deg,#ed5c1f,#ff9b18)!important}
+.islamic-menu button:nth-child(12n+5){background:linear-gradient(135deg,#c92e70,#ff477f)!important}
+.islamic-menu button:nth-child(12n+6){background:linear-gradient(135deg,#007f8d,#00c4b8)!important}
+.islamic-menu button:nth-child(12n+7){background:linear-gradient(135deg,#2950ca,#5947ef)!important}
+.islamic-menu button:nth-child(12n+8){background:linear-gradient(135deg,#895900,#d79800)!important}
+.islamic-menu button:nth-child(12n+9){background:linear-gradient(135deg,#7c34bd,#d33fca)!important}
+.islamic-menu button:nth-child(12n+10){background:linear-gradient(135deg,#a1294b,#ed4566)!important}
+.islamic-menu button:nth-child(12n+11){background:linear-gradient(135deg,#13617d,#11a5cf)!important}
+.islamic-menu button:nth-child(12n+12){background:linear-gradient(135deg,#33620c,#66a800)!important}
+.islamic-menu button[aria-pressed="true"],.islamic-menu button.is-active{outline:3px solid #fff!important;outline-offset:2px!important;box-shadow:0 0 0 6px rgba(33,231,255,.20),0 14px 34px rgba(7,29,65,.25)!important}
+
+/* Document preview remains white-paper professional; accents become vivid, text stays dark. */
+.v84-source-document{box-shadow:0 24px 62px rgba(9,37,82,.17),0 0 0 1px rgba(17,119,255,.06)!important}
+.v84-source-document::before{background:linear-gradient(90deg,var(--doc-accent),var(--doc-accent2),#ffd326,#ff3fc8,#9fff3b)!important;box-shadow:0 3px 16px rgba(33,231,255,.24)!important}
+.v84-source-paragraph,.v84-source-table td{color:#18324f!important;-webkit-text-fill-color:#18324f!important}
+.v84-source-table .v84-head-cell{color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px 8px rgba(0,0,0,.22)!important}
+.v84-source-paragraph.v84-title,.v84-source-paragraph.v84-heading{color:#0b2444!important;-webkit-text-fill-color:#0b2444!important}
+
+/* Buttons/chips on pale backgrounds keep dark readable copy. */
+:where(.teacher-controls,#teacher-grade-filter,.v38-worship-tabs,.v38-worship-actions,.v38-recent-chips) button:not([aria-pressed="true"]){color:#123455!important;-webkit-text-fill-color:#123455!important;text-shadow:none!important}
+:where(.teacher-controls,#teacher-grade-filter,.v38-worship-tabs,.v38-worship-actions,.v38-recent-chips) button[aria-pressed="true"]{color:#fff!important;-webkit-text-fill-color:#fff!important}
+
+/* Subtle modern motion only; no size/position/layout changes. */
+@media (prefers-reduced-motion:no-preference){
+  .feature-card-v25,.directory-feature-v25,.access-tile,.teacher-doc-menu button,.islamic-menu button{transition:filter .22s ease,box-shadow .22s ease,transform .22s ease!important}
+  .feature-card-v25:hover,.directory-feature-v25:hover,.access-tile:hover{filter:saturate(1.12) brightness(1.045)!important;box-shadow:0 24px 52px rgba(7,29,65,.24),0 0 0 1px rgba(255,255,255,.22)!important}
+}
