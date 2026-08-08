@@ -1,0 +1,52 @@
+/* V87 surgical visual correction — no layout/content/feature changes. */
+/* Restore SMP Negeri 1 Susukan gate photo in the home hero while keeping strong text contrast. */
+.hero-v25{
+  background-image:
+    linear-gradient(108deg,rgba(4,22,44,.92) 0%,rgba(4,55,72,.78) 46%,rgba(58,35,104,.60) 78%,rgba(118,38,105,.48) 100%),
+    url("gerbang.jpg")!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+}
+.hero-v25::before,.hero-v25::after{background-image:none!important;background:none!important}
+
+/* V86 fix: glyphs must never inherit the white card-copy colour on a pale icon disc. */
+.teacher-doc-menu button>span svg.v86-svg-art,
+.islamic-menu .v86-icon-disc svg.v86-svg-art,
+:where(.nav-svg,.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25,.rail-card-icon,.orbit-item) svg{
+  color:var(--icon-ink,#0b4f8c)!important;
+  -webkit-text-fill-color:var(--icon-ink,#0b4f8c)!important;
+  stroke:var(--icon-ink,#0b4f8c)!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+.teacher-doc-menu button>span,
+.islamic-menu .v86-icon-disc{
+  background:linear-gradient(145deg,#ffffff 0%,#eaf5ff 54%,#d4e9ff 100%)!important;
+  border:1px solid rgba(255,255,255,.98)!important;
+  box-shadow:inset 0 1px 0 #fff,inset 0 -5px 10px rgba(28,100,164,.11),0 5px 12px rgba(5,31,68,.20)!important;
+}
+.teacher-doc-menu button:nth-child(1)>span{--icon-ink:#006bc8}.teacher-doc-menu button:nth-child(2)>span{--icon-ink:#c25500}.teacher-doc-menu button:nth-child(3)>span{--icon-ink:#6d32c8}.teacher-doc-menu button:nth-child(4)>span{--icon-ink:#007a54}.teacher-doc-menu button:nth-child(5)>span{--icon-ink:#1757b9}.teacher-doc-menu button:nth-child(6)>span{--icon-ink:#b32562}.teacher-doc-menu button:nth-child(7)>span{--icon-ink:#795000}.teacher-doc-menu button:nth-child(8)>span{--icon-ink:#006675}.teacher-doc-menu button:nth-child(9)>span{--icon-ink:#4934a3}.teacher-doc-menu button:nth-child(10)>span{--icon-ink:#982641}
+
+/* ATP source identity table: the value cell is a light surface and therefore uses dark ink. */
+.v84-doc-atp [data-table-index="0"] .v84-source-table tr:nth-child(2) td:nth-child(2){
+  background:linear-gradient(135deg,#f8fbff,#edf5ff)!important;
+  color:#173653!important;
+  -webkit-text-fill-color:#173653!important;
+  text-shadow:none!important;
+  font-weight:800!important;
+}
+/* Keep the label half strong but readable. */
+.v84-doc-atp [data-table-index="0"] .v84-source-table tr:nth-child(2) td:nth-child(1){
+  background:linear-gradient(135deg,#5527c8,#8539ec)!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+
+/* General white-paper preview readability. */
+#teacher-document .v84-source-body,#teacher-document .v84-source-table td:not(.v84-head-cell){color:#18324f!important;-webkit-text-fill-color:#18324f!important;text-shadow:none!important}
+#teacher-document .v84-source-table .v84-head-cell{color:#fff!important;-webkit-text-fill-color:#fff!important}
+
+@media(max-width:760px){
+  .hero-v25{background-position:42% center!important}
+  .teacher-doc-menu button>span{box-shadow:inset 0 1px #fff,0 4px 9px rgba(5,31,68,.16)!important}
+}
