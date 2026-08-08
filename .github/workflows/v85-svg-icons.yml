@@ -1,0 +1,41 @@
+name: V85 SVG icons
+on:
+  push:
+    paths:
+      - '.github/workflows/v85-svg-icons.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Attach icon artwork only to V85 themed pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in Path('.').glob('*.html'):
+              s=p.read_text(encoding='utf-8')
+              if 'visual-v85.css?v=85' not in s or 'icon-art-v85.js?v=85' in s:
+                  continue
+              s=s.replace('</body>','<script src="icon-art-v85.js?v=85" defer></script></body>',1)
+              p.write_text(s,encoding='utf-8')
+          p=Path('service-worker.js')
+          s=p.read_text(encoding='utf-8')
+          if 'icon-art-v85' not in s:
+              s=s.replace('icon-depth-v85|','icon-depth-v85|icon-art-v85|')
+          p.write_text(s,encoding='utf-8')
+          Path('.github/workflows/v85-svg-icons.yml').unlink(missing_ok=True)
+          PY
+          node --check icon-art-v85.js
+          grep -q 'icon-art-v85.js?v=85' index.html
+          grep -q 'icon-art-v85.js?v=85' akses-guru.html
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "V85 replace amateur emoji UI icons with local SVG artwork only"
+          git push
