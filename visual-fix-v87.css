@@ -46,7 +46,14 @@
 #teacher-document .v84-source-body,#teacher-document .v84-source-table td:not(.v84-head-cell){color:#18324f!important;-webkit-text-fill-color:#18324f!important;text-shadow:none!important}
 #teacher-document .v84-source-table .v84-head-cell{color:#fff!important;-webkit-text-fill-color:#fff!important}
 
+/* Analisis Hari Efektif must be visually distinct from CP while remaining lightweight. */
+.v87-effective-document{overflow:hidden;border:1px solid #d8e6f4;border-radius:22px;background:#fff;box-shadow:0 10px 26px rgba(8,35,76,.12)}
+.v87-effective-head{padding:20px 22px;background:linear-gradient(110deg,#075bb7,#1679e8 44%,#6e3bd2 76%,#c23683);color:#fff}
+.v87-effective-head,.v87-effective-head *{color:#fff!important;-webkit-text-fill-color:#fff!important}.v87-effective-head>span{font-size:.72rem;font-weight:900;letter-spacing:.12em}.v87-effective-head h2{margin:.35rem 0;font-size:clamp(1.25rem,2.2vw,2rem)}.v87-effective-head p{margin:0;opacity:.93}
+.v87-effective-document .document-section{padding:18px 22px}.v87-effective-scroll{overflow:auto;border:1px solid #dbe7f2;border-radius:15px}.v87-effective-scroll table{margin:0!important;min-width:760px}.v87-effective-scroll th{background:linear-gradient(135deg,#0a67c8,#5b3dcc)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}.v87-effective-scroll td{color:#173653!important;-webkit-text-fill-color:#173653!important}.v87-effective-scroll input{width:82px;min-height:34px;border:1px solid #bad1e6;border-radius:9px;padding:5px 8px;background:#fff;color:#173653}
+
 @media(max-width:760px){
   .hero-v25{background-position:42% center!important}
   .teacher-doc-menu button>span{box-shadow:inset 0 1px #fff,0 4px 9px rgba(5,31,68,.16)!important}
+  .v87-effective-document .document-section{padding:14px}
 }
