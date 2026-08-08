@@ -1,8 +1,7 @@
-/* V87 surgical visual correction — no layout/content/feature changes. */
-/* Restore SMP Negeri 1 Susukan gate photo in the home hero while keeping strong text contrast. */
+/* V88 surgical visual correction — navigation vivid, document preview neutral/readable. */
 .hero-v25{
   background-image:
-    linear-gradient(108deg,rgba(4,22,44,.92) 0%,rgba(4,55,72,.78) 46%,rgba(58,35,104,.60) 78%,rgba(118,38,105,.48) 100%),
+    linear-gradient(108deg,rgba(4,22,44,.88) 0%,rgba(4,55,72,.70) 46%,rgba(58,35,104,.52) 78%,rgba(118,38,105,.42) 100%),
     url("gerbang.jpg")!important;
   background-size:cover!important;
   background-position:center center!important;
@@ -10,50 +9,88 @@
 }
 .hero-v25::before,.hero-v25::after{background-image:none!important;background:none!important}
 
-/* V86 fix: glyphs must never inherit the white card-copy colour on a pale icon disc. */
+/* Teacher icons: coloured glass discs + clearly contrasting glyphs. */
+.teacher-doc-menu button>span{
+  width:38px!important;height:38px!important;min-width:38px!important;
+  display:grid!important;place-items:center!important;border-radius:12px!important;
+  border:1px solid rgba(255,255,255,.78)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.92),inset 0 -6px 12px rgba(20,60,105,.10),0 5px 12px rgba(4,28,65,.22)!important;
+  opacity:1!important;visibility:visible!important;overflow:visible!important;
+}
+.teacher-doc-menu button:nth-child(1)>span{--icon-ink:#075fae;background:linear-gradient(145deg,#dcf5ff,#8dddff)!important}
+.teacher-doc-menu button:nth-child(2)>span{--icon-ink:#9e4500;background:linear-gradient(145deg,#fff2b9,#ffd265)!important}
+.teacher-doc-menu button:nth-child(3)>span{--icon-ink:#5d27b8;background:linear-gradient(145deg,#f0ddff,#c59aff)!important}
+.teacher-doc-menu button:nth-child(4)>span{--icon-ink:#006b49;background:linear-gradient(145deg,#d9ffed,#8ee4bd)!important}
+.teacher-doc-menu button:nth-child(5)>span{--icon-ink:#164da9;background:linear-gradient(145deg,#deecff,#9bc5ff)!important}
+.teacher-doc-menu button:nth-child(6)>span{--icon-ink:#9e2456;background:linear-gradient(145deg,#ffe0ed,#ff9fc0)!important}
+.teacher-doc-menu button:nth-child(7)>span{--icon-ink:#775000;background:linear-gradient(145deg,#fff4c8,#eac869)!important}
+.teacher-doc-menu button:nth-child(8)>span{--icon-ink:#005d69;background:linear-gradient(145deg,#d7fbff,#82dfe9)!important}
+.teacher-doc-menu button:nth-child(9)>span{--icon-ink:#45329b;background:linear-gradient(145deg,#ebe4ff,#b9a8ff)!important}
+.teacher-doc-menu button:nth-child(10)>span{--icon-ink:#8b253d;background:linear-gradient(145deg,#ffe2e7,#f6a0b1)!important}
 .teacher-doc-menu button>span svg.v86-svg-art,
 .islamic-menu .v86-icon-disc svg.v86-svg-art,
 :where(.nav-svg,.hero-action-icon,.access-icon,.directory-feature-icon,.feature-icon-v25,.rail-card-icon,.orbit-item) svg{
   color:var(--icon-ink,#0b4f8c)!important;
   -webkit-text-fill-color:var(--icon-ink,#0b4f8c)!important;
   stroke:var(--icon-ink,#0b4f8c)!important;
-  opacity:1!important;
-  visibility:visible!important;
+  opacity:1!important;visibility:visible!important;filter:none!important;
 }
-.teacher-doc-menu button>span,
+.teacher-doc-menu button>span svg.v86-svg-art{width:22px!important;height:22px!important;stroke-width:2!important}
+
+/* Islamic icon discs stay colourful but readable. */
 .islamic-menu .v86-icon-disc{
-  background:linear-gradient(145deg,#ffffff 0%,#eaf5ff 54%,#d4e9ff 100%)!important;
-  border:1px solid rgba(255,255,255,.98)!important;
-  box-shadow:inset 0 1px 0 #fff,inset 0 -5px 10px rgba(28,100,164,.11),0 5px 12px rgba(5,31,68,.20)!important;
+  background:linear-gradient(145deg,#ffffff,#dff1ff)!important;
+  border:1px solid rgba(255,255,255,.9)!important;
+  box-shadow:inset 0 1px #fff,0 4px 10px rgba(5,31,68,.18)!important;
 }
-.teacher-doc-menu button:nth-child(1)>span{--icon-ink:#006bc8}.teacher-doc-menu button:nth-child(2)>span{--icon-ink:#c25500}.teacher-doc-menu button:nth-child(3)>span{--icon-ink:#6d32c8}.teacher-doc-menu button:nth-child(4)>span{--icon-ink:#007a54}.teacher-doc-menu button:nth-child(5)>span{--icon-ink:#1757b9}.teacher-doc-menu button:nth-child(6)>span{--icon-ink:#b32562}.teacher-doc-menu button:nth-child(7)>span{--icon-ink:#795000}.teacher-doc-menu button:nth-child(8)>span{--icon-ink:#006675}.teacher-doc-menu button:nth-child(9)>span{--icon-ink:#4934a3}.teacher-doc-menu button:nth-child(10)>span{--icon-ink:#982641}
 
-/* ATP source identity table: the value cell is a light surface and therefore uses dark ink. */
-.v84-doc-atp [data-table-index="0"] .v84-source-table tr:nth-child(2) td:nth-child(2){
-  background:linear-gradient(135deg,#f8fbff,#edf5ff)!important;
-  color:#173653!important;
-  -webkit-text-fill-color:#173653!important;
+/* READABILITY MODE: vivid colour belongs to navigation, not to the document paper. */
+#teacher-document .v84-source-document,
+#teacher-document .v84-source-body{
+  background:#fff!important;color:#172f4b!important;-webkit-text-fill-color:#172f4b!important;
   text-shadow:none!important;
-  font-weight:800!important;
 }
-/* Keep the label half strong but readable. */
+#teacher-document .v84-source-paragraph{
+  color:#172f4b!important;-webkit-text-fill-color:#172f4b!important;text-shadow:none!important;
+  background:transparent!important;
+}
+#teacher-document .v84-source-table{
+  background:#fff!important;border-collapse:collapse!important;
+}
+#teacher-document .v84-source-table td,
+#teacher-document .v84-source-table .v84-head-cell{
+  background:#fff!important;
+  color:#172f4b!important;-webkit-text-fill-color:#172f4b!important;text-shadow:none!important;
+  border-color:#cbd9e7!important;
+}
+#teacher-document .v84-source-table tr:first-child td{
+  background:#eaf2f9!important;color:#102842!important;-webkit-text-fill-color:#102842!important;font-weight:850!important;
+}
+#teacher-document .v84-source-table tr:nth-child(2) td{
+  background:#f8fbfe!important;color:#173653!important;-webkit-text-fill-color:#173653!important;
+}
+#teacher-document .v84-source-table :where(strong,b,span,p){color:inherit!important;-webkit-text-fill-color:inherit!important;text-shadow:none!important}
+#teacher-document .v84-table-scroll{border:1px solid #d6e1eb!important;border-radius:12px!important;box-shadow:none!important;background:#fff!important}
+
+/* ATP identity stays structured but not colour-forced. */
+.v84-doc-atp [data-table-index="0"] .v84-source-table tr:nth-child(1) td{
+  background:#e9eefb!important;color:#26315f!important;-webkit-text-fill-color:#26315f!important;text-align:center!important;
+}
 .v84-doc-atp [data-table-index="0"] .v84-source-table tr:nth-child(2) td:nth-child(1){
-  background:linear-gradient(135deg,#5527c8,#8539ec)!important;
-  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  background:#f1edfb!important;color:#3c2c70!important;-webkit-text-fill-color:#3c2c70!important;
+}
+.v84-doc-atp [data-table-index="0"] .v84-source-table tr:nth-child(2) td:nth-child(2){
+  background:#fff!important;color:#173653!important;-webkit-text-fill-color:#173653!important;font-weight:750!important;
 }
 
-/* General white-paper preview readability. */
-#teacher-document .v84-source-body,#teacher-document .v84-source-table td:not(.v84-head-cell){color:#18324f!important;-webkit-text-fill-color:#18324f!important;text-shadow:none!important}
-#teacher-document .v84-source-table .v84-head-cell{color:#fff!important;-webkit-text-fill-color:#fff!important}
-
-/* Analisis Hari Efektif must be visually distinct from CP while remaining lightweight. */
-.v87-effective-document{overflow:hidden;border:1px solid #d8e6f4;border-radius:22px;background:#fff;box-shadow:0 10px 26px rgba(8,35,76,.12)}
-.v87-effective-head{padding:20px 22px;background:linear-gradient(110deg,#075bb7,#1679e8 44%,#6e3bd2 76%,#c23683);color:#fff}
+/* Analisis Hari Efektif stays dedicated and readable. */
+.v87-effective-document{overflow:hidden;border:1px solid #d8e6f4;border-radius:18px;background:#fff;box-shadow:0 8px 20px rgba(8,35,76,.10)}
+.v87-effective-head{padding:18px 20px;background:#153c6f;color:#fff}
 .v87-effective-head,.v87-effective-head *{color:#fff!important;-webkit-text-fill-color:#fff!important}.v87-effective-head>span{font-size:.72rem;font-weight:900;letter-spacing:.12em}.v87-effective-head h2{margin:.35rem 0;font-size:clamp(1.25rem,2.2vw,2rem)}.v87-effective-head p{margin:0;opacity:.93}
-.v87-effective-document .document-section{padding:18px 22px}.v87-effective-scroll{overflow:auto;border:1px solid #dbe7f2;border-radius:15px}.v87-effective-scroll table{margin:0!important;min-width:760px}.v87-effective-scroll th{background:linear-gradient(135deg,#0a67c8,#5b3dcc)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}.v87-effective-scroll td{color:#173653!important;-webkit-text-fill-color:#173653!important}.v87-effective-scroll input{width:82px;min-height:34px;border:1px solid #bad1e6;border-radius:9px;padding:5px 8px;background:#fff;color:#173653}
+.v87-effective-document .document-section{padding:18px 20px}.v87-effective-scroll{overflow:auto;border:1px solid #dbe7f2;border-radius:12px}.v87-effective-scroll table{margin:0!important;min-width:760px}.v87-effective-scroll th{background:#e8f0f8!important;color:#173653!important;-webkit-text-fill-color:#173653!important}.v87-effective-scroll td{background:#fff!important;color:#173653!important;-webkit-text-fill-color:#173653!important}.v87-effective-scroll input{width:82px;min-height:34px;border:1px solid #bad1e6;border-radius:9px;padding:5px 8px;background:#fff;color:#173653}
 
 @media(max-width:760px){
   .hero-v25{background-position:42% center!important}
-  .teacher-doc-menu button>span{box-shadow:inset 0 1px #fff,0 4px 9px rgba(5,31,68,.16)!important}
+  .teacher-doc-menu button>span{width:35px!important;height:35px!important;min-width:35px!important}
   .v87-effective-document .document-section{padding:14px}
 }
