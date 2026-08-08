@@ -1,12 +1,12 @@
-const CACHE_NAME="paibp-smart-v87-fast-static";
+const CACHE_NAME="paibp-smart-v88-fast-static";
 const STATIC=[
   "./logo-spensus.png",
   "./assets/icons/icon-192.png",
   "./visual-v86.css?v=86",
   "./icon-v86.css?v=86",
-  "./icon-art-v86.js?v=86",
-  "./visual-fix-v87.css?v=87",
-  "./teacher-preview-fix-v87.js?v=87"
+  "./icon-art-v86.js?v=88",
+  "./visual-fix-v87.css?v=88",
+  "./teacher-preview-fix-v87.js?v=88"
 ];
 
 self.addEventListener("install",(event)=>{
@@ -27,7 +27,7 @@ self.addEventListener("activate",(event)=>{
 async function networkFirst(request){
   const cache=await caches.open(CACHE_NAME);
   try{
-    const response=await fetch(request);
+    const response=await fetch(request,{cache:"no-store"});
     if(response && response.ok) cache.put(request,response.clone());
     return response;
   }catch{
@@ -40,7 +40,7 @@ async function cacheFirst(request){
   const hit=await cache.match(request);
   if(hit) return hit;
   try{
-    const response=await fetch(request);
+    const response=await fetch(request,{cache:"no-store"});
     if(response && response.ok) cache.put(request,response.clone());
     return response;
   }catch{
@@ -59,7 +59,7 @@ self.addEventListener("fetch",(event)=>{
     return;
   }
 
-  if(["86","87"].includes(url.searchParams.get("v")) && (request.destination==="script" || request.destination==="style")){
+  if(["86","87","88"].includes(url.searchParams.get("v")) && (request.destination==="script" || request.destination==="style")){
     event.respondWith(cacheFirst(request));
     return;
   }
