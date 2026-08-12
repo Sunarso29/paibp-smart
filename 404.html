@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow">
+  <title>PAIBP SMART — Dialihkan</title>
+  <script>
+    (function () {
+      var OLD_PREFIX = '/paibp-smart';
+      var NEW_ORIGIN = 'https://paibpsmart.github.io';
+      var path = window.location.pathname || '/';
+      if (path === OLD_PREFIX) path = '/';
+      else if (path.indexOf(OLD_PREFIX + '/') === 0) path = path.slice(OLD_PREFIX.length) || '/';
+      else path = '/';
+      window.location.replace(NEW_ORIGIN + path + (window.location.search || '') + (window.location.hash || ''));
+    })();
+  </script>
+  <meta http-equiv="refresh" content="0;url=https://paibpsmart.github.io/">
+</head>
+<body>
+  <p>PAIBP SMART telah pindah ke <a href="https://paibpsmart.github.io/">https://paibpsmart.github.io/</a>.</p>
+</body>
+</html>
