@@ -1,0 +1,64 @@
+name: Verify legacy redirect V128
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-legacy-redirect-v128.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Wait for Pages propagation
+        run: sleep 10
+
+      - name: Verify live bridge pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          OLD='https://sunarso29.github.io/paibp-smart'
+          NEW='https://paibpsmart.github.io'
+
+          curl -fsS "$OLD/" -o /tmp/root.html
+          grep -Fq "var NEW_ORIGIN = '$NEW'" /tmp/root.html
+          grep -Fq "window.location.replace(target)" /tmp/root.html
+
+          code=$(curl -sS -o /tmp/unknown.html -w '%{http_code}' "$OLD/akses-guru.html")
+          test "$code" = '404'
+          grep -Fq "var NEW_ORIGIN = '$NEW'" /tmp/unknown.html
+          grep -Fq "window.location.replace(NEW_ORIGIN + path" /tmp/unknown.html
+
+          curl -fsS "$NEW/" -o /tmp/new.html
+          grep -Fq 'PAIBP SMART' /tmp/new.html
+
+      - name: Verify path query hash preservation logic
+        shell: node {0}
+        run: |
+          const cases = [
+            ['https://sunarso29.github.io/paibp-smart/', 'https://paibpsmart.github.io/'],
+            ['https://sunarso29.github.io/paibp-smart/index.html', 'https://paibpsmart.github.io/index.html'],
+            ['https://sunarso29.github.io/paibp-smart/akses-guru.html', 'https://paibpsmart.github.io/akses-guru.html'],
+            ['https://sunarso29.github.io/paibp-smart/index.html?news=abc&from=share#kabar-spensus', 'https://paibpsmart.github.io/index.html?news=abc&from=share#kabar-spensus'],
+            ['https://sunarso29.github.io/paibp-smart/path-yang-tidak-ada?a=1#bagian', 'https://paibpsmart.github.io/path-yang-tidak-ada?a=1#bagian']
+          ];
+          function target(input) {
+            const u = new URL(input);
+            const OLD_PREFIX = '/paibp-smart';
+            const NEW_ORIGIN = 'https://paibpsmart.github.io';
+            let path = u.pathname || '/';
+            if (path === OLD_PREFIX) path = '/';
+            else if (path.indexOf(OLD_PREFIX + '/') === 0) path = path.slice(OLD_PREFIX.length) || '/';
+            else path = '/';
+            return NEW_ORIGIN + path + u.search + u.hash;
+          }
+          for (const [input, expected] of cases) {
+            const got = target(input);
+            if (got !== expected) throw new Error(`${input} -> ${got}, expected ${expected}`);
+            console.log(`PASS ${input} -> ${got}`);
+          }
